@@ -1,7 +1,10 @@
 mod file_util;
+mod item;
 
 use std::env;
 use std::process;
+
+use item::Item;
 
 fn main() {
 
@@ -20,8 +23,12 @@ fn main() {
     // Test print
 	let str_contents: Vec<String> = to_str_arr(decompressed);
 	for str in str_contents {
-		print!("{}\n", str);
+		//print!("{}\n", str);
 	}
+
+	// Test item
+	let item = Item::new(17u64, 123u32, 2u32, String::from("a bowl"), String::from("a small wooden bowl"), String::from("Made in Lanta"));
+	item.write_out();
 }
 
 // Test converter
