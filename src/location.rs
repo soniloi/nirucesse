@@ -1,30 +1,6 @@
-use std::cmp::Eq;
 use std::collections::HashMap;
 
 use item::Item;
-
-#[derive(Hash)]
-enum Direction {
-	North,
-	Northeast,
-	East,
-	Southeast,
-	South,
-	Southwest,
-	West,
-	Northwest,
-	Up,
-	Down,
-	Out,
-}
-
-impl Eq for Direction {}
-
-impl PartialEq for Direction {
-	fn eq(&self, other: &Direction) -> bool {
-		self == other
-	}
-}
 
 pub struct Location {
 	id: u64,
@@ -33,7 +9,7 @@ pub struct Location {
 	longname: String,
 	description: String,
 
-	directions: HashMap<Direction, Location>,
+	directions: HashMap<String, *mut Location>,
 	items: HashMap<u32, Item>,
 }
 
@@ -46,13 +22,27 @@ impl Location {
 			shortname: shortname,
 			longname: longname,
 			description: description,
-			directions: HashMap::new(),
+			directions: HashMap::with_capacity(11),
 			items: HashMap::new(),
 		}
+	}
+
+	pub fn set_direction(&mut self, dir: String, loc: *mut Location) {
+		self.directions.insert(dir, loc);
+	}
+
+
+	pub fn get_stubname(&self) -> &str {
+		&self.shortname
 	}
 
 	pub fn write_out(&self) {
 		println!("Location [id={}] [status={}] [shortname={}] [longname={}] [description={}] ", 
 			self.id, self.status, self.shortname, self.longname, self.description);
+		for (key, val) in self.directions.iter() {
+			unsafe{
+				println!("\tTo the {} there is {}", key, (**val).get_stubname());
+			}
+		}
 	}
 }

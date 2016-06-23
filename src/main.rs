@@ -33,8 +33,20 @@ fn main() {
 	item.write_out();
 
 	// Test location
-	let location = Location::new(91u64, 765u32, String::from("Kitchen"), String::from("in the kitchen"), String::from(". A lovely aroma of lentil soup lingers in the air. There are doors to the north and southeast"));
-	location.write_out();
+	let mut kitchen = Location::new(91u64, 765u32, String::from("Kitchen"), String::from("in the kitchen"), String::from(". A lovely aroma of lentil soup lingers in the air. There are doors to the north and southeast"));
+	let mut store = Location::new(92u64, 763u32, String::from("Store"), String::from("in the food store"), String::from(". The area is filled with sacks, tins, jars, barrels, and casks of the finest food and drink this side of the Etenar Nebula"));
+	let mut garden = Location::new(93u64, 760u32, String::from("Garden"), String::from("in the garden"), String::from(", a large, high-roofed dome filled with all manner of trees and plants. In the centre, where there is most room for it to grow, stands a particularly large tree"));
+
+	kitchen.set_direction(String::from("southeast"), &mut store as *mut Location);
+	store.set_direction(String::from("north"), &mut kitchen as *mut Location);
+	store.set_direction(String::from("west"), &mut garden as *mut Location);
+	garden.set_direction(String::from("northeast"), &mut store as *mut Location);
+
+	kitchen.write_out();
+	store.write_out();
+	garden.write_out();
+
+
 }
 
 // Test converter
