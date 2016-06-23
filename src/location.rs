@@ -10,7 +10,7 @@ pub struct Location {
 	description: String,
 
 	directions: HashMap<String, *mut Location>,
-	items: HashMap<u32, Item>,
+	items: HashMap<u64, *const Item>,
 }
 
 impl Location {
@@ -31,6 +31,11 @@ impl Location {
 		self.directions.insert(dir, loc);
 	}
 
+	pub fn drop_item(&mut self, item: *const Item) {
+		unsafe {
+			self.items.insert((*item).get_id(), item);
+		}
+	}
 
 	pub fn get_stubname(&self) -> &str {
 		&self.shortname
@@ -39,9 +44,16 @@ impl Location {
 	pub fn write_out(&self) {
 		println!("Location [id={}] [status={}] [shortname={}] [longname={}] [description={}] ", 
 			self.id, self.status, self.shortname, self.longname, self.description);
+
 		for (key, val) in self.directions.iter() {
-			unsafe{
+			unsafe {
 				println!("\tTo the {} there is {}", key, (**val).get_stubname());
+			}
+		}
+
+		for (key, val) in self.items.iter() {
+			unsafe {
+				println!("\tThere is {} here [id={}]", (**val).get_longname(), (**val).get_id());
 			}
 		}
 	}
