@@ -1,10 +1,12 @@
 mod file_util;
 mod item;
+mod location;
 
 use std::env;
 use std::process;
 
 use item::Item;
+use location::Location;
 
 fn main() {
 
@@ -29,6 +31,10 @@ fn main() {
 	// Test item
 	let item = Item::new(17u64, 123u32, 2u32, String::from("a bowl"), String::from("a small wooden bowl"), String::from("Made in Lanta"));
 	item.write_out();
+
+	// Test location
+	let location = Location::new(91u64, 765u32, String::from("Kitchen"), String::from("in the kitchen"), String::from(". A lovely aroma of lentil soup lingers in the air. There are doors to the north and southeast"));
+	location.write_out();
 }
 
 // Test converter
