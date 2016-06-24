@@ -42,7 +42,7 @@ fn main() {
 	store.set_direction(String::from("west"), &mut garden as *mut Location);
 	garden.set_direction(String::from("northeast"), &mut store as *mut Location);
 
-	kitchen.drop_item(&item as *const Item);
+	kitchen.drop_item(item);
 
 	kitchen.write_out();
 	store.write_out();
