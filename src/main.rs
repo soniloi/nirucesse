@@ -1,6 +1,7 @@
 mod file_util;
 mod item;
 mod location;
+mod terminal;
 
 use std::env;
 use std::process;
@@ -47,6 +48,10 @@ fn main() {
 	kitchen.write_out();
 	store.write_out();
 	garden.write_out();
+
+	// Test terminal
+	terminal::write_tabbed("You awaken. You feel ill and dazed. Slowly you raise your head. You try to look around. You are intermittently blinded by flickering light. Groggily and warily you flail around.");
+	terminal::reset();
 }
 
 // Test converter
