@@ -59,7 +59,7 @@ fn read_prompted(prompt: &str) -> String {
 	let mut result = String::new();
 	write(prompt);
 	io::stdin().read_line(&mut result);
-	result
+	String::from(result.trim())
 }
 
 pub fn reset() {
@@ -75,12 +75,13 @@ fn write_prompted(st: &str, prompt: &str) {
 }
 
 fn write(st: &str) {
-	print!("{}{}", COLOUR_OUT, st);
+	print!("{}{}{}", COLOUR_OUT, st, COLOUR_IN);
 	stdout().flush();
 }
 
 fn write_line(st: &str) {
-	println!("{}{}", COLOUR_OUT, st);
+	println!("{}{}{}", COLOUR_OUT, st, COLOUR_IN);
+	stdout().flush();
 }
 
 // Return the index of the first newline within a string slice
