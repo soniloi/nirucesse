@@ -1,3 +1,7 @@
+use std::io;
+use std::io::stdout;
+use std::io::Write;
+
 const COLOUR_IN: &'static str = "\x1b[0m";
 const COLOUR_OUT: &'static str = "\x1b[32m";
 const CONSOLE_RESET: &'static str = "\x1b[0m";
@@ -6,6 +10,7 @@ const PROMPT_END: &'static str = " > ";
 const PROMPT_FULL: &'static str = "---------> ";
 const PROMPT_TAB: &'static str = "         > ";
 const PROMPT_WIDTH: usize = 11;
+const PROMPT_EFFECTIVE_WIDTH: usize = 8;
 const CONSOLE_EFFECTIVE_WIDTH: usize = CONSOLE_WIDTH - PROMPT_WIDTH;
 
 pub fn write_full(st: &str) {
@@ -40,6 +45,27 @@ fn write_sections(chars: Vec<char>, start_index: usize, prompt: &str) {
 	write_sections(chars, stop_index as usize + 1, PROMPT_TAB);
 }
 
+// Create a prompt based on location name and read from stdin
+pub fn read_location(stubname: &str) -> String {
+	let mut prompt: String = stubname.to_string();
+	for i in stubname.len()..PROMPT_EFFECTIVE_WIDTH {
+		prompt.push(' ');
+	}
+	read_prompted(&(prompt + PROMPT_END))
+}
+
+// Write a prompt and read from stdin
+fn read_prompted(prompt: &str) -> String {
+	let mut result = String::new();
+	write(prompt);
+	io::stdin().read_line(&mut result);
+	result
+}
+
+pub fn reset() {
+	print!("{}", CONSOLE_RESET);
+}
+
 // Write to console with a given prompt
 fn write_prompted(st: &str, prompt: &str) {
 	let mut prompted: String = String::with_capacity(CONSOLE_WIDTH);
@@ -48,12 +74,13 @@ fn write_prompted(st: &str, prompt: &str) {
 	write_line(&prompted);
 }
 
-fn write_line(st: &str) {
-	println!("{}{}", COLOUR_OUT, st);
+fn write(st: &str) {
+	print!("{}{}", COLOUR_OUT, st);
+	stdout().flush();
 }
 
-pub fn reset() {
-	print!("{}", CONSOLE_RESET);
+fn write_line(st: &str) {
+	println!("{}{}", COLOUR_OUT, st);
 }
 
 // Return the index of the first newline within a string slice

@@ -50,8 +50,11 @@ fn main() {
 	garden.write_out();
 
 	// Test terminal
-	terminal::write_full("Hello");
 	terminal::write_full("You awaken. You feel ill and dazed. Slowly you raise your head. You try to look around. You are intermittently blinded by flickering light. Groggily and warily you flail around.");
+	let input: String = terminal::read_location(kitchen.get_stubname());
+	let output: String = String::from("Your input was [") + &input + "]";
+	terminal::write_full(&output);
+
 	terminal::reset();
 }
 
