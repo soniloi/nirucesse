@@ -12,6 +12,7 @@ const PROMPT_TAB: &'static str = "         > ";
 const PROMPT_WIDTH: usize = 11;
 const PROMPT_EFFECTIVE_WIDTH: usize = 8;
 const CONSOLE_EFFECTIVE_WIDTH: usize = CONSOLE_WIDTH - PROMPT_WIDTH;
+const MAX_TOKENS: u32 = 2;
 
 pub fn write_full(st: &str) {
 	let raw: Vec<char> = st.chars().collect();
@@ -46,20 +47,30 @@ fn write_sections(chars: Vec<char>, start_index: usize, prompt: &str) {
 }
 
 // Create a prompt based on location name and read from stdin
-pub fn read_location(stubname: &str) -> String {
+pub fn read_location(stubname: &str) -> Vec<String> {
 	let mut prompt: String = stubname.to_string();
 	for i in stubname.len()..PROMPT_EFFECTIVE_WIDTH {
 		prompt.push(' ');
 	}
-	read_prompted(&(prompt + PROMPT_END))
+	let result_raw = read_prompted(&(prompt + PROMPT_END));
+	println!("[{}]", result_raw);
+	let mut result_iter = result_raw.split(" ");
+	let mut result_vec: Vec<String> = vec![];
+	for i in 0..MAX_TOKENS {
+		match result_iter.next() {
+			Some(st) => {result_vec.push(st.to_string()); },
+			None => break,
+		}
+	}
+	return result_vec
 }
 
 // Write a prompt and read from stdin
 fn read_prompted(prompt: &str) -> String {
-	let mut result = String::new();
+	let mut result_raw = String::new();
 	write(prompt);
-	io::stdin().read_line(&mut result);
-	String::from(result.trim())
+	io::stdin().read_line(&mut result_raw);
+	String::from(result_raw.trim())
 }
 
 pub fn reset() {
