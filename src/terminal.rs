@@ -52,9 +52,18 @@ pub fn read_location(stubname: &str) -> Vec<String> {
 	for i in stubname.len()..PROMPT_EFFECTIVE_WIDTH {
 		prompt.push(' ');
 	}
-	let result_raw = read_prompted(&(prompt + PROMPT_END));
-	println!("[{}]", result_raw);
-	let mut result_iter = result_raw.split(" ");
+
+	read_prompted(&(prompt + PROMPT_END))
+}
+
+// Write a prompt and read tokens from stdin
+// Return only the first MAX_TOKENS tokens of input
+fn read_prompted(prompt: &str) -> Vec<String> {
+	let mut result_raw = String::new();
+	write(prompt);
+	io::stdin().read_line(&mut result_raw);
+	let mut result_iter = result_raw.trim().split(" ");
+
 	let mut result_vec: Vec<String> = vec![];
 	for i in 0..MAX_TOKENS {
 		match result_iter.next() {
@@ -62,15 +71,8 @@ pub fn read_location(stubname: &str) -> Vec<String> {
 			None => break,
 		}
 	}
-	return result_vec
-}
 
-// Write a prompt and read from stdin
-fn read_prompted(prompt: &str) -> String {
-	let mut result_raw = String::new();
-	write(prompt);
-	io::stdin().read_line(&mut result_raw);
-	String::from(result_raw.trim())
+	result_vec
 }
 
 pub fn reset() {
