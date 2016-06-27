@@ -67,7 +67,7 @@ fn read_prompted(prompt: &str) -> Vec<String> {
 	let mut result_vec: Vec<String> = vec![];
 	for i in 0..MAX_TOKENS {
 		match result_iter.next() {
-			Some(st) => {result_vec.push(st.to_string()); },
+			Some(st) => {result_vec.push(st.to_lowercase()); },
 			None => break,
 		}
 	}
