@@ -1,3 +1,4 @@
+mod command;
 mod file_util;
 mod item;
 mod location;
@@ -6,6 +7,7 @@ mod terminal;
 use std::env;
 use std::process;
 
+use command::Command;
 use item::Item;
 use location::Location;
 
@@ -61,6 +63,12 @@ fn main() {
 	
 	terminal::write_full(&output);
 
+	// Test command
+	let handler: fn(String, String) = print_args;
+	let cmd = Command::new(String::from("take"), 0x0c, handler);
+	cmd.write_out();
+
+	// Clean
 	terminal::reset();
 }
 
@@ -80,4 +88,8 @@ fn to_str_arr(contents: Vec<char>) -> Vec<String> {
 	}
 
 	strs
+}
+
+fn print_args(str1: String, str2: String) {
+	print!("[str1={}] [str2={}]", str1, str2);
 }
