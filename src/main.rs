@@ -1,4 +1,5 @@
 mod command;
+mod command_collection;
 mod file_util;
 mod item;
 mod location;
@@ -8,6 +9,7 @@ use std::env;
 use std::process;
 
 use command::Command;
+use command_collection::CommandCollection;
 use item::Item;
 use location::Location;
 
@@ -65,8 +67,21 @@ fn main() {
 
 	// Test command
 	let handler: fn(String, String) = print_args;
-	let cmd = Command::new(String::from("take"), 0x0c, handler);
-	cmd.write_out();
+	let take = Command::new(String::from("take"), 0x0c, handler);
+	let drop = Command::new(String::from("drop"), 0x0e, handler);
+
+	let mut cmd_coll = CommandCollection::new();
+	cmd_coll.put(String::from("take"), &take as *const Command);
+	cmd_coll.put(String::from("t"), &take as *const Command); // Alias
+	cmd_coll.put(String::from("drop"), &drop as *const Command);
+	cmd_coll.put(String::from("dr"), &drop as *const Command);
+
+	print_if_existing(&cmd_coll, "dr");
+	print_if_existing(&cmd_coll, "examine");
+
+	cmd_coll.write_all();
+	take.write_out();
+	drop.write_out();
 
 	// Clean
 	terminal::reset();
@@ -88,6 +103,13 @@ fn to_str_arr(contents: Vec<char>) -> Vec<String> {
 	}
 
 	strs
+}
+
+fn print_if_existing(collection: &CommandCollection, key: &str) {
+	match collection.get(String::from(key)) {
+		Some(cmd) => {print!("Command found! [{}] ", key); unsafe{(**cmd).write_out()}},
+		None => println!("No such command [{}]", key),
+	}
 }
 
 fn print_args(str1: String, str2: String) {
