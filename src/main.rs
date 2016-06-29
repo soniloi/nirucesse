@@ -35,7 +35,7 @@ fn main() {
 
 	// Test item
 	let item = Item::new(17u64, 123u32, 2u32, String::from("a bowl"), String::from("a small wooden bowl"), String::from("Made in Lanta"));
-	item.write_out();
+	//item.write_out();
 
 	// Test location
 	let mut kitchen = Location::new(91u64, 765u32, String::from("Kitchen"), String::from("in the kitchen"), String::from(". A lovely aroma of lentil soup lingers in the air. There are doors to the north and southeast"));
@@ -49,12 +49,12 @@ fn main() {
 
 	kitchen.drop_item(item);
 
-	kitchen.write_out();
-	store.write_out();
-	garden.write_out();
+	//kitchen.write_out();
+	//store.write_out();
+	//garden.write_out();
 
 	// Test command
-	let handler: fn(String, String) = print_args;
+	let handler: fn(&str) = print_arg;
 	let take = Command::new(String::from("take"), 0x0c, handler);
 	let drop = Command::new(String::from("drop"), 0x0e, handler);
 
@@ -64,12 +64,12 @@ fn main() {
 	cmd_coll.put("drop", &drop as *const Command);
 	cmd_coll.put("dr", &drop as *const Command);
 
-	print_if_existing(&cmd_coll, "dr");
-	print_if_existing(&cmd_coll, "examine");
+	//print_if_existing(&cmd_coll, "dr");
+	//print_if_existing(&cmd_coll, "examine");
 
-	cmd_coll.write_all();
-	take.write_out();
-	drop.write_out();
+	//cmd_coll.write_all();
+	//take.write_out();
+	//drop.write_out();
 
 	// Test terminal
 	terminal::write_full("You awaken. You feel ill and dazed. Slowly you raise your head. You try to look around. You are intermittently blinded by flickering light. Groggily and warily you flail around.");
@@ -77,8 +77,16 @@ fn main() {
 	let inputs: Vec<String> = terminal::read_location(kitchen.get_stubname());
 
 	match cmd_coll.get(&inputs[0]) {
-		Some(cmd) => {print!("Command found! [{}] ", inputs[0]); unsafe{(**cmd).write_out()}},
-		None => println!("No such command [{}]", inputs[0]),
+		Some(cmd) => {
+			print!("Command found! [{}] ", inputs[0]);
+			unsafe{
+				(**cmd).write_out();
+				(**cmd).execute(&inputs[1])
+			}
+		},
+		None => {
+			println!("No such command [{}]", inputs[0])
+		},
 	}
 
 	let mut output: String = String::from("Your input was [ ");
@@ -118,6 +126,6 @@ fn print_if_existing(collection: &CommandCollection, key: &str) {
 	}
 }
 
-fn print_args(str1: String, str2: String) {
-	print!("[str1={}] [str2={}]", str1, str2);
+fn print_arg(st: &str) {
+	println!("[arg={}]", st);
 }

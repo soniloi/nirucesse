@@ -10,12 +10,12 @@ const CTRL_COMMAND_COMPOUND: u32 = 0x80; // Whether the command is compound e.g.
 pub struct Command {
 	name: String,
 	status: u32,
-	handler: fn(String, String),
+	handler: fn(&str),
 }
 
 impl Command {
 
-	pub fn new(name: String, status: u32, handler: fn(String, String)) -> Command {
+	pub fn new(name: String, status: u32, handler: fn(&str)) -> Command {
 		Command {
 			name: name,
 			status: status,
@@ -23,10 +23,13 @@ impl Command {
 		}
 	}
 
-	pub fn write_out(&self) {
-		print!("Command ");
+	pub fn execute(&self, arg: &str) {
 		let h = self.handler;
-		h(String::from("bowl"), String::from(""));
-		println!(" [name={}] [status={:X}]", self.name, self.status);
+		println!("Received instruction to [{}] the [{}]", self.name, arg);
+		h(arg);
+	}
+
+	pub fn write_out(&self) {
+		println!("Command [name={}] [status={:X}]", self.name, self.status);
 	}
 }
