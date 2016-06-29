@@ -2,24 +2,24 @@ use std::collections::HashMap;
 
 use command::Command;
 
-pub struct CommandCollection {
-	commands: HashMap<String, *const Command>,
+pub struct CommandCollection<'a> {
+	commands: HashMap<&'a str, *const Command>,
 }
 
-impl CommandCollection {
+impl<'a> CommandCollection<'a> {
 
-	pub fn new() -> CommandCollection {
+	pub fn new() -> CommandCollection<'a> {
 		CommandCollection {
 			commands: HashMap::new(),
 		}
 	}
 
-	pub fn put(&mut self, key: String, val: *const Command) {
+	pub fn put(&mut self, key: &'a str, val: *const Command) {
 		self.commands.insert(key, val);
 	}
 
-	pub fn get(&self, key: String) -> Option<&*const Command> {
-		self.commands.get(&key)
+	pub fn get(&self, key: &str) -> Option<&*const Command> {
+		self.commands.get(key)
 	}
 
 	pub fn write_all(&self) {

@@ -53,28 +53,16 @@ fn main() {
 	store.write_out();
 	garden.write_out();
 
-	// Test terminal
-	terminal::write_full("You awaken. You feel ill and dazed. Slowly you raise your head. You try to look around. You are intermittently blinded by flickering light. Groggily and warily you flail around.");
-	
-	let inputs: Vec<String> = terminal::read_location(kitchen.get_stubname());
-	let mut output: String = String::from("Your input was [ ");
-	for input in inputs {
-		output = output + &input + " ";
-	}
-	output = output + "]";
-	
-	terminal::write_full(&output);
-
 	// Test command
 	let handler: fn(String, String) = print_args;
 	let take = Command::new(String::from("take"), 0x0c, handler);
 	let drop = Command::new(String::from("drop"), 0x0e, handler);
 
 	let mut cmd_coll = CommandCollection::new();
-	cmd_coll.put(String::from("take"), &take as *const Command);
-	cmd_coll.put(String::from("t"), &take as *const Command); // Alias
-	cmd_coll.put(String::from("drop"), &drop as *const Command);
-	cmd_coll.put(String::from("dr"), &drop as *const Command);
+	cmd_coll.put("take", &take as *const Command);
+	cmd_coll.put("t", &take as *const Command); // Alias
+	cmd_coll.put("drop", &drop as *const Command);
+	cmd_coll.put("dr", &drop as *const Command);
 
 	print_if_existing(&cmd_coll, "dr");
 	print_if_existing(&cmd_coll, "examine");
@@ -82,6 +70,24 @@ fn main() {
 	cmd_coll.write_all();
 	take.write_out();
 	drop.write_out();
+
+	// Test terminal
+	terminal::write_full("You awaken. You feel ill and dazed. Slowly you raise your head. You try to look around. You are intermittently blinded by flickering light. Groggily and warily you flail around.");
+
+	let inputs: Vec<String> = terminal::read_location(kitchen.get_stubname());
+
+	match cmd_coll.get(&inputs[0]) {
+		Some(cmd) => {print!("Command found! [{}] ", inputs[0]); unsafe{(**cmd).write_out()}},
+		None => println!("No such command [{}]", inputs[0]),
+	}
+
+	let mut output: String = String::from("Your input was [ ");
+	for input in inputs {
+		output = output + &input + " ";
+	}
+	output = output + "]";
+	
+	terminal::write_full(&output);
 
 	// Clean
 	terminal::reset();
@@ -106,7 +112,7 @@ fn to_str_arr(contents: Vec<char>) -> Vec<String> {
 }
 
 fn print_if_existing(collection: &CommandCollection, key: &str) {
-	match collection.get(String::from(key)) {
+	match collection.get(key) {
 		Some(cmd) => {print!("Command found! [{}] ", key); unsafe{(**cmd).write_out()}},
 		None => println!("No such command [{}]", key),
 	}
