@@ -81,7 +81,8 @@ fn main() {
 			print!("Command found! [{}] ", inputs[0]);
 			unsafe{
 				(**cmd).write_out();
-				(**cmd).execute(&inputs[1])
+				let arg: &str = if inputs.len() > 1 {&inputs[1]} else {""};
+				(**cmd).execute(arg)
 			}
 		},
 		None => {
