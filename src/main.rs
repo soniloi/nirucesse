@@ -4,6 +4,7 @@ mod file_util;
 mod inventory;
 mod item;
 mod location;
+mod player;
 mod terminal;
 
 use std::env;
@@ -14,6 +15,7 @@ use command_collection::CommandCollection;
 use inventory::Inventory;
 use item::Item;
 use location::Location;
+use player::Player;
 
 fn main() {
 
@@ -74,10 +76,10 @@ fn main() {
 	//take.write_out();
 	//drop.write_out();
 
-	let mut inventory = Inventory::new(16);
-	inventory.write_out();
-	inventory.insert_item(medallion);
-	inventory.write_out();
+	let mut player = Player::new();
+	player.write_out();
+	player.insert_item(medallion);
+	player.write_out();
 
 	// Test terminal
 	terminal::write_full("You awaken. You feel ill and dazed. Slowly you raise your head. You try to look around. You are intermittently blinded by flickering light. Groggily and warily you flail around.");
