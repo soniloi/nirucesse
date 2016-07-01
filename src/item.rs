@@ -1,7 +1,8 @@
 pub struct Item {
 	id: u64,
 	status: u32,
-	size: u32,	
+	size: u32,
+	shortname: String,
 	longname: String,
 	description: String,
 	writing: String,
@@ -9,11 +10,12 @@ pub struct Item {
 
 impl Item {
 
-	pub fn new(id: u64, status: u32, size: u32, longname: String, description: String, writing: String) -> Item {
+	pub fn new(id: u64, status: u32, size: u32, shortname: String, longname: String, description: String, writing: String) -> Item {
 		Item {
 			id: id,
 			status: status,
 			size: size,
+			shortname: shortname,
 			longname: longname,
 			description: description,
 			writing: writing,
@@ -29,6 +31,6 @@ impl Item {
 	}
 
 	pub fn write_out(&self) {
-		println!("Item [id={}] [status={}] [size={}] [longname={}] [description={}] [writing={}]", self.id, self.status, self.size, self.longname, self.description, self.writing);
+		println!("Item [id={}] [status={}] [size={}] [shortname={}] [longname={}] [description={}] [writing={}]", self.id, self.status, self.size, self.shortname, self.longname, self.description, self.writing);
 	}
 }

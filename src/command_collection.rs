@@ -22,7 +22,7 @@ impl<'a> CommandCollection<'a> {
 		self.commands.get(key)
 	}
 
-	pub fn write_all(&self) {
+	pub fn write_out(&self) {
 		for (key, val) in self.commands.iter() {
 			unsafe {
 				print!("\t[{}]\t", key);

@@ -3,6 +3,7 @@ mod command_collection;
 mod file_util;
 mod inventory;
 mod item;
+mod item_collection;
 mod location;
 mod player;
 mod terminal;
@@ -14,6 +15,7 @@ use command::Command;
 use command_collection::CommandCollection;
 use inventory::Inventory;
 use item::Item;
+use item_collection::ItemCollection;
 use location::Location;
 use player::Player;
 
@@ -38,9 +40,15 @@ fn main() {
 	}
 
 	// Test item
-	let bowl = Item::new(17u64, 123u32, 2u32, String::from("a bowl"), String::from("a small wooden bowl"), String::from("Made in Lanta"));
-	let medallion = Item::new(75u64, 128u32, 2u32, String::from("an asterium medallion"), String::from("a large asterium medallion, engraved with pirate symbolism"), String::from("arr!"));
+	let bowl = Item::new(17u64, 123u32, 2u32, String::from("bowl"), String::from("a bowl"), String::from("a small wooden bowl"), String::from("Made in Lanta"));
+	let medallion = Item::new(75u64, 128u32, 2u32, String::from("medallion"), String::from("an asterium medallion"), String::from("a large asterium medallion, engraved with pirate symbolism"), String::from("arr!"));
 	//bowl.write_out();
+
+	let mut item_coll = ItemCollection::new();
+	item_coll.put("bowl", &bowl as *const Item);
+	item_coll.put("medallion", &medallion as *const Item);
+	item_coll.put("medal", &medallion as *const Item);
+	item_coll.write_out();
 
 	// Test location
 	let mut kitchen = Location::new(91u64, 765u32, String::from("Kitchen"), String::from("in the kitchen"), String::from(". A lovely aroma of lentil soup lingers in the air. There are doors to the north and southeast"));
@@ -69,6 +77,7 @@ fn main() {
 	cmd_coll.put("t", &take as *const Command); // Alias
 	cmd_coll.put("drop", &drop as *const Command);
 	cmd_coll.put("dr", &drop as *const Command);
+
 
 	//print_if_existing(&cmd_coll, "dr");
 	//print_if_existing(&cmd_coll, "examine");
