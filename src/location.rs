@@ -31,7 +31,7 @@ impl Location {
 		self.directions.insert(dir, loc);
 	}
 
-	pub fn drop_item(&mut self, item: Item) {
+	pub fn insert_item(&mut self, item: Item) {
 		self.items.insert(item.get_id(), item);
 	}
 

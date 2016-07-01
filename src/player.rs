@@ -2,18 +2,21 @@ use std::collections::HashMap;
 
 use inventory::Inventory;
 use item::Item;
+use location::Location;
 
 pub struct Player {
-	score: u32,
 	inventory: Inventory,
+	location: *const Location,
+	score: u32,
 }
 
 impl Player {
 
-	pub fn new() -> Player {
+	pub fn new(initial: *const Location) -> Player {
 		Player {
-			score: 0u32,
 			inventory: Inventory::new(16),
+			location: initial,
+			score: 0u32,
 		}
 	}
 
@@ -22,7 +25,7 @@ impl Player {
 	}
 
 	pub fn write_out(&self) {
-		println!("Player [current score={}]", self.score);
+		println!("Player [current score={}] [location={}]", self.score, unsafe{(*self.location).get_stubname()});
 		self.inventory.write_out();
 	}
 }
