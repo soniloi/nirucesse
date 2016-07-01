@@ -1,6 +1,7 @@
 mod command;
 mod command_collection;
 mod file_util;
+mod inventory;
 mod item;
 mod location;
 mod terminal;
@@ -10,6 +11,7 @@ use std::process;
 
 use command::Command;
 use command_collection::CommandCollection;
+use inventory::Inventory;
 use item::Item;
 use location::Location;
 
@@ -34,8 +36,9 @@ fn main() {
 	}
 
 	// Test item
-	let item = Item::new(17u64, 123u32, 2u32, String::from("a bowl"), String::from("a small wooden bowl"), String::from("Made in Lanta"));
-	//item.write_out();
+	let bowl = Item::new(17u64, 123u32, 2u32, String::from("a bowl"), String::from("a small wooden bowl"), String::from("Made in Lanta"));
+	let medallion = Item::new(75u64, 128u32, 2u32, String::from("an asterium medallion"), String::from("a large asterium medallion, engraved with pirate symbolism"), String::from("arr!"));
+	//bowl.write_out();
 
 	// Test location
 	let mut kitchen = Location::new(91u64, 765u32, String::from("Kitchen"), String::from("in the kitchen"), String::from(". A lovely aroma of lentil soup lingers in the air. There are doors to the north and southeast"));
@@ -47,7 +50,7 @@ fn main() {
 	store.set_direction(String::from("west"), &mut garden as *mut Location);
 	garden.set_direction(String::from("northeast"), &mut store as *mut Location);
 
-	kitchen.drop_item(item);
+	kitchen.drop_item(bowl);
 
 	//kitchen.write_out();
 	//store.write_out();
@@ -70,6 +73,11 @@ fn main() {
 	//cmd_coll.write_all();
 	//take.write_out();
 	//drop.write_out();
+
+	let mut inventory = Inventory::new(16);
+	inventory.write_out();
+	inventory.insert_item(medallion);
+	inventory.write_out();
 
 	// Test terminal
 	terminal::write_full("You awaken. You feel ill and dazed. Slowly you raise your head. You try to look around. You are intermittently blinded by flickering light. Groggily and warily you flail around.");
