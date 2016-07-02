@@ -52,60 +52,69 @@ fn main() {
 	unsafe { (*bowl_ptr).write_out(); }
 
 	// Test location
-	let mut kitchen = Location::new(91u64, 765u32, String::from("Kitchen"), String::from("in the kitchen"), String::from(". A lovely aroma of lentil soup lingers in the air. There are doors to the north and southeast"));
-	let mut store = Location::new(92u64, 763u32, String::from("Store"), String::from("in the food store"), String::from(". The area is filled with sacks, tins, jars, barrels, and casks of the finest food and drink this side of the Etenar Nebula"));
-	let mut garden = Location::new(93u64, 760u32, String::from("Garden"), String::from("in the garden"), String::from(", a large, high-roofed dome filled with all manner of trees and plants. In the centre, where there is most room for it to grow, stands a particularly large tree"));
-	let mut ward = Location::new(9u64, 0x70Fu32, String::from("Ward"), String::from("in a medical ward"), String::from(". The faint electric light is flickering on and off, but it is enough to see by. The exit is to the south"));
+	let mut kitchen_box = Box::new(Location::new(91u64, 765u32, String::from("Kitchen"), String::from("in the kitchen"), String::from(". A lovely aroma of lentil soup lingers in the air. There are doors to the north and southeast")));
+	let mut store_box = Box::new(Location::new(92u64, 763u32, String::from("Store"), String::from("in the food store"), String::from(". The area is filled with sacks, tins, jars, barrels, and casks of the finest food and drink this side of the Etenar Nebula")));
+	let mut garden_box = Box::new(Location::new(93u64, 760u32, String::from("Garden"), String::from("in the garden"), String::from(", a large, high-roofed dome filled with all manner of trees and plants. In the centre, where there is most room for it to grow, stands a particularly large tree")));
+	let mut ward_box = Box::new(Location::new(9u64, 0x70Fu32, String::from("Ward"), String::from("in a medical ward"), String::from(". The faint electric light is flickering on and off, but it is enough to see by. The exit is to the south")));
+	let kitchen_ptr = Box::into_raw(kitchen_box);
+	let store_ptr = Box::into_raw(store_box);
+	let garden_ptr = Box::into_raw(garden_box);
+	let ward_ptr = Box::into_raw(ward_box);
 
-	kitchen.set_direction(String::from("southeast"), &mut store as *mut Location);
-	store.set_direction(String::from("north"), &mut kitchen as *mut Location);
-	store.set_direction(String::from("west"), &mut garden as *mut Location);
-	garden.set_direction(String::from("northeast"), &mut store as *mut Location);
+	unsafe {
+		(*kitchen_ptr).set_direction(String::from("southeast"), store_ptr);
+		(*store_ptr).set_direction(String::from("north"), kitchen_ptr);
+		(*store_ptr).set_direction(String::from("west"), garden_ptr);
+		(*garden_ptr).set_direction(String::from("northeast"), store_ptr);
 
-	ward.insert_item(bowl_ptr);
+		(*ward_ptr).insert_item(bowl_ptr);
+	}
 
 	// Test command
 	let take_fn: fn(items: &ItemCollection, arg: &str, player: &mut Player) = do_take;
 	let drop_fn: fn(items: &ItemCollection, arg: &str, player: &mut Player) = do_drop;
-	let take_cmd = Command::new(String::from("take"), 0x0c, do_take);
-	let drop_cmd = Command::new(String::from("drop"), 0x0e, do_drop);
+	let take_box = Box::new(Command::new(String::from("take"), 0x0c, do_take));
+	let drop_box = Box::new(Command::new(String::from("drop"), 0x0e, do_drop));
+	let take_ptr = Box::into_raw(take_box);
+	let drop_ptr = Box::into_raw(drop_box);
 
 	let mut cmd_coll = CommandCollection::new();
-	cmd_coll.put("take", &take_cmd as *const Command);
-	cmd_coll.put("t", &take_cmd as *const Command); // Alias
-	cmd_coll.put("drop", &drop_cmd as *const Command);
-	cmd_coll.put("dr", &drop_cmd as *const Command);
+	cmd_coll.put("take", take_ptr);
+	cmd_coll.put("t", take_ptr); // Alias
+	cmd_coll.put("drop", drop_ptr);
+	cmd_coll.put("dr", drop_ptr);
 
 	// Test player
-	let mut player = Player::new(&mut ward as *mut Location);
-	player.write_out();
+	let mut player = Box::new(Player::new(ward_ptr));
+	(*player).write_out();
 
 	// Test terminal
 	terminal::write_full("You awaken. You feel ill and dazed. Slowly you raise your head. You try to look around. You are intermittently blinded by flickering light. Groggily and warily you flail around.");
 
-	let inputs: Vec<String> = terminal::read_location(kitchen.get_stubname());
+	unsafe {
+		let inputs: Vec<String> = terminal::read_location((*kitchen_ptr).get_stubname());
+		match cmd_coll.get(&inputs[0]) {
+			Some(cmd) => {
+				unsafe{
+					let arg: &str = if inputs.len() > 1 { &inputs[1] } else { "" };
+					(**cmd).execute(&item_coll, arg, &mut player)
+				}
+			},
+			None => {
+				println!("No such command [{}]", inputs[0])
+			},
+		}
 
-	match cmd_coll.get(&inputs[0]) {
-		Some(cmd) => {
-			unsafe{
-				let arg: &str = if inputs.len() > 1 { &inputs[1] } else { "" };
-				(**cmd).execute(&item_coll, arg, &mut player)
-			}
-		},
-		None => {
-			println!("No such command [{}]", inputs[0])
-		},
+		let mut output: String = String::from("Your input was [ ");
+		for input in inputs {
+			output = output + &input + " ";
+		}
+		output = output + "]";
+		
+		terminal::write_full(&output);
+		player.write_out();
+		(*ward_ptr).write_out();
 	}
-
-	let mut output: String = String::from("Your input was [ ");
-	for input in inputs {
-		output = output + &input + " ";
-	}
-	output = output + "]";
-	
-	terminal::write_full(&output);
-	player.write_out();
-	ward.write_out();
 
 	// Clean
 	terminal::reset();
