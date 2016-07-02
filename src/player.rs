@@ -6,13 +6,13 @@ use location::Location;
 
 pub struct Player {
 	inventory: Inventory,
-	location: *const Location,
+	location: *mut Location,
 	score: u32,
 }
 
 impl Player {
 
-	pub fn new(initial: *const Location) -> Player {
+	pub fn new(initial: *mut Location) -> Player {
 		Player {
 			inventory: Inventory::new(16),
 			location: initial,
@@ -20,8 +20,16 @@ impl Player {
 		}
 	}
 
-	pub fn insert_item(&mut self, item: Item) {
-		self.inventory.insert_item(item);
+	pub fn contains_item(&self, item_ptr: *const Item) -> bool {
+		self.inventory.contains_item(item_ptr)
+	}
+
+	pub fn insert_item(&mut self, item_ptr: *const Item) {
+		self.inventory.insert_item(item_ptr);
+	}
+
+	pub fn get_location(&self) -> *mut Location {
+		self.location
 	}
 
 	pub fn write_out(&self) {

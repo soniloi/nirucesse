@@ -40,15 +40,16 @@ fn main() {
 	}
 
 	// Test item
-	let bowl = Item::new(17u64, 123u32, 2u32, String::from("bowl"), String::from("a bowl"), String::from("a small wooden bowl"), String::from("Made in Lanta"));
-	let medallion = Item::new(75u64, 128u32, 2u32, String::from("medallion"), String::from("an asterium medallion"), String::from("a large asterium medallion, engraved with pirate symbolism"), String::from("arr!"));
-	//bowl.write_out();
+	let bowl_box: Box<Item> = Box::new(Item::new(17u64, 123u32, 2u32, String::from("bowl"), String::from("a bowl"), String::from("a small wooden bowl"), String::from("Made in Lanta")));
+	let medallion_box: Box<Item> = Box::new(Item::new(75u64, 128u32, 2u32, String::from("medallion"), String::from("an asterium medallion"), String::from("a large asterium medallion, engraved with pirate symbolism"), String::from("arr!")));
+	let bowl_ptr = Box::into_raw(bowl_box);
+	let medallion_ptr = Box::into_raw(medallion_box);
 
 	let mut item_coll = ItemCollection::new();
-	item_coll.put("bowl", &bowl as *const Item);
-	item_coll.put("medallion", &medallion as *const Item);
-	item_coll.put("medal", &medallion as *const Item);
-	item_coll.write_out();
+	item_coll.put("bowl", bowl_ptr);
+	item_coll.put("medal", medallion_ptr);
+	item_coll.put("medallion", medallion_ptr);
+	unsafe { (*bowl_ptr).write_out(); }
 
 	// Test location
 	let mut kitchen = Location::new(91u64, 765u32, String::from("Kitchen"), String::from("in the kitchen"), String::from(". A lovely aroma of lentil soup lingers in the air. There are doors to the north and southeast"));
@@ -61,34 +62,22 @@ fn main() {
 	store.set_direction(String::from("west"), &mut garden as *mut Location);
 	garden.set_direction(String::from("northeast"), &mut store as *mut Location);
 
-	kitchen.insert_item(bowl);
-
-	//kitchen.write_out();
-	//store.write_out();
-	//garden.write_out();
+	ward.insert_item(bowl_ptr);
 
 	// Test command
-	let handler: fn(&str) = print_arg;
-	let take = Command::new(String::from("take"), 0x0c, handler);
-	let drop = Command::new(String::from("drop"), 0x0e, handler);
+	let take_fn: fn(items: &ItemCollection, arg: &str, player: &mut Player) = do_take;
+	let drop_fn: fn(items: &ItemCollection, arg: &str, player: &mut Player) = do_drop;
+	let take_cmd = Command::new(String::from("take"), 0x0c, do_take);
+	let drop_cmd = Command::new(String::from("drop"), 0x0e, do_drop);
 
 	let mut cmd_coll = CommandCollection::new();
-	cmd_coll.put("take", &take as *const Command);
-	cmd_coll.put("t", &take as *const Command); // Alias
-	cmd_coll.put("drop", &drop as *const Command);
-	cmd_coll.put("dr", &drop as *const Command);
+	cmd_coll.put("take", &take_cmd as *const Command);
+	cmd_coll.put("t", &take_cmd as *const Command); // Alias
+	cmd_coll.put("drop", &drop_cmd as *const Command);
+	cmd_coll.put("dr", &drop_cmd as *const Command);
 
-
-	//print_if_existing(&cmd_coll, "dr");
-	//print_if_existing(&cmd_coll, "examine");
-
-	//cmd_coll.write_all();
-	//take.write_out();
-	//drop.write_out();
-
-	let mut player = Player::new(&ward as *const Location);
-	player.write_out();
-	player.insert_item(medallion);
+	// Test player
+	let mut player = Player::new(&mut ward as *mut Location);
 	player.write_out();
 
 	// Test terminal
@@ -98,11 +87,9 @@ fn main() {
 
 	match cmd_coll.get(&inputs[0]) {
 		Some(cmd) => {
-			print!("Command found! [{}] ", inputs[0]);
 			unsafe{
-				(**cmd).write_out();
-				let arg: &str = if inputs.len() > 1 {&inputs[1]} else {""};
-				(**cmd).execute(arg)
+				let arg: &str = if inputs.len() > 1 { &inputs[1] } else { "" };
+				(**cmd).execute(&item_coll, arg, &mut player)
 			}
 		},
 		None => {
@@ -117,6 +104,8 @@ fn main() {
 	output = output + "]";
 	
 	terminal::write_full(&output);
+	player.write_out();
+	ward.write_out();
 
 	// Clean
 	terminal::reset();
@@ -140,13 +129,35 @@ fn to_str_arr(contents: Vec<char>) -> Vec<String> {
 	strs
 }
 
-fn print_if_existing(collection: &CommandCollection, key: &str) {
-	match collection.get(key) {
-		Some(cmd) => {print!("Command found! [{}] ", key); unsafe{(**cmd).write_out()}},
-		None => println!("No such command [{}]", key),
+fn do_take(items: &ItemCollection, arg: &str, player: &mut Player) {
+	match items.get(arg) {
+		None => {
+			terminal::write_full("I do not know who or what that is.");
+			return;
+		},
+		Some(item_ptr) => {
+			unsafe {
+				if player.contains_item(*item_ptr) {
+					terminal::write_full("You are already carrying that.");
+					return;
+				}
+				let location_ptr = player.get_location();
+
+				(**item_ptr).write_out();
+				match (*location_ptr).remove_item(*item_ptr) {
+					None => {
+						terminal::write_full("That item is not at this location.");
+					}
+					Some(item) => {
+						player.insert_item(item);
+						terminal::write_full("Taken.");
+					}
+				}
+			}
+		}
 	}
 }
 
-fn print_arg(st: &str) {
-	println!("[arg={}]", st);
+fn do_drop(items: &ItemCollection, arg: &str, player: &mut Player) {
+//TODO
 }

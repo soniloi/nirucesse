@@ -4,7 +4,7 @@ use item::Item;
 
 pub struct Inventory {
 	capacity: u32,
-	items: HashMap<u64, Item>,
+	items: HashMap<u64, *const Item>,
 }
 
 impl Inventory {
@@ -16,17 +16,26 @@ impl Inventory {
 		}
 	}
 
-	pub fn insert_item(&mut self, item: Item) {
-		self.items.insert(item.get_id(), item);
+	pub fn contains_item(&self, item: *const Item) -> bool {
+		for val in self.items.values() {
+			if item == *val {
+				return true;
+			}
+		}
+		false
+	}
+
+	pub fn insert_item(&mut self, item: *const Item) {
+		unsafe { self.items.insert((*item).get_id(), item); }
 	}
 
 	pub fn write_out(&self) {
-		if self.items.len() < 1 {
+		if self.items.is_empty() {
 			println!("There are currently no items in the inventory.");
 		} else {
 			println!("The inventory contains the following items:");
 			for (key, val) in self.items.iter() {
-				println!("\tThere is {} here [id={}]", (*val).get_longname(), key);
+				unsafe { println!("\t{} [id={}]", (**val).get_longname(), key); }
 			}
 		}
 	}

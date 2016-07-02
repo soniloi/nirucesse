@@ -10,7 +10,7 @@ pub struct Location {
 	description: String,
 
 	directions: HashMap<String, *mut Location>,
-	items: HashMap<u64, Item>,
+	items: HashMap<u64, *const Item>,
 }
 
 impl Location {
@@ -31,8 +31,16 @@ impl Location {
 		self.directions.insert(dir, loc);
 	}
 
-	pub fn insert_item(&mut self, item: Item) {
-		self.items.insert(item.get_id(), item);
+	pub fn insert_item(&mut self, item: *const Item) {
+		unsafe { self.items.insert((*item).get_id(), item); }
+	}
+
+	pub fn remove_item(&mut self, item_ptr: *const Item) -> Option<*const Item> {
+		self.write_out();
+		unsafe {println!("Trying to remove item [id={}] from this location", (*item_ptr).get_id()); }
+		unsafe {println!("Trying to remove item [name=\"{}\"] from this location", (*item_ptr).get_longname()); }
+		unsafe {println!("Trying to remove item [name=\"{}\"] [id={}] from this location", (*item_ptr).get_longname(), (*item_ptr).get_id()); }
+		unsafe {self.items.remove(&(*item_ptr).get_id()) }
 	}
 
 	pub fn get_stubname(&self) -> &str {
@@ -49,8 +57,8 @@ impl Location {
 			}
 		}
 
-		for (key, val) in self.items.iter() {
-			println!("\tThere is {} here [id={}]", (*val).get_longname(), (*val).get_id());
+		for val in self.items.values() {
+			unsafe { println!("\tThere is {} here [id={}]", (**val).get_longname(), (**val).get_id()); }
 		}
 	}
 }

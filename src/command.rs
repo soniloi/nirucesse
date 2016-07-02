@@ -7,15 +7,18 @@ const CTRL_COMMAND_INVERTIBLE: u32 = 0x20; // Whether the command appears in ord
 const CTRL_COMMAND_MOVEMENT: u32 = 0x40; // Whether the command intends movement
 const CTRL_COMMAND_COMPOUND: u32 = 0x80; // Whether the command is compound e.g. "go" in "go north"
 
+use item_collection::ItemCollection;
+use player::Player;
+
 pub struct Command {
 	name: String,
 	status: u32,
-	handler: fn(&str),
+	handler: fn(items: &ItemCollection, arg: &str, player: &mut Player),
 }
 
 impl Command {
 
-	pub fn new(name: String, status: u32, handler: fn(&str)) -> Command {
+	pub fn new(name: String, status: u32, handler: fn(items: &ItemCollection, arg: &str, player: &mut Player)) -> Command {
 		Command {
 			name: name,
 			status: status,
@@ -23,10 +26,10 @@ impl Command {
 		}
 	}
 
-	pub fn execute(&self, arg: &str) {
+	pub fn execute(&self, items: &ItemCollection, arg: &str, player: &mut Player) {
 		let h = self.handler;
-		println!("Received instruction to [{}] the [{}]", self.name, arg);
-		h(arg);
+		//println!("Received instruction for player to [{}] the [{}]", self.name, arg);
+		h(items, arg, player);
 	}
 
 	pub fn write_out(&self) {
