@@ -27,7 +27,7 @@ impl Inventory {
 	}
 
 	pub fn insert_item(&mut self, item: Rc<Box<Item>>) {
-		unsafe { self.items.insert((*item).get_id(), item); }
+		self.items.insert((*item).get_id(), item);
 	}
 
 	pub fn write_out(&self) {
@@ -36,7 +36,7 @@ impl Inventory {
 		} else {
 			println!("The inventory contains the following items:");
 			for (key, val) in self.items.iter() {
-				unsafe { println!("\t{} [id={}]", (**val).get_longname(), key); }
+				println!("\t{} [id={}]", (**val).get_longname(), key);
 			}
 		}
 	}

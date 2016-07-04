@@ -25,10 +25,8 @@ impl<'a> CommandCollection<'a> {
 
 	pub fn write_out(&self) {
 		for (key, val) in self.commands.iter() {
-			unsafe {
-				print!("\t[{}]\t", key);
-				(**val).write_out();
-			}
+			print!("\t[{}]\t", key);
+			(**val).write_out();
 		}
 	}
 }

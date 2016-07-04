@@ -14,7 +14,6 @@ use std::rc::Rc;
 
 use command::Command;
 use command_collection::CommandCollection;
-use inventory::Inventory;
 use item::Item;
 use item_collection::ItemCollection;
 use location::Location;
