@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::rc::Rc;
 
 use inventory::Inventory;
 use item::Item;
@@ -20,11 +21,11 @@ impl Player {
 		}
 	}
 
-	pub fn contains_item(&self, item_ptr: *const Item) -> bool {
+	pub fn contains_item(&self, item_ptr: &Rc<Box<Item>>) -> bool {
 		self.inventory.contains_item(item_ptr)
 	}
 
-	pub fn insert_item(&mut self, item_ptr: *const Item) {
+	pub fn insert_item(&mut self, item_ptr: Rc<Box<Item>>) {
 		self.inventory.insert_item(item_ptr);
 	}
 

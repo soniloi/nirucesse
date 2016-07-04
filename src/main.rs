@@ -41,22 +41,21 @@ fn main() {
 	}
 
 	// Test item
-	let bowl_box: Box<Item> = Box::new(Item::new(17u64, 123u32, 2u32, String::from("bowl"), String::from("a bowl"), String::from("a small wooden bowl"), String::from("Made in Lanta")));
-	let medallion_box: Box<Item> = Box::new(Item::new(75u64, 128u32, 2u32, String::from("medallion"), String::from("an asterium medallion"), String::from("a large asterium medallion, engraved with pirate symbolism"), String::from("arr!")));
-	let bowl_ptr = Box::into_raw(bowl_box);
-	let medallion_ptr = Box::into_raw(medallion_box);
+	let bowl_box: Rc<Box<Item>> = Rc::new(Box::new(Item::new(17u64, 123u32, 2u32, String::from("bowl"), String::from("a bowl"), String::from("a small wooden bowl"), String::from("Made in Lanta"))));
+	let medallion_box: Rc<Box<Item>> = Rc::new(Box::new(Item::new(75u64, 128u32, 2u32, String::from("medallion"), String::from("an asterium medallion"), String::from("a large asterium medallion, engraved with pirate symbolism"), String::from("arr!"))));
 
 	let mut item_coll = ItemCollection::new();
-	item_coll.put("bowl", bowl_ptr);
-	item_coll.put("medal", medallion_ptr);
-	item_coll.put("medallion", medallion_ptr);
-	unsafe { (*bowl_ptr).write_out(); }
+	item_coll.put("bowl", bowl_box.clone());
+	item_coll.put("medal", medallion_box.clone());
+	item_coll.put("medallion", medallion_box.clone());
+	(*bowl_box).write_out();
 
 	// Test location
 	let mut kitchen_box = Box::new(Location::new(91u64, 765u32, String::from("Kitchen"), String::from("in the kitchen"), String::from(". A lovely aroma of lentil soup lingers in the air. There are doors to the north and southeast")));
 	let mut store_box = Box::new(Location::new(92u64, 763u32, String::from("Store"), String::from("in the food store"), String::from(". The area is filled with sacks, tins, jars, barrels, and casks of the finest food and drink this side of the Etenar Nebula")));
 	let mut garden_box = Box::new(Location::new(93u64, 760u32, String::from("Garden"), String::from("in the garden"), String::from(", a large, high-roofed dome filled with all manner of trees and plants. In the centre, where there is most room for it to grow, stands a particularly large tree")));
 	let mut ward_box = Box::new(Location::new(9u64, 0x70Fu32, String::from("Ward"), String::from("in a medical ward"), String::from(". The faint electric light is flickering on and off, but it is enough to see by. The exit is to the south")));
+
 	let kitchen_ptr = Box::into_raw(kitchen_box);
 	let store_ptr = Box::into_raw(store_box);
 	let garden_ptr = Box::into_raw(garden_box);
@@ -68,7 +67,7 @@ fn main() {
 		(*store_ptr).set_direction(String::from("west"), garden_ptr);
 		(*garden_ptr).set_direction(String::from("northeast"), store_ptr);
 
-		(*ward_ptr).insert_item(bowl_ptr);
+		(*ward_ptr).insert_item(bowl_box);
 	}
 
 	// Test command
@@ -143,14 +142,14 @@ fn do_take(items: &ItemCollection, arg: &str, player: &mut Player) {
 		},
 		Some(item_ptr) => {
 			unsafe {
-				if player.contains_item(*item_ptr) {
+				if player.contains_item(item_ptr) {
 					terminal::write_full("You are already carrying that.");
 					return;
 				}
 				let location_ptr = player.get_location();
 
 				(**item_ptr).write_out();
-				match (*location_ptr).remove_item(*item_ptr) {
+				match (*location_ptr).remove_item(item_ptr) {
 					None => {
 						terminal::write_full("That item is not at this location.");
 					}

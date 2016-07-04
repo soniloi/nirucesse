@@ -1,10 +1,11 @@
 use std::collections::HashMap;
+use std::rc::Rc;
 
 use item::Item;
 
 pub struct Inventory {
 	capacity: u32,
-	items: HashMap<u64, *const Item>,
+	items: HashMap<u64, Rc<Box<Item>>>,
 }
 
 impl Inventory {
@@ -16,16 +17,16 @@ impl Inventory {
 		}
 	}
 
-	pub fn contains_item(&self, item: *const Item) -> bool {
+	pub fn contains_item(&self, item: &Rc<Box<Item>>) -> bool {
 		for val in self.items.values() {
-			if item == *val {
+			if (**item).get_id() == (*val).get_id() {
 				return true;
 			}
 		}
 		false
 	}
 
-	pub fn insert_item(&mut self, item: *const Item) {
+	pub fn insert_item(&mut self, item: Rc<Box<Item>>) {
 		unsafe { self.items.insert((*item).get_id(), item); }
 	}
 
