@@ -1,19 +1,21 @@
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
 use inventory::Inventory;
 use item::Item;
 use location::Location;
+use terminal;
 
 pub struct Player {
 	inventory: Inventory,
-	location: *mut Location,
+	location: Rc<RefCell<Box<Location>>>,
 	score: u32,
 }
 
 impl Player {
 
-	pub fn new(initial: *mut Location) -> Player {
+	pub fn new(initial: Rc<RefCell<Box<Location>>>) -> Player {
 		Player {
 			inventory: Inventory::new(16),
 			location: initial,
@@ -29,12 +31,31 @@ impl Player {
 		self.inventory.insert_item(item_ptr);
 	}
 
-	pub fn get_location(&self) -> *mut Location {
-		self.location
+	pub fn get_location(&self) -> &Rc<RefCell<Box<Location>>> {
+		&self.location
+	}
+
+	// Have player attempt to pick up item from current location
+	pub fn pick_up(&mut self, item: &Rc<Box<Item>>) {
+		if self.contains_item(item) {
+			terminal::write_full("You are already carrying that.");
+			return;	
+		}
+
+		let it = self.location.borrow_mut().remove_item(item);
+		match it {
+			None => {
+				terminal::write_full("That item is not at this location.");
+			}
+			Some(i) => {
+				self.insert_item(i);
+				terminal::write_full("Taken.");
+			}
+		}
 	}
 
 	pub fn write_out(&self) {
-		println!("Player [current score={}] [location={}]", self.score, unsafe{(*self.location).get_stubname()});
+		println!("Player [current score={}] [location={}]", self.score, self.location.borrow().get_stubname());
 		self.inventory.write_out();
 	}
 }

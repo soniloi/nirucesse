@@ -1,3 +1,4 @@
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
@@ -10,7 +11,7 @@ pub struct Location {
 	longname: String,
 	description: String,
 
-	directions: HashMap<String, *mut Location>,
+	directions: HashMap<String, Rc<RefCell<Box<Location>>>>,
 	items: HashMap<u64, Rc<Box<Item>>>,
 }
 
@@ -28,7 +29,7 @@ impl Location {
 		}
 	}
 
-	pub fn set_direction(&mut self, dir: String, loc: *mut Location) {
+	pub fn set_direction(&mut self, dir: String, loc: Rc<RefCell<Box<Location>>>) {
 		self.directions.insert(dir, loc);
 	}
 
@@ -50,9 +51,7 @@ impl Location {
 			self.id, self.status, self.shortname, self.longname, self.description);
 
 		for (key, val) in self.directions.iter() {
-			unsafe {
-				println!("\tTo the {} there is {}", key, (**val).get_stubname());
-			}
+			println!("\tTo the {} there is {}", key, (*val).borrow().get_stubname());
 		}
 
 		for val in self.items.values() {

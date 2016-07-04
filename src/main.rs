@@ -8,6 +8,7 @@ mod location;
 mod player;
 mod terminal;
 
+use std::cell::RefCell;
 use std::env;
 use std::process;
 use std::rc::Rc;
@@ -50,28 +51,18 @@ fn main() {
 	(*bowl_box).write_out();
 
 	// Test location
-	let mut kitchen_box = Box::new(Location::new(91u64, 765u32, String::from("Kitchen"), String::from("in the kitchen"), String::from(". A lovely aroma of lentil soup lingers in the air. There are doors to the north and southeast")));
-	let mut store_box = Box::new(Location::new(92u64, 763u32, String::from("Store"), String::from("in the food store"), String::from(". The area is filled with sacks, tins, jars, barrels, and casks of the finest food and drink this side of the Etenar Nebula")));
-	let mut garden_box = Box::new(Location::new(93u64, 760u32, String::from("Garden"), String::from("in the garden"), String::from(", a large, high-roofed dome filled with all manner of trees and plants. In the centre, where there is most room for it to grow, stands a particularly large tree")));
-	let mut ward_box = Box::new(Location::new(9u64, 0x70Fu32, String::from("Ward"), String::from("in a medical ward"), String::from(". The faint electric light is flickering on and off, but it is enough to see by. The exit is to the south")));
+	let kitchen_box = Rc::new(RefCell::new(Box::new(Location::new(91u64, 765u32, String::from("Kitchen"), String::from("in the kitchen"), String::from(". A lovely aroma of lentil soup lingers in the air. There are doors to the north and southeast")))));
+	let store_box = Rc::new(RefCell::new(Box::new(Location::new(92u64, 763u32, String::from("Store"), String::from("in the food store"), String::from(". The area is filled with sacks, tins, jars, barrels, and casks of the finest food and drink this side of the Etenar Nebula")))));
+	let garden_box = Rc::new(RefCell::new(Box::new(Location::new(93u64, 760u32, String::from("Garden"), String::from("in the garden"), String::from(", a large, high-roofed dome filled with all manner of trees and plants. In the centre, where there is most room for it to grow, stands a particularly large tree")))));
+	let ward_box = Rc::new(RefCell::new(Box::new(Location::new(9u64, 0x70Fu32, String::from("Ward"), String::from("in a medical ward"), String::from(". The faint electric light is flickering on and off, but it is enough to see by. The exit is to the south")))));
 
-	let kitchen_ptr = Box::into_raw(kitchen_box);
-	let store_ptr = Box::into_raw(store_box);
-	let garden_ptr = Box::into_raw(garden_box);
-	let ward_ptr = Box::into_raw(ward_box);
-
-	unsafe {
-		(*kitchen_ptr).set_direction(String::from("southeast"), store_ptr);
-		(*store_ptr).set_direction(String::from("north"), kitchen_ptr);
-		(*store_ptr).set_direction(String::from("west"), garden_ptr);
-		(*garden_ptr).set_direction(String::from("northeast"), store_ptr);
-
-		(*ward_ptr).insert_item(bowl_box);
-	}
+	kitchen_box.borrow_mut().set_direction(String::from(""), store_box.clone());
+	store_box.borrow_mut().set_direction(String::from(""), kitchen_box.clone());
+	store_box.borrow_mut().set_direction(String::from(""), garden_box.clone());
+	garden_box.borrow_mut().set_direction(String::from(""), store_box.clone());
+	ward_box.borrow_mut().insert_item(bowl_box);
 
 	// Test command
-	let take_fn: fn(items: &ItemCollection, arg: &str, player: &mut Player) = do_take;
-	let drop_fn: fn(items: &ItemCollection, arg: &str, player: &mut Player) = do_drop;
 	let take_box: Rc<Box<Command>> = Rc::new(Box::new(Command::new(String::from("take"), 0x0c, do_take)));
 	let drop_box: Rc<Box<Command>> = Rc::new(Box::new(Command::new(String::from("drop"), 0x0e, do_drop)));
 
@@ -82,34 +73,31 @@ fn main() {
 	cmd_coll.put("dr", drop_box.clone());
 
 	// Test player
-	let mut player = Box::new(Player::new(ward_ptr));
+	let mut player = Box::new(Player::new(ward_box.clone()));
 	(*player).write_out();
 
 	// Test terminal
 	terminal::write_full("You awaken. You feel ill and dazed. Slowly you raise your head. You try to look around. You are intermittently blinded by flickering light. Groggily and warily you flail around.");
 
-	unsafe {
-		let inputs: Vec<String> = terminal::read_location((*kitchen_ptr).get_stubname());
-		match cmd_coll.get(&inputs[0]) {
-			Some(cmd) => {
-				let arg: &str = if inputs.len() > 1 { &inputs[1] } else { "" };
-				(**cmd).execute(&item_coll, arg, &mut player)
-			},
-			None => {
-				println!("No such command [{}]", inputs[0])
-			},
-		}
-
-		let mut output: String = String::from("Your input was [ ");
-		for input in inputs {
-			output = output + &input + " ";
-		}
-		output = output + "]";
-		
-		terminal::write_full(&output);
-		player.write_out();
-		(*ward_ptr).write_out();
+	let inputs: Vec<String> = terminal::read_location(kitchen_box.borrow().get_stubname());
+	match cmd_coll.get(&inputs[0]) {
+		Some(cmd) => {
+			let arg: &str = if inputs.len() > 1 { &inputs[1] } else { "" };
+			(**cmd).execute(&item_coll, arg, &mut player)
+		},
+		None => {
+			println!("No such command [{}]", inputs[0])
+		},
 	}
+	let mut output: String = String::from("Your input was [ ");
+	for input in inputs {
+		output = output + &input + " ";
+	}
+	output = output + "]";
+
+	terminal::write_full(&output);
+	player.write_out();
+	ward_box.borrow().write_out();
 
 	// Clean
 	terminal::reset();
@@ -140,24 +128,7 @@ fn do_take(items: &ItemCollection, arg: &str, player: &mut Player) {
 			return;
 		},
 		Some(item_ptr) => {
-			unsafe {
-				if player.contains_item(item_ptr) {
-					terminal::write_full("You are already carrying that.");
-					return;
-				}
-				let location_ptr = player.get_location();
-
-				(**item_ptr).write_out();
-				match (*location_ptr).remove_item(item_ptr) {
-					None => {
-						terminal::write_full("That item is not at this location.");
-					}
-					Some(item) => {
-						player.insert_item(item);
-						terminal::write_full("Taken.");
-					}
-				}
-			}
+			player.pick_up(item_ptr);
 		}
 	}
 }
