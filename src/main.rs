@@ -10,6 +10,7 @@ mod terminal;
 
 use std::env;
 use std::process;
+use std::rc::Rc;
 
 use command::Command;
 use command_collection::CommandCollection;
@@ -73,16 +74,14 @@ fn main() {
 	// Test command
 	let take_fn: fn(items: &ItemCollection, arg: &str, player: &mut Player) = do_take;
 	let drop_fn: fn(items: &ItemCollection, arg: &str, player: &mut Player) = do_drop;
-	let take_box = Box::new(Command::new(String::from("take"), 0x0c, do_take));
-	let drop_box = Box::new(Command::new(String::from("drop"), 0x0e, do_drop));
-	let take_ptr = Box::into_raw(take_box);
-	let drop_ptr = Box::into_raw(drop_box);
+	let take_box: Rc<Box<Command>> = Rc::new(Box::new(Command::new(String::from("take"), 0x0c, do_take)));
+	let drop_box: Rc<Box<Command>> = Rc::new(Box::new(Command::new(String::from("drop"), 0x0e, do_drop)));
 
 	let mut cmd_coll = CommandCollection::new();
-	cmd_coll.put("take", take_ptr);
-	cmd_coll.put("t", take_ptr); // Alias
-	cmd_coll.put("drop", drop_ptr);
-	cmd_coll.put("dr", drop_ptr);
+	cmd_coll.put("take", take_box.clone());
+	cmd_coll.put("t", take_box.clone());
+	cmd_coll.put("drop", drop_box.clone());
+	cmd_coll.put("dr", drop_box.clone());
 
 	// Test player
 	let mut player = Box::new(Player::new(ward_ptr));
@@ -95,10 +94,8 @@ fn main() {
 		let inputs: Vec<String> = terminal::read_location((*kitchen_ptr).get_stubname());
 		match cmd_coll.get(&inputs[0]) {
 			Some(cmd) => {
-				unsafe{
-					let arg: &str = if inputs.len() > 1 { &inputs[1] } else { "" };
-					(**cmd).execute(&item_coll, arg, &mut player)
-				}
+				let arg: &str = if inputs.len() > 1 { &inputs[1] } else { "" };
+				(**cmd).execute(&item_coll, arg, &mut player)
 			},
 			None => {
 				println!("No such command [{}]", inputs[0])

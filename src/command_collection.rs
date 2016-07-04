@@ -1,9 +1,10 @@
 use std::collections::HashMap;
+use std::rc::Rc;
 
 use command::Command;
 
 pub struct CommandCollection<'a> {
-	commands: HashMap<&'a str, *const Command>,
+	commands: HashMap<&'a str, Rc<Box<Command>>>,
 }
 
 impl<'a> CommandCollection<'a> {
@@ -14,11 +15,11 @@ impl<'a> CommandCollection<'a> {
 		}
 	}
 
-	pub fn put(&mut self, key: &'a str, val: *const Command) {
+	pub fn put(&mut self, key: &'a str, val: Rc<Box<Command>>) {
 		self.commands.insert(key, val);
 	}
 
-	pub fn get(&self, key: &str) -> Option<&*const Command> {
+	pub fn get(&self, key: &str) -> Option<&Rc<Box<Command>>> {
 		self.commands.get(key)
 	}
 
