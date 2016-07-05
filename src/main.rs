@@ -43,11 +43,13 @@ fn main() {
 	// Test item
 	let bowl_box: Rc<Box<Item>> = Rc::new(Box::new(Item::new(17u64, 123u32, 2u32, String::from("bowl"), String::from("a bowl"), String::from("a small wooden bowl"), String::from("Made in Lanta"))));
 	let medallion_box: Rc<Box<Item>> = Rc::new(Box::new(Item::new(75u64, 128u32, 2u32, String::from("medallion"), String::from("an asterium medallion"), String::from("a large asterium medallion, engraved with pirate symbolism"), String::from("arr!"))));
+	let radishes_box: Rc<Box<Item>> = Rc::new(Box::new(Item::new(28u64, 132u32, 2u32, String::from("radishes"), String::from("a bunch of radishes"), String::from("some tasty-looking radishes"), String::from(""))));
 
 	let mut item_coll = ItemCollection::new();
 	item_coll.put("bowl", bowl_box.clone());
 	item_coll.put("medal", medallion_box.clone());
 	item_coll.put("medallion", medallion_box.clone());
+	item_coll.put("radishes", radishes_box.clone());
 	(*bowl_box).write_out();
 
 	// Test location
@@ -74,6 +76,7 @@ fn main() {
 
 	// Test player
 	let mut player = Box::new(Player::new(ward_box.clone()));
+	(*player).insert_item(radishes_box);
 	(*player).write_out();
 
 	// Test terminal
@@ -134,5 +137,13 @@ fn do_take(items: &ItemCollection, arg: &str, player: &mut Player) {
 }
 
 fn do_drop(items: &ItemCollection, arg: &str, player: &mut Player) {
-//TODO
+	match items.get(arg) {
+		None => {
+			terminal::write_full("I do not know who or what that is.");
+			return;
+		},
+		Some(item_ptr) => {
+			player.drop(item_ptr);
+		}
+	}
 }

@@ -30,6 +30,10 @@ impl Inventory {
 		self.items.insert((*item).get_id(), item);
 	}
 
+	pub fn remove_item(&mut self, item: &Rc<Box<Item>>) -> Option<Rc<Box<Item>>> {
+		self.items.remove(&(*item).get_id())
+	}
+
 	pub fn write_out(&self) {
 		if self.items.is_empty() {
 			println!("There are currently no items in the inventory.");

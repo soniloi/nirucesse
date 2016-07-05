@@ -54,6 +54,20 @@ impl Player {
 		}
 	}
 
+	// Have player attempt to drop item from inventory to current location
+	pub fn drop(&mut self, item: &Rc<Box<Item>>) {
+		let it = self.inventory.remove_item(item);
+		match it {
+			None => {
+				terminal::write_full("You are not carrying it.");
+			}
+			Some(i) => {
+				self.location.borrow_mut().insert_item(i);
+				terminal::write_full("Dropped.");
+			}
+		}	
+	}
+
 	pub fn write_out(&self) {
 		println!("Player [current score={}] [location={}]", self.score, self.location.borrow().get_stubname());
 		self.inventory.write_out();
