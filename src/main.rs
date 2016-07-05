@@ -41,66 +41,72 @@ fn main() {
 	}
 
 	// Test item
-	let bowl_box: Rc<Box<Item>> = Rc::new(Box::new(Item::new(17u64, 123u32, 2u32, String::from("bowl"), String::from("a bowl"), String::from("a small wooden bowl"), String::from("Made in Lanta"))));
-	let medallion_box: Rc<Box<Item>> = Rc::new(Box::new(Item::new(75u64, 128u32, 2u32, String::from("medallion"), String::from("an asterium medallion"), String::from("a large asterium medallion, engraved with pirate symbolism"), String::from("arr!"))));
-	let radishes_box: Rc<Box<Item>> = Rc::new(Box::new(Item::new(28u64, 132u32, 2u32, String::from("radishes"), String::from("a bunch of radishes"), String::from("some tasty-looking radishes"), String::from(""))));
+	let bowl: Rc<Box<Item>> = Rc::new(Box::new(Item::new(17u64, 123u32, 2u32, String::from("bowl"), String::from("a bowl"), String::from("a small wooden bowl"), String::from("Made in Lanta"))));
+	let medallion: Rc<Box<Item>> = Rc::new(Box::new(Item::new(75u64, 128u32, 2u32, String::from("medallion"), String::from("an asterium medallion"), String::from("a large asterium medallion, engraved with pirate symbolism"), String::from("arr!"))));
+	let radishes: Rc<Box<Item>> = Rc::new(Box::new(Item::new(28u64, 132u32, 2u32, String::from("radishes"), String::from("a bunch of radishes"), String::from("some tasty-looking radishes"), String::from(""))));
 
 	let mut item_coll = ItemCollection::new();
-	item_coll.put("bowl", bowl_box.clone());
-	item_coll.put("medal", medallion_box.clone());
-	item_coll.put("medallion", medallion_box.clone());
-	item_coll.put("radishes", radishes_box.clone());
-	(*bowl_box).write_out();
+	item_coll.put("bowl", bowl.clone());
+	item_coll.put("medal", medallion.clone());
+	item_coll.put("medallion", medallion.clone());
+	item_coll.put("radishes", radishes.clone());
 
 	// Test location
-	let kitchen_box = Rc::new(RefCell::new(Box::new(Location::new(91u64, 765u32, String::from("Kitchen"), String::from("in the kitchen"), String::from(". A lovely aroma of lentil soup lingers in the air. There are doors to the north and southeast")))));
-	let store_box = Rc::new(RefCell::new(Box::new(Location::new(92u64, 763u32, String::from("Store"), String::from("in the food store"), String::from(". The area is filled with sacks, tins, jars, barrels, and casks of the finest food and drink this side of the Etenar Nebula")))));
-	let garden_box = Rc::new(RefCell::new(Box::new(Location::new(93u64, 760u32, String::from("Garden"), String::from("in the garden"), String::from(", a large, high-roofed dome filled with all manner of trees and plants. In the centre, where there is most room for it to grow, stands a particularly large tree")))));
-	let ward_box = Rc::new(RefCell::new(Box::new(Location::new(9u64, 0x70Fu32, String::from("Ward"), String::from("in a medical ward"), String::from(". The faint electric light is flickering on and off, but it is enough to see by. The exit is to the south")))));
+	let kitchen = Rc::new(RefCell::new(Box::new(Location::new(91u64, 765u32, String::from("Kitchen"), String::from("in the kitchen"), String::from(". A lovely aroma of lentil soup lingers in the air. There are doors to the north and southeast")))));
+	let store = Rc::new(RefCell::new(Box::new(Location::new(92u64, 763u32, String::from("Store"), String::from("in the food store"), String::from(". The area is filled with sacks, tins, jars, barrels, and casks of the finest food and drink this side of the Etenar Nebula")))));
+	let garden = Rc::new(RefCell::new(Box::new(Location::new(93u64, 760u32, String::from("Garden"), String::from("in the garden"), String::from(", a large, high-roofed dome filled with all manner of trees and plants. In the centre, where there is most room for it to grow, stands a particularly large tree")))));
+	let ward = Rc::new(RefCell::new(Box::new(Location::new(9u64, 0x70Fu32, String::from("Ward"), String::from("in a medical ward"), String::from(". The faint electric light is flickering on and off, but it is enough to see by. The exit is to the south")))));
 
-	kitchen_box.borrow_mut().set_direction(String::from(""), store_box.clone());
-	store_box.borrow_mut().set_direction(String::from(""), kitchen_box.clone());
-	store_box.borrow_mut().set_direction(String::from(""), garden_box.clone());
-	garden_box.borrow_mut().set_direction(String::from(""), store_box.clone());
-	ward_box.borrow_mut().insert_item(bowl_box);
+	kitchen.borrow_mut().set_direction(String::from(""), store.clone());
+	store.borrow_mut().set_direction(String::from(""), kitchen.clone());
+	store.borrow_mut().set_direction(String::from(""), garden.clone());
+	garden.borrow_mut().set_direction(String::from(""), store.clone());
+	ward.borrow_mut().insert_item(bowl);
 
 	// Test command
-	let take_box: Rc<Box<Command>> = Rc::new(Box::new(Command::new(String::from("take"), 0x0c, do_take)));
-	let drop_box: Rc<Box<Command>> = Rc::new(Box::new(Command::new(String::from("drop"), 0x0e, do_drop)));
+	let take: Rc<Box<Command>> = Rc::new(Box::new(Command::new(String::from("take"), 0x0c, do_take)));
+	let drop: Rc<Box<Command>> = Rc::new(Box::new(Command::new(String::from("drop"), 0x0e, do_drop)));
+	let quit: Rc<Box<Command>> = Rc::new(Box::new(Command::new(String::from("quit"), 0x00, do_quit)));
 
 	let mut cmd_coll = CommandCollection::new();
-	cmd_coll.put("take", take_box.clone());
-	cmd_coll.put("t", take_box.clone());
-	cmd_coll.put("drop", drop_box.clone());
-	cmd_coll.put("dr", drop_box.clone());
+	cmd_coll.put("take", take.clone());
+	cmd_coll.put("t", take.clone());
+	cmd_coll.put("drop", drop.clone());
+	cmd_coll.put("dr", drop.clone());
+	cmd_coll.put("quit", quit.clone());
+	cmd_coll.put("q", quit.clone());
+	cmd_coll.put("end", quit.clone());
 
 	// Test player
-	let mut player = Box::new(Player::new(ward_box.clone()));
-	(*player).insert_item(radishes_box);
+	let mut player = Box::new(Player::new(ward.clone()));
+	(*player).insert_item(radishes);
 	(*player).write_out();
 
 	// Test terminal
 	terminal::write_full("You awaken. You feel ill and dazed. Slowly you raise your head. You try to look around. You are intermittently blinded by flickering light. Groggily and warily you flail around.");
 
-	let inputs: Vec<String> = terminal::read_location(kitchen_box.borrow().get_stubname());
-	match cmd_coll.get(&inputs[0]) {
-		Some(cmd) => {
-			let arg: &str = if inputs.len() > 1 { &inputs[1] } else { "" };
-			(**cmd).execute(&item_coll, arg, &mut player)
-		},
-		None => {
-			println!("No such command [{}]", inputs[0])
-		},
-	}
-	let mut output: String = String::from("Your input was [ ");
-	for input in inputs {
-		output = output + &input + " ";
-	}
-	output = output + "]";
+	while (*player).is_playing() {
+		let inputs: Vec<String> = terminal::read_stub((*player).get_location().borrow().get_stubname());
+		match cmd_coll.get(&inputs[0]) {
+			Some(cmd) => {
+				let arg: &str = if inputs.len() > 1 { &inputs[1] } else { "" };
+				(**cmd).execute(&item_coll, arg, &mut player)
+			},
+			None => {
+				println!("No such command [{}]", inputs[0])
+			},
+		}
+		let mut output: String = String::from("Your input was [ ");
+		for input in inputs {
+			output = output + &input + " ";
+		}
+		output = output + "]";
+		terminal::write_full(&output);
 
-	terminal::write_full(&output);
-	player.write_out();
-	ward_box.borrow().write_out();
+		// Check that the things got moved
+		player.write_out();
+		ward.borrow().write_out();
+	}
 
 	// Clean
 	terminal::reset();
@@ -146,4 +152,8 @@ fn do_drop(items: &ItemCollection, arg: &str, player: &mut Player) {
 			player.drop(item_ptr);
 		}
 	}
+}
+
+fn do_quit(items: &ItemCollection, arg: &str, player: &mut Player) {
+	player.set_playing(false);
 }

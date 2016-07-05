@@ -46,8 +46,8 @@ fn write_sections(chars: Vec<char>, start_index: usize, prompt: &str) {
 	write_sections(chars, stop_index as usize + 1, PROMPT_TAB);
 }
 
-// Create a prompt based on location name and read from stdin
-pub fn read_location(stubname: &str) -> Vec<String> {
+// Create a prompt based on a short word and read from stdin
+pub fn read_stub(stubname: &str) -> Vec<String> {
 	let mut prompt: String = stubname.to_string();
 	for i in stubname.len()..PROMPT_EFFECTIVE_WIDTH {
 		prompt.push(' ');

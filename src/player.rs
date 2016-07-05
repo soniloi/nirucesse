@@ -11,6 +11,7 @@ pub struct Player {
 	inventory: Inventory,
 	location: Rc<RefCell<Box<Location>>>,
 	score: u32,
+	playing: bool,
 }
 
 impl Player {
@@ -20,6 +21,7 @@ impl Player {
 			inventory: Inventory::new(16),
 			location: initial,
 			score: 0u32,
+			playing: true,
 		}
 	}
 
@@ -33,6 +35,14 @@ impl Player {
 
 	pub fn get_location(&self) -> &Rc<RefCell<Box<Location>>> {
 		&self.location
+	}
+
+	pub fn is_playing(&self) -> bool {
+		self.playing
+	}
+
+	pub fn set_playing(&mut self, b: bool) {
+		self.playing = b
 	}
 
 	// Have player attempt to pick up item from current location
