@@ -67,6 +67,7 @@ fn main() {
 	let take: Rc<Box<Command>> = Rc::new(Box::new(Command::new(String::from("take"), 0x0c, do_take)));
 	let drop: Rc<Box<Command>> = Rc::new(Box::new(Command::new(String::from("drop"), 0x0e, do_drop)));
 	let quit: Rc<Box<Command>> = Rc::new(Box::new(Command::new(String::from("quit"), 0x00, do_quit)));
+	let inventory: Rc<Box<Command>> = Rc::new(Box::new(Command::new(String::from("inventory"), 0x00, do_inventory)));
 
 	let mut cmd_coll = CommandCollection::new();
 	cmd_coll.put("take", take.clone());
@@ -76,6 +77,9 @@ fn main() {
 	cmd_coll.put("quit", quit.clone());
 	cmd_coll.put("q", quit.clone());
 	cmd_coll.put("end", quit.clone());
+	cmd_coll.put("i", inventory.clone());
+	cmd_coll.put("invent", inventory.clone());
+	cmd_coll.put("inventory", inventory.clone());
 
 	// Test player
 	let mut player = Box::new(Player::new(ward.clone()));
@@ -104,7 +108,6 @@ fn main() {
 		terminal::write_full(&output);
 
 		// Check that the things got moved
-		player.write_out();
 		ward.borrow().write_out();
 	}
 
@@ -156,4 +159,8 @@ fn do_drop(items: &ItemCollection, arg: &str, player: &mut Player) {
 
 fn do_quit(items: &ItemCollection, arg: &str, player: &mut Player) {
 	player.set_playing(false);
+}
+
+fn do_inventory(items: &ItemCollection, arg: &str, player: &mut Player) {
+	terminal::write_full(&player.mk_inventory_string());
 }

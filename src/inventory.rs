@@ -34,6 +34,19 @@ impl Inventory {
 		self.items.remove(&(*item).get_id())
 	}
 
+	pub fn mk_string(&self) -> String {
+		let mut result = String::new();
+		if self.items.is_empty() {
+			result = result + "You are not carrying anything.";
+		} else {
+			result = result + "You currently have the following:";
+			for item in self.items.values() {
+				result = result + "\n\t" + item.get_longname();
+			}
+		}
+		result
+	}
+
 	pub fn write_out(&self) {
 		if self.items.is_empty() {
 			println!("There are currently no items in the inventory.");
