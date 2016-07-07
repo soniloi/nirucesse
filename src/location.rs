@@ -45,6 +45,16 @@ impl Location {
 		&self.shortname
 	}
 
+	fn mk_basic_string(&self) -> String {
+		String::from("You are ") + &self.longname
+	}
+
+	pub fn mk_full_string(&self) -> String {
+		let mut result = self.mk_basic_string();
+		result = result + &self.description + ".";
+		result
+	}
+
 	pub fn write_out(&self) {
 		println!("Location [id={}] [status={}] [shortname={}] [longname={}] [description={}] ", 
 			self.id, self.status, self.shortname, self.longname, self.description);

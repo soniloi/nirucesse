@@ -68,6 +68,7 @@ fn main() {
 	let drop: Rc<Box<Command>> = Rc::new(Box::new(Command::new(String::from("drop"), 0x0e, do_drop)));
 	let quit: Rc<Box<Command>> = Rc::new(Box::new(Command::new(String::from("quit"), 0x00, do_quit)));
 	let inventory: Rc<Box<Command>> = Rc::new(Box::new(Command::new(String::from("inventory"), 0x00, do_inventory)));
+	let look: Rc<Box<Command>> = Rc::new(Box::new(Command::new(String::from("look"), 0x00, do_look)));
 
 	let mut cmd_coll = CommandCollection::new();
 	cmd_coll.put("take", take.clone());
@@ -80,16 +81,18 @@ fn main() {
 	cmd_coll.put("i", inventory.clone());
 	cmd_coll.put("invent", inventory.clone());
 	cmd_coll.put("inventory", inventory.clone());
+	cmd_coll.put("l", look.clone());
+	cmd_coll.put("look", look.clone());
 
 	// Test player
 	let mut player = Box::new(Player::new(ward.clone()));
-	(*player).insert_item(radishes);
-	(*player).write_out();
+	player.insert_item(radishes);
+	player.write_out();
 
 	// Test terminal
 	terminal::write_full("You awaken. You feel ill and dazed. Slowly you raise your head. You try to look around. You are intermittently blinded by flickering light. Groggily and warily you flail around.");
 
-	while (*player).is_playing() {
+	while player.is_playing() {
 		let inputs: Vec<String> = terminal::read_stub((*player).get_location().borrow().get_stubname());
 		match cmd_coll.get(&inputs[0]) {
 			Some(cmd) => {
@@ -100,16 +103,7 @@ fn main() {
 				println!("No such command [{}]", inputs[0])
 			},
 		}
-		let mut output: String = String::from("Your input was [ ");
-		for input in inputs {
-			output = output + &input + " ";
-		}
-		output = output + "]";
-		terminal::write_full(&output);
-
-		// Check that the things got moved
-		ward.borrow().write_out();
-	}
+ 	}
 
 	// Clean
 	terminal::reset();
@@ -163,4 +157,8 @@ fn do_quit(items: &ItemCollection, arg: &str, player: &mut Player) {
 
 fn do_inventory(items: &ItemCollection, arg: &str, player: &mut Player) {
 	terminal::write_full(&player.mk_inventory_string());
+}
+
+fn do_look(items: &ItemCollection, arg: &str, player: &mut Player) {
+	terminal::write_full(&player.mk_location_string());
 }
