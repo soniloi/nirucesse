@@ -10,15 +10,15 @@ const CTRL_COMMAND_COMPOUND: u32 = 0x80; // Whether the command is compound e.g.
 use item_collection::ItemCollection;
 use player::Player;
 
-pub struct Command {
-	name: String,
+pub struct Command<'a> {
+	name: &'a str,
 	status: u32,
 	handler: fn(items: &ItemCollection, arg: &str, player: &mut Player),
 }
 
-impl Command {
+impl<'a> Command<'a> {
 
-	pub fn new(name: String, status: u32, handler: fn(items: &ItemCollection, arg: &str, player: &mut Player)) -> Command {
+	pub fn new(name: &str, status: u32, handler: fn(items: &ItemCollection, arg: &str, player: &mut Player)) -> Command {
 		Command {
 			name: name,
 			status: status,

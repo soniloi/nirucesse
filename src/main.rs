@@ -64,11 +64,11 @@ fn main() {
 	ward.borrow_mut().insert_item(bowl);
 
 	// Test command
-	let take: Rc<Box<Command>> = Rc::new(Box::new(Command::new(String::from("take"), 0x0c, do_take)));
-	let drop: Rc<Box<Command>> = Rc::new(Box::new(Command::new(String::from("drop"), 0x0e, do_drop)));
-	let quit: Rc<Box<Command>> = Rc::new(Box::new(Command::new(String::from("quit"), 0x00, do_quit)));
-	let inventory: Rc<Box<Command>> = Rc::new(Box::new(Command::new(String::from("inventory"), 0x00, do_inventory)));
-	let look: Rc<Box<Command>> = Rc::new(Box::new(Command::new(String::from("look"), 0x00, do_look)));
+	let take: Rc<Box<Command>> = Rc::new(Box::new(Command::new("take", 0x0c, do_take)));
+	let drop: Rc<Box<Command>> = Rc::new(Box::new(Command::new("drop", 0x0e, do_drop)));
+	let quit: Rc<Box<Command>> = Rc::new(Box::new(Command::new("quit", 0x00, do_quit)));
+	let inventory: Rc<Box<Command>> = Rc::new(Box::new(Command::new("inventory", 0x00, do_inventory)));
+	let look: Rc<Box<Command>> = Rc::new(Box::new(Command::new("look", 0x00, do_look)));
 
 	let mut cmd_coll = CommandCollection::new();
 	cmd_coll.put("take", take.clone());
@@ -103,7 +103,7 @@ fn main() {
 				println!("No such command [{}]", inputs[0])
 			},
 		}
- 	}
+	}
 
 	// Clean
 	terminal::reset();

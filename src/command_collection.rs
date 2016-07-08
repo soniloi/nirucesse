@@ -4,7 +4,7 @@ use std::rc::Rc;
 use command::Command;
 
 pub struct CommandCollection<'a> {
-	commands: HashMap<&'a str, Rc<Box<Command>>>,
+	commands: HashMap<&'a str, Rc<Box<Command<'a>>>>,
 }
 
 impl<'a> CommandCollection<'a> {
@@ -15,7 +15,7 @@ impl<'a> CommandCollection<'a> {
 		}
 	}
 
-	pub fn put(&mut self, key: &'a str, val: Rc<Box<Command>>) {
+	pub fn put(&mut self, key: &'a str, val: Rc<Box<Command<'a>>>) {
 		self.commands.insert(key, val);
 	}
 
