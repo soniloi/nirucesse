@@ -36,14 +36,12 @@ fn write_sections(chars: Vec<char>, start_index: usize, prompt: &str) {
 	let newline_index = get_newline_index_within_width(&chars[(start_index as usize)..max_index]);
 	if newline_index != -1 {
 		stop_index = start_index as i32 + newline_index;
-		let content: String = to_str(&chars[start_index..(stop_index as usize)]);
-		write_prompted(&content, prompt);
+		write_content(&chars, start_index, stop_index as usize, prompt);
 		write_sections(chars, stop_index as usize + 1, PROMPT_TAB);
 
 	// If the remaining width is less than the console width, print and return
 	} else if remaining <= CONSOLE_EFFECTIVE_WIDTH {
-		let content: String = to_str(&chars[(start_index as usize)..]);
-		write_prompted(&content, prompt);
+		write_content(&chars, start_index, chars.len(), prompt);
 		return;
 
 	} else {
@@ -51,18 +49,21 @@ fn write_sections(chars: Vec<char>, start_index: usize, prompt: &str) {
 		let space_index = get_last_space_index_within_width(&chars[(start_index as usize)..max_index]);
 		if space_index != -1 {
 			stop_index = start_index as i32 + space_index;
-			let content: String = to_str(&chars[start_index..(stop_index as usize)]);
-			write_prompted(&content, prompt);
+			write_content(&chars, start_index, stop_index as usize, prompt);
 			write_sections(chars, stop_index as usize + 1, PROMPT_TAB);
 
 		// This string is a lost cause, so just dump out whatever is left
 		} else {
-			let content: String = to_str(&chars[start_index..]);
-			write_prompted(&content, prompt);
+			write_content(&chars, start_index, chars.len(), prompt);
 			write_sections(chars, stop_index as usize + 1, PROMPT_TAB);
 		}
 	}
+}
 
+// Write some content from a character slice
+fn write_content(chars: &Vec<char>, start_index: usize, stop_index: usize, prompt: &str) {
+	let content: String = to_str(&chars[start_index..stop_index]);
+	write_prompted(&content, prompt);
 }
 
 // Create a prompt based on a short word and read from stdin
