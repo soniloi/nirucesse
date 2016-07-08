@@ -1,3 +1,4 @@
+use std::cmp;
 use std::io;
 use std::io::stdout;
 use std::io::Write;
@@ -24,26 +25,44 @@ pub fn write_full(st: &str) {
 // width is reached; returns only when a section shorter than the effective width has been
 // printed
 fn write_sections(chars: Vec<char>, start_index: usize, prompt: &str) {
+
 	let remaining = chars.len() - start_index;
-	if remaining < CONSOLE_EFFECTIVE_WIDTH {
+	let max_index = start_index + if CONSOLE_EFFECTIVE_WIDTH > remaining {remaining} else {CONSOLE_EFFECTIVE_WIDTH};
+	//let max_index = start_index + cmp::min(remaining, CONSOLE_EFFECTIVE_WIDTH);
+
+	let mut stop_index: i32 = -1;
+
+	// If there is a newline within range, print up to that
+	let newline_index = get_newline_index_within_width(&chars[(start_index as usize)..max_index]);
+	if newline_index != -1 {
+		stop_index = start_index as i32 + newline_index;
+		let content: String = to_str(&chars[start_index..(stop_index as usize)]);
+		write_prompted(&content, prompt);
+		write_sections(chars, stop_index as usize + 1, PROMPT_TAB);
+
+	// If the remaining width is less than the console width, print and return
+	} else if remaining <= CONSOLE_EFFECTIVE_WIDTH {
 		let content: String = to_str(&chars[(start_index as usize)..]);
 		write_prompted(&content, prompt);
 		return;
+
+	} else {
+		// Write up until the last available space character in the string, if existing
+		let space_index = get_last_space_index_within_width(&chars[(start_index as usize)..max_index]);
+		if space_index != -1 {
+			stop_index = start_index as i32 + space_index;
+			let content: String = to_str(&chars[start_index..(stop_index as usize)]);
+			write_prompted(&content, prompt);
+			write_sections(chars, stop_index as usize + 1, PROMPT_TAB);
+
+		// This string is a lost cause, so just dump out whatever is left
+		} else {
+			let content: String = to_str(&chars[start_index..]);
+			write_prompted(&content, prompt);
+			write_sections(chars, stop_index as usize + 1, PROMPT_TAB);
+		}
 	}
 
-	let max_index = start_index + CONSOLE_EFFECTIVE_WIDTH;
-
-	let mut stop_index: i32 = get_newline_index_within_width(&chars[(start_index as usize)..max_index]);
-	if stop_index == -1 {
-		stop_index = start_index as i32 + get_last_space_index_within_width(&chars[(start_index as usize)..max_index]);
-	}
-	if stop_index == -1 {
-		stop_index = chars.len() as i32;
-	}
-	let content: String = to_str(&chars[start_index..(stop_index as usize)]);
-	write_prompted(&content, prompt);
-
-	write_sections(chars, stop_index as usize + 1, PROMPT_TAB);
 }
 
 // Create a prompt based on a short word and read from stdin
