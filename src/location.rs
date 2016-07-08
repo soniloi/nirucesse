@@ -52,6 +52,12 @@ impl Location {
 	pub fn mk_full_string(&self) -> String {
 		let mut result = self.mk_basic_string();
 		result = result + &self.description + ".";
+		if !self.items.is_empty() {
+			for item in self.items.values() {
+				result = result + "\nThere is " + item.get_longname() + " here.";
+			}
+		}
+
 		result
 	}
 
