@@ -27,30 +27,26 @@ pub fn write_full(st: &str) {
 fn write_sections(chars: &Vec<char>, start_index: usize, prompt: &str) {
 
 	let remaining = chars.len() - start_index;
-	let max_index = start_index + if CONSOLE_EFFECTIVE_WIDTH > remaining {remaining} else {CONSOLE_EFFECTIVE_WIDTH};
-	//let max_index = start_index + cmp::min(remaining, CONSOLE_EFFECTIVE_WIDTH);
+	let max_index = start_index + cmp::min(remaining, CONSOLE_EFFECTIVE_WIDTH);
 
-	let mut stop_index: i32 = -1;
-
-	// If there is a newline within range, print up to that
 	let newline_index = get_newline_index_within_width(&chars[(start_index as usize)..max_index]);
 	if newline_index != -1 {
-		stop_index = start_index as i32 + newline_index;
-		write_remainder(&chars, start_index, stop_index as usize, prompt);
+		// If there is a newline within range, print up to that
+		write_remainder(&chars, start_index, start_index + newline_index as usize, prompt);
 
-	// If the remaining width is less than the console width, print and return
 	} else if remaining <= CONSOLE_EFFECTIVE_WIDTH {
+		// If the remaining width is less than the console width, print and return
 		write_content(&chars, start_index, chars.len(), prompt);
 		return;
 
 	} else {
-		// Write up until the last available space character in the string, if existing
 		let space_index = get_last_space_index_within_width(&chars[(start_index as usize)..max_index]);
 		if space_index != -1 {
-			stop_index = start_index as i32 + space_index;
-			write_remainder(&chars, start_index, stop_index as usize, prompt);
-		// This string is a lost cause, so just dump out whatever is left
+			// Write up until the last available space character in the string, if existing
+			write_remainder(&chars, start_index, start_index + space_index as usize, prompt);
+
 		} else {
+			// This string is a lost cause, so just dump out whatever is left
 			write_remainder(&chars, start_index, chars.len(), prompt);
 		}
 	}
