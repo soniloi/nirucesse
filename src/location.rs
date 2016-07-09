@@ -64,17 +64,4 @@ impl Location {
 
 		result
 	}
-
-	pub fn write_out(&self) {
-		println!("Location [id={}] [status={}] [shortname={}] [longname={}] [description={}] ", 
-			self.id, self.status, self.shortname, self.longname, self.description);
-
-		for (key, val) in self.directions.iter() {
-			println!("\tTo the {} there is {}", key, (*val).borrow().get_stubname());
-		}
-
-		for val in self.items.values() {
-			println!("\tThere is {} here [id={}]", (**val).get_longname(), (**val).get_id());
-		}
-	}
 }

@@ -22,11 +22,4 @@ impl<'a> ItemCollection<'a> {
 	pub fn get(&self, key: &str) -> Option<&Rc<Box<Item>>> {
 		self.items.get(key)
 	}
-
-	pub fn write_out(&self) {
-		for (key, val) in self.items.iter() {
-			print!("\t[{}]\t", key);
-			(**val).write_out();
-		}
-	}
 }

@@ -29,8 +29,4 @@ impl Item {
 	pub fn get_longname(&self) -> &str {
 		&self.longname
 	}
-
-	pub fn write_out(&self) {
-		println!("Item [id={}] [status={}] [size={}] [shortname={}] [longname={}] [description={}] [writing={}]", self.id, self.status, self.size, self.shortname, self.longname, self.description, self.writing);
-	}
 }

@@ -31,8 +31,4 @@ impl<'a> Command<'a> {
 		//println!("Received instruction for player to [{}] the [{}]", self.name, arg);
 		h(items, arg, player);
 	}
-
-	pub fn write_out(&self) {
-		println!("Command [name={}] [status={:X}]", self.name, self.status);
-	}
 }

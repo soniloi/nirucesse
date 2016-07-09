@@ -23,10 +23,4 @@ impl<'a> CommandCollection<'a> {
 		self.commands.get(key)
 	}
 
-	pub fn write_out(&self) {
-		for (key, val) in self.commands.iter() {
-			print!("\t[{}]\t", key);
-			(**val).write_out();
-		}
-	}
 }
