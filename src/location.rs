@@ -29,6 +29,10 @@ impl Location {
 		}
 	}
 
+	pub fn get_direction(&self, dir: String) -> Option<&Rc<RefCell<Box<Location>>>> {
+		self.directions.get(&dir)
+	}
+
 	pub fn set_direction(&mut self, dir: String, loc: Rc<RefCell<Box<Location>>>) {
 		self.directions.insert(dir, loc);
 	}

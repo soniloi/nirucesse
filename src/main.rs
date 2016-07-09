@@ -57,10 +57,12 @@ fn main() {
 	let garden = Rc::new(RefCell::new(Box::new(Location::new(93u64, 760u32, String::from("Garden"), String::from("in the garden"), String::from(", a large, high-roofed dome filled with all manner of trees and plants. In the centre, where there is most room for it to grow, stands a particularly large tree")))));
 	let ward = Rc::new(RefCell::new(Box::new(Location::new(9u64, 0x70Fu32, String::from("Ward"), String::from("in a medical ward"), String::from(". The faint electric light is flickering on and off, but it is enough to see by. The exit is to the south")))));
 
-	kitchen.borrow_mut().set_direction(String::from(""), store.clone());
-	store.borrow_mut().set_direction(String::from(""), kitchen.clone());
-	store.borrow_mut().set_direction(String::from(""), garden.clone());
-	garden.borrow_mut().set_direction(String::from(""), store.clone());
+	kitchen.borrow_mut().set_direction(String::from("southeast"), store.clone());
+	kitchen.borrow_mut().set_direction(String::from("up"), ward.clone());
+	store.borrow_mut().set_direction(String::from("north"), kitchen.clone());
+	store.borrow_mut().set_direction(String::from("west"), garden.clone());
+	garden.borrow_mut().set_direction(String::from("southwest"), store.clone());
+	ward.borrow_mut().set_direction(String::from("down"), kitchen.clone());
 	ward.borrow_mut().insert_item(bowl);
 
 	// Test command
@@ -69,6 +71,7 @@ fn main() {
 	let quit: Rc<Box<Command>> = Rc::new(Box::new(Command::new("quit", 0x00, do_quit)));
 	let inventory: Rc<Box<Command>> = Rc::new(Box::new(Command::new("inventory", 0x00, do_inventory)));
 	let look: Rc<Box<Command>> = Rc::new(Box::new(Command::new("look", 0x00, do_look)));
+	let go: Rc<Box<Command>> = Rc::new(Box::new(Command::new("go", 0xC0, do_go)));
 
 	let mut cmd_coll = CommandCollection::new();
 	cmd_coll.put("take", take.clone());
@@ -83,6 +86,9 @@ fn main() {
 	cmd_coll.put("inventory", inventory.clone());
 	cmd_coll.put("l", look.clone());
 	cmd_coll.put("look", look.clone());
+	cmd_coll.put("go", go.clone());
+	cmd_coll.put("walk", go.clone());
+	cmd_coll.put("travel", go.clone());
 
 	// Test player
 	let mut player = Box::new(Player::new(ward.clone()));
@@ -161,4 +167,8 @@ fn do_inventory(items: &ItemCollection, arg: &str, player: &mut Player) {
 
 fn do_look(items: &ItemCollection, arg: &str, player: &mut Player) {
 	terminal::write_full(&player.mk_location_string());
+}
+
+fn do_go(items: &ItemCollection, arg: &str, player: &mut Player) {
+	player.go(String::from(arg));
 }

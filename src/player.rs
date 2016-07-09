@@ -78,6 +78,21 @@ impl Player {
 		}	
 	}
 
+	// Have player travel to an adjacent location
+	// TODO: I don't really like this very much; there's probably a better way
+	pub fn go(&mut self, dir: String) {
+
+		let loc_clone = self.location.clone();
+		let self_loc = loc_clone.borrow();
+		match self_loc.get_direction(dir) {
+			None => terminal::write_full("You cannot go that way."),
+			Some(l) => {
+				self.location = l.clone();
+				terminal::write_full(&self.location.borrow().mk_full_string());
+			},
+		}
+	}
+
 	pub fn mk_inventory_string(&self) -> String {
 		self.inventory.mk_string()
 	}
