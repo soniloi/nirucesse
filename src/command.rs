@@ -66,6 +66,12 @@ impl<'a> Command<'a> {
 					return;
 				}
 			}
+		} else {
+			// Command takes no argument, but player gave one anyway
+			if !actual_arg.is_empty() {
+				terminal::write_full("I do not understand that instruction");
+				return;
+			}
 		}
 
 		// Movement aliasing
