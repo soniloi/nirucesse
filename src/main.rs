@@ -72,6 +72,16 @@ fn main() {
 	let inventory: Rc<Box<Command>> = Rc::new(Box::new(Command::new("inventory", 0x00, do_inventory)));
 	let look: Rc<Box<Command>> = Rc::new(Box::new(Command::new("look", 0x00, do_look)));
 	let go: Rc<Box<Command>> = Rc::new(Box::new(Command::new("go", 0xC0, do_go)));
+	let north: Rc<Box<Command>> = Rc::new(Box::new(Command::new("north", 0x40, do_go)));
+	let northeast: Rc<Box<Command>> = Rc::new(Box::new(Command::new("northeast", 0x40, do_go)));
+	let east: Rc<Box<Command>> = Rc::new(Box::new(Command::new("east", 0x40, do_go)));
+	let southeast: Rc<Box<Command>> = Rc::new(Box::new(Command::new("southeast", 0x40, do_go)));
+	let south: Rc<Box<Command>> = Rc::new(Box::new(Command::new("south", 0x40, do_go)));
+	let southwest: Rc<Box<Command>> = Rc::new(Box::new(Command::new("southwest", 0x40, do_go)));
+	let west: Rc<Box<Command>> = Rc::new(Box::new(Command::new("west", 0x40, do_go)));
+	let northwest: Rc<Box<Command>> = Rc::new(Box::new(Command::new("northwest", 0x40, do_go)));
+	let up: Rc<Box<Command>> = Rc::new(Box::new(Command::new("up", 0x40, do_go)));
+	let down: Rc<Box<Command>> = Rc::new(Box::new(Command::new("down", 0x40, do_go)));
 
 	let mut cmd_coll = CommandCollection::new();
 	cmd_coll.put("take", take.clone());
@@ -89,6 +99,26 @@ fn main() {
 	cmd_coll.put("go", go.clone());
 	cmd_coll.put("walk", go.clone());
 	cmd_coll.put("travel", go.clone());
+	cmd_coll.put("n", north.clone());
+	cmd_coll.put("ne", northeast.clone());
+	cmd_coll.put("e", east.clone());
+	cmd_coll.put("se", southeast.clone());
+	cmd_coll.put("s", southeast.clone());
+	cmd_coll.put("sw", southwest.clone());
+	cmd_coll.put("w", west.clone());
+	cmd_coll.put("nw", northwest.clone());
+	cmd_coll.put("u", up.clone());
+	cmd_coll.put("d", down.clone());
+	cmd_coll.put("north", north.clone());
+	cmd_coll.put("northeast", northeast.clone());
+	cmd_coll.put("east", east.clone());
+	cmd_coll.put("southeast", southeast.clone());
+	cmd_coll.put("south", southeast.clone());
+	cmd_coll.put("southwest", southwest.clone());
+	cmd_coll.put("west", west.clone());
+	cmd_coll.put("northwest", northwest.clone());
+	cmd_coll.put("up", up.clone());
+	cmd_coll.put("down", down.clone());
 
 	// Test player
 	let mut player = Box::new(Player::new(ward.clone()));

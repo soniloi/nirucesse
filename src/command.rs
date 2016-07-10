@@ -12,23 +12,40 @@ use player::Player;
 
 pub struct Command<'a> {
 	name: &'a str,
-	status: u32,
+	properties: u32,
 	handler: fn(items: &ItemCollection, arg: &str, player: &mut Player),
 }
 
 impl<'a> Command<'a> {
 
-	pub fn new(name: &str, status: u32, handler: fn(items: &ItemCollection, arg: &str, player: &mut Player)) -> Command {
+	pub fn new(name: &str, properties: u32, handler: fn(items: &ItemCollection, arg: &str, player: &mut Player)) -> Command {
 		Command {
 			name: name,
-			status: status,
+			properties: properties,
 			handler: handler,
 		}
 	}
 
+	fn has_property(&self, property: u32) -> bool {
+		self.properties & property != 0
+	}
+
+	fn is_compound(&self) -> bool {
+		self.has_property(CTRL_COMMAND_COMPOUND)
+	}
+
+	fn is_movement(&self) -> bool {
+		self.has_property(CTRL_COMMAND_MOVEMENT)
+	}
+
 	pub fn execute(&self, items: &ItemCollection, arg: &str, player: &mut Player) {
+		let mut actual_arg = arg;
+		if self.is_movement() {
+			if !self.is_compound() {
+				actual_arg = self.name;
+			}
+		}
 		let h = self.handler;
-		//println!("Received instruction for player to [{}] the [{}]", self.name, arg);
-		h(items, arg, player);
+		h(items, actual_arg, player);
 	}
 }
