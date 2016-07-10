@@ -84,12 +84,19 @@ fn write(st: &str) {
 
 // Create a prompt based on a short word and read from stdin
 pub fn read_stub(stubname: &str) -> Vec<String> {
-	let mut prompt: String = stubname.to_string();
+	let mut prompt: String = String::from(stubname);
 	for i in stubname.len()..PROMPT_EFFECTIVE_WIDTH {
 		prompt.push(' ');
 	}
 
 	read_prompted(&(prompt + PROMPT_END))
+}
+
+// Create a prompt based on a short question
+pub fn read_question(question: &str) -> Vec<String> {
+	let mut prompt: String = String::from(PROMPT_FULL);
+	prompt = prompt + question + " ";
+	read_prompted(&prompt)
 }
 
 // Write a prompt and read tokens from stdin
