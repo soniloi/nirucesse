@@ -56,7 +56,7 @@ impl<'a> Command<'a> {
 				let mut question = String::from("What would you like to ") + self.name + "?";
 				let further_args = terminal::read_question(&question);
 
-				if further_args.len() != 1 {
+				if further_args.len() != 1 || (!further_args.is_empty() && further_args[0].is_empty()) {
 					terminal::write_full("I do not understand that instruction.");
 					return;
 				} else {

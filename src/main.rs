@@ -130,14 +130,18 @@ fn main() {
 
 	while player.is_playing() {
 		let inputs: Vec<String> = terminal::read_stub((*player).get_location().borrow().get_stubname());
-		match cmd_coll.get(&inputs[0]) {
-			Some(cmd) => {
-				let arg: &str = if inputs.len() > 1 { &inputs[1] } else { "" };
-				(**cmd).execute(&item_coll, arg, &mut player)
-			},
-			None => {
-				println!("No such command [{}]", inputs[0])
-			},
+		let cmd_name = &inputs[0];
+		if !cmd_name.is_empty() {
+			match cmd_coll.get(cmd_name) {
+				Some(cmd) => {
+					let arg: &str = if inputs.len() > 1 { &inputs[1] } else { "" };
+					(**cmd).execute(&item_coll, arg, &mut player)
+				},
+				None => {
+					println!("No such command [{}]", inputs[0]);
+					terminal::write_full("I do not understand that instruction");
+				},
+			}
 		}
 	}
 
