@@ -45,9 +45,7 @@ impl<'a> Command<'a> {
 
 	pub fn execute(&self, items: &ItemCollection, arg: &str, player: &mut Player) {
 		let h = self.handler;
-
 		let mut actual_arg = arg;
-		//let mut further_args = Vec::new();
 
 		// Argument counting
 		if self.takes_arg() {

@@ -104,7 +104,7 @@ fn main() {
 	cmd_coll.put("ne", northeast.clone());
 	cmd_coll.put("e", east.clone());
 	cmd_coll.put("se", southeast.clone());
-	cmd_coll.put("s", southeast.clone());
+	cmd_coll.put("s", south.clone());
 	cmd_coll.put("sw", southwest.clone());
 	cmd_coll.put("w", west.clone());
 	cmd_coll.put("nw", northwest.clone());
@@ -177,8 +177,8 @@ fn do_take(items: &ItemCollection, arg: &str, player: &mut Player) {
 			terminal::write_full("I do not know who or what that is.");
 			return;
 		},
-		Some(item_ptr) => {
-			player.pick_up(item_ptr);
+		Some(i) => {
+			player.pick_up(i);
 		}
 	}
 }
@@ -189,8 +189,8 @@ fn do_drop(items: &ItemCollection, arg: &str, player: &mut Player) {
 			terminal::write_full("I do not know who or what that is.");
 			return;
 		},
-		Some(item_ptr) => {
-			player.drop(item_ptr);
+		Some(i) => {
+			player.drop(i);
 		}
 	}
 }

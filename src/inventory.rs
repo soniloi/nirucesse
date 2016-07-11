@@ -18,12 +18,7 @@ impl Inventory {
 	}
 
 	pub fn contains_item(&self, item: &Rc<Box<Item>>) -> bool {
-		for val in self.items.values() {
-			if (**item).get_id() == (*val).get_id() {
-				return true;
-			}
-		}
-		false
+		self.items.contains_key(&(*item).get_id())
 	}
 
 	pub fn insert_item(&mut self, item: Rc<Box<Item>>) {
