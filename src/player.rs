@@ -77,6 +77,16 @@ impl Player {
 		}	
 	}
 
+	// Describe an item in the player's inventory or at the player's location
+	pub fn describe(&self, item: &Rc<Box<Item>>) {
+		if self.inventory.contains_item(item) || self.location.borrow().contains_item(item) {
+			terminal::write_full(&item.mk_full_string());
+		} else {
+			let response = String::from("I see no ") + &item.get_shortname() + " here.";
+			terminal::write_full(&response);
+		}
+	}
+
 	// Have player travel to an adjacent location
 	// TODO: I don't really like this very much; there's probably a better way
 	pub fn go(&mut self, dir: String) {

@@ -82,6 +82,7 @@ fn main() {
 	let northwest: Rc<Box<Command>> = Rc::new(Box::new(Command::new("northwest", 0x40, do_go)));
 	let up: Rc<Box<Command>> = Rc::new(Box::new(Command::new("up", 0x40, do_go)));
 	let down: Rc<Box<Command>> = Rc::new(Box::new(Command::new("down", 0x40, do_go)));
+	let describe: Rc<Box<Command>> = Rc::new(Box::new(Command::new("describe", 0x0c, do_describe)));
 
 	let mut cmd_coll = CommandCollection::new();
 	cmd_coll.put("take", take.clone());
@@ -119,6 +120,9 @@ fn main() {
 	cmd_coll.put("northwest", northwest.clone());
 	cmd_coll.put("up", up.clone());
 	cmd_coll.put("down", down.clone());
+	cmd_coll.put("describe", describe.clone());
+	cmd_coll.put("de", describe.clone());
+	cmd_coll.put("examine", describe.clone());
 
 	// Test player
 	let mut player = Box::new(Player::new(ward.clone()));
@@ -187,6 +191,18 @@ fn do_drop(items: &ItemCollection, arg: &str, player: &mut Player) {
 		},
 		Some(item_ptr) => {
 			player.drop(item_ptr);
+		}
+	}
+}
+
+fn do_describe(items: &ItemCollection, arg: &str, player: &mut Player) {
+	match items.get(arg) {
+		None => {
+			terminal::write_full("I do not know who or what that is.");
+			return;
+		},
+		Some(i) => {
+			player.describe(i);
 		}
 	}
 }

@@ -37,6 +37,10 @@ impl Location {
 		self.directions.insert(dir, loc);
 	}
 
+	pub fn contains_item(&self, item: &Rc<Box<Item>>) -> bool {
+		self.items.contains_key(&(*item).get_id())
+	}
+
 	pub fn insert_item(&mut self, item: Rc<Box<Item>>) {
 		self.items.insert((*item).get_id(), item);
 	}

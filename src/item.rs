@@ -26,7 +26,15 @@ impl Item {
 		self.id
 	}
 
+	pub fn get_shortname(&self) -> &str {
+		&self.shortname
+	}
+
 	pub fn get_longname(&self) -> &str {
 		&self.longname
+	}
+
+	pub fn mk_full_string(&self) -> String {
+		String::from("It is ") + &self.description + "."
 	}
 }
