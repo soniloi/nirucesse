@@ -1,3 +1,4 @@
+mod actions;
 mod command;
 mod command_collection;
 mod file_buffer;
@@ -66,23 +67,23 @@ fn main() {
 	ward.borrow_mut().insert_item(bowl);
 
 	// Test command
-	let take: Rc<Box<Command>> = Rc::new(Box::new(Command::new("take", 0x0c, do_take)));
-	let drop: Rc<Box<Command>> = Rc::new(Box::new(Command::new("drop", 0x0e, do_drop)));
-	let quit: Rc<Box<Command>> = Rc::new(Box::new(Command::new("quit", 0x00, do_quit)));
-	let inventory: Rc<Box<Command>> = Rc::new(Box::new(Command::new("inventory", 0x00, do_inventory)));
-	let look: Rc<Box<Command>> = Rc::new(Box::new(Command::new("look", 0x00, do_look)));
-	let go: Rc<Box<Command>> = Rc::new(Box::new(Command::new("go", 0xC0, do_go)));
-	let north: Rc<Box<Command>> = Rc::new(Box::new(Command::new("north", 0x40, do_go)));
-	let northeast: Rc<Box<Command>> = Rc::new(Box::new(Command::new("northeast", 0x40, do_go)));
-	let east: Rc<Box<Command>> = Rc::new(Box::new(Command::new("east", 0x40, do_go)));
-	let southeast: Rc<Box<Command>> = Rc::new(Box::new(Command::new("southeast", 0x40, do_go)));
-	let south: Rc<Box<Command>> = Rc::new(Box::new(Command::new("south", 0x40, do_go)));
-	let southwest: Rc<Box<Command>> = Rc::new(Box::new(Command::new("southwest", 0x40, do_go)));
-	let west: Rc<Box<Command>> = Rc::new(Box::new(Command::new("west", 0x40, do_go)));
-	let northwest: Rc<Box<Command>> = Rc::new(Box::new(Command::new("northwest", 0x40, do_go)));
-	let up: Rc<Box<Command>> = Rc::new(Box::new(Command::new("up", 0x40, do_go)));
-	let down: Rc<Box<Command>> = Rc::new(Box::new(Command::new("down", 0x40, do_go)));
-	let describe: Rc<Box<Command>> = Rc::new(Box::new(Command::new("describe", 0x0c, do_describe)));
+	let take: Rc<Box<Command>> = Rc::new(Box::new(Command::new("take", 0x0c, actions::do_take)));
+	let drop: Rc<Box<Command>> = Rc::new(Box::new(Command::new("drop", 0x0e, actions::do_drop)));
+	let quit: Rc<Box<Command>> = Rc::new(Box::new(Command::new("quit", 0x00, actions::do_quit)));
+	let inventory: Rc<Box<Command>> = Rc::new(Box::new(Command::new("inventory", 0x00, actions::do_inventory)));
+	let look: Rc<Box<Command>> = Rc::new(Box::new(Command::new("look", 0x00, actions::do_look)));
+	let go: Rc<Box<Command>> = Rc::new(Box::new(Command::new("go", 0xC0, actions::do_go)));
+	let north: Rc<Box<Command>> = Rc::new(Box::new(Command::new("north", 0x40, actions::do_go)));
+	let northeast: Rc<Box<Command>> = Rc::new(Box::new(Command::new("northeast", 0x40, actions::do_go)));
+	let east: Rc<Box<Command>> = Rc::new(Box::new(Command::new("east", 0x40, actions::do_go)));
+	let southeast: Rc<Box<Command>> = Rc::new(Box::new(Command::new("southeast", 0x40, actions::do_go)));
+	let south: Rc<Box<Command>> = Rc::new(Box::new(Command::new("south", 0x40, actions::do_go)));
+	let southwest: Rc<Box<Command>> = Rc::new(Box::new(Command::new("southwest", 0x40, actions::do_go)));
+	let west: Rc<Box<Command>> = Rc::new(Box::new(Command::new("west", 0x40, actions::do_go)));
+	let northwest: Rc<Box<Command>> = Rc::new(Box::new(Command::new("northwest", 0x40, actions::do_go)));
+	let up: Rc<Box<Command>> = Rc::new(Box::new(Command::new("up", 0x40, actions::do_go)));
+	let down: Rc<Box<Command>> = Rc::new(Box::new(Command::new("down", 0x40, actions::do_go)));
+	let describe: Rc<Box<Command>> = Rc::new(Box::new(Command::new("describe", 0x0c, actions::do_describe)));
 
 	cmd_coll.put("take", take.clone());
 	cmd_coll.put("t", take.clone());
@@ -150,60 +151,4 @@ fn main() {
 
 	// Clean
 	terminal::reset();
-}
-
-fn do_take(items: &ItemCollection, arg: &str, player: &mut Player) {
-	match items.get(arg) {
-		None => {
-			terminal::write_full("I do not know who or what that is.");
-			return;
-		},
-		Some(i) => {
-			player.pick_up(i);
-		}
-	}
-}
-
-fn do_drop(items: &ItemCollection, arg: &str, player: &mut Player) {
-	match items.get(arg) {
-		None => {
-			terminal::write_full("I do not know who or what that is.");
-			return;
-		},
-		Some(i) => {
-			player.drop(i);
-		}
-	}
-}
-
-fn do_describe(items: &ItemCollection, arg: &str, player: &mut Player) {
-	match items.get(arg) {
-		None => {
-			terminal::write_full("I do not know who or what that is.");
-			return;
-		},
-		Some(i) => {
-			player.describe(i);
-		}
-	}
-}
-
-#[allow(unused_variables)]
-fn do_quit(items: &ItemCollection, arg: &str, player: &mut Player) {
-	player.set_playing(false);
-}
-
-#[allow(unused_variables)]
-fn do_inventory(items: &ItemCollection, arg: &str, player: &mut Player) {
-	terminal::write_full(&player.mk_inventory_string());
-}
-
-#[allow(unused_variables)]
-fn do_look(items: &ItemCollection, arg: &str, player: &mut Player) {
-	terminal::write_full(&player.mk_location_string());
-}
-
-#[allow(unused_variables)]
-fn do_go(items: &ItemCollection, arg: &str, player: &mut Player) {
-	player.go(String::from(arg));
 }
