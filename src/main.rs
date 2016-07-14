@@ -33,6 +33,9 @@ fn main() {
     let filename = &args[1];
 
     let mut buffer = FileBuffer::new(filename);
+
+    let mut cmd_coll = CommandCollection::new();
+    cmd_coll.init(&mut buffer);
     while !buffer.eof() {
 		println!("{}", buffer.get_line());
     }
@@ -81,7 +84,6 @@ fn main() {
 	let down: Rc<Box<Command>> = Rc::new(Box::new(Command::new("down", 0x40, do_go)));
 	let describe: Rc<Box<Command>> = Rc::new(Box::new(Command::new("describe", 0x0c, do_describe)));
 
-	let mut cmd_coll = CommandCollection::new();
 	cmd_coll.put("take", take.clone());
 	cmd_coll.put("t", take.clone());
 	cmd_coll.put("drop", drop.clone());
