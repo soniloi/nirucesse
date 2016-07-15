@@ -37,9 +37,11 @@ fn main() {
 
     let mut cmd_coll = CommandCollection::new();
     cmd_coll.init(&mut buffer);
+    /*
     while !buffer.eof() {
 		println!("{}", buffer.get_line());
     }
+    */
 
 	// Test item
 	let bowl: Rc<Box<Item>> = Rc::new(Box::new(Item::new(17u64, 123u32, 2u32, String::from("bowl"), String::from("a bowl"), String::from("a small wooden bowl"), String::from("Made in Lanta"))));

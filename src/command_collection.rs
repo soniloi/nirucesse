@@ -25,7 +25,8 @@ impl<'a> CommandCollection<'a> {
 		}
 	}
 
-	pub fn init(&self, buffer: &mut FileBuffer) {
+	pub fn init(&mut self, buffer: &mut FileBuffer) {
+		// TODO: make static
 		let mut acts: HashMap<&str, fn(items: &ItemCollection, arg: &str, player: &mut Player)> = HashMap::new();
 		acts.insert("describe", actions::do_describe);
 		acts.insert("down", actions::do_go);
@@ -49,12 +50,37 @@ impl<'a> CommandCollection<'a> {
 	    while !buffer.eof() {
 			match line.as_ref() {
 				SEP_SECTION => return,
-				_ => {
-					println!("{}", line);
-					line = buffer.get_line();
-				}
-			}
+				x => {
 
+					let words_split = x.split("\t");
+					let words: Vec<&str> = words_split.collect();
+
+					let primary = words[FILE_INDEX_COMMAND_PRIMARY];
+					let status_str = words[FILE_INDEX_COMMAND_STATUS];
+					let status = match u32::from_str_radix(status_str, 16) {
+						Err(why) => panic!("Unable to parse integer field {}: {}", status_str, why),
+						Ok(status) => status,
+					};
+
+					let tag = words[FILE_INDEX_COMMAND_TAG];
+					match acts.get(tag) {
+						None => println!("\x1b[31m[Warning: no action function found for tag: {}, skipping]\x1b[0m", tag),
+						Some(act) => {
+							let cmd: Rc<Box<Command>> = Rc::new(Box::new(Command::new(primary, status, *act)));
+							//self.put(primary, cmd.clone());
+							//for i in FILE_INDEX_COMMAND_ALIAS_START..words.len() {
+							//	self.put(words[i], cmd.clone());
+							//}
+						},
+					}
+
+					for word in words {
+						print!("{} ", word);
+					}
+					println!("");
+				},
+			}
+			line = buffer.get_line();
 		}
 	}
 
