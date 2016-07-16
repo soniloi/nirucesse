@@ -67,7 +67,7 @@ fn main() {
 	garden.borrow_mut().set_direction(String::from("southwest"), store.clone());
 	ward.borrow_mut().set_direction(String::from("down"), kitchen.clone());
 	ward.borrow_mut().insert_item(bowl);
-
+/*
 	// Test command
 	let take: Rc<Box<Command>> = Rc::new(Box::new(Command::new("take", 0x0c, actions::do_take)));
 	let drop: Rc<Box<Command>> = Rc::new(Box::new(Command::new("drop", 0x0e, actions::do_drop)));
@@ -125,7 +125,7 @@ fn main() {
 	cmd_coll.put("describe", describe.clone());
 	cmd_coll.put("de", describe.clone());
 	cmd_coll.put("examine", describe.clone());
-
+*/
 	// Test player
 	let mut player = Box::new(Player::new(ward.clone()));
 	player.insert_item(radishes);
@@ -136,7 +136,7 @@ fn main() {
 
 	while player.is_playing() {
 		let inputs: Vec<String> = terminal::read_stub((*player).get_location().borrow().get_stubname());
-		let cmd_name = &inputs[0];
+		let cmd_name = inputs[0].clone();
 		if !cmd_name.is_empty() {
 			match cmd_coll.get(cmd_name) {
 				Some(cmd) => {

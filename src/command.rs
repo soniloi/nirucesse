@@ -11,15 +11,15 @@ use item_collection::ItemCollection;
 use player::Player;
 use terminal;
 
-pub struct Command<'a> {
-	name: &'a str,
+pub struct Command {
+	name: String,
 	properties: u32,
 	handler: fn(items: &ItemCollection, arg: &str, player: &mut Player),
 }
 
-impl<'a> Command<'a> {
+impl Command {
 
-	pub fn new(name: &str, properties: u32, handler: fn(items: &ItemCollection, arg: &str, player: &mut Player)) -> Command {
+	pub fn new(name: String, properties: u32, handler: fn(items: &ItemCollection, arg: &str, player: &mut Player)) -> Command {
 		Command {
 			name: name,
 			properties: properties,
@@ -51,7 +51,7 @@ impl<'a> Command<'a> {
 		if self.takes_arg() {
 			// Command takes an argument, but player didn't give one
 			if actual_arg.is_empty() {
-				let mut question = String::from("What would you like to ") + self.name + "?";
+				let mut question = String::from("What would you like to ") + &self.name + "?";
 				let further_args = terminal::read_question(&question);
 
 				if further_args.len() != 1 || (!further_args.is_empty() && further_args[0].is_empty()) {
@@ -75,7 +75,7 @@ impl<'a> Command<'a> {
 		// Movement aliasing
 		if self.is_movement() {
 			if !self.is_compound() {
-				actual_arg = self.name;
+				actual_arg = &self.name;
 			}
 		}
 

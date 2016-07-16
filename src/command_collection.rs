@@ -13,13 +13,13 @@ const FILE_INDEX_COMMAND_PRIMARY: usize = 2;
 const FILE_INDEX_COMMAND_ALIAS_START: usize = 3;
 const SEP_SECTION: &'static str = "---"; // String separating sections
 
-pub struct CommandCollection<'a> {
-	commands: HashMap<&'a str, Rc<Box<Command<'a>>>>,
+pub struct CommandCollection {
+	commands: HashMap<String, Rc<Box<Command>>>,
 }
 
-impl<'a> CommandCollection<'a> {
+impl<'a> CommandCollection {
 
-	pub fn new() -> CommandCollection<'a> {
+	pub fn new() -> CommandCollection {
 		CommandCollection {
 			commands: HashMap::new(),
 		}
@@ -55,7 +55,8 @@ impl<'a> CommandCollection<'a> {
 					let words_split = x.split("\t");
 					let words: Vec<&str> = words_split.collect();
 
-					let primary = words[FILE_INDEX_COMMAND_PRIMARY];
+					let primary = String::from(words[FILE_INDEX_COMMAND_PRIMARY]);
+					let key = primary.clone();
 					let status_str = words[FILE_INDEX_COMMAND_STATUS];
 					let status = match u32::from_str_radix(status_str, 16) {
 						Err(why) => panic!("Unable to parse integer field {}: {}", status_str, why),
@@ -64,32 +65,27 @@ impl<'a> CommandCollection<'a> {
 
 					let tag = words[FILE_INDEX_COMMAND_TAG];
 					match acts.get(tag) {
-						None => println!("\x1b[31m[Warning: no action function found for tag: {}, skipping]\x1b[0m", tag),
+						None => println!("\x1b[31m[Warning: no action function found for tag [{}]; skipping]\x1b[0m", tag),
 						Some(act) => {
 							let cmd: Rc<Box<Command>> = Rc::new(Box::new(Command::new(primary, status, *act)));
-							//self.put(primary, cmd.clone());
-							//for i in FILE_INDEX_COMMAND_ALIAS_START..words.len() {
-							//	self.put(words[i], cmd.clone());
-							//}
+							self.commands.insert(key, cmd.clone());
+							for i in FILE_INDEX_COMMAND_ALIAS_START..words.len() {
+								self.commands.insert(String::from(words[i]), cmd.clone());
+							}
 						},
 					}
-
-					for word in words {
-						print!("{} ", word);
-					}
-					println!("");
 				},
 			}
 			line = buffer.get_line();
 		}
 	}
 
-	pub fn put(&mut self, key: &'a str, val: Rc<Box<Command<'a>>>) {
+	pub fn put(&mut self, key: String, val: Rc<Box<Command>>) {
 		self.commands.insert(key, val);
 	}
 
-	pub fn get(&self, key: &str) -> Option<&Rc<Box<Command>>> {
-		self.commands.get(key)
+	pub fn get(&self, key: String) -> Option<&Rc<Box<Command>>> {
+		self.commands.get(&key)
 	}
 
 }
