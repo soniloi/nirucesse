@@ -51,7 +51,7 @@ impl Command {
 		if self.takes_arg() {
 			// Command takes an argument, but player didn't give one
 			if actual_arg.is_empty() {
-				let mut question = String::from("What would you like to ") + &self.name + "?";
+				let question = String::from("What would you like to ") + &self.name + "?";
 				let further_args = terminal::read_question(&question);
 
 				if further_args.len() != 1 || (!further_args.is_empty() && further_args[0].is_empty()) {

@@ -15,7 +15,6 @@ use std::env;
 use std::process;
 use std::rc::Rc;
 
-use command::Command;
 use command_collection::CommandCollection;
 use file_buffer::FileBuffer;
 use item::Item;
@@ -67,65 +66,7 @@ fn main() {
 	garden.borrow_mut().set_direction(String::from("southwest"), store.clone());
 	ward.borrow_mut().set_direction(String::from("down"), kitchen.clone());
 	ward.borrow_mut().insert_item(bowl);
-/*
-	// Test command
-	let take: Rc<Box<Command>> = Rc::new(Box::new(Command::new("take", 0x0c, actions::do_take)));
-	let drop: Rc<Box<Command>> = Rc::new(Box::new(Command::new("drop", 0x0e, actions::do_drop)));
-	let quit: Rc<Box<Command>> = Rc::new(Box::new(Command::new("quit", 0x00, actions::do_quit)));
-	let inventory: Rc<Box<Command>> = Rc::new(Box::new(Command::new("inventory", 0x00, actions::do_inventory)));
-	let look: Rc<Box<Command>> = Rc::new(Box::new(Command::new("look", 0x00, actions::do_look)));
-	let go: Rc<Box<Command>> = Rc::new(Box::new(Command::new("go", 0xC0, actions::do_go)));
-	let north: Rc<Box<Command>> = Rc::new(Box::new(Command::new("north", 0x40, actions::do_go)));
-	let northeast: Rc<Box<Command>> = Rc::new(Box::new(Command::new("northeast", 0x40, actions::do_go)));
-	let east: Rc<Box<Command>> = Rc::new(Box::new(Command::new("east", 0x40, actions::do_go)));
-	let southeast: Rc<Box<Command>> = Rc::new(Box::new(Command::new("southeast", 0x40, actions::do_go)));
-	let south: Rc<Box<Command>> = Rc::new(Box::new(Command::new("south", 0x40, actions::do_go)));
-	let southwest: Rc<Box<Command>> = Rc::new(Box::new(Command::new("southwest", 0x40, actions::do_go)));
-	let west: Rc<Box<Command>> = Rc::new(Box::new(Command::new("west", 0x40, actions::do_go)));
-	let northwest: Rc<Box<Command>> = Rc::new(Box::new(Command::new("northwest", 0x40, actions::do_go)));
-	let up: Rc<Box<Command>> = Rc::new(Box::new(Command::new("up", 0x40, actions::do_go)));
-	let down: Rc<Box<Command>> = Rc::new(Box::new(Command::new("down", 0x40, actions::do_go)));
-	let describe: Rc<Box<Command>> = Rc::new(Box::new(Command::new("describe", 0x0c, actions::do_describe)));
 
-	cmd_coll.put("take", take.clone());
-	cmd_coll.put("t", take.clone());
-	cmd_coll.put("drop", drop.clone());
-	cmd_coll.put("dr", drop.clone());
-	cmd_coll.put("quit", quit.clone());
-	cmd_coll.put("q", quit.clone());
-	cmd_coll.put("end", quit.clone());
-	cmd_coll.put("i", inventory.clone());
-	cmd_coll.put("invent", inventory.clone());
-	cmd_coll.put("inventory", inventory.clone());
-	cmd_coll.put("l", look.clone());
-	cmd_coll.put("look", look.clone());
-	cmd_coll.put("go", go.clone());
-	cmd_coll.put("walk", go.clone());
-	cmd_coll.put("travel", go.clone());
-	cmd_coll.put("n", north.clone());
-	cmd_coll.put("ne", northeast.clone());
-	cmd_coll.put("e", east.clone());
-	cmd_coll.put("se", southeast.clone());
-	cmd_coll.put("s", south.clone());
-	cmd_coll.put("sw", southwest.clone());
-	cmd_coll.put("w", west.clone());
-	cmd_coll.put("nw", northwest.clone());
-	cmd_coll.put("u", up.clone());
-	cmd_coll.put("d", down.clone());
-	cmd_coll.put("north", north.clone());
-	cmd_coll.put("northeast", northeast.clone());
-	cmd_coll.put("east", east.clone());
-	cmd_coll.put("southeast", southeast.clone());
-	cmd_coll.put("south", southeast.clone());
-	cmd_coll.put("southwest", southwest.clone());
-	cmd_coll.put("west", west.clone());
-	cmd_coll.put("northwest", northwest.clone());
-	cmd_coll.put("up", up.clone());
-	cmd_coll.put("down", down.clone());
-	cmd_coll.put("describe", describe.clone());
-	cmd_coll.put("de", describe.clone());
-	cmd_coll.put("examine", describe.clone());
-*/
 	// Test player
 	let mut player = Box::new(Player::new(ward.clone()));
 	player.insert_item(radishes);
@@ -138,13 +79,13 @@ fn main() {
 		let inputs: Vec<String> = terminal::read_stub((*player).get_location().borrow().get_stubname());
 		let cmd_name = inputs[0].clone();
 		if !cmd_name.is_empty() {
-			match cmd_coll.get(cmd_name) {
+			match cmd_coll.get(cmd_name.clone()) {
 				Some(cmd) => {
 					let arg: &str = if inputs.len() > 1 { &inputs[1] } else { "" };
 					(**cmd).execute(&item_coll, arg, &mut player)
 				},
 				None => {
-					println!("No such command [{}]", inputs[0]);
+					println!("No such command [{}]", cmd_name);
 					terminal::write_full("I do not understand that instruction");
 				},
 			}

@@ -80,10 +80,6 @@ impl<'a> CommandCollection {
 		}
 	}
 
-	pub fn put(&mut self, key: String, val: Rc<Box<Command>>) {
-		self.commands.insert(key, val);
-	}
-
 	pub fn get(&self, key: String) -> Option<&Rc<Box<Command>>> {
 		self.commands.get(&key)
 	}
