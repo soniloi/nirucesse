@@ -7,6 +7,7 @@ mod inventory;
 mod item;
 mod item_collection;
 mod location;
+mod location_collection;
 mod player;
 mod terminal;
 
@@ -19,6 +20,7 @@ use command_collection::CommandCollection;
 use file_buffer::FileBuffer;
 use item::Item;
 use item_collection::ItemCollection;
+use location_collection::LocationCollection;
 use location::Location;
 use player::Player;
 
@@ -36,6 +38,7 @@ fn main() {
 
     let mut cmd_coll = CommandCollection::new();
     cmd_coll.init(&mut buffer);
+
     /*
     while !buffer.eof() {
 		println!("{}", buffer.get_line());
@@ -54,10 +57,10 @@ fn main() {
 	item_coll.put("radishes", radishes.clone());
 
 	// Test location
-	let kitchen = Rc::new(RefCell::new(Box::new(Location::new(91u64, 765u32, String::from("Kitchen"), String::from("in the kitchen"), String::from(". A lovely aroma of lentil soup lingers in the air. There are doors to the north and southeast")))));
-	let store = Rc::new(RefCell::new(Box::new(Location::new(92u64, 763u32, String::from("Store"), String::from("in the food store"), String::from(". The area is filled with sacks, tins, jars, barrels, and casks of the finest food and drink this side of the Etenar Nebula")))));
-	let garden = Rc::new(RefCell::new(Box::new(Location::new(93u64, 760u32, String::from("Garden"), String::from("in the garden"), String::from(", a large, high-roofed dome filled with all manner of trees and plants. In the centre, where there is most room for it to grow, stands a particularly large tree")))));
-	let ward = Rc::new(RefCell::new(Box::new(Location::new(9u64, 0x70Fu32, String::from("Ward"), String::from("in a medical ward"), String::from(". The faint electric light is flickering on and off, but it is enough to see by. The exit is to the south")))));
+	let kitchen = Rc::new(RefCell::new(Box::new(Location::new(91u32, 765u32, String::from("Kitchen"), String::from("in the kitchen"), String::from(". A lovely aroma of lentil soup lingers in the air. There are doors to the north and southeast")))));
+	let store = Rc::new(RefCell::new(Box::new(Location::new(92u32, 763u32, String::from("Store"), String::from("in the food store"), String::from(". The area is filled with sacks, tins, jars, barrels, and casks of the finest food and drink this side of the Etenar Nebula")))));
+	let garden = Rc::new(RefCell::new(Box::new(Location::new(93u32, 760u32, String::from("Garden"), String::from("in the garden"), String::from(", a large, high-roofed dome filled with all manner of trees and plants. In the centre, where there is most room for it to grow, stands a particularly large tree")))));
+	let ward = Rc::new(RefCell::new(Box::new(Location::new(9u32, 0x70Fu32, String::from("Ward"), String::from("in a medical ward"), String::from(". The faint electric light is flickering on and off, but it is enough to see by. The exit is to the south")))));
 
 	kitchen.borrow_mut().set_direction(String::from("southeast"), store.clone());
 	kitchen.borrow_mut().set_direction(String::from("up"), ward.clone());
@@ -66,6 +69,12 @@ fn main() {
 	garden.borrow_mut().set_direction(String::from("southwest"), store.clone());
 	ward.borrow_mut().set_direction(String::from("down"), kitchen.clone());
 	ward.borrow_mut().insert_item(bowl);
+
+    let mut loc_coll = LocationCollection::new();
+    loc_coll.put(91u32, kitchen.clone());
+    loc_coll.put(92u32, store.clone());
+    loc_coll.put(93u32, garden.clone());
+    loc_coll.put(9u32, ward.clone());
 
 	// Test player
 	let mut player = Box::new(Player::new(ward.clone()));

@@ -5,7 +5,7 @@ use std::rc::Rc;
 use item::Item;
 
 pub struct Location {
-	id: u64,
+	id: u32,
 	status: u32,
 	shortname: String,	
 	longname: String,
@@ -17,7 +17,7 @@ pub struct Location {
 
 impl Location {
 
-	pub fn new(id: u64, status: u32, shortname: String, longname: String, description: String) -> Location {
+	pub fn new(id: u32, status: u32, shortname: String, longname: String, description: String) -> Location {
 		Location {
 			id: id,
 			status: status,
