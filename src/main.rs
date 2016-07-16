@@ -39,11 +39,14 @@ fn main() {
     let mut cmd_coll = CommandCollection::new();
     cmd_coll.init(&mut buffer);
 
-    /*
+    let mut loc_coll = LocationCollection::new();
+    loc_coll.init(&mut buffer);
+
+/*
     while !buffer.eof() {
 		println!("{}", buffer.get_line());
     }
-    */
+*/
 
 	// Test item
 	let bowl: Rc<Box<Item>> = Rc::new(Box::new(Item::new(17u64, 123u32, 2u32, String::from("bowl"), String::from("a bowl"), String::from("a small wooden bowl"), String::from("Made in Lanta"))));
@@ -56,6 +59,7 @@ fn main() {
 	item_coll.put("medallion", medallion.clone());
 	item_coll.put("radishes", radishes.clone());
 
+/*
 	// Test location
 	let kitchen = Rc::new(RefCell::new(Box::new(Location::new(91u32, 765u32, String::from("Kitchen"), String::from("in the kitchen"), String::from(". A lovely aroma of lentil soup lingers in the air. There are doors to the north and southeast")))));
 	let store = Rc::new(RefCell::new(Box::new(Location::new(92u32, 763u32, String::from("Store"), String::from("in the food store"), String::from(". The area is filled with sacks, tins, jars, barrels, and casks of the finest food and drink this side of the Etenar Nebula")))));
@@ -70,14 +74,19 @@ fn main() {
 	ward.borrow_mut().set_direction(String::from("down"), kitchen.clone());
 	ward.borrow_mut().insert_item(bowl);
 
-    let mut loc_coll = LocationCollection::new();
     loc_coll.put(91u32, kitchen.clone());
     loc_coll.put(92u32, store.clone());
     loc_coll.put(93u32, garden.clone());
     loc_coll.put(9u32, ward.clone());
+*/
+
+	let start_loc = match loc_coll.get(9u32) {
+		None => panic!("Unable to set starting location number: {}", 9u32),
+		Some(loc) => loc,
+	};
 
 	// Test player
-	let mut player = Box::new(Player::new(ward.clone()));
+	let mut player = Box::new(Player::new(start_loc.clone()));
 	player.insert_item(radishes);
 	player.write_out();
 

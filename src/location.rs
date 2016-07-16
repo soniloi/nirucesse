@@ -29,6 +29,10 @@ impl Location {
 		}
 	}
 
+	pub fn get_id(&self) -> u32 {
+		self.id
+	}
+
 	pub fn get_direction(&self, dir: String) -> Option<&Rc<RefCell<Box<Location>>>> {
 		self.directions.get(&dir)
 	}

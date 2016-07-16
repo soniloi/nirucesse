@@ -44,7 +44,7 @@ impl<'a> CommandCollection {
 		acts.insert("southwest", actions::do_go);
 		acts.insert("take", actions::do_take);
 		acts.insert("up", actions::do_go);
-		acts.insert("down", actions::do_go);
+		acts.insert("west", actions::do_go);
 
 		let mut line = buffer.get_line();
 	    while !buffer.eof() {
