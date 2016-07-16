@@ -17,7 +17,7 @@ pub struct CommandCollection {
 	commands: HashMap<String, Rc<Box<Command>>>,
 }
 
-impl<'a> CommandCollection {
+impl CommandCollection {
 
 	pub fn new() -> CommandCollection {
 		CommandCollection {

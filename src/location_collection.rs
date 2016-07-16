@@ -2,7 +2,6 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use actions;
 use location::Location;
 use file_buffer::FileBuffer;
 
@@ -50,7 +49,7 @@ impl LocationCollection {
 					let words: Vec<&str> = words_split.collect();
 
 					let id = str_to_u32(words[FILE_INDEX_LOCATION_ID], 10);
-					let status = str_to_u32(words[FILE_INDEX_LOCATION_ID], 16);
+					let status = str_to_u32(words[FILE_INDEX_LOCATION_STATUS], 16);
 					let shortname = String::from(words[FILE_INDEX_LOCATION_SHORTNAME]);
 					let longname = String::from(words[FILE_INDEX_LOCATION_LONGNAME]);
 					let description = String::from(words[FILE_INDEX_LOCATION_DESCRIPTION]);
@@ -100,10 +99,6 @@ impl LocationCollection {
 				},
 			}
 		}
-	}
-
-	pub fn put(&mut self, key: u32, val: Rc<RefCell<Box<Location>>>) {
-		self.locations.insert(key, val);
 	}
 
 	pub fn get(&self, key: u32) -> Option<&Rc<RefCell<Box<Location>>>> {
