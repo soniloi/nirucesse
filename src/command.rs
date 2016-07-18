@@ -50,7 +50,7 @@ impl Command {
 		// Argument counting
 		if self.takes_arg() {
 			// Command takes an argument, but player didn't give one
-			if actual_arg.is_empty() {
+			if !self.is_movement() && actual_arg.is_empty() {
 				let question = String::from("What would you like to ") + &self.name + "?";
 				let further_args = terminal::read_question(&question);
 
@@ -67,7 +67,7 @@ impl Command {
 		} else {
 			// Command takes no argument, but player gave one anyway
 			if !actual_arg.is_empty() {
-				terminal::write_full("I do not understand that instruction");
+				terminal::write_full("I do not understand that instruction.");
 				return;
 			}
 		}

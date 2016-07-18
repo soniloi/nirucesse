@@ -27,6 +27,11 @@ pub fn do_drop(items: &ItemCollection, arg: &str, player: &mut Player) {
 }
 
 #[allow(unused_variables)]
+pub fn do_go_disambiguate(items: &ItemCollection, arg: &str, player: &mut Player) {
+	terminal::write_full("Use compass points or directions (e.g. \"north\", \"down\") to travel to a new location.");
+}
+
+#[allow(unused_variables)]
 pub fn do_go(items: &ItemCollection, arg: &str, player: &mut Player) {
 	player.go(String::from(arg));
 }
