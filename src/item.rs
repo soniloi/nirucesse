@@ -37,4 +37,12 @@ impl Item {
 	pub fn mk_full_string(&self) -> String {
 		String::from("It is ") + &self.description + "."
 	}
+
+	pub fn mk_writing_string(&self) -> String {
+		if self.writing.is_empty() {
+			String::from("There is no writing to read there.")
+		} else {
+			String::from("It reads \"") + &self.writing + "\"."
+		}
+	}
 }

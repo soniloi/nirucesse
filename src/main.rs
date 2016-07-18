@@ -65,6 +65,7 @@ fn main() {
 	// Test player
 	let mut player = Box::new(Player::new(start_loc.clone()));
 	player.insert_item(radishes);
+	player.insert_item(medallion);
 	player.write_out();
 
 	// Test terminal

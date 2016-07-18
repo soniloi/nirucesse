@@ -39,6 +39,7 @@ impl CommandCollection {
 		acts.insert("northeast", actions::do_go);
 		acts.insert("northwest", actions::do_go);
 		acts.insert("quit", actions::do_quit);
+		acts.insert("read", actions::do_read);
 		acts.insert("south", actions::do_go);
 		acts.insert("southeast", actions::do_go);
 		acts.insert("southwest", actions::do_go);

@@ -110,6 +110,15 @@ impl Player {
 		self.location.borrow().mk_full_string()
 	}
 
+	pub fn read(&self, item: &Rc<Box<Item>>) {
+		if self.inventory.contains_item(item) || self.location.borrow().contains_item(item) {
+			terminal::write_full(&item.mk_writing_string());
+		} else {
+			let response = String::from("I see no ") + &item.get_shortname() + " here.";
+			terminal::write_full(&response);
+		}
+	}
+
 	pub fn write_out(&self) {
 		println!("Player [current score={}] [location={}]", self.score, self.location.borrow().get_stubname());
 		self.inventory.write_out();

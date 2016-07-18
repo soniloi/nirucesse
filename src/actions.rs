@@ -27,13 +27,13 @@ pub fn do_drop(items: &ItemCollection, arg: &str, player: &mut Player) {
 }
 
 #[allow(unused_variables)]
-pub fn do_go_disambiguate(items: &ItemCollection, arg: &str, player: &mut Player) {
-	terminal::write_full("Use compass points or directions (e.g. \"north\", \"down\") to travel to a new location.");
+pub fn do_go(items: &ItemCollection, arg: &str, player: &mut Player) {
+	player.go(String::from(arg));
 }
 
 #[allow(unused_variables)]
-pub fn do_go(items: &ItemCollection, arg: &str, player: &mut Player) {
-	player.go(String::from(arg));
+pub fn do_go_disambiguate(items: &ItemCollection, arg: &str, player: &mut Player) {
+	terminal::write_full("Use compass points or directions (e.g. \"north\", \"down\") to travel to a new location.");
 }
 
 #[allow(unused_variables)]
@@ -49,6 +49,18 @@ pub fn do_look(items: &ItemCollection, arg: &str, player: &mut Player) {
 #[allow(unused_variables)]
 pub fn do_quit(items: &ItemCollection, arg: &str, player: &mut Player) {
 	player.set_playing(false);
+}
+
+pub fn do_read(items: &ItemCollection, arg: &str, player: &mut Player) {
+	match items.get(arg) {
+		None => {
+			terminal::write_full("I do not know who or what that is.");
+			return;
+		},
+		Some(i) => {
+			player.read(i);
+		}
+	}
 }
 
 pub fn do_take(items: &ItemCollection, arg: &str, player: &mut Player) {
