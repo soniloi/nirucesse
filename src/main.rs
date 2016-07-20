@@ -13,11 +13,9 @@ mod terminal;
 
 use std::env;
 use std::process;
-use std::rc::Rc;
 
 use command_collection::CommandCollection;
 use file_buffer::FileBuffer;
-use item::Item;
 use item_collection::ItemCollection;
 use location_collection::LocationCollection;
 use player::Player;
@@ -49,31 +47,13 @@ fn main() {
     }
 */
 
-	// Test item
-/*
-	let bowl: Rc<Box<Item>> = Rc::new(Box::new(Item::new(17u64, 123u32, 2u32, String::from("bowl"), String::from("a bowl"), String::from("a small wooden bowl"), String::from("Made in Lanta"))));
-	let medallion: Rc<Box<Item>> = Rc::new(Box::new(Item::new(75u64, 128u32, 2u32, String::from("medallion"), String::from("an asterium medallion"), String::from("a large asterium medallion, engraved with pirate symbolism"), String::from("arr!"))));
-	let radishes: Rc<Box<Item>> = Rc::new(Box::new(Item::new(28u64, 132u32, 2u32, String::from("radishes"), String::from("a bunch of radishes"), String::from("some tasty-looking radishes"), String::from(""))));
-
-	item_coll.put("bowl", bowl.clone());
-	item_coll.put("medal", medallion.clone());
-	item_coll.put("medallion", medallion.clone());
-	item_coll.put("radishes", radishes.clone());
-*/
 	let start_loc = match loc_coll.get(9u32) {
 		None => panic!("Unable to set starting location number: {}", 9u32),
 		Some(loc) => loc,
 	};
-
-	// Test player
 	let mut player = Box::new(Player::new(start_loc.clone()));
-	//player.insert_item(radishes);
-	//player.insert_item(medallion);
-	player.write_out();
 
-	// Test terminal
 	terminal::write_full("You awaken. You feel ill and dazed. Slowly you raise your head. You try to look around. You are intermittently blinded by flickering light. Groggily and warily you flail around.");
-
 	while player.is_playing() {
 		let inputs: Vec<String> = terminal::read_stub((*player).get_location().borrow().get_stubname());
 		let cmd_name = inputs[0].clone();

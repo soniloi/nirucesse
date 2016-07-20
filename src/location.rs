@@ -6,7 +6,7 @@ use item::Item;
 
 pub struct Location {
 	id: u32,
-	status: u32,
+	properties: u32,
 	shortname: String,	
 	longname: String,
 	description: String,
@@ -17,10 +17,10 @@ pub struct Location {
 
 impl Location {
 
-	pub fn new(id: u32, status: u32, shortname: String, longname: String, description: String) -> Location {
+	pub fn new(id: u32, properties: u32, shortname: String, longname: String, description: String) -> Location {
 		Location {
 			id: id,
-			status: status,
+			properties: properties,
 			shortname: shortname,
 			longname: longname,
 			description: description,

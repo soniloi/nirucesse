@@ -49,12 +49,12 @@ impl LocationCollection {
 					let words: Vec<&str> = words_split.collect();
 
 					let id = str_to_u32(words[FILE_INDEX_LOCATION_ID], 10);
-					let status = str_to_u32(words[FILE_INDEX_LOCATION_STATUS], 16);
+					let properties = str_to_u32(words[FILE_INDEX_LOCATION_STATUS], 16);
 					let shortname = String::from(words[FILE_INDEX_LOCATION_SHORTNAME]);
 					let longname = String::from(words[FILE_INDEX_LOCATION_LONGNAME]);
 					let description = String::from(words[FILE_INDEX_LOCATION_DESCRIPTION]);
 
-					let loc = Rc::new(RefCell::new(Box::new(Location::new(id, status, shortname, longname, description))));
+					let loc = Rc::new(RefCell::new(Box::new(Location::new(id, properties, shortname, longname, description))));
 					self.locations.insert(id, loc);
 
 					let mut links: Box<HashMap<String, u32>> = Box::new(HashMap::new());

@@ -42,7 +42,7 @@ impl ItemCollection {
 
 					// Create item
 					let id = str_to_u32(words[FILE_INDEX_ITEM_ID], 10);
-					let status = str_to_u32(words[FILE_INDEX_ITEM_STATUS], 16);
+					let properties = str_to_u32(words[FILE_INDEX_ITEM_STATUS], 16);
 					let initial = str_to_u32(words[FILE_INDEX_ITEM_INITIAL_LOC], 10);
 					let size = str_to_u32(words[FILE_INDEX_ITEM_SIZE], 10);
 					let shortname = String::from(words[FILE_INDEX_ITEM_SHORTNAME]);
@@ -50,11 +50,11 @@ impl ItemCollection {
 					let description = String::from(words[FILE_INDEX_ITEM_DESCRIPTION]);
 					let writing = String::from(words[FILE_INDEX_ITEM_WRITING]);
 
-					let item = Rc::new(Box::new(Item::new(id, status, size, shortname.clone(), longname, description, writing)));
+					let item = Rc::new(Box::new(Item::new(id, properties, size, shortname.clone(), longname, description, writing)));
 					self.items.insert(shortname, item.clone());
 
 					// Point item's starting location at it
-					let mut initial_loc = match locations.get(initial) {
+					let initial_loc = match locations.get(initial) {
 						None => panic!("Unable to find location with ID: {}", initial),
 						Some(loc) => {
 							loc
@@ -65,10 +65,6 @@ impl ItemCollection {
 			}
 			line = buffer.get_line();
 		}
-	}
-
-	pub fn put(&mut self, key: String, val: Rc<Box<Item>>) {
-		self.items.insert(key, val);
 	}
 
 	pub fn get(&self, key: String) -> Option<&Rc<Box<Item>>> {
