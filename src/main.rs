@@ -40,6 +40,9 @@ fn main() {
     let mut loc_coll = LocationCollection::new();
     loc_coll.init(&mut buffer);
 
+    let mut item_coll = ItemCollection::new();
+    item_coll.init(&mut buffer, &mut loc_coll);
+
 /*
     while !buffer.eof() {
 		println!("{}", buffer.get_line());
@@ -47,16 +50,16 @@ fn main() {
 */
 
 	// Test item
+/*
 	let bowl: Rc<Box<Item>> = Rc::new(Box::new(Item::new(17u64, 123u32, 2u32, String::from("bowl"), String::from("a bowl"), String::from("a small wooden bowl"), String::from("Made in Lanta"))));
 	let medallion: Rc<Box<Item>> = Rc::new(Box::new(Item::new(75u64, 128u32, 2u32, String::from("medallion"), String::from("an asterium medallion"), String::from("a large asterium medallion, engraved with pirate symbolism"), String::from("arr!"))));
 	let radishes: Rc<Box<Item>> = Rc::new(Box::new(Item::new(28u64, 132u32, 2u32, String::from("radishes"), String::from("a bunch of radishes"), String::from("some tasty-looking radishes"), String::from(""))));
 
-	let mut item_coll = ItemCollection::new();
 	item_coll.put("bowl", bowl.clone());
 	item_coll.put("medal", medallion.clone());
 	item_coll.put("medallion", medallion.clone());
 	item_coll.put("radishes", radishes.clone());
-
+*/
 	let start_loc = match loc_coll.get(9u32) {
 		None => panic!("Unable to set starting location number: {}", 9u32),
 		Some(loc) => loc,
@@ -64,8 +67,8 @@ fn main() {
 
 	// Test player
 	let mut player = Box::new(Player::new(start_loc.clone()));
-	player.insert_item(radishes);
-	player.insert_item(medallion);
+	//player.insert_item(radishes);
+	//player.insert_item(medallion);
 	player.write_out();
 
 	// Test terminal
@@ -77,7 +80,7 @@ fn main() {
 		if !cmd_name.is_empty() {
 			match cmd_coll.get(cmd_name.clone()) {
 				Some(cmd) => {
-					let arg: &str = if inputs.len() > 1 { &inputs[1] } else { "" };
+					let arg: String = if inputs.len() > 1 { inputs[1].clone() } else { String::from("") };
 					(**cmd).execute(&item_coll, arg, &mut player)
 				},
 				None => {

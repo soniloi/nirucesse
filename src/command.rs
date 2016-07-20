@@ -14,12 +14,12 @@ use terminal;
 pub struct Command {
 	name: String,
 	properties: u32,
-	handler: fn(items: &ItemCollection, arg: &str, player: &mut Player),
+	handler: fn(items: &ItemCollection, arg: String, player: &mut Player),
 }
 
 impl Command {
 
-	pub fn new(name: String, properties: u32, handler: fn(items: &ItemCollection, arg: &str, player: &mut Player)) -> Command {
+	pub fn new(name: String, properties: u32, handler: fn(items: &ItemCollection, arg: String, player: &mut Player)) -> Command {
 		Command {
 			name: name,
 			properties: properties,
@@ -43,7 +43,7 @@ impl Command {
 		self.has_property(CTRL_COMMAND_TAKES_ARG)
 	}
 
-	pub fn execute(&self, items: &ItemCollection, arg: &str, player: &mut Player) {
+	pub fn execute(&self, items: &ItemCollection, arg: String, player: &mut Player) {
 		let h = self.handler;
 		let mut actual_arg = arg;
 
@@ -59,7 +59,7 @@ impl Command {
 					return;
 				} else {
 					// FIXME: fix the lifetime on actual_arg/further_args
-					let actual_arg = &(String::new() + &further_args[0]);
+					let actual_arg = String::new() + &further_args[0];
 					h(items, actual_arg, player);
 					return;
 				}
@@ -75,7 +75,7 @@ impl Command {
 		// Movement aliasing
 		if self.is_movement() {
 			if !self.is_compound() {
-				actual_arg = &self.name;
+				actual_arg = String::new() + &self.name;
 			}
 		}
 

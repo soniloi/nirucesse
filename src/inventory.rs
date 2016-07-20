@@ -5,7 +5,7 @@ use item::Item;
 
 pub struct Inventory {
 	capacity: u32,
-	items: HashMap<u64, Rc<Box<Item>>>,
+	items: HashMap<u32, Rc<Box<Item>>>,
 }
 
 impl Inventory {

@@ -1,5 +1,5 @@
 pub struct Item {
-	id: u64,
+	id: u32,
 	status: u32,
 	size: u32,
 	shortname: String,
@@ -10,7 +10,7 @@ pub struct Item {
 
 impl Item {
 
-	pub fn new(id: u64, status: u32, size: u32, shortname: String, longname: String, description: String, writing: String) -> Item {
+	pub fn new(id: u32, status: u32, size: u32, shortname: String, longname: String, description: String, writing: String) -> Item {
 		Item {
 			id: id,
 			status: status,
@@ -22,7 +22,7 @@ impl Item {
 		}
 	}
 
-	pub fn get_id(&self) -> u64 {
+	pub fn get_id(&self) -> u32 {
 		self.id
 	}
 

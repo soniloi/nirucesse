@@ -27,7 +27,7 @@ impl CommandCollection {
 
 	pub fn init(&mut self, buffer: &mut FileBuffer) {
 		// TODO: make static
-		let mut acts: HashMap<&str, fn(items: &ItemCollection, arg: &str, player: &mut Player)> = HashMap::new();
+		let mut acts: HashMap<&str, fn(items: &ItemCollection, arg: String, player: &mut Player)> = HashMap::new();
 		acts.insert("describe", actions::do_describe);
 		acts.insert("down", actions::do_go);
 		acts.insert("drop", actions::do_drop);

@@ -2,7 +2,7 @@ use item_collection::ItemCollection;
 use player::Player;
 use terminal;
 
-pub fn do_describe(items: &ItemCollection, arg: &str, player: &mut Player) {
+pub fn do_describe(items: &ItemCollection, arg: String, player: &mut Player) {
 	match items.get(arg) {
 		None => {
 			terminal::write_full("I do not know who or what that is.");
@@ -14,7 +14,7 @@ pub fn do_describe(items: &ItemCollection, arg: &str, player: &mut Player) {
 	}
 }
 
-pub fn do_drop(items: &ItemCollection, arg: &str, player: &mut Player) {
+pub fn do_drop(items: &ItemCollection, arg: String, player: &mut Player) {
 	match items.get(arg) {
 		None => {
 			terminal::write_full("I do not know who or what that is.");
@@ -27,31 +27,31 @@ pub fn do_drop(items: &ItemCollection, arg: &str, player: &mut Player) {
 }
 
 #[allow(unused_variables)]
-pub fn do_go(items: &ItemCollection, arg: &str, player: &mut Player) {
+pub fn do_go(items: &ItemCollection, arg: String, player: &mut Player) {
 	player.go(String::from(arg));
 }
 
 #[allow(unused_variables)]
-pub fn do_go_disambiguate(items: &ItemCollection, arg: &str, player: &mut Player) {
+pub fn do_go_disambiguate(items: &ItemCollection, arg: String, player: &mut Player) {
 	terminal::write_full("Use compass points or directions (e.g. \"north\", \"down\") to travel to a new location.");
 }
 
 #[allow(unused_variables)]
-pub fn do_inventory(items: &ItemCollection, arg: &str, player: &mut Player) {
+pub fn do_inventory(items: &ItemCollection, arg: String, player: &mut Player) {
 	terminal::write_full(&player.mk_inventory_string());
 }
 
 #[allow(unused_variables)]
-pub fn do_look(items: &ItemCollection, arg: &str, player: &mut Player) {
+pub fn do_look(items: &ItemCollection, arg: String, player: &mut Player) {
 	terminal::write_full(&player.mk_location_string());
 }
 
 #[allow(unused_variables)]
-pub fn do_quit(items: &ItemCollection, arg: &str, player: &mut Player) {
+pub fn do_quit(items: &ItemCollection, arg: String, player: &mut Player) {
 	player.set_playing(false);
 }
 
-pub fn do_read(items: &ItemCollection, arg: &str, player: &mut Player) {
+pub fn do_read(items: &ItemCollection, arg: String, player: &mut Player) {
 	match items.get(arg) {
 		None => {
 			terminal::write_full("I do not know who or what that is.");
@@ -63,7 +63,7 @@ pub fn do_read(items: &ItemCollection, arg: &str, player: &mut Player) {
 	}
 }
 
-pub fn do_take(items: &ItemCollection, arg: &str, player: &mut Player) {
+pub fn do_take(items: &ItemCollection, arg: String, player: &mut Player) {
 	match items.get(arg) {
 		None => {
 			terminal::write_full("I do not know who or what that is.");

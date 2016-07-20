@@ -12,7 +12,7 @@ pub struct Location {
 	description: String,
 
 	directions: HashMap<String, Rc<RefCell<Box<Location>>>>,
-	items: HashMap<u64, Rc<Box<Item>>>,
+	items: HashMap<u32, Rc<Box<Item>>>,
 }
 
 impl Location {
