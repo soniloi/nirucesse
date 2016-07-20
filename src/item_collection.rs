@@ -14,6 +14,7 @@ const FILE_INDEX_ITEM_LONGNAME: usize = 5;
 const FILE_INDEX_ITEM_DESCRIPTION: usize = 6;
 const FILE_INDEX_ITEM_WRITING: usize = 7;
 //const ITEM_INDEX_START: usize = 1000; // ID numbers before this index are used for locations, everything from here on for items
+const ITEM_WRITING_NONE: &'static str = "0"; // String indicating that there is no writing
 
 const SEP_SECTION: &'static str = "---"; // String separating sections
 
@@ -48,7 +49,10 @@ impl ItemCollection {
 					let shortname = String::from(words[FILE_INDEX_ITEM_SHORTNAME]);
 					let longname = String::from(words[FILE_INDEX_ITEM_LONGNAME]);
 					let description = String::from(words[FILE_INDEX_ITEM_DESCRIPTION]);
-					let writing = String::from(words[FILE_INDEX_ITEM_WRITING]);
+					let writing = match words[FILE_INDEX_ITEM_WRITING] {
+						ITEM_WRITING_NONE => String::from(""),
+						writ => String::from(writ),
+					};
 
 					let item = Rc::new(Box::new(Item::new(id, properties, size, shortname.clone(), longname, description, writing)));
 					self.items.insert(shortname, item.clone());
