@@ -9,6 +9,7 @@ mod item_collection;
 mod location;
 mod location_collection;
 mod player;
+mod string_collection;
 mod terminal;
 
 use std::env;
@@ -19,6 +20,7 @@ use file_buffer::FileBuffer;
 use item_collection::ItemCollection;
 use location_collection::LocationCollection;
 use player::Player;
+use string_collection::StringCollection;
 
 fn main() {
 
@@ -41,11 +43,24 @@ fn main() {
     let mut item_coll = ItemCollection::new();
     item_coll.init(&mut buffer, &mut loc_coll);
 
+    let mut hints = StringCollection::new();
+    hints.init(&mut buffer);
+
 /*
     while !buffer.eof() {
 		println!("{}", buffer.get_line());
     }
 */
+
+	match hints.get(String::from("troll")) {
+		None => terminal::write_full("Error: no hint for troll."),
+		Some(hint) => terminal::write_full(hint),
+	}
+
+	match hints.get(String::from("cinnamon")) {
+		None => terminal::write_full("Pass: no hint found for cinnamon."),
+		_ => terminal::write_full("Error: hint found for unknown question: cinnamon."),
+	}
 
 	let start_loc = match loc_coll.get(9u32) {
 		None => panic!("Unable to set starting location number: {}", 9u32),
