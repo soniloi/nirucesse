@@ -46,6 +46,15 @@ fn main() {
     let mut hints = StringCollection::new();
     hints.init(&mut buffer);
 
+    let mut explanations = StringCollection::new();
+    explanations.init(&mut buffer);
+
+    let mut general = StringCollection::new();
+    general.init(&mut buffer);
+
+    let mut events = StringCollection::new();
+    events.init(&mut buffer);
+
 /*
     while !buffer.eof() {
 		println!("{}", buffer.get_line());
@@ -60,6 +69,21 @@ fn main() {
 	match hints.get(String::from("cinnamon")) {
 		None => terminal::write_full("Pass: no hint found for cinnamon."),
 		_ => terminal::write_full("Error: hint found for unknown question: cinnamon."),
+	}
+
+	match explanations.get(String::from("Taznassa")) {
+		None => terminal::write_full("Error: no explanation for Taznassa."),
+		Some(exp) => terminal::write_full(exp),
+	}
+
+	match general.get(String::from("drink")) {
+		None => terminal::write_full("Error: no string for drink."),
+		Some(st) => terminal::write_full(st),
+	}
+
+	match events.get(String::from("elf")) {
+		None => terminal::write_full("Error: no event for elf."),
+		Some(event) => terminal::write_full(event),
 	}
 
 	let start_loc = match loc_coll.get(9u32) {
