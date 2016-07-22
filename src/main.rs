@@ -1,6 +1,7 @@
 mod actions;
 mod command;
 mod command_collection;
+mod data_collection;
 mod file_buffer;
 mod file_util;
 mod inventory;
@@ -15,6 +16,7 @@ mod terminal;
 use std::env;
 use std::process;
 
+use data_collection::DataCollection;
 use command_collection::CommandCollection;
 use file_buffer::FileBuffer;
 use item_collection::ItemCollection;
@@ -33,7 +35,9 @@ fn main() {
     let filename = &args[1];
 
     let mut buffer = FileBuffer::new(filename);
-
+    let mut data = DataCollection::new();
+    data.init(&mut buffer);
+/*
     let mut cmd_coll = CommandCollection::new();
     cmd_coll.init(&mut buffer);
 
@@ -54,6 +58,7 @@ fn main() {
 
     let mut events = StringCollection::new();
     events.init(&mut buffer);
+*/
 
 /*
     while !buffer.eof() {
@@ -61,6 +66,7 @@ fn main() {
     }
 */
 
+/*
 	match hints.get(String::from("troll")) {
 		None => terminal::write_full("Error: no hint for troll."),
 		Some(hint) => terminal::write_full(hint),
@@ -85,8 +91,10 @@ fn main() {
 		None => terminal::write_full("Error: no event for elf."),
 		Some(event) => terminal::write_full(event),
 	}
+*/
+	let item_coll = data.get_items();
 
-	let start_loc = match loc_coll.get(9u32) {
+	let start_loc = match data.get_location(9u32) {
 		None => panic!("Unable to set starting location number: {}", 9u32),
 		Some(loc) => loc,
 	};
@@ -97,7 +105,7 @@ fn main() {
 		let inputs: Vec<String> = terminal::read_stub((*player).get_location().borrow().get_stubname());
 		let cmd_name = inputs[0].clone();
 		if !cmd_name.is_empty() {
-			match cmd_coll.get(cmd_name.clone()) {
+			match data.get_command(cmd_name.clone()) {
 				Some(cmd) => {
 					let arg: String = if inputs.len() > 1 { inputs[1].clone() } else { String::from("") };
 					(**cmd).execute(&item_coll, arg, &mut player)
