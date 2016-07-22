@@ -92,7 +92,7 @@ fn main() {
 		Some(event) => terminal::write_full(event),
 	}
 */
-	let item_coll = data.get_items();
+	//let item_coll = data.get_items();
 
 	let start_loc = match data.get_location(9u32) {
 		None => panic!("Unable to set starting location number: {}", 9u32),
@@ -108,7 +108,7 @@ fn main() {
 			match data.get_command(cmd_name.clone()) {
 				Some(cmd) => {
 					let arg: String = if inputs.len() > 1 { inputs[1].clone() } else { String::from("") };
-					(**cmd).execute(&item_coll, arg, &mut player)
+					(**cmd).execute(&data, arg, &mut player)
 				},
 				None => {
 					println!("No such command [{}]", cmd_name);

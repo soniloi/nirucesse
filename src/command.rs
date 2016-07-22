@@ -7,19 +7,19 @@ const CTRL_COMMAND_INVERTIBLE: u32 = 0x20; // Whether the command appears in ord
 const CTRL_COMMAND_MOVEMENT: u32 = 0x40; // Whether the command intends movement
 const CTRL_COMMAND_COMPOUND: u32 = 0x80; // Whether the command is compound e.g. "go" in "go north"
 
-use item_collection::ItemCollection;
+use data_collection::DataCollection;
 use player::Player;
 use terminal;
 
 pub struct Command {
 	name: String,
 	properties: u32,
-	handler: fn(items: &ItemCollection, arg: String, player: &mut Player),
+	handler: fn(items: &DataCollection, arg: String, player: &mut Player),
 }
 
 impl Command {
 
-	pub fn new(name: String, properties: u32, handler: fn(items: &ItemCollection, arg: String, player: &mut Player)) -> Command {
+	pub fn new(name: String, properties: u32, handler: fn(items: &DataCollection, arg: String, player: &mut Player)) -> Command {
 		Command {
 			name: name,
 			properties: properties,
@@ -43,7 +43,7 @@ impl Command {
 		self.has_property(CTRL_COMMAND_TAKES_ARG)
 	}
 
-	pub fn execute(&self, items: &ItemCollection, arg: String, player: &mut Player) {
+	pub fn execute(&self, data: &DataCollection, arg: String, player: &mut Player) {
 		let h = self.handler;
 		let mut actual_arg = arg;
 
@@ -60,7 +60,7 @@ impl Command {
 				} else {
 					// FIXME: fix the lifetime on actual_arg/further_args
 					let actual_arg = String::new() + &further_args[0];
-					h(items, actual_arg, player);
+					h(data, actual_arg, player);
 					return;
 				}
 			}
@@ -79,6 +79,6 @@ impl Command {
 			}
 		}
 
-		h(items, actual_arg, player);
+		h(data, actual_arg, player);
 	}
 }

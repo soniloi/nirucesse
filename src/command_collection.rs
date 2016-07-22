@@ -4,7 +4,7 @@ use std::rc::Rc;
 use actions;
 use command::Command;
 use file_buffer::FileBuffer;
-use item_collection::ItemCollection;
+use data_collection::DataCollection;
 use player::Player;
 
 const FILE_INDEX_COMMAND_TAG: usize = 0;
@@ -27,7 +27,7 @@ impl CommandCollection {
 
 	pub fn init(&mut self, buffer: &mut FileBuffer) {
 		// TODO: make static
-		let mut acts: HashMap<&str, fn(items: &ItemCollection, arg: String, player: &mut Player)> = HashMap::new();
+		let mut acts: HashMap<&str, fn(items: &DataCollection, arg: String, player: &mut Player)> = HashMap::new();
 		acts.insert("describe", actions::do_describe);
 		acts.insert("down", actions::do_go);
 		acts.insert("drop", actions::do_drop);
@@ -84,5 +84,4 @@ impl CommandCollection {
 	pub fn get(&self, key: String) -> Option<&Rc<Box<Command>>> {
 		self.commands.get(&key)
 	}
-
 }
