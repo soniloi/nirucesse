@@ -71,9 +71,4 @@ impl DataCollection {
 	pub fn get_event(&self, key: String) -> Option<&String> {
 		self.events.get(key)
 	}
-
-	// TODO: remove when replaced
-	pub fn get_items(&self) -> &ItemCollection {
-		&self.items
-	}
 }

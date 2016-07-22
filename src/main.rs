@@ -17,12 +17,8 @@ use std::env;
 use std::process;
 
 use data_collection::DataCollection;
-use command_collection::CommandCollection;
 use file_buffer::FileBuffer;
-use item_collection::ItemCollection;
-use location_collection::LocationCollection;
 use player::Player;
-use string_collection::StringCollection;
 
 fn main() {
 
@@ -37,62 +33,6 @@ fn main() {
     let mut buffer = FileBuffer::new(filename);
     let mut data = DataCollection::new();
     data.init(&mut buffer);
-/*
-    let mut cmd_coll = CommandCollection::new();
-    cmd_coll.init(&mut buffer);
-
-    let mut loc_coll = LocationCollection::new();
-    loc_coll.init(&mut buffer);
-
-    let mut item_coll = ItemCollection::new();
-    item_coll.init(&mut buffer, &mut loc_coll);
-
-    let mut hints = StringCollection::new();
-    hints.init(&mut buffer);
-
-    let mut explanations = StringCollection::new();
-    explanations.init(&mut buffer);
-
-    let mut general = StringCollection::new();
-    general.init(&mut buffer);
-
-    let mut events = StringCollection::new();
-    events.init(&mut buffer);
-*/
-
-/*
-    while !buffer.eof() {
-		println!("{}", buffer.get_line());
-    }
-*/
-
-/*
-	match hints.get(String::from("troll")) {
-		None => terminal::write_full("Error: no hint for troll."),
-		Some(hint) => terminal::write_full(hint),
-	}
-
-	match hints.get(String::from("cinnamon")) {
-		None => terminal::write_full("Pass: no hint found for cinnamon."),
-		_ => terminal::write_full("Error: hint found for unknown question: cinnamon."),
-	}
-
-	match explanations.get(String::from("Taznassa")) {
-		None => terminal::write_full("Error: no explanation for Taznassa."),
-		Some(exp) => terminal::write_full(exp),
-	}
-
-	match general.get(String::from("drink")) {
-		None => terminal::write_full("Error: no string for drink."),
-		Some(st) => terminal::write_full(st),
-	}
-
-	match events.get(String::from("elf")) {
-		None => terminal::write_full("Error: no event for elf."),
-		Some(event) => terminal::write_full(event),
-	}
-*/
-	//let item_coll = data.get_items();
 
 	let start_loc = match data.get_location(9u32) {
 		None => panic!("Unable to set starting location number: {}", 9u32),

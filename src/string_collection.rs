@@ -1,7 +1,5 @@
 use std::collections::HashMap;
-use std::rc::Rc;
 
-use actions;
 use file_buffer::FileBuffer;
 
 const FILE_INDEX_STRING_TAG: usize = 0;
