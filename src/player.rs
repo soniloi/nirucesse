@@ -118,9 +118,4 @@ impl Player {
 			terminal::write_full(&response);
 		}
 	}
-
-	pub fn write_out(&self) {
-		println!("Player [current score={}] [location={}]", self.score, self.location.borrow().get_stubname());
-		self.inventory.write_out();
-	}
 }

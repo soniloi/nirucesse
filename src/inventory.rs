@@ -41,15 +41,4 @@ impl Inventory {
 		}
 		result
 	}
-
-	pub fn write_out(&self) {
-		if self.items.is_empty() {
-			println!("There are currently no items in the inventory.");
-		} else {
-			println!("The inventory contains the following items:");
-			for (key, val) in self.items.iter() {
-				println!("\t{} [id={}]", (**val).get_longname(), key);
-			}
-		}
-	}
 }

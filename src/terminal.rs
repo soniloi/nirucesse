@@ -85,7 +85,7 @@ fn write(st: &str) {
 // Create a prompt based on a short word and read from stdin
 pub fn read_stub(stubname: &str) -> Vec<String> {
 	let mut prompt: String = String::from(stubname);
-	for i in stubname.len()..PROMPT_EFFECTIVE_WIDTH {
+	for _ in stubname.len()..PROMPT_EFFECTIVE_WIDTH {
 		prompt.push(' ');
 	}
 
@@ -108,7 +108,7 @@ fn read_prompted(prompt: &str) -> Vec<String> {
 	let mut result_iter = result_raw.trim().split(" ");
 
 	let mut result_vec: Vec<String> = vec![];
-	for i in 0..MAX_TOKENS {
+	for _ in 0..MAX_TOKENS {
 		match result_iter.next() {
 			Some(st) => {result_vec.push(st.to_lowercase()); },
 			None => break,
