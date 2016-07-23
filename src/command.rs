@@ -43,6 +43,10 @@ impl Command {
 		self.has_property(CTRL_COMMAND_TAKES_ARG)
 	}
 
+	pub fn is_secret(&self) -> bool {
+		self.has_property(CTRL_COMMAND_SECRET)
+	}
+
 	pub fn execute(&self, data: &DataCollection, arg: String, player: &mut Player) {
 		let h = self.handler;
 		let mut actual_arg = arg;

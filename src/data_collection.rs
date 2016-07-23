@@ -71,4 +71,8 @@ impl DataCollection {
 	pub fn get_event(&self, key: String) -> Option<&String> {
 		self.events.get(key)
 	}
+
+	pub fn get_commands_non_secret(&self) -> String {
+		self.commands.mk_non_secret_string()
+	}
 }

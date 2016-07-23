@@ -16,6 +16,7 @@ const CONSOLE_EFFECTIVE_WIDTH: usize = CONSOLE_WIDTH - PROMPT_WIDTH;
 const MAX_TOKENS: u32 = 2;
 
 pub fn write_full(st: &str) {
+
 	let raw: Vec<char> = st.chars().collect();
 	write_sections(&raw, 0, PROMPT_FULL);
 }
@@ -47,7 +48,7 @@ fn write_sections(chars: &Vec<char>, start_index: usize, prompt: &str) {
 
 		} else {
 			// This string is a lost cause, so just dump out whatever is left
-			write_remainder(&chars, start_index, chars.len(), prompt);
+			write_remainder(&chars, start_index, chars.len() - 1, prompt);
 		}
 	}
 }

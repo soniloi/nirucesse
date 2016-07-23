@@ -2,6 +2,10 @@ use data_collection::DataCollection;
 use player::Player;
 use terminal;
 
+pub fn do_commands(data: &DataCollection, arg: String, player: &mut Player) {
+	terminal::write_full(&data.get_commands_non_secret());
+}
+
 pub fn do_describe(data: &DataCollection, arg: String, player: &mut Player) {
 	match data.get_item(arg) {
 		None => {

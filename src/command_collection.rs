@@ -28,6 +28,7 @@ impl CommandCollection {
 	pub fn init(&mut self, buffer: &mut FileBuffer) {
 		// TODO: make static
 		let mut acts: HashMap<&str, fn(items: &DataCollection, arg: String, player: &mut Player)> = HashMap::new();
+		acts.insert("commands", actions::do_commands);
 		acts.insert("describe", actions::do_describe);
 		acts.insert("down", actions::do_go);
 		acts.insert("drop", actions::do_drop);
@@ -72,7 +73,9 @@ impl CommandCollection {
 							let cmd: Rc<Box<Command>> = Rc::new(Box::new(Command::new(primary, status, *act)));
 							self.commands.insert(key, cmd.clone());
 							for i in FILE_INDEX_COMMAND_ALIAS_START..words.len() {
-								self.commands.insert(String::from(words[i]), cmd.clone());
+								if !words[i].is_empty() {
+									self.commands.insert(String::from(words[i]), cmd.clone());
+								}
 							}
 						},
 					}
@@ -84,5 +87,15 @@ impl CommandCollection {
 
 	pub fn get(&self, key: String) -> Option<&Rc<Box<Command>>> {
 		self.commands.get(&key)
+	}
+
+	pub fn mk_non_secret_string(&self) -> String {
+		let mut result: String = String::from("I understand the following commands (and possibly others):\n");
+		for (tag, command) in self.commands.iter() {
+			if !command.is_secret() {
+				result = result + "[" + tag + "] ";
+			}
+		}
+		result
 	}
 }
