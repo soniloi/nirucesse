@@ -2,6 +2,7 @@ use data_collection::DataCollection;
 use player::Player;
 use terminal;
 
+#[allow(unused_variables)]
 pub fn do_commands(data: &DataCollection, arg: String, player: &mut Player) {
 	terminal::write_full(&data.get_commands_non_secret());
 }
@@ -79,6 +80,7 @@ pub fn do_take(data: &DataCollection, arg: String, player: &mut Player) {
 	}
 }
 
+#[allow(unused_variables)]
 pub fn do_xyzzy(data: &DataCollection, arg: String, player: &mut Player) {
 	terminal::write_full("OK.");
 }

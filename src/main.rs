@@ -51,7 +51,6 @@ fn main() {
 					(**cmd).execute(&data, arg, &mut player)
 				},
 				None => {
-					println!("No such command [{}]", cmd_name);
 					terminal::write_full("I do not understand that instruction");
 				},
 			}
