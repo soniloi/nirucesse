@@ -46,6 +46,7 @@ impl CommandCollection {
 		acts.insert("take", actions::do_take);
 		acts.insert("up", actions::do_go);
 		acts.insert("west", actions::do_go);
+		acts.insert("xyzzy", actions::do_xyzzy);
 
 		let mut line = buffer.get_line();
 	    while !buffer.eof() {

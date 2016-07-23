@@ -74,3 +74,7 @@ pub fn do_take(data: &DataCollection, arg: String, player: &mut Player) {
 		}
 	}
 }
+
+pub fn do_xyzzy(data: &DataCollection, arg: String, player: &mut Player) {
+	terminal::write_full("OK.");
+}
