@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use location::Location;
+use data_collection;
 use file_buffer::FileBuffer;
 
 const FILE_INDEX_LOCATION_ID: usize = 0;
@@ -48,8 +49,8 @@ impl LocationCollection {
 					let words_split = x.split("\t");
 					let words: Vec<&str> = words_split.collect();
 
-					let id = str_to_u32(words[FILE_INDEX_LOCATION_ID], 10);
-					let properties = str_to_u32(words[FILE_INDEX_LOCATION_STATUS], 16);
+					let id = data_collection::str_to_u32(words[FILE_INDEX_LOCATION_ID], 10);
+					let properties = data_collection::str_to_u32(words[FILE_INDEX_LOCATION_STATUS], 16);
 					let shortname = String::from(words[FILE_INDEX_LOCATION_SHORTNAME]);
 					let longname = String::from(words[FILE_INDEX_LOCATION_LONGNAME]);
 					let description = String::from(words[FILE_INDEX_LOCATION_DESCRIPTION]);
@@ -58,16 +59,16 @@ impl LocationCollection {
 					self.locations.insert(id, loc);
 
 					let mut links: Box<HashMap<String, u32>> = Box::new(HashMap::new());
-					links.insert(String::from("north"), str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_N], 10));
-					links.insert(String::from("south"), str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_S], 10));
-					links.insert(String::from("east"), str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_E], 10));
-					links.insert(String::from("west"), str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_W], 10));
-					links.insert(String::from("northeast"), str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_NE], 10));
-					links.insert(String::from("southwest"), str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_SW], 10));
-					links.insert(String::from("southeast"), str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_SE], 10));
-					links.insert(String::from("northwest"), str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_NW], 10));
-					links.insert(String::from("up"), str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_U], 10));
-					links.insert(String::from("down"), str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_D], 10));
+					links.insert(String::from("north"), data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_N], 10));
+					links.insert(String::from("south"), data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_S], 10));
+					links.insert(String::from("east"), data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_E], 10));
+					links.insert(String::from("west"), data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_W], 10));
+					links.insert(String::from("northeast"), data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_NE], 10));
+					links.insert(String::from("southwest"), data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_SW], 10));
+					links.insert(String::from("southeast"), data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_SE], 10));
+					links.insert(String::from("northwest"), data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_NW], 10));
+					links.insert(String::from("up"), data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_U], 10));
+					links.insert(String::from("down"), data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_D], 10));
 					all_links.insert(id, links.clone());
 				},
 			}
@@ -105,11 +106,4 @@ impl LocationCollection {
 		self.locations.get(&key)
 	}
 
-}
-
-fn str_to_u32(st: &str, radix: u32) -> u32 {
-	match u32::from_str_radix(st, radix) {
-		Err(why) => panic!("Unable to parse integer field {}: {}", st, why),
-		Ok(status) => status,
-	}
 }

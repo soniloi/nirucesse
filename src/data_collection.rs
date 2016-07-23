@@ -76,3 +76,10 @@ impl DataCollection {
 		self.commands.mk_non_secret_string()
 	}
 }
+
+pub fn str_to_u32(st: &str, radix: u32) -> u32 {
+	match u32::from_str_radix(st, radix) {
+		Err(why) => panic!("Unable to parse integer field {}: {}", st, why),
+		Ok(status) => status,
+	}
+}

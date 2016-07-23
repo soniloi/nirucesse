@@ -3,8 +3,9 @@ use std::rc::Rc;
 
 use actions;
 use command::Command;
-use file_buffer::FileBuffer;
+use data_collection;
 use data_collection::DataCollection;
+use file_buffer::FileBuffer;
 use player::Player;
 
 const FILE_INDEX_COMMAND_TAG: usize = 0;
@@ -60,17 +61,13 @@ impl CommandCollection {
 
 					let primary = String::from(words[FILE_INDEX_COMMAND_PRIMARY]);
 					let key = primary.clone();
-					let status_str = words[FILE_INDEX_COMMAND_STATUS];
-					let status = match u32::from_str_radix(status_str, 16) {
-						Err(why) => panic!("Unable to parse integer field {}: {}", status_str, why),
-						Ok(status) => status,
-					};
-
+					let properties = data_collection::str_to_u32(words[FILE_INDEX_COMMAND_STATUS], 16);
 					let tag = words[FILE_INDEX_COMMAND_TAG];
+
 					match acts.get(tag) {
 						None => println!("\x1b[31m[Warning: no action function found for tag [{}]; skipping]\x1b[0m", tag),
 						Some(act) => {
-							let cmd: Rc<Box<Command>> = Rc::new(Box::new(Command::new(primary, status, *act)));
+							let cmd: Rc<Box<Command>> = Rc::new(Box::new(Command::new(primary, properties, *act)));
 							self.commands.insert(key, cmd.clone());
 							for i in FILE_INDEX_COMMAND_ALIAS_START..words.len() {
 								if !words[i].is_empty() {
