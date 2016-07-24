@@ -41,6 +41,14 @@ pub fn do_go_disambiguate(data: &DataCollection, arg: String, player: &mut Playe
 	terminal::write_full("Use compass points or directions (e.g. \"north\", \"down\") to travel to a new location.");
 }
 
+pub fn do_hint(data: &DataCollection, arg: String, player: &mut Player) {
+	match data.get_hint(arg) {
+		None => terminal::write_full("I have no hints to offer about such a thing."),
+		Some(hint) => terminal::write_full(hint),
+	}
+	player.increment_hints();
+}
+
 #[allow(unused_variables)]
 pub fn do_inventory(data: &DataCollection, arg: String, player: &mut Player) {
 	terminal::write_full(&player.mk_inventory_string());

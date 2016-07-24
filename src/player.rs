@@ -11,6 +11,7 @@ pub struct Player {
 	location: Rc<RefCell<Box<Location>>>,
 	score: u32,
 	playing: bool,
+	hints: u32,
 }
 
 impl Player {
@@ -21,6 +22,7 @@ impl Player {
 			location: initial,
 			score: 0u32,
 			playing: true,
+			hints: 0u32,
 		}
 	}
 
@@ -100,6 +102,10 @@ impl Player {
 				terminal::write_full(&self.location.borrow().mk_full_string());
 			},
 		}
+	}
+
+	pub fn increment_hints(&mut self) {
+		self.hints = self.hints + 1;
 	}
 
 	pub fn mk_inventory_string(&self) -> String {
