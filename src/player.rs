@@ -126,6 +126,10 @@ impl Player {
 		self.instructions = self.instructions + 1;
 	}
 
+	pub fn decrement_instructions(&mut self) {
+		self.instructions = self.instructions - 1;
+	}
+
 	pub fn mk_inventory_string(&self) -> String {
 		self.inventory.mk_string()
 	}
