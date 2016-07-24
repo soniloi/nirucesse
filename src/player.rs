@@ -9,9 +9,10 @@ use terminal;
 pub struct Player {
 	inventory: Inventory,
 	location: Rc<RefCell<Box<Location>>>,
-	score: u32,
-	playing: bool,
-	hints: u32,
+	score: u32, // player's current score
+	playing: bool, // whether player is currently playing
+	hints: u32, // number of hints player has requested
+	instructions: u32, // number of instructions player has entered
 }
 
 impl Player {
@@ -23,6 +24,7 @@ impl Player {
 			score: 0u32,
 			playing: true,
 			hints: 0u32,
+			instructions: 0u32,
 		}
 	}
 
@@ -108,8 +110,20 @@ impl Player {
 		self.score
 	}
 
+	pub fn get_hints(&self) -> u32 {
+		self.hints
+	}
+
 	pub fn increment_hints(&mut self) {
 		self.hints = self.hints + 1;
+	}
+
+	pub fn get_instructions(&self) -> u32 {
+		self.instructions
+	}
+
+	pub fn increment_instructions(&mut self) {
+		self.instructions = self.instructions + 1;
 	}
 
 	pub fn mk_inventory_string(&self) -> String {

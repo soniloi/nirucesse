@@ -78,7 +78,9 @@ pub fn do_read(data: &DataCollection, arg: String, player: &mut Player) {
 
 #[allow(unused_variables)]
 pub fn do_score(data: &DataCollection, arg: String, player: &mut Player) {
-	let score_str = String::from("You currently have a score of ") + &player.get_score().to_string() + " points.";
+	let score_str = String::from("You currently have a score of ") + &player.get_score().to_string() +
+		" points. You have entered " + &player.get_instructions().to_string() +
+		" instructions, and requested " + &player.get_hints().to_string() + " hints.";
 	terminal::write_full(&score_str);
 }
 

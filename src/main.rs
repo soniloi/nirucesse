@@ -45,6 +45,7 @@ fn main() {
 		let inputs: Vec<String> = terminal::read_stub((*player).get_location().borrow().get_stubname());
 		let cmd_name = inputs[0].clone();
 		if !cmd_name.is_empty() {
+			player.increment_instructions();
 			match data.get_command(cmd_name.clone()) {
 				Some(cmd) => {
 					let arg: String = if inputs.len() > 1 { inputs[1].clone() } else { String::from("") };
