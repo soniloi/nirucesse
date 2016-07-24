@@ -104,6 +104,10 @@ impl Player {
 		}
 	}
 
+	pub fn get_score(&self) -> u32 {
+		self.score
+	}
+
 	pub fn increment_hints(&mut self) {
 		self.hints = self.hints + 1;
 	}

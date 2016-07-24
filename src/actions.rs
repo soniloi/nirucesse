@@ -76,6 +76,12 @@ pub fn do_read(data: &DataCollection, arg: String, player: &mut Player) {
 	}
 }
 
+#[allow(unused_variables)]
+pub fn do_score(data: &DataCollection, arg: String, player: &mut Player) {
+	let score_str = String::from("You currently have a score of ") + &player.get_score().to_string() + " points.";
+	terminal::write_full(&score_str);
+}
+
 pub fn do_take(data: &DataCollection, arg: String, player: &mut Player) {
 	match data.get_item(arg) {
 		None => {
