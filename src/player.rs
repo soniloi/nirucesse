@@ -28,6 +28,10 @@ impl Player {
 		}
 	}
 
+	fn has_light(&self) -> bool {
+		self.inventory.has_light() || self.location.borrow().has_light()
+	}
+
 	pub fn contains_item(&self, item_ptr: &Rc<Box<Item>>) -> bool {
 		self.inventory.contains_item(item_ptr)
 	}
@@ -105,15 +109,10 @@ impl Player {
 			},
 		}
 
-		if self.location.borrow().has_light() {
-			terminal::write_full("There is light here.");
+		if self.has_light() {
+			terminal::write_full("You have light.");
 		} else {
-			terminal::write_full("It is dark here.");
-		}
-		if self.inventory.has_light() {
-			terminal::write_full("Something you are carrying emits light.");
-		} else {
-			terminal::write_full("You are not carrying anything that emits light.");
+			terminal::write_full("You do not have light.");
 		}
 	}
 
