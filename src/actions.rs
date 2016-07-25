@@ -41,6 +41,7 @@ pub fn do_go_disambiguate(data: &DataCollection, arg: String, player: &mut Playe
 	terminal::write_full("Use compass points or directions (e.g. \"north\", \"down\") to travel to a new location.");
 }
 
+#[allow(unused_variables)]
 pub fn do_help(data: &DataCollection, arg: String, player: &mut Player) {
 	player.decrement_instructions(); // Requesting help does not count as an instruction
 	match data.get_response(String::from("help")) {
@@ -107,5 +108,8 @@ pub fn do_take(data: &DataCollection, arg: String, player: &mut Player) {
 
 #[allow(unused_variables)]
 pub fn do_xyzzy(data: &DataCollection, arg: String, player: &mut Player) {
-	terminal::write_full("OK.");
+	match data.get_response(String::from("ok")) {
+		None => {},
+		Some(h) => terminal::write_full(h),
+	}
 }
