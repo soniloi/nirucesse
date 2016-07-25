@@ -35,7 +35,6 @@ impl Location {
 		self.properties & property != 0
 	}
 
-
 	pub fn has_light(&self) -> bool {
 		// First check whether the location has ambient light
 		if self.has_property(CTRL_LOC_HAS_LIGHT) {

@@ -110,6 +110,11 @@ impl Player {
 		} else {
 			terminal::write_full("It is dark here.");
 		}
+		if self.inventory.has_light() {
+			terminal::write_full("Something you are carrying emits light.");
+		} else {
+			terminal::write_full("You are not carrying anything that emits light.");
+		}
 	}
 
 	pub fn get_score(&self) -> u32 {

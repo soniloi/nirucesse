@@ -17,6 +17,17 @@ impl Inventory {
 		}
 	}
 
+	pub fn has_light(&self) -> bool {
+		// Inventory has light if any item within it has light
+		for item in self.items.values() {
+			if item.has_light() {
+				return true
+			}
+		}
+
+		false
+	}
+
 	pub fn contains_item(&self, item: &Rc<Box<Item>>) -> bool {
 		self.items.contains_key(&(*item).get_id())
 	}
