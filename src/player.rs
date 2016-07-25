@@ -104,6 +104,12 @@ impl Player {
 				terminal::write_full(&self.location.borrow().mk_full_string());
 			},
 		}
+
+		if self.location.borrow().has_light() {
+			terminal::write_full("There is light here.");
+		} else {
+			terminal::write_full("It is dark here.");
+		}
 	}
 
 	pub fn get_score(&self) -> u32 {

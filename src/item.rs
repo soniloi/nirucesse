@@ -1,3 +1,5 @@
+const CTRL_ITEM_GIVES_LIGHT: u32 = 0x10; // Whether the item emits light
+
 pub struct Item {
 	id: u32,
 	properties: u32,
@@ -20,6 +22,14 @@ impl Item {
 			description: description,
 			writing: writing,
 		}
+	}
+
+	fn has_property(&self, property: u32) -> bool {
+		self.properties & property != 0
+	}
+
+	pub fn has_light(&self) -> bool {
+		self.has_property(CTRL_ITEM_GIVES_LIGHT)
 	}
 
 	pub fn get_id(&self) -> u32 {

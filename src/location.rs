@@ -4,6 +4,8 @@ use std::rc::Rc;
 
 use item::Item;
 
+const CTRL_LOC_HAS_LIGHT: u32 = 0x01; // Whether the location has ambient lighting
+
 pub struct Location {
 	id: u32,
 	properties: u32,
@@ -27,6 +29,27 @@ impl Location {
 			directions: HashMap::with_capacity(11),
 			items: HashMap::new(),
 		}
+	}
+
+	fn has_property(&self, property: u32) -> bool {
+		self.properties & property != 0
+	}
+
+
+	pub fn has_light(&self) -> bool {
+		// First check whether the location has ambient light
+		if self.has_property(CTRL_LOC_HAS_LIGHT) {
+			return true
+		}
+
+		// Next check whether any items at location emit light
+		for item in self.items.values() {
+			if item.has_light() {
+				return true
+			}
+		}
+
+		false
 	}
 
 	pub fn get_direction(&self, dir: String) -> Option<&Rc<RefCell<Box<Location>>>> {
