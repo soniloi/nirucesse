@@ -1,3 +1,5 @@
+extern crate rand;
+
 mod actions;
 mod command;
 mod command_collection;

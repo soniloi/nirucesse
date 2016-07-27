@@ -1,4 +1,6 @@
 use std::cell::RefCell;
+use rand;
+use rand::Rng;
 use std::rc::Rc;
 
 use inventory::Inventory;
@@ -107,19 +109,16 @@ impl Player {
 				return;
 			},
 			Some(next) => {
-				if !self.has_light() && !next.borrow().has_light() {
+				let mut rng = rand::thread_rng();
+				let death_rand: u32 = rng.gen();
+				let death = death_rand % 4 == 0;
+				if !self.has_light() && !next.borrow().has_light() && death {
 					terminal::write_full("... ouch! You seem to have tripped on something. You fall and break your neck in a multitude of places.");
 				} else {
 					self.location = next.clone();
 					terminal::write_full(&self.location.borrow().mk_full_string());
 				}
 			},
-		}
-
-		if self.has_light() {
-			terminal::write_full("You have light.");
-		} else {
-			terminal::write_full("You do not have light.");
 		}
 	}
 
