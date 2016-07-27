@@ -102,10 +102,17 @@ impl Player {
 		let loc_clone = self.location.clone();
 		let self_loc = loc_clone.borrow();
 		match self_loc.get_direction(dir) {
-			None => terminal::write_full("You cannot go that way."),
-			Some(l) => {
-				self.location = l.clone();
-				terminal::write_full(&self.location.borrow().mk_full_string());
+			None => {
+				terminal::write_full("You cannot go that way.");
+				return;
+			},
+			Some(next) => {
+				if !self.has_light() && !next.borrow().has_light() {
+					terminal::write_full("... ouch! You seem to have tripped on something. You fall and break your neck in a multitude of places.");
+				} else {
+					self.location = next.clone();
+					terminal::write_full(&self.location.borrow().mk_full_string());
+				}
 			},
 		}
 
