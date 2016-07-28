@@ -133,17 +133,21 @@ impl Player {
 				return;
 			},
 			Some(next) => {
-				let mut rng = rand::thread_rng();
-				let death_rand: u32 = rng.gen();
-				let death = death_rand % 4 == 0;
-				if !self.has_light() && !next.borrow().has_light() && death {
-					terminal::write_full("... ouch! You seem to have tripped on something. You fall and break your neck in a multitude of places.");
-					self.die(data);
-				} else {
-					self.location = next.clone();
-					terminal::write_full(&self.location.borrow().mk_full_string());
-				}
+				self.go_to(data, next);
 			},
+		}
+	}
+
+	fn go_to(&mut self, data: &DataCollection, next: &Rc<RefCell<Box<Location>>>) {
+		let mut rng = rand::thread_rng();
+		let death_rand: u32 = rng.gen();
+		let death = death_rand % 4 == 0;
+		if !self.has_light() && !next.borrow().has_light() && death {
+			terminal::write_full("... ouch! You seem to have tripped on something. You fall and break your neck in a multitude of places.");
+			self.die(data);
+		} else {
+			self.location = next.clone();
+			terminal::write_full(&self.location.borrow().mk_full_string());
 		}
 	}
 
