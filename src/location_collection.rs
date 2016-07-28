@@ -23,10 +23,13 @@ const FILE_INDEX_LOCATION_LONGNAME: usize = 13;
 const FILE_INDEX_LOCATION_DESCRIPTION: usize = 14;
 const KEY_DIRECTION_NONE: u32 = 0;
 
+const LOCATION_INDEX_WAKE: u32 = 9;
+
 const SEP_SECTION: &'static str = "---"; // String separating sections
 
 pub struct LocationCollection {
 	locations: HashMap<u32, Rc<RefCell<Box<Location>>>>,
+	location_wake: u32, // Where the player wakes on game start, or after being reincarnated
 }
 
 impl LocationCollection {
@@ -34,6 +37,7 @@ impl LocationCollection {
 	pub fn new() -> LocationCollection {
 		LocationCollection {
 			locations: HashMap::new(),
+			location_wake: LOCATION_INDEX_WAKE,
 		}
 	}
 
@@ -106,4 +110,7 @@ impl LocationCollection {
 		self.locations.get(&key)
 	}
 
+	pub fn get_location_wake(&self) -> Option<&Rc<RefCell<Box<Location>>>> {
+		self.get(self.location_wake)
+	}
 }

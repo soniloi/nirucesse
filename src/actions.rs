@@ -33,7 +33,7 @@ pub fn do_drop(data: &DataCollection, arg: String, player: &mut Player) {
 
 #[allow(unused_variables)]
 pub fn do_go(data: &DataCollection, arg: String, player: &mut Player) {
-	player.go(String::from(arg));
+	player.go(data, String::from(arg));
 }
 
 #[allow(unused_variables)]

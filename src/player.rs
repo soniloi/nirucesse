@@ -3,6 +3,7 @@ use rand;
 use rand::Rng;
 use std::rc::Rc;
 
+use data_collection::DataCollection;
 use inventory::Inventory;
 use item::Item;
 use location::Location;
@@ -64,6 +65,16 @@ impl Player {
 		self.alive = b
 	}
 
+	fn die(&mut self, data: &DataCollection) {
+		self.set_alive(false);
+		match data.get_location_wake() {
+			None => panic!("Unable to get wake location, fail"),
+			Some(loc_wake) => {
+				self.location = loc_wake.clone();
+			},
+		}
+	}
+
 	// Have player attempt to pick up item from current location
 	pub fn pick_up(&mut self, item: &Rc<Box<Item>>) {
 		if self.contains_item(item) {
@@ -109,7 +120,7 @@ impl Player {
 
 	// Have player travel to an adjacent location
 	// TODO: I don't really like this very much; there's probably a better way
-	pub fn go(&mut self, dir: String) {
+	pub fn go(&mut self, data: &DataCollection, dir: String) {
 
 		let loc_clone = self.location.clone();
 		let self_loc = loc_clone.borrow();
@@ -124,7 +135,7 @@ impl Player {
 				let death = death_rand % 4 == 0;
 				if !self.has_light() && !next.borrow().has_light() && death {
 					terminal::write_full("... ouch! You seem to have tripped on something. You fall and break your neck in a multitude of places.");
-					self.alive = false;
+					self.die(data);
 				} else {
 					self.location = next.clone();
 					terminal::write_full(&self.location.borrow().mk_full_string());
