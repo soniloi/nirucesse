@@ -16,6 +16,7 @@ pub struct Player {
 	playing: bool, // whether player is currently playing
 	hints: u32, // number of hints player has requested
 	instructions: u32, // number of instructions player has entered
+	deaths: u32, // number of times player has died
 	alive: bool,
 }
 
@@ -29,6 +30,7 @@ impl Player {
 			playing: true,
 			hints: 0u32,
 			instructions: 0u32,
+			deaths: 0u32,
 			alive: true,
 		}
 	}
@@ -67,6 +69,7 @@ impl Player {
 
 	fn die(&mut self, data: &DataCollection) {
 		self.set_alive(false);
+		self.increment_deaths();
 		match data.get_location_wake() {
 			None => panic!("Unable to get wake location, fail"),
 			Some(loc_wake) => {
@@ -166,6 +169,14 @@ impl Player {
 
 	pub fn decrement_instructions(&mut self) {
 		self.instructions = self.instructions - 1;
+	}
+
+	pub fn get_deaths(&self) -> u32 {
+		self.deaths
+	}
+
+	pub fn increment_deaths(&mut self) {
+		self.deaths = self.deaths + 1;
 	}
 
 	pub fn mk_inventory_string(&self) -> String {
