@@ -15,6 +15,7 @@ pub struct Player {
 	playing: bool, // whether player is currently playing
 	hints: u32, // number of hints player has requested
 	instructions: u32, // number of instructions player has entered
+	alive: bool,
 }
 
 impl Player {
@@ -27,6 +28,7 @@ impl Player {
 			playing: true,
 			hints: 0u32,
 			instructions: 0u32,
+			alive: true,
 		}
 	}
 
@@ -52,6 +54,10 @@ impl Player {
 
 	pub fn set_playing(&mut self, b: bool) {
 		self.playing = b
+	}
+
+	pub fn is_alive(&self) -> bool {
+		self.alive
 	}
 
 	// Have player attempt to pick up item from current location
@@ -114,6 +120,7 @@ impl Player {
 				let death = death_rand % 4 == 0;
 				if !self.has_light() && !next.borrow().has_light() && death {
 					terminal::write_full("... ouch! You seem to have tripped on something. You fall and break your neck in a multitude of places.");
+					self.alive = false;
 				} else {
 					self.location = next.clone();
 					terminal::write_full(&self.location.borrow().mk_full_string());

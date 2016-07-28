@@ -43,7 +43,7 @@ fn main() {
 	let mut player = Box::new(Player::new(start_loc.clone()));
 
 	terminal::write_full("You awaken. You feel ill and dazed. Slowly you raise your head. You try to look around. You are intermittently blinded by flickering light. Groggily and warily you flail around.");
-	while player.is_playing() {
+	while player.is_alive() && player.is_playing() {
 		let inputs: Vec<String> = terminal::read_stub((*player).get_location().borrow().get_stubname());
 		let cmd_name = inputs[0].clone();
 		if !cmd_name.is_empty() {
