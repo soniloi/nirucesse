@@ -58,8 +58,49 @@ fn main() {
 				},
 			}
 		}
+		// Something in this move killed the player; see whether they want to continue
+		if !player.is_alive() {
+			terminal::write_full("You appear to be dead. I can attempt to reincarnate you, but not everything will necessarily be as it was before.");
+
+			let reincarnate: bool = get_response("Would you like to be reincarnated?");
+			match reincarnate {
+				true => {
+					terminal::write_full("All right, I will see what I can do ... *******~~~*******ALAKAZAM*******~~~*******");
+					player.set_alive(true);
+				},
+				false => {
+					terminal::write_full("OK")
+				},
+			}
+		}
 	}
 
 	// Clean
 	terminal::reset();
+}
+
+// Look for an answer to a yes-no question
+fn get_response(question: &str) -> bool {
+
+	let mut response_valid: bool = false;
+	while !response_valid {
+		let mut response: Vec<String> = terminal::read_question(question);
+		while response.is_empty() {
+			response = terminal::read_question(question);
+		}
+
+		match response[0].as_ref() {
+			"yes" | "y" | "true" => {
+				response_valid = true;
+				return true;
+			},
+			"no" | "n" | "false" => {
+				response_valid = true;
+				return false;
+			},
+			_ => terminal::write_full("I do not understand that response."),
+		}
+	}
+
+	false
 }

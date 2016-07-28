@@ -60,6 +60,10 @@ impl Player {
 		self.alive
 	}
 
+	pub fn set_alive(&mut self, b: bool) {
+		self.alive = b
+	}
+
 	// Have player attempt to pick up item from current location
 	pub fn pick_up(&mut self, item: &Rc<Box<Item>>) {
 		if self.contains_item(item) {
