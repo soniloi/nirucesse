@@ -82,25 +82,16 @@ fn main() {
 // Look for an answer to a yes-no question
 fn get_response(question: &str) -> bool {
 
-	let mut response_valid: bool = false;
-	while !response_valid {
+	loop {
 		let mut response: Vec<String> = terminal::read_question(question);
 		while response.is_empty() {
 			response = terminal::read_question(question);
 		}
 
 		match response[0].as_ref() {
-			"yes" | "y" | "true" => {
-				response_valid = true;
-				return true;
-			},
-			"no" | "n" | "false" => {
-				response_valid = true;
-				return false;
-			},
+			"yes" | "y" | "true" => return true,
+			"no" | "n" | "false" => return false,
 			_ => terminal::write_full("I do not understand that response."),
 		}
 	}
-
-	false
 }
