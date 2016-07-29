@@ -32,6 +32,14 @@ pub fn do_drop(data: &DataCollection, arg: String, player: &mut Player) {
 }
 
 #[allow(unused_variables)]
+pub fn do_explain(data: &DataCollection, arg: String, player: &mut Player) {
+	match data.get_explanation(arg) {
+		None => terminal::write_full("I have no explanation for that."),
+		Some(explanation) => terminal::write_full(explanation),
+	}
+}
+
+#[allow(unused_variables)]
 pub fn do_go(data: &DataCollection, arg: String, player: &mut Player) {
 	player.go(data, String::from(arg));
 }
