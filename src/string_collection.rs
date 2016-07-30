@@ -38,8 +38,8 @@ impl StringCollection {
 		}
 	}
 
-	pub fn get(&self, key: String) -> Option<&String> {
-		self.strings.get(&key)
+	pub fn get(&self, key: &str) -> Option<&String> {
+		self.strings.get(&String::from(key))
 	}
 
 }

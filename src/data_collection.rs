@@ -60,19 +60,19 @@ impl DataCollection {
 		self.locations.get_location_wake()
 	}
 
-	pub fn get_hint(&self, key: String) -> Option<&String> {
+	pub fn get_hint(&self, key: &str) -> Option<&String> {
 		self.hints.get(key)
 	}
 
-	pub fn get_explanation(&self, key: String) -> Option<&String> {
+	pub fn get_explanation(&self, key: &str) -> Option<&String> {
 		self.explanations.get(key)
 	}
 
-	pub fn get_response(&self, key: String) -> Option<&String> {
+	pub fn get_response(&self, key: &str) -> Option<&String> {
 		self.responses.get(key)
 	}
 
-	pub fn get_event(&self, key: String) -> Option<&String> {
+	pub fn get_event(&self, key: &str) -> Option<&String> {
 		self.events.get(key)
 	}
 

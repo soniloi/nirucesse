@@ -75,7 +75,7 @@ fn main() {
 		}
 
 		else if player.is_playing() && !player.has_light() {
-			match data.get_response(String::from("lampno")) {
+			match data.get_response("lampno") {
 				None => {},
 				Some(response) => {
 					terminal::write_full(response);

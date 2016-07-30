@@ -148,7 +148,7 @@ impl Player {
 		} else {
 			self.location = next.clone();
 			if !self.has_light() {
-				match data.get_response(String::from("cantsee")) {
+				match data.get_response("cantsee") {
 					None => {},
 					Some(response) => {
 						terminal::write_full(response);

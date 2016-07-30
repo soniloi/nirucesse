@@ -9,7 +9,7 @@ pub fn do_commands(data: &DataCollection, arg: String, player: &mut Player) {
 
 pub fn do_describe(data: &DataCollection, arg: String, player: &mut Player) {
 	if !player.has_light() {
-		match data.get_response(String::from("cantsee")) {
+		match data.get_response("cantsee") {
 			None => {},
 			Some(response) => {
 				terminal::write_full(response);
@@ -42,7 +42,7 @@ pub fn do_drop(data: &DataCollection, arg: String, player: &mut Player) {
 
 #[allow(unused_variables)]
 pub fn do_explain(data: &DataCollection, arg: String, player: &mut Player) {
-	match data.get_explanation(arg) {
+	match data.get_explanation(&arg) {
 		None => terminal::write_full("I have no explanation for that."),
 		Some(explanation) => terminal::write_full(explanation),
 	}
@@ -61,14 +61,14 @@ pub fn do_go_disambiguate(data: &DataCollection, arg: String, player: &mut Playe
 #[allow(unused_variables)]
 pub fn do_help(data: &DataCollection, arg: String, player: &mut Player) {
 	player.decrement_instructions(); // Requesting help does not count as an instruction
-	match data.get_response(String::from("help")) {
+	match data.get_response("help") {
 		None => {},
 		Some(h) => terminal::write_full(h),
 	}
 }
 
 pub fn do_hint(data: &DataCollection, arg: String, player: &mut Player) {
-	match data.get_hint(arg) {
+	match data.get_hint(&arg) {
 		None => terminal::write_full("I have no hints to offer about such a thing."),
 		Some(hint) => terminal::write_full(hint),
 	}
@@ -83,7 +83,7 @@ pub fn do_inventory(data: &DataCollection, arg: String, player: &mut Player) {
 #[allow(unused_variables)]
 pub fn do_look(data: &DataCollection, arg: String, player: &mut Player) {
 	if !player.has_light() {
-		match data.get_response(String::from("cantsee")) {
+		match data.get_response("cantsee") {
 			None => {},
 			Some(response) => {
 				terminal::write_full(response);
@@ -135,7 +135,7 @@ pub fn do_take(data: &DataCollection, arg: String, player: &mut Player) {
 
 #[allow(unused_variables)]
 pub fn do_xyzzy(data: &DataCollection, arg: String, player: &mut Player) {
-	match data.get_response(String::from("ok")) {
+	match data.get_response("ok") {
 		None => {},
 		Some(h) => terminal::write_full(h),
 	}
