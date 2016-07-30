@@ -143,7 +143,7 @@ impl Player {
 		let death_rand: u32 = rng.gen();
 		let death = death_rand % 4 == 0;
 		if !self.has_light() && !next.borrow().has_light() && death {
-			terminal::write_full("... ouch! You seem to have tripped on something. You fall and break your neck in a multitude of places.");
+			terminal::write_full(data.get_response("nolight"));
 			self.die(data);
 		} else {
 			self.location = next.clone();

@@ -42,7 +42,7 @@ fn main() {
 	};
 	let mut player = Box::new(Player::new(start_loc.clone()));
 
-	terminal::write_full("You awaken. You feel ill and dazed. Slowly you raise your head. You try to look around. You are intermittently blinded by flickering light. Groggily and warily you flail around.");
+	terminal::write_full(data.get_response("initial"));
 	while player.is_alive() && player.is_playing() {
 		let inputs: Vec<String> = terminal::read_stub((*player).get_location().borrow().get_stubname());
 		let cmd_name = inputs[0].clone();
@@ -54,22 +54,22 @@ fn main() {
 					(**cmd).execute(&data, arg, &mut player)
 				},
 				None => {
-					terminal::write_full("I do not understand that instruction");
+					terminal::write_full(data.get_response("notuigin"));
 				},
 			}
 		}
 		// Something in this move killed the player; see whether they want to continue
 		if !player.is_alive() {
-			terminal::write_full("You appear to be dead. I can attempt to reincarnate you, but not everything will necessarily be as it was before.");
+			terminal::write_full(data.get_response("desreinc"));
 
-			let reincarnate: bool = get_response("Would you like to be reincarnated?");
+			let reincarnate: bool = get_yes_no(data.get_response("askreinc"), data.get_response("notuigse"));
 			match reincarnate {
 				true => {
-					terminal::write_full("All right, I will see what I can do ... *******~~~*******ALAKAZAM*******~~~*******");
+					terminal::write_full(data.get_response("doreinc"));
 					player.set_alive(true);
 				},
 				false => {
-					terminal::write_full("OK")
+					terminal::write_full(data.get_response("ok"));
 				},
 			}
 		}
@@ -84,7 +84,7 @@ fn main() {
 }
 
 // Look for an answer to a yes-no question
-fn get_response(question: &str) -> bool {
+fn get_yes_no(question: &str, default: &str) -> bool {
 
 	loop {
 		let mut response: Vec<String> = terminal::read_question(question);
@@ -95,7 +95,7 @@ fn get_response(question: &str) -> bool {
 		match response[0].as_ref() {
 			"yes" | "y" | "true" => return true,
 			"no" | "n" | "false" => return false,
-			_ => terminal::write_full("I do not understand that response."),
+			_ => terminal::write_full(default),
 		}
 	}
 }

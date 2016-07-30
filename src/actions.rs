@@ -14,7 +14,7 @@ pub fn do_describe(data: &DataCollection, arg: String, player: &mut Player) {
 	}
 	match data.get_item(arg) {
 		None => {
-			terminal::write_full("I do not know who or what that is.");
+			terminal::write_full(data.get_response("nonowhat"));
 			return;
 		},
 		Some(i) => {
@@ -26,7 +26,7 @@ pub fn do_describe(data: &DataCollection, arg: String, player: &mut Player) {
 pub fn do_drop(data: &DataCollection, arg: String, player: &mut Player) {
 	match data.get_item(arg) {
 		None => {
-			terminal::write_full("I do not know who or what that is.");
+			terminal::write_full(data.get_response("nonowhat"));
 			return;
 		},
 		Some(i) => {
@@ -89,7 +89,7 @@ pub fn do_quit(data: &DataCollection, arg: String, player: &mut Player) {
 pub fn do_read(data: &DataCollection, arg: String, player: &mut Player) {
 	match data.get_item(arg) {
 		None => {
-			terminal::write_full("I do not know who or what that is.");
+			terminal::write_full(data.get_response("nonowhat"));
 			return;
 		},
 		Some(i) => {
@@ -111,7 +111,7 @@ pub fn do_score(data: &DataCollection, arg: String, player: &mut Player) {
 pub fn do_take(data: &DataCollection, arg: String, player: &mut Player) {
 	match data.get_item(arg) {
 		None => {
-			terminal::write_full("I do not know who or what that is.");
+			terminal::write_full(data.get_response("nonowhat"));
 			return;
 		},
 		Some(i) => {
