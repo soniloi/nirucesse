@@ -61,19 +61,19 @@ impl DataCollection {
 	}
 
 	pub fn get_hint(&self, key: &str) -> Option<&String> {
-		self.hints.get(key)
+		self.hints.get_uncertain(key)
 	}
 
 	pub fn get_explanation(&self, key: &str) -> Option<&String> {
-		self.explanations.get(key)
+		self.explanations.get_uncertain(key)
 	}
 
-	pub fn get_response(&self, key: &str) -> Option<&String> {
-		self.responses.get(key)
+	pub fn get_response(&self, key: &str) -> &String {
+		self.responses.get_certain(key)
 	}
 
 	pub fn get_event(&self, key: &str) -> Option<&String> {
-		self.events.get(key)
+		self.events.get_uncertain(key)
 	}
 
 	pub fn get_commands_non_secret(&self) -> String {

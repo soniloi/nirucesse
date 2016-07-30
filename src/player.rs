@@ -148,12 +148,7 @@ impl Player {
 		} else {
 			self.location = next.clone();
 			if !self.has_light() {
-				match data.get_response("cantsee") {
-					None => {},
-					Some(response) => {
-						terminal::write_full(response);
-					},
-				}
+				terminal::write_full(data.get_response("cantsee"));
 			} else {
 				terminal::write_full(&self.location.borrow().mk_full_string());
 			}

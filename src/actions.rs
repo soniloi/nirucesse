@@ -9,12 +9,7 @@ pub fn do_commands(data: &DataCollection, arg: String, player: &mut Player) {
 
 pub fn do_describe(data: &DataCollection, arg: String, player: &mut Player) {
 	if !player.has_light() {
-		match data.get_response("cantsee") {
-			None => {},
-			Some(response) => {
-				terminal::write_full(response);
-			},
-		}
+		terminal::write_full(data.get_response("cantsee"));
 		return;
 	}
 	match data.get_item(arg) {
@@ -61,10 +56,7 @@ pub fn do_go_disambiguate(data: &DataCollection, arg: String, player: &mut Playe
 #[allow(unused_variables)]
 pub fn do_help(data: &DataCollection, arg: String, player: &mut Player) {
 	player.decrement_instructions(); // Requesting help does not count as an instruction
-	match data.get_response("help") {
-		None => {},
-		Some(h) => terminal::write_full(h),
-	}
+	terminal::write_full(data.get_response("help"));
 }
 
 pub fn do_hint(data: &DataCollection, arg: String, player: &mut Player) {
@@ -83,12 +75,7 @@ pub fn do_inventory(data: &DataCollection, arg: String, player: &mut Player) {
 #[allow(unused_variables)]
 pub fn do_look(data: &DataCollection, arg: String, player: &mut Player) {
 	if !player.has_light() {
-		match data.get_response("cantsee") {
-			None => {},
-			Some(response) => {
-				terminal::write_full(response);
-			},
-		}
+		terminal::write_full(data.get_response("cantsee"));
 		return;
 	}
 	terminal::write_full(&player.mk_location_string());
@@ -135,8 +122,5 @@ pub fn do_take(data: &DataCollection, arg: String, player: &mut Player) {
 
 #[allow(unused_variables)]
 pub fn do_xyzzy(data: &DataCollection, arg: String, player: &mut Player) {
-	match data.get_response("ok") {
-		None => {},
-		Some(h) => terminal::write_full(h),
-	}
+	terminal::write_full(data.get_response("ok"));
 }

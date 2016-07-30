@@ -38,8 +38,16 @@ impl StringCollection {
 		}
 	}
 
-	pub fn get(&self, key: &str) -> Option<&String> {
+	// Return a String Option
+	pub fn get_uncertain(&self, key: &str) -> Option<&String> {
 		self.strings.get(&String::from(key))
 	}
 
+	// Return a String we are certain is in the collection
+	pub fn get_certain(&self, key: &str) -> &String {
+		match self.strings.get(&String::from(key)) {
+			None => panic!("Error: Data collection corrupt, or key [{}] malformed.", key),
+			Some(st) => return st,
+		}
+	}
 }
