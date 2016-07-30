@@ -8,6 +8,15 @@ pub fn do_commands(data: &DataCollection, arg: String, player: &mut Player) {
 }
 
 pub fn do_describe(data: &DataCollection, arg: String, player: &mut Player) {
+	if !player.has_light() {
+		match data.get_response(String::from("cantsee")) {
+			None => {},
+			Some(response) => {
+				terminal::write_full(response);
+			},
+		}
+		return;
+	}
 	match data.get_item(arg) {
 		None => {
 			terminal::write_full("I do not know who or what that is.");
@@ -73,6 +82,15 @@ pub fn do_inventory(data: &DataCollection, arg: String, player: &mut Player) {
 
 #[allow(unused_variables)]
 pub fn do_look(data: &DataCollection, arg: String, player: &mut Player) {
+	if !player.has_light() {
+		match data.get_response(String::from("cantsee")) {
+			None => {},
+			Some(response) => {
+				terminal::write_full(response);
+			},
+		}
+		return;
+	}
 	terminal::write_full(&player.mk_location_string());
 }
 

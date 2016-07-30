@@ -35,7 +35,7 @@ impl Player {
 		}
 	}
 
-	fn has_light(&self) -> bool {
+	pub fn has_light(&self) -> bool {
 		self.inventory.has_light() || self.location.borrow().has_light()
 	}
 
@@ -147,7 +147,16 @@ impl Player {
 			self.die(data);
 		} else {
 			self.location = next.clone();
-			terminal::write_full(&self.location.borrow().mk_full_string());
+			if !self.has_light() {
+				match data.get_response(String::from("cantsee")) {
+					None => {},
+					Some(response) => {
+						terminal::write_full(response);
+					},
+				}
+			} else {
+				terminal::write_full(&self.location.borrow().mk_full_string());
+			}
 		}
 	}
 
