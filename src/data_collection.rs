@@ -56,7 +56,7 @@ impl DataCollection {
 		self.locations.get(key)
 	}
 
-	pub fn get_location_wake(&self) -> Option<&Rc<RefCell<Box<Location>>>> {
+	pub fn get_location_wake(&self) -> &Rc<RefCell<Box<Location>>> {
 		self.locations.get_location_wake()
 	}
 

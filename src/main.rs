@@ -32,17 +32,17 @@ fn main() {
 	}
     let filename = &args[1];
 
+    // Read in data file
     let mut buffer = FileBuffer::new(filename);
     let mut data = DataCollection::new();
     data.init(&mut buffer);
 
-	let start_loc = match data.get_location(9u32) {
-		None => panic!("Unable to set starting location number: {}", 9u32),
-		Some(loc) => loc,
-	};
+    // Initialize player
+	let start_loc = data.get_location_wake();
 	let mut player = Box::new(Player::new(start_loc.clone()));
-
 	terminal::write_full(data.get_response("initial"));
+
+	// Process player instructions
 	while player.is_alive() && player.is_playing() {
 		let inputs: Vec<String> = terminal::read_stub((*player).get_location().borrow().get_stubname());
 		let cmd_name = inputs[0].clone();

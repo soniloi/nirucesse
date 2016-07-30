@@ -70,12 +70,7 @@ impl Player {
 	fn die(&mut self, data: &DataCollection) {
 		self.set_alive(false);
 		self.increment_deaths();
-		match data.get_location_wake() {
-			None => panic!("Unable to get wake location, fail"),
-			Some(loc_wake) => {
-				self.location = loc_wake.clone();
-			},
-		}
+		self.location = data.get_location_wake().clone();
 	}
 
 	// Have player attempt to pick up item from current location

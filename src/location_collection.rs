@@ -110,7 +110,10 @@ impl LocationCollection {
 		self.locations.get(&key)
 	}
 
-	pub fn get_location_wake(&self) -> Option<&Rc<RefCell<Box<Location>>>> {
-		self.get(self.location_wake)
+	pub fn get_location_wake(&self) -> &Rc<RefCell<Box<Location>>> {
+		match self.get(self.location_wake) {
+			None => panic!("Unable to determine wake location, fail."),
+			Some(location) => return location,
+		}
 	}
 }
