@@ -24,34 +24,51 @@ use player::Player;
 
 fn main() {
 
-	// Get command-line args
+    let filename = get_filename();
+
+    let data = init_data(&filename);
+    let mut player = init_player(&data);
+
+    play_game(&data, &mut player);
+
+	terminal::reset();
+}
+
+fn get_filename() -> String {
 	let args: Vec<_> = env::args().collect();
 	if args.len() < 2 {
 		println!("Filename parameter missing, fail.");
 		process::exit(1);
 	}
-    let filename = &args[1];
+    args[1].clone()
+}
 
-    // Read in data file
-    let mut buffer = FileBuffer::new(filename);
+fn init_data(filename: &String) -> DataCollection {
+    let mut buffer = FileBuffer::new(&filename);
     let mut data = DataCollection::new();
     data.init(&mut buffer);
+    data
+}
 
-    // Initialize player
+fn init_player(data: &DataCollection) -> Player {
 	let start_loc = data.get_location_wake();
-	let mut player = Box::new(Player::new(start_loc.clone()));
+	Player::new(start_loc.clone())
+}
+
+fn play_game(data: &DataCollection, player: &mut Player) {
+
 	terminal::write_full(data.get_response("initial"));
 
 	// Process player instructions
 	while player.is_alive() && player.is_playing() {
-		let inputs: Vec<String> = terminal::read_stub((*player).get_location().borrow().get_stubname());
+		let inputs: Vec<String> = terminal::read_stub(player.get_location().borrow().get_stubname());
 		let cmd_name = inputs[0].clone();
 		if !cmd_name.is_empty() {
 			player.increment_instructions();
 			match data.get_command(cmd_name.clone()) {
 				Some(cmd) => {
 					let arg: String = if inputs.len() > 1 { inputs[1].clone() } else { String::from("") };
-					(**cmd).execute(&data, arg, &mut player)
+					(**cmd).execute(&data, arg, player);
 				},
 				None => {
 					terminal::write_full(data.get_response("notuigin"));
@@ -78,9 +95,6 @@ fn main() {
 			terminal::write_full(data.get_response("lampno"));
 		}
 	}
-
-	// Clean
-	terminal::reset();
 }
 
 // Look for an answer to a yes-no question
