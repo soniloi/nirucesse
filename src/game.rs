@@ -20,7 +20,7 @@ impl Game {
 
 		terminal::write_full(self.data.get_response("initial"));
 
-		while self.player.is_alive() && self.player.is_playing() {
+		while self.player.is_playing() {
 			self.process_input();
 
 			if !self.player.is_alive() {
@@ -33,6 +33,7 @@ impl Game {
 		}
 	}
 
+	// Process commands from player
 	fn process_input(&mut self) {
 		let inputs: Vec<String> = terminal::read_stub(self.player.get_location().borrow().get_stubname());
 		let cmd_name = inputs[0].clone();
@@ -50,10 +51,10 @@ impl Game {
 		}
 	}
 
+	// Reincarnate the player, if requested
 	fn process_reincarnation(&mut self) {
-		// Something in this move killed the self.player; see whether they want to continue
 		terminal::write_full(self.data.get_response("desreinc"));
-			let reincarnate: bool = get_yes_no(self.data.get_response("askreinc"), self.data.get_response("notuigse"));
+		let reincarnate: bool = get_yes_no(self.data.get_response("askreinc"), self.data.get_response("notuigse"));
 		match reincarnate {
 			true => {
 				terminal::write_full(self.data.get_response("doreinc"));
@@ -61,10 +62,12 @@ impl Game {
 			},
 			false => {
 				terminal::write_full(self.data.get_response("ok"));
+				self.player.set_playing(false);
 			},
 		}
 	}
 
+	// Print any warnings that the player should know about
 	fn process_warnings(&self) {
 		if !self.player.has_light() {
 			terminal::write_full(self.data.get_response("lampno"));
@@ -72,7 +75,7 @@ impl Game {
 	}
 }
 
-// Look for an answer to a yes-no question
+// Look for an answer to a yes-no question FIXME: maybe move to a utility file
 fn get_yes_no(question: &str, default: &str) -> bool {
 
 	loop {
