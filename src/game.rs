@@ -20,41 +20,54 @@ impl Game {
 
 		terminal::write_full(self.data.get_response("initial"));
 
-		// Process self.player instructions
 		while self.player.is_alive() && self.player.is_playing() {
-			let inputs: Vec<String> = terminal::read_stub(self.player.get_location().borrow().get_stubname());
-			let cmd_name = inputs[0].clone();
-			if !cmd_name.is_empty() {
-				self.player.increment_instructions();
-				match self.data.get_command(cmd_name.clone()) {
-					Some(cmd) => {
-						let arg: String = if inputs.len() > 1 { inputs[1].clone() } else { String::from("") };
-						(**cmd).execute(&self.data, arg, &mut self.player);
-					},
-					None => {
-						terminal::write_full(self.data.get_response("notuigin"));
-					},
-				}
-			}
-			// Something in this move killed the self.player; see whether they want to continue
+			self.process_input();
+
 			if !self.player.is_alive() {
-				terminal::write_full(self.data.get_response("desreinc"));
-
-				let reincarnate: bool = get_yes_no(self.data.get_response("askreinc"), self.data.get_response("notuigse"));
-				match reincarnate {
-					true => {
-						terminal::write_full(self.data.get_response("doreinc"));
-						self.player.set_alive(true);
-					},
-					false => {
-						terminal::write_full(self.data.get_response("ok"));
-					},
-				}
+				self.process_reincarnation();
 			}
 
-			else if self.player.is_playing() && !self.player.has_light() {
-				terminal::write_full(self.data.get_response("lampno"));
+			else if self.player.is_playing() {
+				self.process_warnings();
 			}
+		}
+	}
+
+	fn process_input(&mut self) {
+		let inputs: Vec<String> = terminal::read_stub(self.player.get_location().borrow().get_stubname());
+		let cmd_name = inputs[0].clone();
+		if !cmd_name.is_empty() {
+			self.player.increment_instructions();
+			match self.data.get_command(cmd_name.clone()) {
+				Some(cmd) => {
+					let arg: String = if inputs.len() > 1 { inputs[1].clone() } else { String::from("") };
+					(**cmd).execute(&self.data, arg, &mut self.player);
+				},
+				None => {
+					terminal::write_full(self.data.get_response("notuigin"));
+				},
+			}
+		}
+	}
+
+	fn process_reincarnation(&mut self) {
+		// Something in this move killed the self.player; see whether they want to continue
+		terminal::write_full(self.data.get_response("desreinc"));
+			let reincarnate: bool = get_yes_no(self.data.get_response("askreinc"), self.data.get_response("notuigse"));
+		match reincarnate {
+			true => {
+				terminal::write_full(self.data.get_response("doreinc"));
+				self.player.set_alive(true);
+			},
+			false => {
+				terminal::write_full(self.data.get_response("ok"));
+			},
+		}
+	}
+
+	fn process_warnings(&self) {
+		if !self.player.has_light() {
+			terminal::write_full(self.data.get_response("lampno"));
 		}
 	}
 }
