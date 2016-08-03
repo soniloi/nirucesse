@@ -44,6 +44,10 @@ impl Item {
 		&self.longname
 	}
 
+	pub fn get_size(&self) -> u32 {
+		self.size
+	}
+
 	pub fn mk_full_string(&self) -> String {
 		String::from("It is ") + &self.description + "."
 	}

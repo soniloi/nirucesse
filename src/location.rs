@@ -71,6 +71,13 @@ impl Location {
 		self.items.remove(&(*item).get_id())
 	}
 
+	pub fn remove_item_certain(&mut self, item: &Rc<Box<Item>>) -> Rc<Box<Item>> {
+		match self.items.remove(&(*item).get_id()) {
+			None => panic!("Error: Location or item [{}] corrupt.", item.get_shortname()),
+			Some(i) => i,
+		}
+	}
+
 	pub fn get_stubname(&self) -> &str {
 		&self.shortname
 	}

@@ -40,6 +40,20 @@ impl Inventory {
 		self.items.remove(&(*item).get_id())
 	}
 
+	// Return combined size of all items currently in inventory
+	fn get_size(&self) -> u32 {
+		let mut result = 0;
+		for (_, item) in &self.items {
+			result += item.get_size();
+		}
+		result
+	}
+
+	// Return whether an item could fit in the inventory
+	pub fn can_accept(&self, item: &Rc<Box<Item>>) -> bool {
+		(item.get_size() + self.get_size()) <= self.capacity
+	}
+
 	pub fn mk_string(&self) -> String {
 		let mut result = String::new();
 		if self.items.is_empty() {

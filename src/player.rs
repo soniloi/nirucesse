@@ -80,16 +80,19 @@ impl Player {
 			return;	
 		}
 
-		let it = self.location.borrow_mut().remove_item(item);
-		match it {
-			None => {
-				terminal::write_full("That item is not at this location.");
-			}
-			Some(i) => {
-				self.insert_item(i);
-				terminal::write_full("Taken.");
-			}
+		if !self.location.borrow_mut().contains_item(item) {
+			terminal::write_full("That item is not at this location.");
+			return;
 		}
+
+		if !self.inventory.can_accept(&item) {
+			terminal::write_full("That item is larger than you can carry right now. You must drop something else first.");
+			return;
+		}
+
+		let it = self.location.borrow_mut().remove_item_certain(item);
+		self.insert_item(it);
+		terminal::write_full("Taken.");
 	}
 
 	// Have player attempt to drop item from inventory to current location
