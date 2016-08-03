@@ -115,7 +115,7 @@ pub fn do_take(data: &DataCollection, arg: String, player: &mut Player) {
 			return;
 		},
 		Some(i) => {
-			player.pick_up(i);
+			player.pick_up(data, i);
 		}
 	}
 }

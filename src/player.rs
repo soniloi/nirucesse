@@ -74,25 +74,25 @@ impl Player {
 	}
 
 	// Have player attempt to pick up item from current location
-	pub fn pick_up(&mut self, item: &Rc<Box<Item>>) {
+	pub fn pick_up(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
 		if self.contains_item(item) {
-			terminal::write_full("You are already carrying that.");
+			terminal::write_full(data.get_response("takealre"));
 			return;	
 		}
 
 		if !self.location.borrow_mut().contains_item(item) {
-			terminal::write_full("That item is not at this location.");
+			terminal::write_full(data.get_response("noitemhe"));
 			return;
 		}
 
 		if !self.inventory.can_accept(&item) {
-			terminal::write_full("That item is larger than you can carry right now. You must drop something else first.");
+			terminal::write_full(data.get_response("takeover"));
 			return;
 		}
 
 		let it = self.location.borrow_mut().remove_item_certain(item);
 		self.insert_item(it);
-		terminal::write_full("Taken.");
+		terminal::write_full(data.get_response("takegood"));
 	}
 
 	// Have player attempt to drop item from inventory to current location
