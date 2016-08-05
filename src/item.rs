@@ -1,3 +1,4 @@
+const CTRL_ITEM_MOBILE: u32 = 0x2; // Whether the item is fixed or mobile (carryable)
 const CTRL_ITEM_GIVES_LIGHT: u32 = 0x10; // Whether the item emits light
 
 pub struct Item {
@@ -26,6 +27,10 @@ impl Item {
 
 	fn has_property(&self, property: u32) -> bool {
 		self.properties & property != 0
+	}
+
+	pub fn is_mobile(&self) -> bool {
+		self.has_property(CTRL_ITEM_MOBILE)
 	}
 
 	pub fn has_light(&self) -> bool {

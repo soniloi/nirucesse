@@ -92,6 +92,11 @@ impl Player {
 			return;
 		}
 
+		if !item.is_mobile() {
+			terminal::write_full(data.get_response("takenoca"));
+			return;
+		}
+
 		if !self.inventory.can_accept(&item) {
 			terminal::write_full(data.get_response("takeover"));
 			return;
