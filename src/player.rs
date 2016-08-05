@@ -12,6 +12,7 @@ use terminal;
 pub struct Player {
 	inventory: Inventory,
 	location: Rc<RefCell<Box<Location>>>,
+	previous: Rc<RefCell<Box<Location>>>,
 	score: u32, // player's current score
 	playing: bool, // whether player is currently playing
 	hints: u32, // number of hints player has requested
@@ -25,7 +26,8 @@ impl Player {
 	pub fn new(initial: Rc<RefCell<Box<Location>>>) -> Player {
 		Player {
 			inventory: Inventory::new(16),
-			location: initial,
+			location: initial.clone(),
+			previous: initial.clone(),
 			score: 0u32,
 			playing: true,
 			hints: 0u32,
@@ -132,20 +134,30 @@ impl Player {
 	}
 
 	// Have player travel to an adjacent location
-	// TODO: I don't really like this very much; there's probably a better way
+	// TODO: I don't really like this very much, especially the 'back' part; there's probably a better way
 	pub fn go(&mut self, data: &DataCollection, dir: String) {
 
 		let loc_clone = self.location.clone();
 		let self_loc = loc_clone.borrow();
-		match self_loc.get_direction(dir) {
-			None => {
-				terminal::write_full("You cannot go that way.");
-				return;
-			},
-			Some(next) => {
-				self.go_to(data, next);
-			},
+		let temp_loc = self.location.clone();
+
+		if dir == "back" {
+			//let temp_loc = self.location.clone();
+			let prev_loc = self.previous.clone();
+			self.go_to(data, &prev_loc);
+		} else {
+			match self_loc.get_direction(dir) {
+				None => {
+					terminal::write_full("You cannot go that way.");
+					return;
+				},
+				Some(next) => {
+					self.go_to(data, next);
+				},
+			}
 		}
+
+		self.previous = temp_loc;
 	}
 
 	fn go_to(&mut self, data: &DataCollection, next: &Rc<RefCell<Box<Location>>>) {
