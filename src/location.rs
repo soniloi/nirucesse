@@ -78,8 +78,8 @@ impl Location {
 		}
 	}
 
-	pub fn get_stubname(&self) -> &str {
-		&self.shortname
+	pub fn get_shortname(&self) -> String {
+		self.shortname.clone()
 	}
 
 	fn mk_basic_string(&self) -> String {

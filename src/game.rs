@@ -35,7 +35,7 @@ impl Game {
 
 	// Process commands from player
 	fn process_input(&mut self) {
-		let inputs: Vec<String> = terminal::read_stub(self.player.get_location().borrow().get_stubname());
+		let inputs: Vec<String> = terminal::read_stub(&self.player.get_location_stubname());
 		let cmd_name = inputs[0].clone();
 		if !cmd_name.is_empty() {
 			self.player.increment_instructions();

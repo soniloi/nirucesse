@@ -73,6 +73,13 @@ impl Player {
 		self.location = data.get_location_wake().clone();
 	}
 
+	pub fn get_location_stubname(&self) -> String {
+		if !self.has_light() {
+			return String::from("???");
+		}
+		self.location.borrow().get_shortname()
+	}
+
 	// Have player attempt to pick up item from current location
 	pub fn pick_up(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
 		if self.contains_item(item) {
