@@ -12,7 +12,7 @@ use terminal;
 pub struct Player {
 	inventory: Inventory,
 	location: Rc<RefCell<Box<Location>>>,
-	previous: Rc<RefCell<Box<Location>>>,
+	previous: Option<Rc<RefCell<Box<Location>>>>,
 	score: u32, // player's current score
 	playing: bool, // whether player is currently playing
 	hints: u32, // number of hints player has requested
@@ -26,8 +26,8 @@ impl Player {
 	pub fn new(initial: Rc<RefCell<Box<Location>>>) -> Player {
 		Player {
 			inventory: Inventory::new(16),
-			location: initial.clone(),
-			previous: initial.clone(),
+			location: initial,
+			previous: None,
 			score: 0u32,
 			playing: true,
 			hints: 0u32,
@@ -142,9 +142,17 @@ impl Player {
 		let temp_loc = self.location.clone();
 
 		if dir == "back" {
-			//let temp_loc = self.location.clone();
-			let prev_loc = self.previous.clone();
-			self.go_to(data, &prev_loc);
+			let prev_loc_opt = self.previous.clone();
+			match prev_loc_opt {
+				None => {
+					terminal::write_full("I do not remember how you got here, or I cannot get back there directly. Please give a direction instead.");
+					return;
+				},
+				Some(prev) => {
+					let prev_loc = prev.clone();
+					self.go_to(data, &prev_loc);
+				},
+			}
 		} else {
 			match self_loc.get_direction(dir) {
 				None => {
@@ -157,7 +165,7 @@ impl Player {
 			}
 		}
 
-		self.previous = temp_loc;
+		self.previous = Some(temp_loc);
 	}
 
 	fn go_to(&mut self, data: &DataCollection, next: &Rc<RefCell<Box<Location>>>) {
