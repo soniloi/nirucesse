@@ -165,7 +165,11 @@ impl Player {
 			}
 		}
 
-		self.previous = Some(temp_loc);
+		if self.location.borrow().can_reach(&temp_loc) {
+			self.previous = Some(temp_loc);
+		} else {
+			self.previous = None;
+		}
 	}
 
 	fn go_to(&mut self, data: &DataCollection, next: &Rc<RefCell<Box<Location>>>) {

@@ -31,6 +31,10 @@ impl Location {
 		}
 	}
 
+	pub fn get_id(&self) -> u32 {
+		self.id
+	}
+
 	fn has_property(&self, property: u32) -> bool {
 		self.properties & property != 0
 	}
@@ -80,6 +84,17 @@ impl Location {
 
 	pub fn get_shortname(&self) -> String {
 		self.shortname.clone()
+	}
+
+	// Return whether another location can be reached in one step from this one
+	pub fn can_reach(&self, other: &Rc<RefCell<Box<Location>>>) -> bool {
+		for dir in self.directions.values() {
+			if dir.borrow().get_id() == other.borrow().get_id() {
+				return true;
+			}
+		}
+
+		false
 	}
 
 	fn mk_basic_string(&self) -> String {
