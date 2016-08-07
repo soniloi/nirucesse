@@ -137,62 +137,29 @@ impl Player {
 	// TODO: I don't really like this very much, especially the 'back' part; there's probably a better way
 	pub fn go(&mut self, data: &DataCollection, dir: String) {
 
-		let loc_clone = self.location.clone();
-		let self_loc = loc_clone.borrow();
 		let temp_loc = self.location.clone();
-
 		let mut move_success = false;
 
 		if dir == "back" {
-			let prev_loc_opt = self.previous.clone();
-			match prev_loc_opt {
-				None => {
-					terminal::write_full("I do not remember how you got here, or I cannot get back there directly. Please give a direction instead.");
-					return;
-				},
-				Some(prev) => {
-					let prev_loc = prev.clone();
-					move_success = self.go_to(data, &prev_loc);
-				},
-			}
+			move_success = self.try_move_back(data);
 		} else {
-			match self_loc.get_direction(dir) {
-				None => {
-					terminal::write_full("You cannot go that way.");
-					return;
-				},
-				Some(next) => {
-					if !self.is_previous_loc(&next) {
-						match (**self_loc).get_obstruction() {
-							None => {},
-							Some(obstruction) => {
-								let mut response =  String::from("You cannot get past ");
-								if self.has_light() {
-									response = response + "the " + obstruction.get_shortname() + ".";
-								} else {
-									response = response + "some obstruction at this location.";
-								}
-								terminal::write_full(&response);
-								return;
-							}
-						}
-					}
-
-					move_success = self.go_to(data, next);
-				},
-			}
+			move_success = self.try_move_other(data, dir);
 		}
 
-		if move_success {
-			if self.location.borrow().can_reach(&temp_loc) {
-				self.previous = Some(temp_loc);
-			} else {
-				self.previous = None;
-			}
-		}
+		self.update_previous(move_success, &temp_loc);
+	}
 
-		if !self.is_alive() {
-			self.previous = None;
+	// Attempt to move to previous location; return true if move was successful
+	fn try_move_back(&mut self, data: &DataCollection) -> bool {
+		match self.previous.clone() {
+			None => {
+				terminal::write_full("I do not remember how you got here, or I cannot get back there directly. Please give a direction instead.");
+				return false;
+			},
+			Some(prev) => {
+				let prev_loc = prev.clone();
+				return self.go_to(data, &prev_loc);
+			},
 		}
 	}
 
@@ -202,6 +169,52 @@ impl Player {
 		match previous {
 			None => return false,
 			Some(prev) => prev.borrow().get_id() == next.borrow().get_id(),
+		}
+	}
+
+	// Attempt to move to some location, which may not be reachable from the current location; return true if move was successful
+	fn try_move_other(&mut self, data: &DataCollection, dir: String) -> bool {
+		let loc_clone = self.location.clone();
+		let self_loc = loc_clone.borrow();
+
+		match self_loc.get_direction(dir) {
+			None => {
+				terminal::write_full("You cannot go that way.");
+				return false;
+			},
+			Some(next) => {
+				if !self.is_previous_loc(&next) {
+					match (**self_loc).get_obstruction() {
+						None => {},
+						Some(obstruction) => {
+							let mut response =  String::from("You cannot get past ");
+							if self.has_light() {
+								response = response + "the " + obstruction.get_shortname() + ".";
+							} else {
+								response = response + "some obstruction at this location.";
+							}
+							terminal::write_full(&response);
+							return false;
+						}
+					}
+				}
+				return self.go_to(data, &next);
+			},
+		}
+	}
+
+	// Update player's 'previous' field as appropriate
+	fn update_previous(&mut self, move_success: bool, temp_loc: &Rc<RefCell<Box<Location>>>) {
+		if move_success {
+			if self.location.borrow().can_reach(&temp_loc) {
+				self.previous = Some(temp_loc.clone());
+			} else {
+				self.previous = None;
+			}
+		}
+
+		if !self.is_alive() {
+			self.previous = None;
 		}
 	}
 
