@@ -164,7 +164,12 @@ impl Player {
 						match (**self_loc).get_obstruction() {
 							None => {},
 							Some(obstruction) => {
-								let response = String::from("You cannot get past the ") + obstruction.get_shortname() + ".";
+								let mut response =  String::from("You cannot get past ");
+								if self.has_light() {
+									response = response + "the " + obstruction.get_shortname() + ".";
+								} else {
+									response = response + "some obstruction at this location.";
+								}
 								terminal::write_full(&response);
 								return;
 							}
