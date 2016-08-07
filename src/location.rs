@@ -55,14 +55,14 @@ impl Location {
 		false
 	}
 
-	pub fn has_obstruction(&self) -> bool {
+	pub fn get_obstruction(&self) -> Option<Rc<Box<Item>>> {
 		for item in self.items.values() {
 			if item.is_obstruction() {
-				return true;
+				return Some(item.clone());
 			}
 		}
 
-		false
+		None
 	}
 
 	pub fn get_direction(&self, dir: String) -> Option<&Rc<RefCell<Box<Location>>>> {

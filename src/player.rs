@@ -160,10 +160,17 @@ impl Player {
 					return;
 				},
 				Some(next) => {
-					if (**self_loc).has_obstruction() && !self.is_previous_loc(&next) {
-						terminal::write_full("Some obstruction at this location will not let you go that way.");
-						return;
+					if !self.is_previous_loc(&next) {
+						match (**self_loc).get_obstruction() {
+							None => {},
+							Some(obstruction) => {
+								let response = String::from("You cannot get past the ") + obstruction.get_shortname() + ".";
+								terminal::write_full(&response);
+								return;
+							}
+						}
 					}
+
 					self.go_to(data, next);
 				},
 			}
