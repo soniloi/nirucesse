@@ -141,6 +141,8 @@ impl Player {
 		let self_loc = loc_clone.borrow();
 		let temp_loc = self.location.clone();
 
+		let mut move_success = false;
+
 		if dir == "back" {
 			let prev_loc_opt = self.previous.clone();
 			match prev_loc_opt {
@@ -150,7 +152,7 @@ impl Player {
 				},
 				Some(prev) => {
 					let prev_loc = prev.clone();
-					self.go_to(data, &prev_loc);
+					move_success = self.go_to(data, &prev_loc);
 				},
 			}
 		} else {
@@ -176,14 +178,20 @@ impl Player {
 						}
 					}
 
-					self.go_to(data, next);
+					move_success = self.go_to(data, next);
 				},
 			}
 		}
 
-		if self.location.borrow().can_reach(&temp_loc) {
-			self.previous = Some(temp_loc);
-		} else {
+		if move_success {
+			if self.location.borrow().can_reach(&temp_loc) {
+				self.previous = Some(temp_loc);
+			} else {
+				self.previous = None;
+			}
+		}
+
+		if !self.is_alive() {
 			self.previous = None;
 		}
 	}
@@ -197,13 +205,15 @@ impl Player {
 		}
 	}
 
-	fn go_to(&mut self, data: &DataCollection, next: &Rc<RefCell<Box<Location>>>) {
+	// Attempt to go to a location known to be adjacent; return true if move successful
+	fn go_to(&mut self, data: &DataCollection, next: &Rc<RefCell<Box<Location>>>) -> bool {
 		let mut rng = rand::thread_rng();
 		let death_rand: u32 = rng.gen();
 		let death = death_rand % 4 == 0;
 		if !self.has_light() && !next.borrow().has_light() && death {
 			terminal::write_full(data.get_response("nolight"));
 			self.die(data);
+			return false;
 		} else {
 			self.location = next.clone();
 			if !self.has_light() {
@@ -211,6 +221,7 @@ impl Player {
 			} else {
 				terminal::write_full(&self.location.borrow().mk_full_string());
 			}
+			return true;
 		}
 	}
 
