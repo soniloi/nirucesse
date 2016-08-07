@@ -160,6 +160,10 @@ impl Player {
 					return;
 				},
 				Some(next) => {
+					if (**self_loc).has_obstruction() && !self.is_previous_loc(&next) {
+						terminal::write_full("Some obstruction at this location will not let you go that way.");
+						return;
+					}
 					self.go_to(data, next);
 				},
 			}
@@ -169,6 +173,15 @@ impl Player {
 			self.previous = Some(temp_loc);
 		} else {
 			self.previous = None;
+		}
+	}
+
+	// Return whether a location is the last place the player was
+	fn is_previous_loc(&self, next: &Rc<RefCell<Box<Location>>>) -> bool {
+		let previous = self.previous.clone();
+		match previous {
+			None => return false,
+			Some(prev) => prev.borrow().get_id() == next.borrow().get_id(),
 		}
 	}
 

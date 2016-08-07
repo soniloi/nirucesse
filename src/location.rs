@@ -55,6 +55,16 @@ impl Location {
 		false
 	}
 
+	pub fn has_obstruction(&self) -> bool {
+		for item in self.items.values() {
+			if item.is_obstruction() {
+				return true;
+			}
+		}
+
+		false
+	}
+
 	pub fn get_direction(&self, dir: String) -> Option<&Rc<RefCell<Box<Location>>>> {
 		self.directions.get(&dir)
 	}

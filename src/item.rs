@@ -1,4 +1,5 @@
 const CTRL_ITEM_MOBILE: u32 = 0x2; // Whether the item is fixed or mobile (carryable)
+const CTRL_ITEM_OBSTRUCTION: u32 = 0x4; // Whether the item is an obstruction
 const CTRL_ITEM_GIVES_LIGHT: u32 = 0x10; // Whether the item emits light
 
 pub struct Item {
@@ -35,6 +36,10 @@ impl Item {
 
 	pub fn has_light(&self) -> bool {
 		self.has_property(CTRL_ITEM_GIVES_LIGHT)
+	}
+
+	pub fn is_obstruction(&self) -> bool {
+		self.has_property(CTRL_ITEM_OBSTRUCTION)
 	}
 
 	pub fn get_id(&self) -> u32 {
