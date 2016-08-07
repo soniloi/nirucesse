@@ -153,22 +153,13 @@ impl Player {
 	fn try_move_back(&mut self, data: &DataCollection) -> bool {
 		match self.previous.clone() {
 			None => {
-				terminal::write_full("I do not remember how you got here, or I cannot get back there directly. Please give a direction instead.");
+				terminal::write_full(data.get_response("movnorem"));
 				return false;
 			},
 			Some(prev) => {
 				let prev_loc = prev.clone();
-				return self.go_to(data, &prev_loc);
+				return self.try_move_to(data, &prev_loc);
 			},
-		}
-	}
-
-	// Return whether a location is the last place the player was
-	fn is_previous_loc(&self, next: &Rc<RefCell<Box<Location>>>) -> bool {
-		let previous = self.previous.clone();
-		match previous {
-			None => return false,
-			Some(prev) => prev.borrow().get_id() == next.borrow().get_id(),
 		}
 	}
 
@@ -179,7 +170,7 @@ impl Player {
 
 		match self_loc.get_direction(dir) {
 			None => {
-				terminal::write_full("You cannot go that way.");
+				terminal::write_full(data.get_response("movnoway"));
 				return false;
 			},
 			Some(next) => {
@@ -198,8 +189,28 @@ impl Player {
 						}
 					}
 				}
-				return self.go_to(data, &next);
+				return self.try_move_to(data, &next);
 			},
+		}
+	}
+
+	// Attempt to go to a location known to be adjacent; return true if move successful
+	fn try_move_to(&mut self, data: &DataCollection, next: &Rc<RefCell<Box<Location>>>) -> bool {
+		let mut rng = rand::thread_rng();
+		let death_rand: u32 = rng.gen();
+		let death = death_rand % 4 == 0;
+		if !self.has_light() && !next.borrow().has_light() && death {
+			terminal::write_full(data.get_response("nolight"));
+			self.die(data);
+			return false;
+		} else {
+			self.location = next.clone();
+			if !self.has_light() {
+				terminal::write_full(data.get_response("cantsee"));
+			} else {
+				terminal::write_full(&self.location.borrow().mk_full_string());
+			}
+			return true;
 		}
 	}
 
@@ -218,23 +229,12 @@ impl Player {
 		}
 	}
 
-	// Attempt to go to a location known to be adjacent; return true if move successful
-	fn go_to(&mut self, data: &DataCollection, next: &Rc<RefCell<Box<Location>>>) -> bool {
-		let mut rng = rand::thread_rng();
-		let death_rand: u32 = rng.gen();
-		let death = death_rand % 4 == 0;
-		if !self.has_light() && !next.borrow().has_light() && death {
-			terminal::write_full(data.get_response("nolight"));
-			self.die(data);
-			return false;
-		} else {
-			self.location = next.clone();
-			if !self.has_light() {
-				terminal::write_full(data.get_response("cantsee"));
-			} else {
-				terminal::write_full(&self.location.borrow().mk_full_string());
-			}
-			return true;
+	// Return whether a location is the last place the player was
+	fn is_previous_loc(&self, next: &Rc<RefCell<Box<Location>>>) -> bool {
+		let previous = self.previous.clone();
+		match previous {
+			None => return false,
+			Some(prev) => prev.borrow().get_id() == next.borrow().get_id(),
 		}
 	}
 
