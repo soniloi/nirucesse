@@ -24,6 +24,9 @@ use file_buffer::FileBuffer;
 use game::Game;
 use player::Player;
 
+// ID numbers of specific items
+pub const ITEM_ID_ROBOT: u32 = 1061;
+
 fn main() {
 
     let filename = get_filename();

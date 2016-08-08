@@ -26,6 +26,10 @@ impl Item {
 		}
 	}
 
+	pub fn is(&self, id: u32) -> bool {
+		id == self.id
+	}
+
 	fn has_property(&self, property: u32) -> bool {
 		self.properties & property != 0
 	}

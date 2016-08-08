@@ -3,6 +3,11 @@ use player::Player;
 use terminal;
 
 #[allow(unused_variables)]
+pub fn do_avnarand(data: &DataCollection, arg: String, player: &mut Player) {
+	player.avnarand();
+}
+
+#[allow(unused_variables)]
 pub fn do_commands(data: &DataCollection, arg: String, player: &mut Player) {
 	terminal::write_full(&data.get_commands_non_secret());
 }

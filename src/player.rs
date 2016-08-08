@@ -82,6 +82,21 @@ impl Player {
 		self.location.borrow().get_shortname()
 	}
 
+	pub fn avnarand(&mut self) {
+		let mut self_loc = self.location.borrow_mut();
+		match self_loc.get_obstruction() {
+			None => terminal::write_full("Nothing happens."),
+			Some(obstruction) => {
+				if !obstruction.is(::ITEM_ID_ROBOT) {
+					terminal::write_full("Nothing happens.");
+				} else {
+					self_loc.remove_item_certain(&obstruction);
+					terminal::write_full("The robot guard accepts your password. Its job done, it folds itself up before rolling away and fitting itself into a convenient robot-shaped alcove in the wall. It will not trouble you again.");
+				}
+			},
+		}
+	}
+
 	// Have player attempt to pick up item from current location
 	pub fn pick_up(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
 		if self.contains_item(item) {
