@@ -82,18 +82,22 @@ impl Player {
 		self.location.borrow().get_shortname()
 	}
 
-	pub fn avnarand(&mut self) {
+	pub fn avnarand(&mut self, data: &DataCollection) {
 		let mut self_loc = self.location.borrow_mut();
+		let mut robot_here = false;
 		match self_loc.get_obstruction() {
-			None => terminal::write_full("Nothing happens."),
+			None => {},
 			Some(obstruction) => {
-				if !obstruction.is(::ITEM_ID_ROBOT) {
-					terminal::write_full("Nothing happens.");
-				} else {
+				if obstruction.is(::ITEM_ID_ROBOT) {
 					self_loc.remove_item_certain(&obstruction);
-					terminal::write_full("The robot guard accepts your password. Its job done, it folds itself up before rolling away and fitting itself into a convenient robot-shaped alcove in the wall. It will not trouble you again.");
+					robot_here = true;
 				}
 			},
+		}
+		if robot_here {
+			terminal::write_full(data.get_response("robot"));
+		} else {
+			terminal::write_full(data.get_response("nohappen"));
 		}
 	}
 

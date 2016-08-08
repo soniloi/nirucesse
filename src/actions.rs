@@ -4,7 +4,7 @@ use terminal;
 
 #[allow(unused_variables)]
 pub fn do_avnarand(data: &DataCollection, arg: String, player: &mut Player) {
-	player.avnarand();
+	player.avnarand(data);
 }
 
 #[allow(unused_variables)]
