@@ -14,7 +14,7 @@ pub fn do_commands(data: &DataCollection, arg: String, player: &mut Player) {
 
 pub fn do_describe(data: &DataCollection, arg: String, player: &mut Player) {
 	if !player.has_light() {
-		terminal::write_full(data.get_response("cantsee"));
+		terminal::write_full(data.get_response("cantseed"));
 		return;
 	}
 	match data.get_item(arg) {

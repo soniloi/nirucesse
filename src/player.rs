@@ -80,7 +80,7 @@ impl Player {
 	}
 
 	pub fn get_location_stubname(&self) -> String {
-		if !self.has_light() {
+		if !self.has_light() || self.has_light_and_needsno_light() {
 			return String::from("???");
 		}
 		self.location.borrow().get_shortname()
