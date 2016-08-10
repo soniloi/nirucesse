@@ -79,11 +79,22 @@ impl Player {
 		self.location = data.get_location_wake().clone();
 	}
 
-	pub fn get_location_stubname(&self) -> String {
-		if !self.has_light() || self.has_light_and_needsno_light() {
-			return String::from("???");
+	fn get_effective_description(&self, haze_description: String, darkness_description: String, default_description: String) -> String {
+		if self.has_light_and_needsno_light() {
+			return haze_description;
 		}
-		self.location.borrow().get_shortname()
+		if !self.has_light() {
+			return darkness_description;
+		}
+		return default_description
+	}
+
+	fn get_effective_appearance(&self, data: &DataCollection, default_description: String) -> String {
+		self.get_effective_description(String::from(data.get_response("cantseeh")), String::from(data.get_response("cantseed")), default_description)
+	}
+
+	pub fn get_location_stubname(&self) -> String {
+		self.get_effective_description(String::from("???"), String::from("???"), self.location.borrow().get_shortname())
 	}
 
 	pub fn avnarand(&mut self, data: &DataCollection) {
@@ -228,13 +239,7 @@ impl Player {
 			return false;
 		} else {
 			self.location = next.clone();
-			if self.has_light_and_needsno_light() {
-				terminal::write_full(data.get_response("cantseeh"));
-			} else if !self.has_light() {
-				terminal::write_full(data.get_response("cantseed"));
-			} else {
-				terminal::write_full(&self.location.borrow().mk_full_string());
-			}
+			terminal::write_full(&self.get_effective_appearance(data, self.location.borrow().mk_full_string()));
 			return true;
 		}
 	}
@@ -264,13 +269,8 @@ impl Player {
 	}
 
 	// Return a description of what the player sees when they look
-	pub fn get_look<'a>(&'a self, data: &'a DataCollection) -> String {
-		if self.has_light_and_needsno_light() {
-			return String::from(data.get_response("cantseeh"));
-		} else if !self.has_light() {
-			return String::from(data.get_response("cantseed"));
-		}
-		self.mk_location_string()
+	pub fn get_look(&self, data: &DataCollection) -> String {
+		self.get_effective_appearance(data, self.mk_location_string())
 	}
 
 	pub fn get_score(&self) -> u32 {
