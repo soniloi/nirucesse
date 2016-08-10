@@ -79,8 +79,11 @@ pub fn do_inventory(data: &DataCollection, arg: String, player: &mut Player) {
 
 #[allow(unused_variables)]
 pub fn do_look(data: &DataCollection, arg: String, player: &mut Player) {
-	if !player.has_light() {
-		terminal::write_full(data.get_response("cantsee"));
+	if player.has_light_and_needsno_light() {
+		terminal::write_full(data.get_response("cantseeh"));
+		return;
+	} else if !player.has_light() {
+		terminal::write_full(data.get_response("cantseed"));
 		return;
 	}
 	terminal::write_full(&player.mk_location_string());

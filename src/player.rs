@@ -213,6 +213,10 @@ impl Player {
 		}
 	}
 
+	pub fn has_light_and_needsno_light(&self) -> bool {
+		self.inventory.has_light() && self.location.borrow().needsno_light()
+	}
+
 	// Attempt to go to a location known to be adjacent; return true if move successful
 	fn try_move_to(&mut self, data: &DataCollection, next: &Rc<RefCell<Box<Location>>>) -> bool {
 		let mut rng = rand::thread_rng();
@@ -224,7 +228,7 @@ impl Player {
 			return false;
 		} else {
 			self.location = next.clone();
-			if self.inventory.has_light() && self.location.borrow().needsno_light() {
+			if self.has_light_and_needsno_light() {
 				terminal::write_full(data.get_response("cantseeh"));
 			} else if !self.has_light() {
 				terminal::write_full(data.get_response("cantseed"));
