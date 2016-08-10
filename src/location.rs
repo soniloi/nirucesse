@@ -5,6 +5,7 @@ use std::rc::Rc;
 use item::Item;
 
 const CTRL_LOC_HAS_LIGHT: u32 = 0x01; // Whether the location has ambient lighting
+const CTRL_LOC_NEEDSNO_LIGHT: u32 = 0x10; // Whether the location requires no portable lighting in order for the player to be able to see clearly
 
 pub struct Location {
 	id: u32,
@@ -53,6 +54,10 @@ impl Location {
 		}
 
 		false
+	}
+
+	pub fn needsno_light(&self) -> bool {
+		self.has_property(CTRL_LOC_NEEDSNO_LIGHT)
 	}
 
 	pub fn get_obstruction(&self) -> Option<Rc<Box<Item>>> {

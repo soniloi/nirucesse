@@ -224,8 +224,10 @@ impl Player {
 			return false;
 		} else {
 			self.location = next.clone();
-			if !self.has_light() {
-				terminal::write_full(data.get_response("cantsee"));
+			if self.inventory.has_light() && self.location.borrow().needsno_light() {
+				terminal::write_full(data.get_response("cantseeh"));
+			} else if !self.has_light() {
+				terminal::write_full(data.get_response("cantseed"));
 			} else {
 				terminal::write_full(&self.location.borrow().mk_full_string());
 			}
