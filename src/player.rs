@@ -41,6 +41,10 @@ impl Player {
 		self.inventory.has_light() || self.location.borrow().has_light()
 	}
 
+	fn has_light_and_needsno_light(&self) -> bool {
+		self.inventory.has_light() && self.location.borrow().needsno_light()
+	}
+
 	pub fn contains_item(&self, item_ptr: &Rc<Box<Item>>) -> bool {
 		self.inventory.contains_item(item_ptr)
 	}
@@ -213,10 +217,6 @@ impl Player {
 		}
 	}
 
-	pub fn has_light_and_needsno_light(&self) -> bool {
-		self.inventory.has_light() && self.location.borrow().needsno_light()
-	}
-
 	// Attempt to go to a location known to be adjacent; return true if move successful
 	fn try_move_to(&mut self, data: &DataCollection, next: &Rc<RefCell<Box<Location>>>) -> bool {
 		let mut rng = rand::thread_rng();
@@ -261,6 +261,16 @@ impl Player {
 			None => return false,
 			Some(prev) => prev.borrow().get_id() == next.borrow().get_id(),
 		}
+	}
+
+	// Return a description of what the player sees when they look
+	pub fn get_look<'a>(&'a self, data: &'a DataCollection) -> String {
+		if self.has_light_and_needsno_light() {
+			return String::from(data.get_response("cantseeh"));
+		} else if !self.has_light() {
+			return String::from(data.get_response("cantseed"));
+		}
+		self.mk_location_string()
 	}
 
 	pub fn get_score(&self) -> u32 {

@@ -68,7 +68,7 @@ impl DataCollection {
 		self.explanations.get_uncertain(key)
 	}
 
-	pub fn get_response(&self, key: &str) -> &String {
+	pub fn get_response(&self, key: &str) -> &str {
 		self.responses.get_certain(key)
 	}
 
