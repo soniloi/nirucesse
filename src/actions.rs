@@ -1,5 +1,9 @@
+use std::rc::Rc;
+
 use data_collection::DataCollection;
+use item::Item;
 use player::Player;
+
 use terminal;
 
 #[allow(unused_variables)]
@@ -17,15 +21,7 @@ pub fn do_describe(data: &DataCollection, arg: String, player: &mut Player) {
 		terminal::write_full(data.get_response("cantseed"));
 		return;
 	}
-	match data.get_item(arg) {
-		None => {
-			terminal::write_full(data.get_response("nonowhat"));
-			return;
-		},
-		Some(i) => {
-			player.describe(i);
-		}
-	}
+	manipulate_item(data, arg, player, Player::describe);
 }
 
 pub fn do_drop(data: &DataCollection, arg: String, player: &mut Player) {
@@ -77,6 +73,7 @@ pub fn do_inventory(data: &DataCollection, arg: String, player: &mut Player) {
 	terminal::write_full(&player.mk_inventory_string());
 }
 
+#[allow(unused_variables)]
 pub fn do_look(data: &DataCollection, arg: String, player: &mut Player) {
 	terminal::write_full(&player.get_look(data));
 }
@@ -91,15 +88,7 @@ pub fn do_read(data: &DataCollection, arg: String, player: &mut Player) {
 		terminal::write_full(data.get_response("cantseed"));
 		return;
 	}
-	match data.get_item(arg) {
-		None => {
-			terminal::write_full(data.get_response("nonowhat"));
-			return;
-		},
-		Some(i) => {
-			player.read(i);
-		}
-	}
+	manipulate_item(data, arg, player, Player::read);
 }
 
 #[allow(unused_variables)]
@@ -127,4 +116,16 @@ pub fn do_take(data: &DataCollection, arg: String, player: &mut Player) {
 #[allow(unused_variables)]
 pub fn do_xyzzy(data: &DataCollection, arg: String, player: &mut Player) {
 	terminal::write_full(data.get_response("ok"));
+}
+
+fn manipulate_item(data: &DataCollection, arg: String, player: &mut Player, act: fn(player: &Player, item: &Rc<Box<Item>>)) {
+	match data.get_item(arg) {
+		None => {
+			terminal::write_full(data.get_response("nonowhat"));
+			return;
+		},
+		Some(i) => {
+			act(player, i);
+		}
+	}
 }
