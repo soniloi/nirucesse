@@ -117,14 +117,15 @@ impl Player {
 	}
 
 	// Have player attempt to pick up item from current location
-	pub fn pick_up(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
+	pub fn take(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
 		if self.contains_item(item) {
 			terminal::write_full(data.get_response("takealre"));
 			return;	
 		}
 
 		if !self.location.borrow_mut().contains_item(item) {
-			terminal::write_full(data.get_response("noitemhe"));
+			let response = String::from(data.get_response("nosee")) + &item.get_shortname() + data.get_response("noseeher");
+			terminal::write_full(&response);
 			return;
 		}
 

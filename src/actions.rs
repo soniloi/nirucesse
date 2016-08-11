@@ -94,15 +94,7 @@ pub fn do_score(data: &DataCollection, arg: String, player: &mut Player) {
 }
 
 pub fn do_take(data: &DataCollection, arg: String, player: &mut Player) {
-	match data.get_item(arg) {
-		None => {
-			terminal::write_full(data.get_response("nonowhat"));
-			return;
-		},
-		Some(i) => {
-			player.pick_up(data, i);
-		}
-	}
+	manipulate_item(data, arg, player, Player::take)
 }
 
 #[allow(unused_variables)]
