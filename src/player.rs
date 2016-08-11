@@ -144,25 +144,26 @@ impl Player {
 	}
 
 	// Have player attempt to drop item from inventory to current location
-	pub fn drop(&mut self, item: &Rc<Box<Item>>) {
+	pub fn drop(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
 		let it = self.inventory.remove_item(item);
 		match it {
 			None => {
-				terminal::write_full("You are not carrying it.");
+				let response = String::from(data.get_response("nocarry")) + item.get_shortname() + ".";
+				terminal::write_full(&response);
 			}
 			Some(i) => {
 				self.location.borrow_mut().insert_item(i);
-				terminal::write_full("Dropped.");
+				terminal::write_full(data.get_response("dropgood"));
 			}
 		}	
 	}
 
 	// Describe an item in the player's inventory or at the player's location
-	pub fn describe(&mut self, item: &Rc<Box<Item>>) {
+	pub fn describe(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
 		if self.inventory.contains_item(item) || self.location.borrow().contains_item(item) {
 			terminal::write_full(&item.mk_full_string());
 		} else {
-			let response = String::from("I see no ") + &item.get_shortname() + " here.";
+			let response = String::from(data.get_response("nosee")) + &item.get_shortname() + data.get_response("noseeher");
 			terminal::write_full(&response);
 		}
 	}
@@ -313,11 +314,11 @@ impl Player {
 		self.location.borrow().mk_full_string()
 	}
 
-	pub fn read(&mut self, item: &Rc<Box<Item>>) {
+	pub fn read(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
 		if self.inventory.contains_item(item) || self.location.borrow().contains_item(item) {
 			terminal::write_full(&item.mk_writing_string());
 		} else {
-			let response = String::from("I see no ") + &item.get_shortname() + " here.";
+			let response = String::from(data.get_response("nosee")) + &item.get_shortname() + data.get_response("noseeher");
 			terminal::write_full(&response);
 		}
 	}

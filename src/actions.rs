@@ -110,14 +110,14 @@ pub fn do_xyzzy(data: &DataCollection, arg: String, player: &mut Player) {
 	terminal::write_full(data.get_response("ok"));
 }
 
-fn manipulate_item(data: &DataCollection, arg: String, player: &mut Player, act: fn(player: &mut Player, item: &Rc<Box<Item>>)) {
+fn manipulate_item(data: &DataCollection, arg: String, player: &mut Player, act: fn(player: &mut Player, data: &DataCollection, item: &Rc<Box<Item>>)) {
 	match data.get_item(arg) {
 		None => {
 			terminal::write_full(data.get_response("nonowhat"));
 			return;
 		},
 		Some(i) => {
-			act(player, i);
+			act(player, data, i);
 		}
 	}
 }
