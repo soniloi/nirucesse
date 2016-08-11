@@ -158,7 +158,7 @@ impl Player {
 	}
 
 	// Describe an item in the player's inventory or at the player's location
-	pub fn describe(&self, item: &Rc<Box<Item>>) {
+	pub fn describe(&mut self, item: &Rc<Box<Item>>) {
 		if self.inventory.contains_item(item) || self.location.borrow().contains_item(item) {
 			terminal::write_full(&item.mk_full_string());
 		} else {
@@ -313,7 +313,7 @@ impl Player {
 		self.location.borrow().mk_full_string()
 	}
 
-	pub fn read(&self, item: &Rc<Box<Item>>) {
+	pub fn read(&mut self, item: &Rc<Box<Item>>) {
 		if self.inventory.contains_item(item) || self.location.borrow().contains_item(item) {
 			terminal::write_full(&item.mk_writing_string());
 		} else {
