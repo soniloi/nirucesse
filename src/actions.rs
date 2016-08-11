@@ -87,6 +87,10 @@ pub fn do_quit(data: &DataCollection, arg: String, player: &mut Player) {
 }
 
 pub fn do_read(data: &DataCollection, arg: String, player: &mut Player) {
+	if !player.has_light() {
+		terminal::write_full(data.get_response("cantseed"));
+		return;
+	}
 	match data.get_item(arg) {
 		None => {
 			terminal::write_full(data.get_response("nonowhat"));
