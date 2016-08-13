@@ -26,10 +26,6 @@ impl Game {
 			if !self.player.is_alive() {
 				self.process_reincarnation();
 			}
-
-			else if self.player.is_playing() {
-				self.process_warnings();
-			}
 		}
 	}
 
@@ -64,13 +60,6 @@ impl Game {
 				terminal::write_full(self.data.get_response("ok"));
 				self.player.set_playing(false);
 			},
-		}
-	}
-
-	// Print any warnings that the player should know about
-	fn process_warnings(&self) {
-		if !self.player.has_light() {
-			terminal::write_full(self.data.get_response("lampno"));
 		}
 	}
 }

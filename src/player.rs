@@ -201,6 +201,10 @@ impl Player {
 			move_success = self.try_move_other(data, dir);
 		}
 
+		if move_success && !self.has_light() {
+			terminal::write_full(data.get_response("lampno"));
+		}
+
 		self.update_previous(move_success, &temp_loc);
 	}
 
