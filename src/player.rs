@@ -9,6 +9,8 @@ use item::Item;
 use location::Location;
 use terminal;
 
+type ItemManipFn = fn(player: &Player, data: &DataCollection, item: &Rc<Box<Item>>);
+
 pub struct Player {
 	inventory: Inventory,
 	location: Rc<RefCell<Box<Location>>>,
@@ -97,7 +99,7 @@ impl Player {
 		self.get_effective_description(String::from("???"), String::from("???"), self.location.borrow().get_shortname())
 	}
 
-	fn observe_item(&self, data: &DataCollection, item: &Rc<Box<Item>>, act: fn(player: &Player, data: &DataCollection, item: &Rc<Box<Item>>)) {
+	fn observe_item(&self, data: &DataCollection, item: &Rc<Box<Item>>, act: ItemManipFn) {
 		if !self.has_light() {
 			terminal::write_full(data.get_response("cantseed"));
 			return;
@@ -106,7 +108,7 @@ impl Player {
 	}
 
 	// Manipulate an item present either in the player's inventory or at the player's location
-	fn manipulate_item_present(&self, data: &DataCollection, item: &Rc<Box<Item>>, act: fn(player: &Player, data: &DataCollection, item: &Rc<Box<Item>>)) {
+	fn manipulate_item_present(&self, data: &DataCollection, item: &Rc<Box<Item>>, act: ItemManipFn) {
 		if !self.inventory.contains_item(item) && !self.location.borrow().contains_item(item) {
 			let response = String::from(data.get_response("nosee")) + &item.get_shortname() + data.get_response("noseeher");
 			terminal::write_full(&response);
