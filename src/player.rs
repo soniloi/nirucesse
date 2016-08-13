@@ -97,12 +97,14 @@ impl Player {
 		self.get_effective_description(String::from("???"), String::from("???"), self.location.borrow().get_shortname())
 	}
 
-	fn observe_item(&self, data: &DataCollection, item: &Rc<Box<Item>>, act: fn(player: &Player, data: &DataCollection, item: &Rc<Box<Item>>)) {
+	fn observe_item(&self, data: &DataCollection, item: &Rc<Box<Item>>,
+		act_current: fn(player: &Player, data: &DataCollection, item: &Rc<Box<Item>>, act: fn(player: &Player, data: &DataCollection, item: &Rc<Box<Item>>)),
+		act_final: fn(player: &Player, data: &DataCollection, item: &Rc<Box<Item>>)) {
 		if !self.has_light() {
 			terminal::write_full(data.get_response("cantseed"));
 			return;
 		}
-		act(self, data, item);
+		act_current(self, data, item, act_final);
 	}
 
 	// Manipulate an item present either in the player's inventory or at the player's location
@@ -179,11 +181,7 @@ impl Player {
 
 	// Describe an item in the player's inventory or at the player's location
 	pub fn describe(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
-		self.observe_item(data, item, Player::describe_visible);
-	}
-
-	fn describe_visible(&self, data: &DataCollection, item: &Rc<Box<Item>>) {
-		self.manipulate_item_present(data, item, Player::describe_final);
+		self.observe_item(data, item, Player::manipulate_item_present, Player::describe_final);
 	}
 
 	fn describe_final(&self, data: &DataCollection, item: &Rc<Box<Item>>) {
@@ -337,11 +335,7 @@ impl Player {
 	}
 
 	pub fn read(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
-		self.observe_item(data, item, Player::read_visible);
-	}
-
-	fn read_visible(&self, data: &DataCollection, item: &Rc<Box<Item>>) {
-		self.manipulate_item_present(data, item, Player::read_final);
+		self.observe_item(data, item, Player::manipulate_item_present, Player::read_final);
 	}
 
 	fn read_final(&self, data: &DataCollection, item: &Rc<Box<Item>>) {
