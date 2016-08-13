@@ -97,6 +97,14 @@ impl Player {
 		self.get_effective_description(String::from("???"), String::from("???"), self.location.borrow().get_shortname())
 	}
 
+	fn observe_item(&self, data: &DataCollection, item: &Rc<Box<Item>>, act: fn(player: &Player, data: &DataCollection, item: &Rc<Box<Item>>)) {
+		if !self.has_light() {
+			terminal::write_full(data.get_response("cantseed"));
+			return;
+		}
+		act(self, data, item);
+	}
+
 	pub fn avnarand(&mut self, data: &DataCollection) {
 		let mut self_loc = self.location.borrow_mut();
 		let mut robot_here = false;
@@ -161,6 +169,10 @@ impl Player {
 
 	// Describe an item in the player's inventory or at the player's location
 	pub fn describe(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
+		self.observe_item(data, item, Player::describe_visible);
+	}
+
+	fn describe_visible(&self, data: &DataCollection, item: &Rc<Box<Item>>) {
 		if self.inventory.contains_item(item) || self.location.borrow().contains_item(item) {
 			terminal::write_full(&item.mk_full_string());
 		} else {
@@ -316,6 +328,10 @@ impl Player {
 	}
 
 	pub fn read(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
+		self.observe_item(data, item, Player::read_visible);
+	}
+
+	fn read_visible(&self, data: &DataCollection, item: &Rc<Box<Item>>) {
 		if self.inventory.contains_item(item) || self.location.borrow().contains_item(item) {
 			terminal::write_full(&item.mk_writing_string());
 		} else {

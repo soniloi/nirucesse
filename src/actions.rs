@@ -17,10 +17,6 @@ pub fn do_commands(data: &DataCollection, arg: String, player: &mut Player) {
 }
 
 pub fn do_describe(data: &DataCollection, arg: String, player: &mut Player) {
-	if !player.has_light() {
-		terminal::write_full(data.get_response("cantseed"));
-		return;
-	}
 	manipulate_item(data, arg, player, Player::describe);
 }
 
@@ -76,10 +72,6 @@ pub fn do_quit(data: &DataCollection, arg: String, player: &mut Player) {
 }
 
 pub fn do_read(data: &DataCollection, arg: String, player: &mut Player) {
-	if !player.has_light() {
-		terminal::write_full(data.get_response("cantseed"));
-		return;
-	}
 	manipulate_item(data, arg, player, Player::read);
 }
 
