@@ -105,6 +105,16 @@ impl Player {
 		act(self, data, item);
 	}
 
+	// Manipulate an item present either in the player's inventory or at the player's location
+	fn manipulate_item_present(&self, data: &DataCollection, item: &Rc<Box<Item>>, act: fn(player: &Player, data: &DataCollection, item: &Rc<Box<Item>>)) {
+		if !self.inventory.contains_item(item) && !self.location.borrow().contains_item(item) {
+			let response = String::from(data.get_response("nosee")) + &item.get_shortname() + data.get_response("noseeher");
+			terminal::write_full(&response);
+			return;
+		}
+		act(self, data, item);
+	}
+
 	pub fn avnarand(&mut self, data: &DataCollection) {
 		let mut self_loc = self.location.borrow_mut();
 		let mut robot_here = false;
@@ -173,12 +183,11 @@ impl Player {
 	}
 
 	fn describe_visible(&self, data: &DataCollection, item: &Rc<Box<Item>>) {
-		if self.inventory.contains_item(item) || self.location.borrow().contains_item(item) {
-			terminal::write_full(&item.mk_full_string());
-		} else {
-			let response = String::from(data.get_response("nosee")) + &item.get_shortname() + data.get_response("noseeher");
-			terminal::write_full(&response);
-		}
+		self.manipulate_item_present(data, item, Player::describe_final);
+	}
+
+	fn describe_final(&self, data: &DataCollection, item: &Rc<Box<Item>>) {
+		terminal::write_full(&item.mk_full_string());
 	}
 
 	// Have player travel to an adjacent location
@@ -332,11 +341,10 @@ impl Player {
 	}
 
 	fn read_visible(&self, data: &DataCollection, item: &Rc<Box<Item>>) {
-		if self.inventory.contains_item(item) || self.location.borrow().contains_item(item) {
-			terminal::write_full(&item.mk_writing_string());
-		} else {
-			let response = String::from(data.get_response("nosee")) + &item.get_shortname() + data.get_response("noseeher");
-			terminal::write_full(&response);
-		}
+		self.manipulate_item_present(data, item, Player::read_final);
+	}
+
+	fn read_final(&self, data: &DataCollection, item: &Rc<Box<Item>>) {
+		terminal::write_full(&item.mk_writing_string());
 	}
 }
