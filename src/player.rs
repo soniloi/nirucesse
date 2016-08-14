@@ -194,12 +194,11 @@ impl Player {
 	pub fn go(&mut self, data: &DataCollection, dir: &Direction) {
 
 		let temp_loc = self.location.clone();
-		let mut move_success = false;
 
-		match *dir {
-			Direction::Back => move_success = self.try_move_back(data),
-			_ => move_success = self.try_move_other(data, dir),
-		}
+		let move_success = match *dir {
+			Direction::Back => self.try_move_back(data),
+			_ => self.try_move_other(data, dir),
+		};
 
 		if move_success && !self.has_light() {
 			terminal::write_full(data.get_response("lampno"));
