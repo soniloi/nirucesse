@@ -6,6 +6,7 @@ use std::rc::Rc;
 use data_collection::DataCollection;
 use inventory::Inventory;
 use item::Item;
+use location::Direction;
 use location::Location;
 use terminal;
 
@@ -190,15 +191,14 @@ impl Player {
 
 	// Have player travel to an adjacent location
 	// TODO: I don't really like this very much, especially the 'back' part; there's probably a better way
-	pub fn go(&mut self, data: &DataCollection, dir: String) {
+	pub fn go(&mut self, data: &DataCollection, dir: &Direction) {
 
 		let temp_loc = self.location.clone();
 		let mut move_success = false;
 
-		if dir == "back" {
-			move_success = self.try_move_back(data);
-		} else {
-			move_success = self.try_move_other(data, dir);
+		match *dir {
+			Direction::Back => move_success = self.try_move_back(data),
+			_ => move_success = self.try_move_other(data, dir),
 		}
 
 		if move_success && !self.has_light() {
@@ -223,12 +223,9 @@ impl Player {
 	}
 
 	// Attempt to move to some location, which may not be reachable from the current location; return true if move was successful
-	fn try_move_other(&mut self, data: &DataCollection, dir_str: String) -> bool {
+	fn try_move_other(&mut self, data: &DataCollection, dir: &Direction) -> bool {
 		let loc_clone = self.location.clone();
 		let self_loc = loc_clone.borrow();
-
-		// FIXME: this should be passing the direction tag, not the localized primary name
-		let dir = data.get_direction_enum(dir_str);
 
 		match self_loc.get_direction(dir) {
 			None => {

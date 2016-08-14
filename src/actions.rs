@@ -34,7 +34,9 @@ pub fn do_explain(data: &DataCollection, arg: String, player: &mut Player) {
 
 #[allow(unused_variables)]
 pub fn do_go(data: &DataCollection, arg: String, player: &mut Player) {
-	player.go(data, String::from(arg));
+	// FIXME: this should be passing the direction tag, not the localized primary name
+	let dir = data.get_direction_enum(arg);
+	player.go(data, dir);
 }
 
 #[allow(unused_variables)]

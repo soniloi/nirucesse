@@ -56,6 +56,7 @@ impl LocationCollection {
 		self.direction_map.insert(String::from("northwest"), Direction::Northwest);
 		self.direction_map.insert(String::from("up"), Direction::Up);
 		self.direction_map.insert(String::from("down"), Direction::Down);
+		self.direction_map.insert(String::from("back"), Direction::Back);
 
 		let mut all_links: HashMap<u32, Box<HashMap<Direction, u32>>> = HashMap::new();
 		let mut line = buffer.get_line();

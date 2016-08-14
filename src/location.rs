@@ -19,6 +19,7 @@ pub enum Direction {
 	Northwest,
 	Up,
 	Down,
+	Back,
 }
 
 pub struct Location {
