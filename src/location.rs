@@ -7,6 +7,20 @@ use item::Item;
 const CTRL_LOC_HAS_LIGHT: u32 = 0x01; // Whether the location has ambient lighting
 const CTRL_LOC_NEEDSNO_LIGHT: u32 = 0x10; // Whether the location requires no portable lighting in order for the player to be able to see clearly
 
+#[derive(PartialEq, Eq, Hash, Clone, Copy)]
+pub enum Direction {
+	North,
+	Northeast,
+	East,
+	Southeast,
+	South,
+	Southwest,
+	West,
+	Northwest,
+	Up,
+	Down,
+}
+
 pub struct Location {
 	id: u32,
 	properties: u32,
@@ -14,7 +28,7 @@ pub struct Location {
 	longname: String,
 	description: String,
 
-	directions: HashMap<String, Rc<RefCell<Box<Location>>>>,
+	directions: HashMap<Direction, Rc<RefCell<Box<Location>>>>,
 	items: HashMap<u32, Rc<Box<Item>>>,
 }
 
@@ -27,7 +41,7 @@ impl Location {
 			shortname: shortname,
 			longname: longname,
 			description: description,
-			directions: HashMap::with_capacity(11),
+			directions: HashMap::with_capacity(10),
 			items: HashMap::new(),
 		}
 	}
@@ -70,11 +84,11 @@ impl Location {
 		None
 	}
 
-	pub fn get_direction(&self, dir: String) -> Option<&Rc<RefCell<Box<Location>>>> {
-		self.directions.get(&dir)
+	pub fn get_direction(&self, dir: &Direction) -> Option<&Rc<RefCell<Box<Location>>>> {
+		self.directions.get(dir)
 	}
 
-	pub fn set_direction(&mut self, dir: String, loc: Rc<RefCell<Box<Location>>>) {
+	pub fn set_direction(&mut self, dir: Direction, loc: Rc<RefCell<Box<Location>>>) {
 		self.directions.insert(dir, loc);
 	}
 

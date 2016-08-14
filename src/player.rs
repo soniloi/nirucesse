@@ -223,9 +223,12 @@ impl Player {
 	}
 
 	// Attempt to move to some location, which may not be reachable from the current location; return true if move was successful
-	fn try_move_other(&mut self, data: &DataCollection, dir: String) -> bool {
+	fn try_move_other(&mut self, data: &DataCollection, dir_str: String) -> bool {
 		let loc_clone = self.location.clone();
 		let self_loc = loc_clone.borrow();
+
+		// FIXME: this should be passing the direction tag, not the localized primary name
+		let dir = data.get_direction_enum(dir_str);
 
 		match self_loc.get_direction(dir) {
 			None => {

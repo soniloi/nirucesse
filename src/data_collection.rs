@@ -6,6 +6,7 @@ use command::Command;
 use command_collection::CommandCollection;
 use item::Item;
 use item_collection::ItemCollection;
+use location::Direction;
 use location::Location;
 use location_collection::LocationCollection;
 use string_collection::StringCollection;
@@ -78,6 +79,10 @@ impl DataCollection {
 
 	pub fn get_commands_non_secret(&self) -> String {
 		self.commands.mk_non_secret_string()
+	}
+
+	pub fn get_direction_enum(&self, dir_str: String) -> &Direction {
+		self.locations.get_direction_enum(dir_str)
 	}
 }
 

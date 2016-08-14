@@ -2,6 +2,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
+use location::Direction;
 use location::Location;
 use data_collection;
 use file_buffer::FileBuffer;
@@ -30,6 +31,7 @@ const SEP_SECTION: &'static str = "---"; // String separating sections
 pub struct LocationCollection {
 	locations: HashMap<u32, Rc<RefCell<Box<Location>>>>,
 	location_wake: u32, // Where the player wakes on game start, or after being reincarnated
+	direction_map: HashMap<String, Direction>, // Map of direction strings to direction enum
 }
 
 impl LocationCollection {
@@ -38,12 +40,24 @@ impl LocationCollection {
 		LocationCollection {
 			locations: HashMap::new(),
 			location_wake: LOCATION_INDEX_WAKE,
+			direction_map: HashMap::new(),
 		}
 	}
 
 	pub fn init(&mut self, buffer: &mut FileBuffer) {
 
-		let mut all_links: HashMap<u32, Box<HashMap<String, u32>>> = HashMap::new();
+		self.direction_map.insert(String::from("north"), Direction::North);
+		self.direction_map.insert(String::from("south"), Direction::South);
+		self.direction_map.insert(String::from("east"), Direction::East);
+		self.direction_map.insert(String::from("west"), Direction::West);
+		self.direction_map.insert(String::from("northeast"), Direction::Northeast);
+		self.direction_map.insert(String::from("southwest"), Direction::Southwest);
+		self.direction_map.insert(String::from("southeast"), Direction::Southeast);
+		self.direction_map.insert(String::from("northwest"), Direction::Northwest);
+		self.direction_map.insert(String::from("up"), Direction::Up);
+		self.direction_map.insert(String::from("down"), Direction::Down);
+
+		let mut all_links: HashMap<u32, Box<HashMap<Direction, u32>>> = HashMap::new();
 		let mut line = buffer.get_line();
 		while !buffer.eof() {
 			match line.as_ref() {
@@ -62,18 +76,18 @@ impl LocationCollection {
 					let loc = Rc::new(RefCell::new(Box::new(Location::new(id, properties, shortname, longname, description))));
 					self.locations.insert(id, loc);
 
-					let mut links: Box<HashMap<String, u32>> = Box::new(HashMap::new());
-					links.insert(String::from("north"), data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_N], 10));
-					links.insert(String::from("south"), data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_S], 10));
-					links.insert(String::from("east"), data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_E], 10));
-					links.insert(String::from("west"), data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_W], 10));
-					links.insert(String::from("northeast"), data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_NE], 10));
-					links.insert(String::from("southwest"), data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_SW], 10));
-					links.insert(String::from("southeast"), data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_SE], 10));
-					links.insert(String::from("northwest"), data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_NW], 10));
-					links.insert(String::from("up"), data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_U], 10));
-					links.insert(String::from("down"), data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_D], 10));
-					all_links.insert(id, links.clone());
+					let mut links: Box<HashMap<Direction, u32>> = Box::new(HashMap::new());
+					links.insert(Direction::North, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_N], 10));
+					links.insert(Direction::South, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_S], 10));
+					links.insert(Direction::East, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_E], 10));
+					links.insert(Direction::West, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_W], 10));
+					links.insert(Direction::Northeast, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_NE], 10));
+					links.insert(Direction::Southwest, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_SW], 10));
+					links.insert(Direction::Southeast, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_SE], 10));
+					links.insert(Direction::Northwest, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_NW], 10));
+					links.insert(Direction::Up, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_U], 10));
+					links.insert(Direction::Down, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_D], 10));
+					all_links.insert(id, links);
 				},
 			}
 			line = buffer.get_line();
@@ -96,7 +110,7 @@ impl LocationCollection {
 									return;
 								},
 								Some(direction) => {
-									loc.borrow_mut().set_direction((*direction_key).clone(), (*direction).clone());
+									loc.borrow_mut().set_direction(*direction_key, (*direction).clone());
 								},
 							}
 						}
@@ -114,6 +128,14 @@ impl LocationCollection {
 		match self.get(self.location_wake) {
 			None => panic!("Unable to determine wake location, fail."),
 			Some(location) => return location,
+		}
+	}
+
+	// Get a Direction from a string
+	pub fn get_direction_enum(&self, dir_str: String) -> &Direction {
+		match self.direction_map.get(&dir_str) {
+		    None => panic!("Location collection corruption, fail."),
+			Some(dir) => dir,
 		}
 	}
 }
