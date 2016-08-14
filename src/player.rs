@@ -298,20 +298,15 @@ impl Player {
 		self.get_effective_appearance(data, self.mk_location_string())
 	}
 
-	pub fn get_score(&self) -> u32 {
-		self.score
-	}
-
-	pub fn get_hints(&self) -> u32 {
-		self.hints
+	pub fn get_score_str(&self) -> String {
+		String::from("You currently have a score of ") + &self.score.to_string() +
+		" point(s). You have died " + &self.deaths.to_string() +
+		" time(s). You have entered " + &self.instructions.to_string() +
+		" instruction(s), and requested " + &self.hints.to_string() + " hint(s)."
 	}
 
 	pub fn increment_hints(&mut self) {
 		self.hints = self.hints + 1;
-	}
-
-	pub fn get_instructions(&self) -> u32 {
-		self.instructions
 	}
 
 	pub fn increment_instructions(&mut self) {
@@ -320,10 +315,6 @@ impl Player {
 
 	pub fn decrement_instructions(&mut self) {
 		self.instructions = self.instructions - 1;
-	}
-
-	pub fn get_deaths(&self) -> u32 {
-		self.deaths
 	}
 
 	pub fn increment_deaths(&mut self) {
