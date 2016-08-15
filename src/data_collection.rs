@@ -61,12 +61,18 @@ impl DataCollection {
 		self.locations.get_location_wake()
 	}
 
-	pub fn get_hint(&self, key: &str) -> Option<&String> {
-		self.hints.get_uncertain(key)
+	pub fn get_hint(&self, key: &str) -> &str {
+		match self.hints.get_uncertain(key) {
+			None => self.hints.get_certain("default"),
+			Some(hint) => hint
+		}
 	}
 
-	pub fn get_explanation(&self, key: &str) -> Option<&String> {
-		self.explanations.get_uncertain(key)
+	pub fn get_explanation(&self, key: &str) -> &str {
+		match self.explanations.get_uncertain(key) {
+			None => self.explanations.get_certain("default"),
+			Some(explanation) => explanation
+		}
 	}
 
 	pub fn get_response(&self, key: &str) -> &str {

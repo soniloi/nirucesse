@@ -26,10 +26,7 @@ pub fn do_drop(data: &DataCollection, arg: String, player: &mut Player) {
 
 #[allow(unused_variables)]
 pub fn do_explain(data: &DataCollection, arg: String, player: &mut Player) {
-	match data.get_explanation(&arg) {
-		None => terminal::write_full("I have no explanation for that."),
-		Some(explanation) => terminal::write_full(explanation),
-	}
+	terminal::write_full(data.get_explanation(&arg));
 }
 
 #[allow(unused_variables)]
@@ -51,10 +48,7 @@ pub fn do_help(data: &DataCollection, arg: String, player: &mut Player) {
 }
 
 pub fn do_hint(data: &DataCollection, arg: String, player: &mut Player) {
-	match data.get_hint(&arg) {
-		None => terminal::write_full("I have no hints to offer about such a thing."),
-		Some(hint) => terminal::write_full(hint),
-	}
+	terminal::write_full(data.get_hint(&arg));
 	player.increment_hints();
 }
 
