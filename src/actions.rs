@@ -38,7 +38,7 @@ pub fn do_go(data: &DataCollection, arg: String, player: &mut Player) {
 
 #[allow(unused_variables)]
 pub fn do_go_disambiguate(data: &DataCollection, arg: String, player: &mut Player) {
-	terminal::write_full("Use compass points or directions (e.g. \"north\", \"down\") to travel to a new location.");
+	terminal::write_full(data.get_response("godisamb"));
 }
 
 #[allow(unused_variables)]

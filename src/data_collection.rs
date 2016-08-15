@@ -62,16 +62,17 @@ impl DataCollection {
 	}
 
 	pub fn get_hint(&self, key: &str) -> &str {
-		match self.hints.get_uncertain(key) {
-			None => self.hints.get_certain("default"),
-			Some(hint) => hint
-		}
+		DataCollection::get_value_or_default(&self.hints, key)
 	}
 
 	pub fn get_explanation(&self, key: &str) -> &str {
-		match self.explanations.get_uncertain(key) {
-			None => self.explanations.get_certain("default"),
-			Some(explanation) => explanation
+		DataCollection::get_value_or_default(&self.explanations, key)
+	}
+
+	fn get_value_or_default<'a>(collection: &'a StringCollection, key: &str) -> &'a str {
+		match collection.get_uncertain(key) {
+			None => collection.get_certain("default"),
+			Some(value) => value
 		}
 	}
 
