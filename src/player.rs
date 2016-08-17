@@ -156,6 +156,14 @@ impl Player {
 				self.location.borrow_mut().insert_item(toast.clone());
 				terminal::write_full(data.get_response("bread"));
 			},
+			::ITEM_ID_TOAST => {
+				match self.inventory.remove_item(item) {
+					None => self.location.borrow_mut().remove_item_certain(item),
+					Some(_) => {},
+				};
+				terminal::write_full(data.get_response("toast"));
+				terminal::write_full(data.get_response("ashmouse"));
+			}
 			_ => {
 				terminal::write_full(data.get_response("nonohow"));
 			}
