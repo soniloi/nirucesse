@@ -10,7 +10,7 @@ use location::Direction;
 use location::Location;
 use terminal;
 
-type ItemManipFn = fn(player: &Player, data: &DataCollection, item: &Rc<Box<Item>>);
+type ItemManipFn = fn(player: &mut Player, data: &DataCollection, item: &Rc<Box<Item>>);
 
 pub struct Player {
 	inventory: Inventory,
@@ -100,7 +100,7 @@ impl Player {
 		self.get_effective_description(String::from("???"), String::from("???"), self.location.borrow().get_shortname())
 	}
 
-	fn observe_item(&self, data: &DataCollection, item: &Rc<Box<Item>>, act: ItemManipFn) {
+	fn observe_item(&mut self, data: &DataCollection, item: &Rc<Box<Item>>, act: ItemManipFn) {
 		if !self.has_light() {
 			terminal::write_full(data.get_response("cantseed"));
 			return;
@@ -109,7 +109,7 @@ impl Player {
 	}
 
 	// Manipulate an item present either in the player's inventory or at the player's location
-	fn manipulate_item_present(&self, data: &DataCollection, item: &Rc<Box<Item>>, act: ItemManipFn) {
+	fn manipulate_item_present(&mut self, data: &DataCollection, item: &Rc<Box<Item>>, act: ItemManipFn) {
 		if !self.inventory.contains_item(item) && !self.location.borrow().contains_item(item) {
 			let response = String::from(data.get_response("nosee")) + &item.get_shortname() + data.get_response("noseeher");
 			terminal::write_full(&response);
@@ -141,12 +141,25 @@ impl Player {
 		self.manipulate_item_present(data, item, Player::burn_final);
 	}
 
-	fn burn_final(&self, data: &DataCollection, item: &Rc<Box<Item>>) {
+	fn burn_final(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
 		if !self.inventory.contains_item_by_id(::ITEM_ID_MATCHES) {
 			terminal::write_full(data.get_response("nomatch"));
 			return;
 		}
-		// TODO: burn specific items
+		match item.get_id() {
+			::ITEM_ID_BREAD => {
+				match self.inventory.remove_item(item) {
+					None => self.location.borrow_mut().remove_item_certain(item),
+					Some(_) => {},
+				};
+				let toast = data.get_item_certain(String::from("toast"));
+				self.location.borrow_mut().insert_item(toast.clone());
+				terminal::write_full(data.get_response("bread"));
+			},
+			_ => {
+				terminal::write_full(data.get_response("nonohow"));
+			}
+		}
 	}
 
 	// Have player attempt to pick up item from current location
@@ -172,8 +185,8 @@ impl Player {
 			return;
 		}
 
-		let it = self.location.borrow_mut().remove_item_certain(item);
-		self.insert_item(it);
+		self.location.borrow_mut().remove_item_certain(item);
+		self.insert_item(item.clone());
 		terminal::write_full(data.get_response("takegood"));
 	}
 
@@ -197,7 +210,7 @@ impl Player {
 		self.observe_item(data, item, Player::describe_final);
 	}
 
-	fn describe_final(&self, data: &DataCollection, item: &Rc<Box<Item>>) {
+	fn describe_final(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
 		terminal::write_full(&item.mk_full_string());
 	}
 
@@ -344,7 +357,7 @@ impl Player {
 		self.observe_item(data, item, Player::read_final);
 	}
 
-	fn read_final(&self, data: &DataCollection, item: &Rc<Box<Item>>) {
+	fn read_final(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
 		terminal::write_full(&item.mk_writing_string());
 	}
 }
