@@ -55,13 +55,20 @@ impl DataCollection {
 
 	pub fn get_item_certain(&self, key: String) -> &Rc<Box<Item>> {
 		match self.items.get(key.clone()) {
-			None => panic!("Error: Data collection corrupt when searching for [{}].", key),
+			None => panic!("Error: Data collection corrupt when searching for item [{}].", key),
 			Some(item) => return item,
 		}
 	}
 
 	pub fn get_location(&self, key: u32) -> Option<&Rc<RefCell<Box<Location>>>> {
 		self.locations.get(key)
+	}
+
+	pub fn get_location_certain(&self, key: u32) -> &Rc<RefCell<Box<Location>>> {
+		match self.locations.get(key) {
+			None => panic!("Error: Data collection corrupt when searching for location [{}].", key),
+			Some(loc) => return loc,
+		}
 	}
 
 	pub fn get_location_wake(&self) -> &Rc<RefCell<Box<Location>>> {

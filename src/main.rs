@@ -24,6 +24,10 @@ use file_buffer::FileBuffer;
 use game::Game;
 use player::Player;
 
+// ID numbers of specific locations
+pub const LOCATION_ID_AIRLOCKE: u32 = 31; // The airlock just off the Recreation Hub
+pub const LOCATION_ID_AIRLOCKEOUT: u32 = 36; // The area immediately outside Airlock East
+
 // ID numbers of specific items
 pub const ITEM_ID_BREAD: u32 = 1010;
 pub const ITEM_ID_MATCHES: u32 = 1048;

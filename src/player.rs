@@ -162,7 +162,14 @@ impl Player {
 					Some(_) => {},
 				};
 				terminal::write_full(data.get_response("toast"));
-				terminal::write_full(data.get_response("ashmouse"));
+				let mut self_loc = self.location.borrow_mut();
+				if self_loc.is(::LOCATION_ID_AIRLOCKE) {
+					let out_loc = data.get_location_certain(::LOCATION_ID_AIRLOCKEOUT);
+					self_loc.set_direction(Direction::Southwest, out_loc.clone());
+					terminal::write_full(data.get_response("toastalm"));
+				} else {
+					terminal::write_full(data.get_response("ashmouse"));
+				}
 			}
 			_ => {
 				terminal::write_full(data.get_response("nonohow"));
