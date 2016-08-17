@@ -28,6 +28,10 @@ impl Inventory {
 		false
 	}
 
+	pub fn contains_item_by_id(&self, id: u32) -> bool {
+		self.items.contains_key(&id)
+	}
+
 	pub fn contains_item(&self, item: &Rc<Box<Item>>) -> bool {
 		self.items.contains_key(&(*item).get_id())
 	}

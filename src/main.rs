@@ -25,6 +25,7 @@ use game::Game;
 use player::Player;
 
 // ID numbers of specific items
+pub const ITEM_ID_MATCHES: u32 = 1048;
 pub const ITEM_ID_ROBOT: u32 = 1061;
 
 fn main() {

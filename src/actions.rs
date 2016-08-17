@@ -11,6 +11,10 @@ pub fn do_avnarand(data: &DataCollection, arg: String, player: &mut Player) {
 	player.avnarand(data);
 }
 
+pub fn do_burn(data: &DataCollection, arg: String, player: &mut Player) {
+	manipulate_item(data, arg, player, Player::burn);
+}
+
 #[allow(unused_variables)]
 pub fn do_commands(data: &DataCollection, arg: String, player: &mut Player) {
 	terminal::write_full(&data.get_commands_non_secret());

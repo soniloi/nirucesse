@@ -137,6 +137,18 @@ impl Player {
 		}
 	}
 
+	pub fn burn(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
+		self.manipulate_item_present(data, item, Player::burn_final);
+	}
+
+	fn burn_final(&self, data: &DataCollection, item: &Rc<Box<Item>>) {
+		if !self.inventory.contains_item_by_id(::ITEM_ID_MATCHES) {
+			terminal::write_full(data.get_response("nomatch"));
+			return;
+		}
+		// TODO: burn specific items
+	}
+
 	// Have player attempt to pick up item from current location
 	pub fn take(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
 		if self.contains_item(item) {

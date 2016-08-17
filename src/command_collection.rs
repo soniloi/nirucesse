@@ -31,6 +31,7 @@ impl CommandCollection {
 		let mut acts: HashMap<&str, fn(items: &DataCollection, arg: String, player: &mut Player)> = HashMap::new();
 		acts.insert("avnarand", actions::do_avnarand);
 		acts.insert("back", actions::do_go);
+		acts.insert("burn", actions::do_burn);
 		acts.insert("commands", actions::do_commands);
 		acts.insert("describe", actions::do_describe);
 		acts.insert("down", actions::do_go);
