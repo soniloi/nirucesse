@@ -291,6 +291,12 @@ impl Player {
 						}
 					}
 				}
+
+				if !next.borrow().has_air() && !self.inventory.has_air() {
+					terminal::write_full(data.get_response("movnoair"));
+					return false;
+				}
+
 				return self.try_move_to(data, &next);
 			},
 		}
