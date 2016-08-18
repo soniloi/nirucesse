@@ -170,6 +170,7 @@ impl Player {
 				if self_loc.is(::LOCATION_ID_AIRLOCKE) {
 					let out_loc = data.get_location_certain(::LOCATION_ID_AIRLOCKEOUT);
 					self_loc.set_direction(Direction::Southwest, out_loc.clone());
+					self_loc.set_air(false);
 					terminal::write_full(data.get_response("toastalm"));
 				} else {
 					terminal::write_full(data.get_response("ashmouse"));

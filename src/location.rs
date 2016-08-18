@@ -26,7 +26,7 @@ pub enum Direction {
 pub struct Location {
 	id: u32,
 	properties: u32,
-	shortname: String,	
+	shortname: String,
 	longname: String,
 	description: String,
 
@@ -60,6 +60,14 @@ impl Location {
 		self.properties & property != 0
 	}
 
+	fn set_property(&mut self, property: u32) {
+		self.properties |= property;
+	}
+
+	fn unset_property(&mut self, property: u32) {
+		self.properties &= (!property);
+	}
+
 	pub fn has_light(&self) -> bool {
 		// First check whether the location has ambient light
 		if self.has_property(CTRL_LOC_HAS_LIGHT) {
@@ -78,6 +86,14 @@ impl Location {
 
 	pub fn has_air(&self) -> bool {
 		self.has_property(CTRL_LOC_HAS_AIR)
+	}
+
+	pub fn set_air(&mut self, on: bool) {
+		if on {
+			self.set_property(CTRL_LOC_HAS_AIR);
+		} else {
+			self.unset_property(CTRL_LOC_HAS_AIR);
+		}
 	}
 
 	pub fn needsno_light(&self) -> bool {
