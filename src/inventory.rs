@@ -28,6 +28,15 @@ impl Inventory {
 		false
 	}
 
+	pub fn has_air(&self) -> bool {
+		for item in self.items.values() {
+			if item.has_air() {
+				return true
+			}
+		}
+		false
+	}
+
 	pub fn contains_item_by_id(&self, id: u32) -> bool {
 		self.items.contains_key(&id)
 	}

@@ -5,6 +5,7 @@ use std::rc::Rc;
 use item::Item;
 
 const CTRL_LOC_HAS_LIGHT: u32 = 0x01; // Whether the location has ambient lighting
+const CTRL_LOC_HAS_AIR: u32 = 0x2; // Whether there is air at the location
 const CTRL_LOC_NEEDSNO_LIGHT: u32 = 0x10; // Whether the location requires no portable lighting in order for the player to be able to see clearly
 
 #[derive(PartialEq, Eq, Hash, Clone, Copy)]
@@ -73,6 +74,10 @@ impl Location {
 		}
 
 		false
+	}
+
+	pub fn has_air(&self) -> bool {
+		self.has_property(CTRL_LOC_HAS_AIR)
 	}
 
 	pub fn needsno_light(&self) -> bool {

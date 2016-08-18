@@ -1,6 +1,7 @@
 const CTRL_ITEM_MOBILE: u32 = 0x2; // Whether the item is fixed or mobile (carryable)
 const CTRL_ITEM_OBSTRUCTION: u32 = 0x4; // Whether the item is an obstruction
 const CTRL_ITEM_GIVES_LIGHT: u32 = 0x10; // Whether the item emits light
+const CTRL_ITEM_GIVES_AIR: u32 = 0x20; // Whether the item enables player to breathe
 
 pub struct Item {
 	id: u32,
@@ -40,6 +41,10 @@ impl Item {
 
 	pub fn has_light(&self) -> bool {
 		self.has_property(CTRL_ITEM_GIVES_LIGHT)
+	}
+
+	pub fn has_air(&self) -> bool {
+		self.has_property(CTRL_ITEM_GIVES_AIR)
 	}
 
 	pub fn is_obstruction(&self) -> bool {

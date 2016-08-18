@@ -23,6 +23,11 @@ impl Game {
 		while self.player.is_playing() {
 			self.process_input();
 
+			if !self.player.has_air() {
+				terminal::write_full(self.data.get_response("noair"));
+				self.player.die(&self.data);
+			}
+
 			if !self.player.is_alive() {
 				self.process_reincarnation();
 			}

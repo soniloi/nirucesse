@@ -48,6 +48,10 @@ impl Player {
 		self.inventory.has_light() && self.location.borrow().needsno_light()
 	}
 
+	pub fn has_air(&self) -> bool {
+		self.inventory.has_air() || self.location.borrow().has_air()
+	}
+
 	pub fn contains_item(&self, item_ptr: &Rc<Box<Item>>) -> bool {
 		self.inventory.contains_item(item_ptr)
 	}
@@ -76,7 +80,7 @@ impl Player {
 		self.alive = b
 	}
 
-	fn die(&mut self, data: &DataCollection) {
+	pub fn die(&mut self, data: &DataCollection) {
 		self.set_alive(false);
 		self.increment_deaths();
 		self.location = data.get_location_wake().clone();
@@ -181,7 +185,7 @@ impl Player {
 	pub fn take(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
 		if self.contains_item(item) {
 			terminal::write_full(data.get_response("takealre"));
-			return;	
+			return;
 		}
 
 		if !self.location.borrow_mut().contains_item(item) {
@@ -217,7 +221,7 @@ impl Player {
 				self.location.borrow_mut().insert_item(i);
 				terminal::write_full(data.get_response("dropgood"));
 			}
-		}	
+		}
 	}
 
 	// Describe an item in the player's inventory or at the player's location
