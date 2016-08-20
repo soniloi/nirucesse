@@ -74,7 +74,11 @@ impl Inventory {
 		} else {
 			result = result + "You currently have the following:";
 			for item in self.items.values() {
-				result = result + "\n\t" + item.get_longname();
+				result = result + "\n\t";
+				if item.is_wearable() {
+					result = result + "(wearing) ";
+				}
+				result = result + item.get_longname();
 			}
 		}
 		result

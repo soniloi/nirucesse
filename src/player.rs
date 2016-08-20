@@ -207,7 +207,12 @@ impl Player {
 
 		self.location.borrow_mut().remove_item_certain(item);
 		self.insert_item(item.clone());
-		terminal::write_full(data.get_response("takegood"));
+
+		if item.is_wearable() {
+			terminal::write_full(data.get_response("wear"));
+		} else {
+			terminal::write_full(data.get_response("takegood"));
+		}
 	}
 
 	// Have player attempt to drop item from inventory to current location
