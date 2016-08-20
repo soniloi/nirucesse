@@ -1,7 +1,9 @@
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
 use item::Item;
+use location::Location;
 
 pub struct Inventory {
 	capacity: u32,
@@ -65,6 +67,13 @@ impl Inventory {
 	// Return whether an item could fit in the inventory
 	pub fn can_accept(&self, item: &Rc<Box<Item>>) -> bool {
 		(item.get_size() + self.get_size()) <= self.capacity
+	}
+
+	pub fn drop_all(&mut self, loc: &Rc<RefCell<Box<Location>>>) {
+		let removed = self.items.drain();
+		for (_, item) in removed {
+			loc.borrow_mut().insert_item(item.clone());
+		}
 	}
 
 	pub fn mk_string(&self) -> String {

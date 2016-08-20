@@ -83,6 +83,8 @@ impl Player {
 	pub fn die(&mut self, data: &DataCollection) {
 		self.set_alive(false);
 		self.increment_deaths();
+		let mut safe_loc = data.get_location_safe();
+		self.inventory.drop_all(safe_loc);
 		self.location = data.get_location_wake().clone();
 	}
 

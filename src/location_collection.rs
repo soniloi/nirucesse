@@ -24,13 +24,15 @@ const FILE_INDEX_LOCATION_LONGNAME: usize = 13;
 const FILE_INDEX_LOCATION_DESCRIPTION: usize = 14;
 const KEY_DIRECTION_NONE: u32 = 0;
 
+const LOCATION_INDEX_SAFE: u32 = 34;
 const LOCATION_INDEX_WAKE: u32 = 9;
 
 const SEP_SECTION: &'static str = "---"; // String separating sections
 
 pub struct LocationCollection {
 	locations: HashMap<u32, Rc<RefCell<Box<Location>>>>,
-	location_wake: u32, // Where the player wakes on game start, or after being reincarnated
+	location_wake: u32, // Where player wakes on game start, or after being reincarnated
+	location_safe: u32, // Where player's items get dropped on death
 	direction_map: HashMap<String, Direction>, // Map of direction strings to direction enum
 }
 
@@ -40,6 +42,7 @@ impl LocationCollection {
 		LocationCollection {
 			locations: HashMap::new(),
 			location_wake: LOCATION_INDEX_WAKE,
+			location_safe: LOCATION_INDEX_SAFE,
 			direction_map: HashMap::new(),
 		}
 	}
@@ -127,6 +130,13 @@ impl LocationCollection {
 
 	pub fn get_location_wake(&self) -> &Rc<RefCell<Box<Location>>> {
 		match self.get(self.location_wake) {
+			None => panic!("Unable to determine wake location, fail."),
+			Some(location) => return location,
+		}
+	}
+
+	pub fn get_location_safe(&self) -> &Rc<RefCell<Box<Location>>> {
+		match self.get(self.location_safe) {
 			None => panic!("Unable to determine wake location, fail."),
 			Some(location) => return location,
 		}

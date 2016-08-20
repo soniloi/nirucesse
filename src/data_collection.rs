@@ -75,6 +75,10 @@ impl DataCollection {
 		self.locations.get_location_wake()
 	}
 
+	pub fn get_location_safe(&self) -> &Rc<RefCell<Box<Location>>> {
+		self.locations.get_location_safe()
+	}
+
 	pub fn get_hint(&self, key: &str) -> &str {
 		DataCollection::get_value_or_default(&self.hints, key)
 	}
