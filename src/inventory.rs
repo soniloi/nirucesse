@@ -69,10 +69,14 @@ impl Inventory {
 		(item.get_size() + self.get_size()) <= self.capacity
 	}
 
-	pub fn drop_all(&mut self, loc: &Rc<RefCell<Box<Location>>>) {
+	pub fn drop_on_death(&mut self, safe_loc: &Rc<RefCell<Box<Location>>>, current_loc: &Rc<RefCell<Box<Location>>>) {
 		let removed = self.items.drain();
 		for (_, item) in removed {
-			loc.borrow_mut().insert_item(item.clone());
+			if item.is_essential() {
+				safe_loc.borrow_mut().insert_item(item.clone());
+			} else {
+				current_loc.borrow_mut().insert_item(item.clone());
+			}
 		}
 	}
 

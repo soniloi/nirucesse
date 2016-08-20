@@ -83,7 +83,6 @@ impl Player {
 	pub fn die(&mut self, data: &DataCollection) {
 		self.set_alive(false);
 		self.increment_deaths();
-		self.inventory.drop_all( data.get_location_safe());
 		self.location = data.get_location_wake().clone();
 	}
 
@@ -253,6 +252,8 @@ impl Player {
 
 		if move_success && !self.has_light() {
 			terminal::write_full(data.get_response("lampno"));
+		} else if !self.is_alive() {
+			self.inventory.drop_on_death(data.get_location_safe(), &temp_loc)
 		}
 
 		self.update_previous(move_success, &temp_loc);
