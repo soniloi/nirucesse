@@ -68,6 +68,15 @@ impl Item {
 		&self.longname
 	}
 
+	// Return the name of this item as it would be displayed in an inventory listing
+	pub fn get_inventoryname(&self) -> String {
+		let mut result: String = String::new();
+		if self.is_wearable() {
+			result = result + "(wearing) ";
+		}
+		result + &self.longname
+	}
+
 	pub fn get_size(&self) -> u32 {
 		self.size
 	}
