@@ -15,6 +15,7 @@ type ItemManipFn = fn(player: &mut Player, data: &DataCollection, item: &Rc<Box<
 pub struct Player {
 	inventory: Inventory,
 	location: Rc<RefCell<Box<Location>>>,
+	previous_true: Rc<RefCell<Box<Location>>>,
 	previous: Option<Rc<RefCell<Box<Location>>>>,
 	score: u32, // player's current score
 	playing: bool, // whether player is currently playing
@@ -29,7 +30,8 @@ impl Player {
 	pub fn new(initial: Rc<RefCell<Box<Location>>>) -> Player {
 		Player {
 			inventory: Inventory::new(16),
-			location: initial,
+			location: initial.clone(),
+			previous_true: initial.clone(),
 			previous: None,
 			score: 0u32,
 			playing: true,
@@ -84,6 +86,10 @@ impl Player {
 		self.set_alive(false);
 		self.increment_deaths();
 		self.location = data.get_location_wake().clone();
+	}
+
+	pub fn drop_on_death(&mut self, safe_loc: &Rc<RefCell<Box<Location>>>) {
+		self.inventory.drop_on_death(safe_loc, &self.previous_true);
 	}
 
 	fn get_effective_description(&self, haze_description: String, darkness_description: String, default_description: String) -> String {
@@ -243,6 +249,7 @@ impl Player {
 	// TODO: I don't really like this very much, especially the 'back' part; there's probably a better way
 	pub fn go(&mut self, data: &DataCollection, dir: &Direction) {
 
+		self.previous_true = self.location.clone();
 		let temp_loc = self.location.clone();
 
 		let move_success = match *dir {
@@ -252,8 +259,6 @@ impl Player {
 
 		if move_success && !self.has_light() {
 			terminal::write_full(data.get_response("lampno"));
-		} else if !self.is_alive() {
-			self.inventory.drop_on_death(data.get_location_safe(), &temp_loc)
 		}
 
 		self.update_previous(move_success, &temp_loc);

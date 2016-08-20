@@ -29,6 +29,7 @@ impl Game {
 			}
 
 			if !self.player.is_alive() {
+				self.player.drop_on_death(self.data.get_location_safe());
 				self.process_reincarnation();
 			}
 		}
