@@ -65,7 +65,7 @@ impl Location {
 	}
 
 	fn unset_property(&mut self, property: u32) {
-		self.properties &= (!property);
+		self.properties &= !property;
 	}
 
 	pub fn has_light(&self) -> bool {

@@ -128,18 +128,19 @@ impl LocationCollection {
 		self.locations.get(&key)
 	}
 
-	pub fn get_location_wake(&self) -> &Rc<RefCell<Box<Location>>> {
-		match self.get(self.location_wake) {
-			None => panic!("Unable to determine wake location, fail."),
+	fn get_certain(&self, key: u32) -> &Rc<RefCell<Box<Location>>> {
+		match self.locations.get(&key) {
+			None => panic!("Unable to determine essential location [{}], fail.", key),
 			Some(location) => return location,
 		}
 	}
 
+	pub fn get_location_wake(&self) -> &Rc<RefCell<Box<Location>>> {
+		self.get_certain(self.location_wake)
+	}
+
 	pub fn get_location_safe(&self) -> &Rc<RefCell<Box<Location>>> {
-		match self.get(self.location_safe) {
-			None => panic!("Unable to determine wake location, fail."),
-			Some(location) => return location,
-		}
+		self.get_certain(self.location_safe)
 	}
 
 	// Get a Direction from a string
