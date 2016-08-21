@@ -68,30 +68,32 @@ impl CommandCollection {
 			match line.as_ref() {
 				SEP_SECTION => return,
 				x => {
-
 					let words_split = x.split("\t");
 					let words: Vec<&str> = words_split.collect();
-
-					let primary = String::from(words[FILE_INDEX_COMMAND_PRIMARY]);
-					let key = primary.clone();
-					let properties = data_collection::str_to_u32(words[FILE_INDEX_COMMAND_STATUS], 16);
-					let tag = words[FILE_INDEX_COMMAND_TAG];
-
-					match acts.get(tag) {
-						None => println!("\x1b[31m[Warning: no action function found for tag [{}]; skipping]\x1b[0m", tag),
-						Some(act) => {
-							let cmd: Rc<Box<Command>> = Rc::new(Box::new(Command::new(primary, properties, *act)));
-							self.commands.insert(key, cmd.clone());
-							for i in FILE_INDEX_COMMAND_ALIAS_START..words.len() {
-								if !words[i].is_empty() {
-									self.commands.insert(String::from(words[i]), cmd.clone());
-								}
-							}
-						},
-					}
+					self.parse_and_insert_command(&words, &acts);
 				},
 			}
 			line = buffer.get_line();
+		}
+	}
+
+	fn parse_and_insert_command(&mut self, words: &Vec<&str>, acts: &HashMap<&str, fn(items: &DataCollection, arg: String, player: &mut Player)>) {
+		let primary = String::from(words[FILE_INDEX_COMMAND_PRIMARY]);
+		let key = primary.clone();
+		let properties = data_collection::str_to_u32(words[FILE_INDEX_COMMAND_STATUS], 16);
+		let tag = words[FILE_INDEX_COMMAND_TAG];
+
+		match acts.get(tag) {
+			None => println!("\x1b[31m[Warning: no action function found for tag [{}]; skipping]\x1b[0m", tag),
+			Some(act) => {
+				let cmd: Rc<Box<Command>> = Rc::new(Box::new(Command::new(primary, properties, *act)));
+				self.commands.insert(key, cmd.clone());
+				for i in FILE_INDEX_COMMAND_ALIAS_START..words.len() {
+					if !words[i].is_empty() {
+						self.commands.insert(String::from(words[i]), cmd.clone());
+					}
+				}
+			},
 		}
 	}
 
