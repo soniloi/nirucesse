@@ -29,13 +29,18 @@ impl StringCollection {
 					let words_split = x.split("\t");
 					let words: Vec<&str> = words_split.collect();
 
-					let tag = words[FILE_INDEX_STRING_TAG];
-					let content = words[FILE_INDEX_STRING_CONTENT];
-					self.strings.insert(String::from(tag), String::from(content));
+					let string_parsed = StringCollection::parse_string(&words);
+					self.strings.insert(string_parsed.0, string_parsed.1);
 				},
 			}
 			line = buffer.get_line();
 		}
+	}
+
+	fn parse_string(words: &Vec<&str>) -> (String, String) {
+		let tag = words[FILE_INDEX_STRING_TAG];
+		let content = words[FILE_INDEX_STRING_CONTENT];
+		return (String::from(tag), String::from(content))
 	}
 
 	// Return a String Option
