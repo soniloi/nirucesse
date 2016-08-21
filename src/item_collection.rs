@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
+use data_collection;
 use file_buffer::FileBuffer;
 use item::Item;
 use location_collection::LocationCollection;
@@ -56,10 +57,10 @@ impl ItemCollection {
 	}
 
 	fn parse_item(words: &Vec<&str>) -> (Rc<Box<Item>>, u32) {
-		let id = str_to_u32(words[FILE_INDEX_ITEM_ID], 10);
-		let properties = str_to_u32(words[FILE_INDEX_ITEM_STATUS], 16);
-		let initial = str_to_u32(words[FILE_INDEX_ITEM_INITIAL_LOC], 10);
-		let size = str_to_u32(words[FILE_INDEX_ITEM_SIZE], 10);
+		let id = data_collection::str_to_u32(words[FILE_INDEX_ITEM_ID], 10);
+		let properties = data_collection::str_to_u32(words[FILE_INDEX_ITEM_STATUS], 16);
+		let initial = data_collection::str_to_u32(words[FILE_INDEX_ITEM_INITIAL_LOC], 10);
+		let size = data_collection::str_to_u32(words[FILE_INDEX_ITEM_SIZE], 10);
 		let shortname = String::from(words[FILE_INDEX_ITEM_SHORTNAME]);
 		let longname = String::from(words[FILE_INDEX_ITEM_LONGNAME]);
 		let description = String::from(words[FILE_INDEX_ITEM_DESCRIPTION]);
@@ -82,12 +83,5 @@ impl ItemCollection {
 
 	pub fn get(&self, key: String) -> Option<&Rc<Box<Item>>> {
 		self.items.get(&key)
-	}
-}
-
-fn str_to_u32(st: &str, radix: u32) -> u32 {
-	match u32::from_str_radix(st, radix) {
-		Err(why) => panic!("Unable to parse integer field {}: {}", st, why),
-		Ok(status) => status,
 	}
 }
