@@ -11,15 +11,17 @@ use data_collection::DataCollection;
 use player::Player;
 use terminal;
 
+pub type ActionFn = fn(items: &DataCollection, arg: String, player: &mut Player);
+
 pub struct Command {
 	name: String,
 	properties: u32,
-	handler: fn(items: &DataCollection, arg: String, player: &mut Player),
+	handler: ActionFn,
 }
 
 impl Command {
 
-	pub fn new(name: String, properties: u32, handler: fn(items: &DataCollection, arg: String, player: &mut Player)) -> Command {
+	pub fn new(name: String, properties: u32, handler: ActionFn) -> Command {
 		Command {
 			name: name,
 			properties: properties,

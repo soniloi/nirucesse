@@ -2,11 +2,10 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use actions;
+use command::ActionFn;
 use command::Command;
 use data_collection;
-use data_collection::DataCollection;
 use file_buffer::FileBuffer;
-use player::Player;
 
 const FILE_INDEX_COMMAND_TAG: usize = 0;
 const FILE_INDEX_COMMAND_STATUS: usize = 1;
@@ -27,8 +26,8 @@ impl CommandCollection {
 	}
 
 	// TODO: make properly static
-	fn init_actions() -> HashMap<&'static str, fn(items: &DataCollection, arg: String, player: &mut Player)> {
-		let mut acts: HashMap<&str, fn(items: &DataCollection, arg: String, player: &mut Player)> = HashMap::new();
+	fn init_actions() -> HashMap<&'static str, ActionFn> {
+		let mut acts: HashMap<&str, ActionFn> = HashMap::new();
 		acts.insert("avnarand", actions::do_avnarand);
 		acts.insert("back", actions::do_go);
 		acts.insert("burn", actions::do_burn);
@@ -77,7 +76,7 @@ impl CommandCollection {
 		}
 	}
 
-	fn parse_and_insert_command(&mut self, words: &Vec<&str>, acts: &HashMap<&str, fn(items: &DataCollection, arg: String, player: &mut Player)>) {
+	fn parse_and_insert_command(&mut self, words: &Vec<&str>, acts: &HashMap<&str, ActionFn>) {
 		let primary = String::from(words[FILE_INDEX_COMMAND_PRIMARY]);
 		let key = primary.clone();
 		let properties = data_collection::str_to_u32(words[FILE_INDEX_COMMAND_STATUS], 16);

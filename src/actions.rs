@@ -1,7 +1,5 @@
-use std::rc::Rc;
-
 use data_collection::DataCollection;
-use item::Item;
+use player::ItemManipFn;
 use player::Player;
 
 use terminal;
@@ -90,14 +88,9 @@ pub fn do_xyzzy(data: &DataCollection, arg: String, player: &mut Player) {
 	terminal::write_full(data.get_response("ok"));
 }
 
-fn manipulate_item(data: &DataCollection, arg: String, player: &mut Player, act: fn(player: &mut Player, data: &DataCollection, item: &Rc<Box<Item>>)) {
+fn manipulate_item(data: &DataCollection, arg: String, player: &mut Player, act: ItemManipFn) {
 	match data.get_item(arg) {
-		None => {
-			terminal::write_full(data.get_response("nonowhat"));
-			return;
-		},
-		Some(i) => {
-			act(player, data, i);
-		}
+		None => terminal::write_full(data.get_response("nonowhat")),
+		Some(i) => act(player, data, i),
 	}
 }
