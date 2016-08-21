@@ -48,13 +48,7 @@ impl ItemCollection {
 
 					// Point item's starting location at it
 					let initial = item_parsed.1;
-					let initial_loc = match locations.get(initial) {
-						None => panic!("Unable to find location with ID: {}", initial),
-						Some(loc) => {
-							loc
-						},
-					};
-					initial_loc.borrow_mut().insert_item(item);
+					ItemCollection::set_location(locations, initial, item);
 				},
 			}
 			line = buffer.get_line();
@@ -76,6 +70,14 @@ impl ItemCollection {
 
 		let item = Rc::new(Box::new(Item::new(id, properties, size, shortname, longname, description, writing)));
 		(item, initial)
+	}
+
+	fn set_location(locations: &mut LocationCollection, initial: u32, item: Rc<Box<Item>>) {
+	  let initial_loc = match locations.get(initial) {
+	    None => panic!("Unable to find location with ID: {}", initial),
+	    Some(loc) => loc,
+	  };
+	  initial_loc.borrow_mut().insert_item(item);
 	}
 
 	pub fn get(&self, key: String) -> Option<&Rc<Box<Item>>> {
