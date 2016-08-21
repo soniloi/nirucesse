@@ -41,23 +41,13 @@ impl ItemCollection {
 					let words_split = x.split("\t");
 					let words: Vec<&str> = words_split.collect();
 
-					// Create item
-					let id = str_to_u32(words[FILE_INDEX_ITEM_ID], 10);
-					let properties = str_to_u32(words[FILE_INDEX_ITEM_STATUS], 16);
-					let initial = str_to_u32(words[FILE_INDEX_ITEM_INITIAL_LOC], 10);
-					let size = str_to_u32(words[FILE_INDEX_ITEM_SIZE], 10);
-					let shortname = String::from(words[FILE_INDEX_ITEM_SHORTNAME]);
-					let longname = String::from(words[FILE_INDEX_ITEM_LONGNAME]);
-					let description = String::from(words[FILE_INDEX_ITEM_DESCRIPTION]);
-					let writing = match words[FILE_INDEX_ITEM_WRITING] {
-						ITEM_WRITING_NONE => String::from(""),
-						writ => String::from(writ),
-					};
-
-					let item = Rc::new(Box::new(Item::new(id, properties, size, shortname.clone(), longname, description, writing)));
-					self.items.insert(shortname, item.clone());
+					// Create item and copy a reference into this collection
+					let item_parsed = ItemCollection::parse_item(&words);
+					let item = item_parsed.0;
+					self.items.insert(String::from(item.get_shortname()), item.clone());
 
 					// Point item's starting location at it
+					let initial = item_parsed.1;
 					let initial_loc = match locations.get(initial) {
 						None => panic!("Unable to find location with ID: {}", initial),
 						Some(loc) => {
@@ -69,6 +59,23 @@ impl ItemCollection {
 			}
 			line = buffer.get_line();
 		}
+	}
+
+	fn parse_item(words: &Vec<&str>) -> (Rc<Box<Item>>, u32) {
+		let id = str_to_u32(words[FILE_INDEX_ITEM_ID], 10);
+		let properties = str_to_u32(words[FILE_INDEX_ITEM_STATUS], 16);
+		let initial = str_to_u32(words[FILE_INDEX_ITEM_INITIAL_LOC], 10);
+		let size = str_to_u32(words[FILE_INDEX_ITEM_SIZE], 10);
+		let shortname = String::from(words[FILE_INDEX_ITEM_SHORTNAME]);
+		let longname = String::from(words[FILE_INDEX_ITEM_LONGNAME]);
+		let description = String::from(words[FILE_INDEX_ITEM_DESCRIPTION]);
+		let writing = match words[FILE_INDEX_ITEM_WRITING] {
+			ITEM_WRITING_NONE => String::from(""),
+			writ => String::from(writ),
+		};
+
+		let item = Rc::new(Box::new(Item::new(id, properties, size, shortname, longname, description, writing)));
+		(item, initial)
 	}
 
 	pub fn get(&self, key: String) -> Option<&Rc<Box<Item>>> {
