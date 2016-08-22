@@ -47,8 +47,7 @@ impl LocationCollection {
 		}
 	}
 
-	pub fn init(&mut self, buffer: &mut FileBuffer) {
-
+	fn init_direction_map(&mut self) {
 		self.direction_map.insert(String::from("north"), Direction::North);
 		self.direction_map.insert(String::from("south"), Direction::South);
 		self.direction_map.insert(String::from("east"), Direction::East);
@@ -60,6 +59,11 @@ impl LocationCollection {
 		self.direction_map.insert(String::from("up"), Direction::Up);
 		self.direction_map.insert(String::from("down"), Direction::Down);
 		self.direction_map.insert(String::from("back"), Direction::Back);
+	}
+
+	pub fn init(&mut self, buffer: &mut FileBuffer) {
+
+		self.init_direction_map();
 
 		let mut all_links: HashMap<u32, Box<HashMap<Direction, u32>>> = HashMap::new();
 		let mut line = buffer.get_line();
