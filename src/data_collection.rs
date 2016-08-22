@@ -106,7 +106,7 @@ impl DataCollection {
 		self.commands.mk_non_secret_string()
 	}
 
-	pub fn get_direction_enum(&self, dir_str: String) -> &Direction {
+	pub fn get_direction_enum(&self, dir_str: &str) -> &Direction {
 		self.locations.get_direction_enum(dir_str)
 	}
 }

@@ -33,7 +33,7 @@ pub struct LocationCollection {
 	locations: HashMap<u32, Rc<RefCell<Box<Location>>>>,
 	location_wake: u32, // Where player wakes on game start, or after being reincarnated
 	location_safe: u32, // Where player's items get dropped on death
-	direction_map: HashMap<String, Direction>, // Map of direction strings to direction enum
+	direction_map: HashMap<&'static str, Direction>, // Map of direction strings to direction enum
 }
 
 impl LocationCollection {
@@ -47,18 +47,19 @@ impl LocationCollection {
 		}
 	}
 
+	// TODO: make static
 	fn init_direction_map(&mut self) {
-		self.direction_map.insert(String::from("north"), Direction::North);
-		self.direction_map.insert(String::from("south"), Direction::South);
-		self.direction_map.insert(String::from("east"), Direction::East);
-		self.direction_map.insert(String::from("west"), Direction::West);
-		self.direction_map.insert(String::from("northeast"), Direction::Northeast);
-		self.direction_map.insert(String::from("southwest"), Direction::Southwest);
-		self.direction_map.insert(String::from("southeast"), Direction::Southeast);
-		self.direction_map.insert(String::from("northwest"), Direction::Northwest);
-		self.direction_map.insert(String::from("up"), Direction::Up);
-		self.direction_map.insert(String::from("down"), Direction::Down);
-		self.direction_map.insert(String::from("back"), Direction::Back);
+		self.direction_map.insert("north", Direction::North);
+		self.direction_map.insert("south", Direction::South);
+		self.direction_map.insert("east", Direction::East);
+		self.direction_map.insert("west", Direction::West);
+		self.direction_map.insert("northeast", Direction::Northeast);
+		self.direction_map.insert("southwest", Direction::Southwest);
+		self.direction_map.insert("southeast", Direction::Southeast);
+		self.direction_map.insert("northwest", Direction::Northwest);
+		self.direction_map.insert("up", Direction::Up);
+		self.direction_map.insert("down", Direction::Down);
+		self.direction_map.insert("back", Direction::Back);
 	}
 
 	pub fn init(&mut self, buffer: &mut FileBuffer) {
@@ -148,8 +149,8 @@ impl LocationCollection {
 	}
 
 	// Get a Direction from a string
-	pub fn get_direction_enum(&self, dir_str: String) -> &Direction {
-		match self.direction_map.get(&dir_str) {
+	pub fn get_direction_enum(&self, dir_str: &str) -> &Direction {
+		match self.direction_map.get(dir_str) {
 		    None => panic!("Location collection corruption, fail."),
 			Some(dir) => dir,
 		}
