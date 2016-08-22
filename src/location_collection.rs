@@ -76,14 +76,11 @@ impl LocationCollection {
 					let words_split = x.split("\t");
 					let words: Vec<&str> = words_split.collect();
 
-					let id = data_collection::str_to_u32(words[FILE_INDEX_LOCATION_ID], 10);
-					let properties = data_collection::str_to_u32(words[FILE_INDEX_LOCATION_STATUS], 16);
-					let shortname = String::from(words[FILE_INDEX_LOCATION_SHORTNAME]);
-					let longname = String::from(words[FILE_INDEX_LOCATION_LONGNAME]);
-					let description = String::from(words[FILE_INDEX_LOCATION_DESCRIPTION]);
-
-					let loc = Rc::new(RefCell::new(Box::new(Location::new(id, properties, shortname, longname, description))));
-					self.locations.insert(id, loc);
+					// Create location and copy a reference into this collection
+					let location_parsed = LocationCollection::parse_location(&words);
+					let location = location_parsed.0;
+					let id = location_parsed.1;
+					self.locations.insert(id, location);
 
 					let mut links: Box<HashMap<Direction, u32>> = Box::new(HashMap::new());
 					links.insert(Direction::North, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_N], 10));
@@ -127,6 +124,17 @@ impl LocationCollection {
 				},
 			}
 		}
+	}
+
+	fn parse_location(words: &Vec<&str>) -> (Rc<RefCell<Box<Location>>>, u32) {
+		let id = data_collection::str_to_u32(words[FILE_INDEX_LOCATION_ID], 10);
+		let properties = data_collection::str_to_u32(words[FILE_INDEX_LOCATION_STATUS], 16);
+		let shortname = String::from(words[FILE_INDEX_LOCATION_SHORTNAME]);
+		let longname = String::from(words[FILE_INDEX_LOCATION_LONGNAME]);
+		let description = String::from(words[FILE_INDEX_LOCATION_DESCRIPTION]);
+
+		let loc = Rc::new(RefCell::new(Box::new(Location::new(id, properties, shortname, longname, description))));
+		(loc, id)
 	}
 
 	pub fn get(&self, key: u32) -> Option<&Rc<RefCell<Box<Location>>>> {
