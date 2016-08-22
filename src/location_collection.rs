@@ -122,26 +122,12 @@ impl LocationCollection {
 
 	fn cross_reference(&mut self, all_links: &HashMap<u32, Box<HashMap<Direction, u32>>>) {
 		for (loc_id, direction_map) in all_links.iter() {
-			match self.get(*loc_id) {
-				None => {
-					println!("\x1b[31m[Warning: error cross-referencing location [{}]; giving up]\x1b[0m", *loc_id);
-					return;
-				},
-				Some(loc) => {
-					for (direction_key, direction_val) in (*direction_map).iter() {
-						if *direction_val != KEY_DIRECTION_NONE {
-							match self.get(*direction_val) {
-								None => {
-									println!("\x1b[31m[Warning: error cross-referencing location [{}]; giving up]\x1b[0m", *loc_id);
-									return;
-								},
-								Some(direction) => {
-									loc.borrow_mut().set_direction(*direction_key, (*direction).clone());
-								},
-							}
-						}
-					}
-				},
+			let loc = self.get_certain(*loc_id);
+			for (direction_key, direction_val) in (*direction_map).iter() {
+				if *direction_val != KEY_DIRECTION_NONE {
+					let adjacent_loc = self.get_certain(*direction_val);
+					loc.borrow_mut().set_direction(*direction_key, (*adjacent_loc).clone());
+				}
 			}
 		}
 	}
@@ -152,7 +138,7 @@ impl LocationCollection {
 
 	fn get_certain(&self, key: u32) -> &Rc<RefCell<Box<Location>>> {
 		match self.locations.get(&key) {
-			None => panic!("Unable to determine essential location [{}], fail.", key),
+			None => panic!("Location collection corruption for location id [{}], fail.", key),
 			Some(location) => return location,
 		}
 	}
