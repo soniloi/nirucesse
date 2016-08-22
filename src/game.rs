@@ -38,18 +38,20 @@ impl Game {
 	// Process commands from player
 	fn process_input(&mut self) {
 		let inputs: Vec<String> = terminal::read_stub(&self.player.get_location_stubname());
+		if inputs.is_empty() {
+			return;
+		}
+
 		let cmd_name = inputs[0].clone();
-		if !cmd_name.is_empty() {
-			self.player.increment_instructions();
-			match self.data.get_command(cmd_name.clone()) {
-				Some(cmd) => {
-					let arg: String = if inputs.len() > 1 { inputs[1].clone() } else { String::from("") };
-					(**cmd).execute(&self.data, arg, &mut self.player);
-				},
-				None => {
-					terminal::write_full(self.data.get_response("notuigin"));
-				},
-			}
+		self.player.increment_instructions();
+		match self.data.get_command(cmd_name.clone()) {
+			Some(cmd) => {
+				let arg: String = if inputs.len() > 1 { inputs[1].clone() } else { String::from("") };
+				(**cmd).execute(&self.data, arg, &mut self.player);
+			},
+			None => {
+				terminal::write_full(self.data.get_response("notuigin"));
+			},
 		}
 	}
 

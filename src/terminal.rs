@@ -106,7 +106,7 @@ fn read_prompted(prompt: &str) -> Vec<String> {
 	let mut result_raw = String::new();
 	write(prompt);
 	io::stdin().read_line(&mut result_raw);
-	let mut result_iter = result_raw.trim().split(" ");
+	let mut result_iter = result_raw.trim().split_whitespace();
 
 	let mut result_vec: Vec<String> = vec![];
 	for _ in 0..MAX_TOKENS {
