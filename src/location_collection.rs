@@ -90,31 +90,8 @@ impl LocationCollection {
 			line = buffer.get_line();
 		}
 
-		// Cross-reference all locations
-		// FIXME: refactor
-		for (loc_id, direction_map) in all_links.iter() {
-			match self.get(*loc_id) {
-				None => {
-					println!("\x1b[31m[Warning: error cross-referencing location [{}]; giving up]\x1b[0m", *loc_id);
-					return;
-				},
-				Some(loc) => {
-					for (direction_key, direction_val) in (*direction_map).iter() {
-						if *direction_val != KEY_DIRECTION_NONE {
-							match self.get(*direction_val) {
-								None => {
-									println!("\x1b[31m[Warning: error cross-referencing location [{}]; giving up]\x1b[0m", *loc_id);
-									return;
-								},
-								Some(direction) => {
-									loc.borrow_mut().set_direction(*direction_key, (*direction).clone());
-								},
-							}
-						}
-					}
-				},
-			}
-		}
+		// Use noted links to connect all adjacent locations to each other
+		self.cross_reference(&all_links);
 	}
 
 	fn parse_location(words: &Vec<&str>) -> (Rc<RefCell<Box<Location>>>, u32) {
@@ -141,6 +118,32 @@ impl LocationCollection {
 		links.insert(Direction::Up, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_U], 10));
 		links.insert(Direction::Down, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_D], 10));
 		links
+	}
+
+	fn cross_reference(&mut self, all_links: &HashMap<u32, Box<HashMap<Direction, u32>>>) {
+		for (loc_id, direction_map) in all_links.iter() {
+			match self.get(*loc_id) {
+				None => {
+					println!("\x1b[31m[Warning: error cross-referencing location [{}]; giving up]\x1b[0m", *loc_id);
+					return;
+				},
+				Some(loc) => {
+					for (direction_key, direction_val) in (*direction_map).iter() {
+						if *direction_val != KEY_DIRECTION_NONE {
+							match self.get(*direction_val) {
+								None => {
+									println!("\x1b[31m[Warning: error cross-referencing location [{}]; giving up]\x1b[0m", *loc_id);
+									return;
+								},
+								Some(direction) => {
+									loc.borrow_mut().set_direction(*direction_key, (*direction).clone());
+								},
+							}
+						}
+					}
+				},
+			}
+		}
 	}
 
 	pub fn get(&self, key: u32) -> Option<&Rc<RefCell<Box<Location>>>> {
