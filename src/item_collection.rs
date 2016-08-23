@@ -64,9 +64,9 @@ impl ItemCollection {
 		let shortname = String::from(words[FILE_INDEX_ITEM_SHORTNAME]);
 		let longname = String::from(words[FILE_INDEX_ITEM_LONGNAME]);
 		let description = String::from(words[FILE_INDEX_ITEM_DESCRIPTION]);
-		let writing = match words[FILE_INDEX_ITEM_WRITING] {
-			ITEM_WRITING_NONE => String::from(""),
-			writ => String::from(writ),
+		let writing: Option<String> = match words[FILE_INDEX_ITEM_WRITING] {
+			ITEM_WRITING_NONE => None,
+			writ => Some(String::from(writ)),
 		};
 
 		let item = Rc::new(Box::new(Item::new(id, properties, size, shortname, longname, description, writing)));

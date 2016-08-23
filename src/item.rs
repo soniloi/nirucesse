@@ -12,12 +12,12 @@ pub struct Item {
 	shortname: String,
 	longname: String,
 	description: String,
-	writing: String,
+	writing: Option<String>,
 }
 
 impl Item {
 
-	pub fn new(id: u32, properties: u32, size: u32, shortname: String, longname: String, description: String, writing: String) -> Item {
+	pub fn new(id: u32, properties: u32, size: u32, shortname: String, longname: String, description: String, writing: Option<String>) -> Item {
 		Item {
 			id: id,
 			properties: properties,
@@ -91,10 +91,9 @@ impl Item {
 	}
 
 	pub fn mk_writing_string(&self) -> String {
-		if self.writing.is_empty() {
-			String::from("There is no writing to read there.")
-		} else {
-			String::from("It reads \"") + &self.writing + "\"."
+		match self.writing.clone() {
+			None => String::from("There is no writing to read there."),
+			Some(writ) => String::from("It reads \"") + &writ + "\".",
 		}
 	}
 }
