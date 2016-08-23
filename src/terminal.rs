@@ -75,18 +75,12 @@ fn write_prompted(st: &str, prompt: &str) {
 
 fn write_line(st: &str) {
 	println!("{}{}{}", COLOUR_OUT, st, COLOUR_IN);
-	match stdout().flush() {
-		Err(e) => panic!("Error [{}] on stdout flush, fail.", e),
-		_ => {},
-	}
+	flush();
 }
 
 fn write(st: &str) {
 	print!("{}{}{}", COLOUR_OUT, st, COLOUR_IN);
-	match stdout().flush() {
-		Err(e) => panic!("Error [{}] on stdout flush, fail.", e),
-		_ => {},
-	}
+	flush();
 }
 
 // Create a prompt based on a short word and read from stdin
@@ -111,10 +105,7 @@ pub fn read_question(question: &str) -> Vec<String> {
 fn read_prompted(prompt: &str) -> Vec<String> {
 	let mut result_raw = String::new();
 	write(prompt);
-	match io::stdin().read_line(&mut result_raw) {
-		Err(e) => panic!("Error [{}] on stdin read_line, fail.", e),
-		_ => {},
-	}
+	read_line(&mut result_raw);
 	let mut result_iter = result_raw.trim().split_whitespace();
 
 	let mut result_vec: Vec<String> = vec![];
@@ -126,6 +117,20 @@ fn read_prompted(prompt: &str) -> Vec<String> {
 	}
 
 	result_vec
+}
+
+fn read_line(result_raw: &mut String) {
+	match io::stdin().read_line(result_raw) {
+		Err(e) => panic!("Error [{}] on stdin read_line, fail.", e),
+		_ => {},
+	}
+}
+
+fn flush() {
+	match stdout().flush() {
+		Err(e) => panic!("Error [{}] on stdout flush, fail.", e),
+		_ => {},
+	}
 }
 
 pub fn reset() {
