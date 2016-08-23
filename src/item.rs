@@ -86,14 +86,14 @@ impl Item {
 		self.size
 	}
 
-	pub fn mk_full_string(&self) -> String {
-		String::from("It is ") + &self.description + "."
+	pub fn mk_full_string(&self, description_start: &str, description_end: &str) -> String {
+		String::from(description_start) + &self.description + description_end
 	}
 
-	pub fn mk_writing_string(&self) -> String {
+	pub fn mk_writing_string(&self, no_writing: &str, writing_start: &str, writing_end: &str) -> String {
 		match self.writing.clone() {
-			None => String::from("There is no writing to read there."),
-			Some(writ) => String::from("It reads \"") + &writ + "\".",
+			None => String::from(no_writing),
+			Some(writ) => String::from(writing_start) + &writ + writing_end,
 		}
 	}
 }

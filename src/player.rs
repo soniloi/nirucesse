@@ -243,7 +243,7 @@ impl Player {
 	}
 
 	fn describe_final(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
-		terminal::write_full(&item.mk_full_string());
+		terminal::write_full(&item.mk_full_string(data.get_response("descstar"), data.get_response("descend")));
 	}
 
 	// Have player travel to an adjacent location
@@ -397,6 +397,6 @@ impl Player {
 	}
 
 	fn read_final(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
-		terminal::write_full(&item.mk_writing_string());
+		terminal::write_full(&item.mk_writing_string(data.get_response("nowritin"), data.get_response("writstar"), data.get_response("writend")));
 	}
 }
