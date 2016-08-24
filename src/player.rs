@@ -129,6 +129,16 @@ impl Player {
 		act(self, data, item);
 	}
 
+	// Manipulate an item present strictly in the player's inventory
+	fn manipulate_item_inventory(&mut self, data: &DataCollection, item: &Rc<Box<Item>>, act: ItemManipFinalFn) {
+		if !self.inventory.contains_item(item) {
+			let response = String::from(data.get_response("nocarry")) + &item.get_shortname() + ".";
+			terminal::write_full(&response);
+			return;
+		}
+		act(self, data, item);
+	}
+
 	pub fn avnarand(&mut self, data: &DataCollection) {
 		let mut self_loc = self.location.borrow_mut();
 		let mut robot_here = false;
@@ -222,18 +232,15 @@ impl Player {
 
 	// Have player attempt to drop item from inventory to current location
 	pub fn drop(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
-		let it = self.inventory.remove_item(item);
-		match it {
-			None => {
-				let response = String::from(data.get_response("nocarry")) + item.get_shortname() + ".";
-				terminal::write_full(&response);
-			}
-			Some(i) => {
-				self.location.borrow_mut().insert_item(i);
-				terminal::write_full(data.get_response("dropgood"));
-			}
-		}
+		self.manipulate_item_inventory(data, item, Player::drop_final);
 	}
+
+	fn drop_final(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
+		let it = self.inventory.remove_item_certain(item);
+		self.location.borrow_mut().insert_item(it);
+		terminal::write_full(data.get_response("dropgood"));
+	}
+
 
 	// Describe an item in the player's inventory or at the player's location
 	pub fn describe(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {

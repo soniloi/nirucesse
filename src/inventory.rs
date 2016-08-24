@@ -55,6 +55,13 @@ impl Inventory {
 		self.items.remove(&(*item).get_id())
 	}
 
+	pub fn remove_item_certain(&mut self, item: &Rc<Box<Item>>) -> Rc<Box<Item>> {
+		 match self.items.remove(&(*item).get_id()) {
+			 None => panic!("Data corruption seeking item [{}], fail.", &(*item).get_id()),
+			 Some(item) => item,
+		 }
+	}
+
 	// Return combined size of all items currently in inventory
 	fn get_size(&self) -> u32 {
 		let mut result = 0;
