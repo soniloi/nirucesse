@@ -397,4 +397,23 @@ impl Player {
 	fn read_final(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
 		terminal::write_full(&item.mk_writing_string(data.get_response("nowritin"), data.get_response("writstar"), data.get_response("writend")));
 	}
+
+	pub fn throw(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
+		let it = self.inventory.remove_item(item);
+		match it {
+			None => {
+				let response = String::from(data.get_response("nocarry")) + item.get_shortname() + ".";
+				terminal::write_full(&response);
+			}
+			Some(i) => {
+				terminal::write_full(data.get_response("throw"));
+				if i.is_fragile() {
+					terminal::write_full(data.get_response("shatthro"));
+				} else {
+					self.location.borrow_mut().insert_item(i);
+					terminal::write_full(data.get_response("dropgood"));
+				}
+			}
+		}
+	}
 }

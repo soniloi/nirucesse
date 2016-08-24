@@ -83,6 +83,10 @@ pub fn do_take(data: &DataCollection, arg: String, player: &mut Player) {
 	manipulate_item(data, arg, player, Player::take)
 }
 
+pub fn do_throw(data: &DataCollection, arg: String, player: &mut Player) {
+	manipulate_item(data, arg, player, Player::throw);
+}
+
 #[allow(unused_variables)]
 pub fn do_xyzzy(data: &DataCollection, arg: String, player: &mut Player) {
 	terminal::write_full(data.get_response("ok"));
