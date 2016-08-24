@@ -48,7 +48,7 @@ impl Player {
 	}
 
 	fn has_light_and_needsno_light(&self) -> bool {
-		self.inventory.has_light() && self.location.borrow().needsno_light()
+		(self.inventory.has_light() || self.location.borrow().has_light_item()) && self.location.borrow().needsno_light()
 	}
 
 	pub fn has_air(&self) -> bool {

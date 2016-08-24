@@ -75,12 +75,16 @@ impl Location {
 		}
 
 		// Next check whether any items at location emit light
+		self.has_light_item()
+	}
+
+	// Return whether any item resting at this location emits light
+	pub fn has_light_item(&self) -> bool {
 		for item in self.items.values() {
 			if item.has_light() {
 				return true
 			}
 		}
-
 		false
 	}
 
