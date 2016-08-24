@@ -241,7 +241,6 @@ impl Player {
 		terminal::write_full(data.get_response("dropgood"));
 	}
 
-
 	// Describe an item in the player's inventory or at the player's location
 	pub fn describe(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
 		self.observe_item(data, item, Player::describe_final);
@@ -406,21 +405,16 @@ impl Player {
 	}
 
 	pub fn throw(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
-		let it = self.inventory.remove_item(item);
-		match it {
-			None => {
-				let response = String::from(data.get_response("nocarry")) + item.get_shortname() + ".";
-				terminal::write_full(&response);
-			}
-			Some(i) => {
-				terminal::write_full(data.get_response("throw"));
-				if i.is_fragile() {
-					terminal::write_full(data.get_response("shatthro"));
-				} else {
-					self.location.borrow_mut().insert_item(i);
-					terminal::write_full(data.get_response("dropgood"));
-				}
-			}
+		self.manipulate_item_inventory(data, item, Player::throw_final);
+	}
+
+	fn throw_final(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
+		let it = self.inventory.remove_item_certain(item);
+		if it.is_fragile() {
+			terminal::write_full(data.get_response("shatthro"));
+		} else {
+			self.location.borrow_mut().insert_item(it);
+			terminal::write_full(data.get_response("dropgood"));
 		}
 	}
 }
