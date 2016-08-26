@@ -134,9 +134,9 @@ impl Location {
 		self.items.remove(&(*item).get_id())
 	}
 
-	pub fn remove_item_certain(&mut self, item: &Rc<Box<Item>>) {
-		match self.items.remove(&(*item).get_id()) {
-			None => panic!("Error: Location or item [{}] corrupt.", item.get_shortname()),
+	pub fn remove_item_certain(&mut self, id: u32) {
+		match self.items.remove(&id) {
+			None => panic!("Error: Location or item [{}] corrupt.", id),
 			Some(_) => {},
 		}
 	}

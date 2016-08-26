@@ -55,9 +55,9 @@ impl Inventory {
 		self.items.remove(&(*item).get_id())
 	}
 
-	pub fn remove_item_certain(&mut self, item: &Rc<Box<Item>>) -> Rc<Box<Item>> {
-		 match self.items.remove(&(*item).get_id()) {
-			 None => panic!("Data corruption seeking item [{}], fail.", &(*item).get_id()),
+	pub fn remove_item_certain(&mut self, id: u32) -> Rc<Box<Item>> {
+		 match self.items.remove(&id) {
+			 None => panic!("Data corruption seeking item [{}], fail.", id),
 			 Some(item) => item,
 		 }
 	}

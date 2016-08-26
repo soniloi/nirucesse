@@ -146,7 +146,7 @@ impl Player {
 			None => {},
 			Some(obstruction) => {
 				if obstruction.is(::ITEM_ID_ROBOT) {
-					self_loc.remove_item_certain(&obstruction);
+					self_loc.remove_item_certain(obstruction.get_id());
 					robot_here = true;
 				}
 			},
@@ -170,7 +170,7 @@ impl Player {
 		match item.get_id() {
 			::ITEM_ID_BREAD => {
 				match self.inventory.remove_item(item) {
-					None => self.location.borrow_mut().remove_item_certain(item),
+					None => self.location.borrow_mut().remove_item_certain(item.get_id()),
 					Some(_) => {},
 				};
 				let toast = data.get_item_certain(String::from("toast"));
@@ -179,7 +179,7 @@ impl Player {
 			},
 			::ITEM_ID_TOAST => {
 				match self.inventory.remove_item(item) {
-					None => self.location.borrow_mut().remove_item_certain(item),
+					None => self.location.borrow_mut().remove_item_certain(item.get_id()),
 					Some(_) => {},
 				};
 				terminal::write_full(data.get_response("toast"));
@@ -220,7 +220,7 @@ impl Player {
 			return;
 		}
 
-		self.location.borrow_mut().remove_item_certain(item);
+		self.location.borrow_mut().remove_item_certain(item.get_id());
 		self.insert_item(item.clone());
 
 		if item.is_wearable() {
@@ -236,7 +236,7 @@ impl Player {
 	}
 
 	fn drop_final(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
-		let it = self.inventory.remove_item_certain(item);
+		let it = self.inventory.remove_item_certain(item.get_id());
 		self.location.borrow_mut().insert_item(it);
 		terminal::write_full(data.get_response("dropgood"));
 	}
@@ -409,7 +409,7 @@ impl Player {
 	}
 
 	fn throw_final(&mut self, data: &DataCollection, item: &Rc<Box<Item>>) {
-		let it = self.inventory.remove_item_certain(item);
+		let it = self.inventory.remove_item_certain(item.get_id());
 		if it.is_fragile() {
 			terminal::write_full(data.get_response("shatthro"));
 		} else {
