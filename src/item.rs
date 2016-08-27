@@ -113,7 +113,12 @@ impl Item {
 	}
 
 	pub fn mk_full_string(&self, description_start: &str, description_end: &str) -> String {
-		String::from(description_start) + &self.description + description_end
+		let mut result = String::from(description_start) + &self.description;
+		if self.is_switchable() {
+			result = result + ". It is currently ";
+			result = result + if self.on {"on"} else {"off"};
+		}
+		result + description_end
 	}
 
 	pub fn mk_writing_string(&self, no_writing: &str, writing_start: &str, writing_end: &str) -> String {
