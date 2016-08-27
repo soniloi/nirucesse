@@ -360,9 +360,43 @@ impl Player {
 		}
 	}
 
+	pub fn light(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>) {
+		self.manipulate_item_present(data, item, Player::light_final);
+	}
+
+	fn light_final(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>) {
+		if !item.borrow().is_switchable() {
+			terminal::write_full(data.get_response("nonoligh"));
+			return;
+		}
+		if item.borrow().is_on() {
+			terminal::write_full(data.get_response("alreadon"));
+			return;
+		}
+		terminal::write_full(data.get_response("lit"));
+		item.borrow_mut().set_on(true);
+	}
+
 	// Return a description of what the player sees when they look
 	pub fn get_look(&self, data: &DataCollection) -> String {
 		self.get_effective_appearance(data, self.mk_location_string())
+	}
+
+	pub fn quench(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>) {
+		self.manipulate_item_present(data, item, Player::quench_final);
+	}
+
+	fn quench_final(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>) {
+		if !item.borrow().is_switchable() {
+			terminal::write_full(data.get_response("nonoquen"));
+			return;
+		}
+		if !item.borrow().is_on() {
+			terminal::write_full(data.get_response("alreadof"));
+			return;
+		}
+		terminal::write_full(data.get_response("quenched"));
+		item.borrow_mut().set_on(false);
 	}
 
 	pub fn get_score_str(&self) -> String {

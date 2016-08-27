@@ -41,10 +41,12 @@ impl CommandCollection {
 		acts.insert("help", actions::do_help);
 		acts.insert("hint", actions::do_hint);
 		acts.insert("inventory", actions::do_inventory);
+		acts.insert("light", actions::do_light);
 		acts.insert("look", actions::do_look);
 		acts.insert("north", actions::do_go);
 		acts.insert("northeast", actions::do_go);
 		acts.insert("northwest", actions::do_go);
+		acts.insert("quench", actions::do_quench);
 		acts.insert("quit", actions::do_quit);
 		acts.insert("read", actions::do_read);
 		acts.insert("score", actions::do_score);

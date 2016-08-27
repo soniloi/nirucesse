@@ -1,5 +1,6 @@
 const CTRL_ITEM_MOBILE: u32 = 0x2; // Whether the item is fixed or mobile (carryable)
 const CTRL_ITEM_OBSTRUCTION: u32 = 0x4; // Whether the item is an obstruction
+const CTRL_ITEM_SWITCHABLE: u32 = 0x8; // Whether the item can be lit/quenched
 const CTRL_ITEM_GIVES_LIGHT: u32 = 0x10; // Whether the item emits light
 const CTRL_ITEM_GIVES_AIR: u32 = 0x20; // Whether the item enables player to breathe
 const CTRL_ITEM_FRAGILE: u32 = 0x200; // Whether the item would survive throwing, dropping from heights, etc
@@ -14,6 +15,7 @@ pub struct Item {
 	longname: String,
 	description: String,
 	writing: Option<String>,
+	on: bool,
 }
 
 impl Item {
@@ -27,6 +29,7 @@ impl Item {
 			longname: longname,
 			description: description,
 			writing: writing,
+			on: false,
 		}
 	}
 
@@ -66,6 +69,10 @@ impl Item {
 		self.has_property(CTRL_ITEM_FRAGILE)
 	}
 
+	pub fn is_switchable(&self) -> bool {
+		self.has_property(CTRL_ITEM_SWITCHABLE)
+	}
+
 	pub fn get_id(&self) -> u32 {
 		self.id
 	}
@@ -89,6 +96,14 @@ impl Item {
 
 	pub fn get_size(&self) -> u32 {
 		self.size
+	}
+
+	pub fn is_on(&self) -> bool {
+		self.on
+	}
+
+	pub fn set_on(&mut self, next: bool) {
+		self.on = next;
 	}
 
 	pub fn mk_full_string(&self, description_start: &str, description_end: &str) -> String {

@@ -59,9 +59,17 @@ pub fn do_inventory(data: &DataCollection, arg: String, player: &mut Player) {
 	terminal::write_full(&player.mk_inventory_string());
 }
 
+pub fn do_light(data: &DataCollection, arg: String, player: &mut Player) {
+	manipulate_item(data, arg, player, Player::light);
+}
+
 #[allow(unused_variables)]
 pub fn do_look(data: &DataCollection, arg: String, player: &mut Player) {
 	terminal::write_full(&player.get_look(data));
+}
+
+pub fn do_quench(data: &DataCollection, arg: String, player: &mut Player) {
+	manipulate_item(data, arg, player, Player::quench);
 }
 
 #[allow(unused_variables)]
@@ -80,7 +88,7 @@ pub fn do_score(data: &DataCollection, arg: String, player: &mut Player) {
 }
 
 pub fn do_take(data: &DataCollection, arg: String, player: &mut Player) {
-	manipulate_item(data, arg, player, Player::take)
+	manipulate_item(data, arg, player, Player::take);
 }
 
 pub fn do_throw(data: &DataCollection, arg: String, player: &mut Player) {
