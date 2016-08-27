@@ -23,10 +23,9 @@ impl Inventory {
 		// Inventory has light if any item within it has light
 		for item in self.items.values() {
 			if item.borrow().has_light() {
-				return true
+				return true;
 			}
 		}
-
 		false
 	}
 

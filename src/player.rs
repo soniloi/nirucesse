@@ -444,6 +444,7 @@ impl Player {
 
 	fn throw_final(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>) {
 		let it = self.inventory.remove_item_certain(item.borrow().get_id());
+		terminal::write_full(data.get_response("throw"));
 		// FIXME:
 		let it_ref = it.clone();
 		let it_borrow = it_ref.borrow();
