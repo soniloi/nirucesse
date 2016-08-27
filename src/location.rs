@@ -165,13 +165,7 @@ impl Location {
 		result = result + &self.description + ".";
 		if !self.items.is_empty() {
 			for item in self.items.values() {
-				result = result + "\nThere is " + item.borrow().get_longname();
-				if item.borrow().is_switchable() {
-					result = result + " (currently ";
-					result = result + if item.borrow().is_on() {"on"} else {"off"};
-					result = result + ")";
-				}
-				result = result + " here.";
+				result = result + &item.borrow().get_locationname();
 			}
 		}
 

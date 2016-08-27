@@ -81,8 +81,8 @@ impl Item {
 		&self.shortname
 	}
 
-	pub fn get_longname(&self) -> &str {
-		&self.longname
+	fn get_switch_status(&self) -> String {
+		String::from("currently ") + if self.on {"on"} else {"off"}
 	}
 
 	// Return the name of this item as it would be displayed in an inventory listing
@@ -93,11 +93,18 @@ impl Item {
 		}
 		result = result + &self.longname;
 		if self.is_switchable() {
-			result = result + " (currently ";
-			result = result + if self.on {"on"} else {"off"};
-			result = result + ")"
+			result = result + " (" + &self.get_switch_status() + ")"
 		}
 		result
+	}
+
+	// Return the name of this item as it would be displayed in a location listing
+	pub fn get_locationname(&self) -> String {
+		let mut result: String = String::from("\nThere is ") + &self.longname;
+		if self.is_switchable() {
+			result = result + " (" + &self.get_switch_status() + ")"
+		}
+		result + " here."
 	}
 
 	pub fn get_size(&self) -> u32 {
@@ -115,8 +122,7 @@ impl Item {
 	pub fn mk_full_string(&self, description_start: &str, description_end: &str) -> String {
 		let mut result = String::from(description_start) + &self.description;
 		if self.is_switchable() {
-			result = result + ". It is currently ";
-			result = result + if self.on {"on"} else {"off"};
+			result = result + ". It is " + &self.get_switch_status();
 		}
 		result + description_end
 	}
