@@ -31,7 +31,7 @@ pub struct Location {
 	description: String,
 
 	directions: HashMap<Direction, Rc<RefCell<Box<Location>>>>,
-	items: HashMap<u32, Rc<Box<Item>>>,
+	items: HashMap<u32, Rc<RefCell<Box<Item>>>>,
 }
 
 impl Location {
@@ -81,7 +81,7 @@ impl Location {
 	// Return whether any item resting at this location emits light
 	pub fn has_light_item(&self) -> bool {
 		for item in self.items.values() {
-			if item.has_light() {
+			if item.borrow().has_light() {
 				return true
 			}
 		}
@@ -104,9 +104,9 @@ impl Location {
 		self.has_property(CTRL_LOC_NEEDSNO_LIGHT)
 	}
 
-	pub fn get_obstruction(&self) -> Option<Rc<Box<Item>>> {
+	pub fn get_obstruction(&self) -> Option<Rc<RefCell<Box<Item>>>> {
 		for item in self.items.values() {
-			if item.is_obstruction() {
+			if item.borrow().is_obstruction() {
 				return Some(item.clone());
 			}
 		}
@@ -122,16 +122,16 @@ impl Location {
 		self.directions.insert(dir, loc);
 	}
 
-	pub fn contains_item(&self, item: &Rc<Box<Item>>) -> bool {
-		self.items.contains_key(&(*item).get_id())
+	pub fn contains_item(&self, item: &Rc<RefCell<Box<Item>>>) -> bool {
+		self.items.contains_key(&item.borrow().get_id())
 	}
 
-	pub fn insert_item(&mut self, item: Rc<Box<Item>>) {
-		self.items.insert((*item).get_id(), item);
+	pub fn insert_item(&mut self, item: Rc<RefCell<Box<Item>>>) {
+		self.items.insert(item.borrow().get_id(), item.clone());
 	}
 
-	pub fn remove_item(&mut self, item: &Rc<Box<Item>>) -> Option<Rc<Box<Item>>> {
-		self.items.remove(&(*item).get_id())
+	pub fn remove_item(&mut self, item: &Rc<RefCell<Box<Item>>>) -> Option<Rc<RefCell<Box<Item>>>> {
+		self.items.remove(&item.borrow().get_id())
 	}
 
 	pub fn remove_item_certain(&mut self, id: u32) {
@@ -165,7 +165,7 @@ impl Location {
 		result = result + &self.description + ".";
 		if !self.items.is_empty() {
 			for item in self.items.values() {
-				result = result + "\nThere is " + item.get_longname() + " here.";
+				result = result + "\nThere is " + item.borrow().get_longname() + " here.";
 			}
 		}
 

@@ -49,11 +49,11 @@ impl DataCollection {
 		self.commands.get(key)
 	}
 
-	pub fn get_item(&self, key: String) -> Option<&Rc<Box<Item>>> {
+	pub fn get_item(&self, key: String) -> Option<&Rc<RefCell<Box<Item>>>> {
 		self.items.get(key)
 	}
 
-	pub fn get_item_certain(&self, key: String) -> &Rc<Box<Item>> {
+	pub fn get_item_certain(&self, key: String) -> &Rc<RefCell<Box<Item>>> {
 		match self.items.get(key.clone()) {
 			None => panic!("Error: Data collection corrupt when searching for item [{}].", key),
 			Some(item) => return item,

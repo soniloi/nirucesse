@@ -1,3 +1,4 @@
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
@@ -20,7 +21,7 @@ const ITEM_WRITING_NONE: &'static str = "0"; // String indicating that there is 
 const SEP_SECTION: &'static str = "---"; // String separating sections
 
 pub struct ItemCollection {
-	items: HashMap<String, Rc<Box<Item>>>,
+	items: HashMap<String, Rc<RefCell<Box<Item>>>>,
 }
 
 impl ItemCollection {
@@ -45,7 +46,7 @@ impl ItemCollection {
 					// Create item and copy a reference into this collection
 					let item_parsed = ItemCollection::parse_item(&words);
 					let item = item_parsed.0;
-					self.items.insert(String::from(item.get_shortname()), item.clone());
+					self.items.insert(String::from(item.borrow().get_shortname()), item.clone());
 
 					// Point item's starting location at it
 					let initial = item_parsed.1;
@@ -56,7 +57,7 @@ impl ItemCollection {
 		}
 	}
 
-	fn parse_item(words: &Vec<&str>) -> (Rc<Box<Item>>, u32) {
+	fn parse_item(words: &Vec<&str>) -> (Rc<RefCell<Box<Item>>>, u32) {
 		let id = data_collection::str_to_u32(words[FILE_INDEX_ITEM_ID], 10);
 		let properties = data_collection::str_to_u32(words[FILE_INDEX_ITEM_STATUS], 16);
 		let initial = data_collection::str_to_u32(words[FILE_INDEX_ITEM_INITIAL_LOC], 10);
@@ -69,11 +70,11 @@ impl ItemCollection {
 			writ => Some(String::from(writ)),
 		};
 
-		let item = Rc::new(Box::new(Item::new(id, properties, size, shortname, longname, description, writing)));
+		let item = Rc::new(RefCell::new(Box::new(Item::new(id, properties, size, shortname, longname, description, writing))));
 		(item, initial)
 	}
 
-	fn set_location(locations: &mut LocationCollection, initial: u32, item: Rc<Box<Item>>) {
+	fn set_location(locations: &mut LocationCollection, initial: u32, item: Rc<RefCell<Box<Item>>>) {
 	  let initial_loc = match locations.get(initial) {
 	    None => panic!("Unable to find location with ID: {}", initial),
 	    Some(loc) => loc,
@@ -81,7 +82,7 @@ impl ItemCollection {
 	  initial_loc.borrow_mut().insert_item(item);
 	}
 
-	pub fn get(&self, key: String) -> Option<&Rc<Box<Item>>> {
+	pub fn get(&self, key: String) -> Option<&Rc<RefCell<Box<Item>>>> {
 		self.items.get(&key)
 	}
 }
