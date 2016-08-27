@@ -91,7 +91,13 @@ impl Item {
 		if self.is_wearable() {
 			result = result + "(wearing) ";
 		}
-		result + &self.longname
+		result = result + &self.longname;
+		if self.is_switchable() {
+			result = result + " (currently ";
+			result = result + if self.on {"on"} else {"off"};
+			result = result + ")"
+		}
+		result
 	}
 
 	pub fn get_size(&self) -> u32 {
