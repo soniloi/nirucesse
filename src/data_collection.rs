@@ -11,6 +11,9 @@ use location::Location;
 use location_collection::LocationCollection;
 use string_collection::StringCollection;
 
+pub type GenericRcBox<T> = Rc<Box<T>>;
+pub type CommandRef = GenericRcBox<Command>;
+
 pub struct DataCollection {
 	commands: CommandCollection,
 	items: ItemCollection,

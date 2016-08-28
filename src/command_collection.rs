@@ -5,6 +5,7 @@ use actions;
 use command::ActionFn;
 use command::Command;
 use data_collection;
+use data_collection::CommandRef;
 use file_buffer::FileBuffer;
 
 const FILE_INDEX_COMMAND_TAG: usize = 0;
@@ -14,7 +15,7 @@ const FILE_INDEX_COMMAND_ALIAS_START: usize = 3;
 const SEP_SECTION: &'static str = "---"; // String separating sections
 
 pub struct CommandCollection {
-	commands: HashMap<String, Rc<Box<Command>>>,
+	commands: HashMap<String, CommandRef>,
 }
 
 impl CommandCollection {
@@ -88,7 +89,7 @@ impl CommandCollection {
 		match acts.get(tag) {
 			None => println!("\x1b[31m[Warning: no action function found for tag [{}]; skipping]\x1b[0m", tag),
 			Some(act) => {
-				let cmd: Rc<Box<Command>> = Rc::new(Box::new(Command::new(primary, properties, *act)));
+				let cmd: CommandRef = Rc::new(Box::new(Command::new(primary, properties, *act)));
 				self.commands.insert(key, cmd.clone());
 				for i in FILE_INDEX_COMMAND_ALIAS_START..words.len() {
 					if !words[i].is_empty() {
@@ -99,7 +100,7 @@ impl CommandCollection {
 		}
 	}
 
-	pub fn get(&self, key: String) -> Option<&Rc<Box<Command>>> {
+	pub fn get(&self, key: String) -> Option<&CommandRef> {
 		self.commands.get(&key)
 	}
 
