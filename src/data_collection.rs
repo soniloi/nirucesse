@@ -12,7 +12,10 @@ use location_collection::LocationCollection;
 use string_collection::StringCollection;
 
 pub type GenericRcBox<T> = Rc<Box<T>>;
+pub type GenericRcRefCellBox<T> = Rc<RefCell<Box<T>>>;
 pub type CommandRef = GenericRcBox<Command>;
+pub type ItemRef = GenericRcRefCellBox<Item>;
+pub type LocationRef = GenericRcRefCellBox<Location>;
 
 pub struct DataCollection {
 	commands: CommandCollection,
@@ -52,33 +55,33 @@ impl DataCollection {
 		self.commands.get(key)
 	}
 
-	pub fn get_item(&self, key: String) -> Option<&Rc<RefCell<Box<Item>>>> {
+	pub fn get_item(&self, key: String) -> Option<&ItemRef> {
 		self.items.get(key)
 	}
 
-	pub fn get_item_certain(&self, key: String) -> &Rc<RefCell<Box<Item>>> {
+	pub fn get_item_certain(&self, key: String) -> &ItemRef {
 		match self.items.get(key.clone()) {
 			None => panic!("Error: Data collection corrupt when searching for item [{}].", key),
 			Some(item) => return item,
 		}
 	}
 
-	pub fn get_location(&self, key: u32) -> Option<&Rc<RefCell<Box<Location>>>> {
+	pub fn get_location(&self, key: u32) -> Option<&LocationRef> {
 		self.locations.get(key)
 	}
 
-	pub fn get_location_certain(&self, key: u32) -> &Rc<RefCell<Box<Location>>> {
+	pub fn get_location_certain(&self, key: u32) -> &LocationRef {
 		match self.locations.get(key) {
 			None => panic!("Error: Data collection corrupt when searching for location [{}].", key),
 			Some(loc) => return loc,
 		}
 	}
 
-	pub fn get_location_wake(&self) -> &Rc<RefCell<Box<Location>>> {
+	pub fn get_location_wake(&self) -> &LocationRef {
 		self.locations.get_location_wake()
 	}
 
-	pub fn get_location_safe(&self) -> &Rc<RefCell<Box<Location>>> {
+	pub fn get_location_safe(&self) -> &LocationRef {
 		self.locations.get_location_safe()
 	}
 

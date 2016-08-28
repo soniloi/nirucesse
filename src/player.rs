@@ -1,23 +1,21 @@
-use std::cell::RefCell;
 use rand;
 use rand::Rng;
-use std::rc::Rc;
 
 use data_collection::DataCollection;
+use data_collection::ItemRef;
+use data_collection::LocationRef;
 use inventory::Inventory;
-use item::Item;
 use location::Direction;
-use location::Location;
 use terminal;
 
-pub type ItemManipFinalFn = fn(player: &mut Player, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>);
+pub type ItemManipFinalFn = fn(player: &mut Player, data: &DataCollection, item: &ItemRef);
 pub type ItemManipFn = ItemManipFinalFn;
 
 pub struct Player {
 	inventory: Inventory,
-	location: Rc<RefCell<Box<Location>>>,
-	previous_true: Rc<RefCell<Box<Location>>>,
-	previous: Option<Rc<RefCell<Box<Location>>>>,
+	location: LocationRef,
+	previous_true: LocationRef,
+	previous: Option<LocationRef>,
 	score: u32, // player's current score
 	playing: bool, // whether player is currently playing
 	hints: u32, // number of hints player has requested
@@ -28,7 +26,7 @@ pub struct Player {
 
 impl Player {
 
-	pub fn new(initial: Rc<RefCell<Box<Location>>>) -> Player {
+	pub fn new(initial: LocationRef) -> Player {
 		Player {
 			inventory: Inventory::new(16),
 			location: initial.clone(),
@@ -55,15 +53,15 @@ impl Player {
 		self.inventory.has_air() || self.location.borrow().has_air()
 	}
 
-	pub fn contains_item(&self, item_ptr: &Rc<RefCell<Box<Item>>>) -> bool {
+	pub fn contains_item(&self, item_ptr: &ItemRef) -> bool {
 		self.inventory.contains_item(item_ptr)
 	}
 
-	pub fn insert_item(&mut self, item_ptr: Rc<RefCell<Box<Item>>>) {
+	pub fn insert_item(&mut self, item_ptr: ItemRef) {
 		self.inventory.insert_item(item_ptr);
 	}
 
-	pub fn get_location(&self) -> &Rc<RefCell<Box<Location>>> {
+	pub fn get_location(&self) -> &LocationRef {
 		&self.location
 	}
 
@@ -89,7 +87,7 @@ impl Player {
 		self.location = data.get_location_wake().clone();
 	}
 
-	pub fn drop_on_death(&mut self, safe_loc: &Rc<RefCell<Box<Location>>>) {
+	pub fn drop_on_death(&mut self, safe_loc: &LocationRef) {
 		self.inventory.drop_on_death(safe_loc, &self.previous_true);
 	}
 
@@ -111,7 +109,7 @@ impl Player {
 		self.get_effective_description(String::from("???"), String::from("???"), self.location.borrow().get_shortname())
 	}
 
-	fn observe_item(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>, act: ItemManipFinalFn) {
+	fn observe_item(&mut self, data: &DataCollection, item: &ItemRef, act: ItemManipFinalFn) {
 		if !self.has_light() {
 			terminal::write_full(data.get_response("cantseed"));
 			return;
@@ -120,7 +118,7 @@ impl Player {
 	}
 
 	// Manipulate an item present either in the player's inventory or at the player's location
-	fn manipulate_item_present(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>, act: ItemManipFinalFn) {
+	fn manipulate_item_present(&mut self, data: &DataCollection, item: &ItemRef, act: ItemManipFinalFn) {
 		if !self.inventory.contains_item(item) && !self.location.borrow().contains_item(item) {
 			let response = String::from(data.get_response("nosee")) + &item.borrow().get_shortname() + data.get_response("noseeher");
 			terminal::write_full(&response);
@@ -130,7 +128,7 @@ impl Player {
 	}
 
 	// Manipulate an item present strictly in the player's inventory
-	fn manipulate_item_inventory(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>, act: ItemManipFinalFn) {
+	fn manipulate_item_inventory(&mut self, data: &DataCollection, item: &ItemRef, act: ItemManipFinalFn) {
 		if !self.inventory.contains_item(item) {
 			let response = String::from(data.get_response("nocarry")) + &item.borrow().get_shortname() + ".";
 			terminal::write_full(&response);
@@ -158,11 +156,11 @@ impl Player {
 		}
 	}
 
-	pub fn burn(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>) {
+	pub fn burn(&mut self, data: &DataCollection, item: &ItemRef) {
 		self.manipulate_item_present(data, item, Player::burn_final);
 	}
 
-	fn burn_final(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>) {
+	fn burn_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !self.inventory.contains_item_by_id(::ITEM_ID_MATCHES) {
 			terminal::write_full(data.get_response("nomatch"));
 			return;
@@ -200,11 +198,11 @@ impl Player {
 	}
 
 	// Have player attempt to pick up item from current location
-	pub fn take(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>) {
+	pub fn take(&mut self, data: &DataCollection, item: &ItemRef) {
 		self.manipulate_item_present(data, item, Player::take_final);
 	}
 
-	fn take_final(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>) {
+	fn take_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if self.contains_item(item) {
 			terminal::write_full(data.get_response("takealre"));
 			return;
@@ -231,22 +229,22 @@ impl Player {
 	}
 
 	// Have player attempt to drop item from inventory to current location
-	pub fn drop(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>) {
+	pub fn drop(&mut self, data: &DataCollection, item: &ItemRef) {
 		self.manipulate_item_inventory(data, item, Player::drop_final);
 	}
 
-	fn drop_final(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>) {
+	fn drop_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		let it = self.inventory.remove_item_certain(item.borrow().get_id());
 		self.location.borrow_mut().insert_item(it);
 		terminal::write_full(data.get_response("dropgood"));
 	}
 
 	// Describe an item in the player's inventory or at the player's location
-	pub fn describe(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>) {
+	pub fn describe(&mut self, data: &DataCollection, item: &ItemRef) {
 		self.observe_item(data, item, Player::describe_final);
 	}
 
-	fn describe_final(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>) {
+	fn describe_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		terminal::write_full(&item.borrow().mk_full_string(data.get_response("descstar"), data.get_response("descend")));
 	}
 
@@ -321,7 +319,7 @@ impl Player {
 	}
 
 	// Attempt to go to a location known to be adjacent; return true if move successful
-	fn try_move_to(&mut self, data: &DataCollection, next: &Rc<RefCell<Box<Location>>>) -> bool {
+	fn try_move_to(&mut self, data: &DataCollection, next: &LocationRef) -> bool {
 		let mut rng = rand::thread_rng();
 		let death_rand: u32 = rng.gen();
 		let death = death_rand % 4 == 0;
@@ -337,7 +335,7 @@ impl Player {
 	}
 
 	// Update player's 'previous' field as appropriate
-	fn update_previous(&mut self, move_success: bool, temp_loc: &Rc<RefCell<Box<Location>>>) {
+	fn update_previous(&mut self, move_success: bool, temp_loc: &LocationRef) {
 		if move_success {
 			if self.location.borrow().can_reach(&temp_loc) {
 				self.previous = Some(temp_loc.clone());
@@ -352,7 +350,7 @@ impl Player {
 	}
 
 	// Return whether a location is the last place the player was
-	fn is_previous_loc(&self, next: &Rc<RefCell<Box<Location>>>) -> bool {
+	fn is_previous_loc(&self, next: &LocationRef) -> bool {
 		let previous = self.previous.clone();
 		match previous {
 			None => return false,
@@ -360,11 +358,11 @@ impl Player {
 		}
 	}
 
-	pub fn light(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>) {
+	pub fn light(&mut self, data: &DataCollection, item: &ItemRef) {
 		self.manipulate_item_present(data, item, Player::light_final);
 	}
 
-	fn light_final(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>) {
+	fn light_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !item.borrow().is_switchable() {
 			terminal::write_full(data.get_response("nonoligh"));
 			return;
@@ -382,11 +380,11 @@ impl Player {
 		self.get_effective_appearance(data, self.mk_location_string())
 	}
 
-	pub fn quench(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>) {
+	pub fn quench(&mut self, data: &DataCollection, item: &ItemRef) {
 		self.manipulate_item_present(data, item, Player::quench_final);
 	}
 
-	fn quench_final(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>) {
+	fn quench_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !item.borrow().is_switchable() {
 			terminal::write_full(data.get_response("nonoquen"));
 			return;
@@ -430,19 +428,19 @@ impl Player {
 		self.location.borrow().mk_full_string()
 	}
 
-	pub fn read(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>) {
+	pub fn read(&mut self, data: &DataCollection, item: &ItemRef) {
 		self.observe_item(data, item, Player::read_final);
 	}
 
-	fn read_final(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>) {
+	fn read_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		terminal::write_full(&item.borrow().mk_writing_string(data.get_response("nowritin"), data.get_response("writstar"), data.get_response("writend")));
 	}
 
-	pub fn throw(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>) {
+	pub fn throw(&mut self, data: &DataCollection, item: &ItemRef) {
 		self.manipulate_item_inventory(data, item, Player::throw_final);
 	}
 
-	fn throw_final(&mut self, data: &DataCollection, item: &Rc<RefCell<Box<Item>>>) {
+	fn throw_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		let it = self.inventory.remove_item_certain(item.borrow().get_id());
 		terminal::write_full(data.get_response("throw"));
 		// FIXME:

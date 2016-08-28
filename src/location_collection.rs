@@ -2,9 +2,10 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
+use data_collection;
+use data_collection::LocationRef;
 use location::Direction;
 use location::Location;
-use data_collection;
 use file_buffer::FileBuffer;
 
 const FILE_INDEX_LOCATION_ID: usize = 0;
@@ -30,7 +31,7 @@ const LOCATION_INDEX_WAKE: u32 = 9;
 const SEP_SECTION: &'static str = "---"; // String separating sections
 
 pub struct LocationCollection {
-	locations: HashMap<u32, Rc<RefCell<Box<Location>>>>,
+	locations: HashMap<u32, LocationRef>,
 	location_wake: u32, // Where player wakes on game start, or after being reincarnated
 	location_safe: u32, // Where player's items get dropped on death
 	direction_map: HashMap<&'static str, Direction>, // Map of direction strings to direction enum
@@ -94,7 +95,7 @@ impl LocationCollection {
 		self.cross_reference(&all_links);
 	}
 
-	fn parse_location(words: &Vec<&str>) -> (Rc<RefCell<Box<Location>>>, u32) {
+	fn parse_location(words: &Vec<&str>) -> (LocationRef, u32) {
 		let id = data_collection::str_to_u32(words[FILE_INDEX_LOCATION_ID], 10);
 		let properties = data_collection::str_to_u32(words[FILE_INDEX_LOCATION_STATUS], 16);
 		let shortname = String::from(words[FILE_INDEX_LOCATION_SHORTNAME]);
@@ -132,22 +133,22 @@ impl LocationCollection {
 		}
 	}
 
-	pub fn get(&self, key: u32) -> Option<&Rc<RefCell<Box<Location>>>> {
+	pub fn get(&self, key: u32) -> Option<&LocationRef> {
 		self.locations.get(&key)
 	}
 
-	fn get_certain(&self, key: u32) -> &Rc<RefCell<Box<Location>>> {
+	fn get_certain(&self, key: u32) -> &LocationRef {
 		match self.locations.get(&key) {
 			None => panic!("Location collection corruption for location id [{}], fail.", key),
 			Some(location) => return location,
 		}
 	}
 
-	pub fn get_location_wake(&self) -> &Rc<RefCell<Box<Location>>> {
+	pub fn get_location_wake(&self) -> &LocationRef {
 		self.get_certain(self.location_wake)
 	}
 
-	pub fn get_location_safe(&self) -> &Rc<RefCell<Box<Location>>> {
+	pub fn get_location_safe(&self) -> &LocationRef {
 		self.get_certain(self.location_safe)
 	}
 

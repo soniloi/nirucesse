@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use data_collection;
+use data_collection::ItemRef;
 use file_buffer::FileBuffer;
 use item::Item;
 use location_collection::LocationCollection;
@@ -21,7 +22,7 @@ const ITEM_WRITING_NONE: &'static str = "0"; // String indicating that there is 
 const SEP_SECTION: &'static str = "---"; // String separating sections
 
 pub struct ItemCollection {
-	items: HashMap<String, Rc<RefCell<Box<Item>>>>,
+	items: HashMap<String, ItemRef>,
 }
 
 impl ItemCollection {
@@ -57,7 +58,7 @@ impl ItemCollection {
 		}
 	}
 
-	fn parse_item(words: &Vec<&str>) -> (Rc<RefCell<Box<Item>>>, u32) {
+	fn parse_item(words: &Vec<&str>) -> (ItemRef, u32) {
 		let id = data_collection::str_to_u32(words[FILE_INDEX_ITEM_ID], 10);
 		let properties = data_collection::str_to_u32(words[FILE_INDEX_ITEM_STATUS], 16);
 		let initial = data_collection::str_to_u32(words[FILE_INDEX_ITEM_INITIAL_LOC], 10);
@@ -74,7 +75,7 @@ impl ItemCollection {
 		(item, initial)
 	}
 
-	fn set_location(locations: &mut LocationCollection, initial: u32, item: Rc<RefCell<Box<Item>>>) {
+	fn set_location(locations: &mut LocationCollection, initial: u32, item: ItemRef) {
 	  let initial_loc = match locations.get(initial) {
 	    None => panic!("Unable to find location with ID: {}", initial),
 	    Some(loc) => loc,
@@ -82,7 +83,7 @@ impl ItemCollection {
 	  initial_loc.borrow_mut().insert_item(item);
 	}
 
-	pub fn get(&self, key: String) -> Option<&Rc<RefCell<Box<Item>>>> {
+	pub fn get(&self, key: String) -> Option<&ItemRef> {
 		self.items.get(&key)
 	}
 }

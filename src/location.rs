@@ -1,8 +1,7 @@
-use std::cell::RefCell;
 use std::collections::HashMap;
-use std::rc::Rc;
 
-use item::Item;
+use data_collection::ItemRef;
+use data_collection::LocationRef;
 
 const CTRL_LOC_HAS_LIGHT: u32 = 0x01; // Whether the location has ambient lighting
 const CTRL_LOC_HAS_AIR: u32 = 0x2; // Whether there is air at the location
@@ -30,8 +29,8 @@ pub struct Location {
 	longname: String,
 	description: String,
 
-	directions: HashMap<Direction, Rc<RefCell<Box<Location>>>>,
-	items: HashMap<u32, Rc<RefCell<Box<Item>>>>,
+	directions: HashMap<Direction, LocationRef>,
+	items: HashMap<u32, ItemRef>,
 }
 
 impl Location {
@@ -104,7 +103,7 @@ impl Location {
 		self.has_property(CTRL_LOC_NEEDSNO_LIGHT)
 	}
 
-	pub fn get_obstruction(&self) -> Option<Rc<RefCell<Box<Item>>>> {
+	pub fn get_obstruction(&self) -> Option<ItemRef> {
 		for item in self.items.values() {
 			if item.borrow().is_obstruction() {
 				return Some(item.clone());
@@ -114,23 +113,23 @@ impl Location {
 		None
 	}
 
-	pub fn get_direction(&self, dir: &Direction) -> Option<&Rc<RefCell<Box<Location>>>> {
+	pub fn get_direction(&self, dir: &Direction) -> Option<&LocationRef> {
 		self.directions.get(dir)
 	}
 
-	pub fn set_direction(&mut self, dir: Direction, loc: Rc<RefCell<Box<Location>>>) {
+	pub fn set_direction(&mut self, dir: Direction, loc: LocationRef) {
 		self.directions.insert(dir, loc);
 	}
 
-	pub fn contains_item(&self, item: &Rc<RefCell<Box<Item>>>) -> bool {
+	pub fn contains_item(&self, item: &ItemRef) -> bool {
 		self.items.contains_key(&item.borrow().get_id())
 	}
 
-	pub fn insert_item(&mut self, item: Rc<RefCell<Box<Item>>>) {
+	pub fn insert_item(&mut self, item: ItemRef) {
 		self.items.insert(item.borrow().get_id(), item.clone());
 	}
 
-	pub fn remove_item(&mut self, item: &Rc<RefCell<Box<Item>>>) -> Option<Rc<RefCell<Box<Item>>>> {
+	pub fn remove_item(&mut self, item: &ItemRef) -> Option<ItemRef> {
 		self.items.remove(&item.borrow().get_id())
 	}
 
@@ -146,7 +145,7 @@ impl Location {
 	}
 
 	// Return whether another location can be reached in one step from this one
-	pub fn can_reach(&self, other: &Rc<RefCell<Box<Location>>>) -> bool {
+	pub fn can_reach(&self, other: &LocationRef) -> bool {
 		for dir in self.directions.values() {
 			if dir.borrow().get_id() == other.borrow().get_id() {
 				return true;

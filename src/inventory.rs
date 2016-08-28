@@ -1,13 +1,11 @@
-use std::cell::RefCell;
 use std::collections::HashMap;
-use std::rc::Rc;
 
-use item::Item;
-use location::Location;
+use data_collection::ItemRef;
+use data_collection::LocationRef;
 
 pub struct Inventory {
 	capacity: u32,
-	items: HashMap<u32, Rc<RefCell<Box<Item>>>>,
+	items: HashMap<u32, ItemRef>,
 }
 
 impl Inventory {
@@ -42,19 +40,19 @@ impl Inventory {
 		self.items.contains_key(&id)
 	}
 
-	pub fn contains_item(&self, item: &Rc<RefCell<Box<Item>>>) -> bool {
+	pub fn contains_item(&self, item: &ItemRef) -> bool {
 		self.items.contains_key(&item.borrow().get_id())
 	}
 
-	pub fn insert_item(&mut self, item: Rc<RefCell<Box<Item>>>) {
+	pub fn insert_item(&mut self, item: ItemRef) {
 		self.items.insert(item.borrow().get_id(), item.clone());
 	}
 
-	pub fn remove_item(&mut self, item: &Rc<RefCell<Box<Item>>>) -> Option<Rc<RefCell<Box<Item>>>> {
+	pub fn remove_item(&mut self, item: &ItemRef) -> Option<ItemRef> {
 		self.items.remove(&item.borrow().get_id())
 	}
 
-	pub fn remove_item_certain(&mut self, id: u32) -> Rc<RefCell<Box<Item>>> {
+	pub fn remove_item_certain(&mut self, id: u32) -> ItemRef {
 		 match self.items.remove(&id) {
 			 None => panic!("Data corruption seeking item [{}], fail.", id),
 			 Some(item) => item,
@@ -71,11 +69,11 @@ impl Inventory {
 	}
 
 	// Return whether an item could fit in the inventory
-	pub fn can_accept(&self, item: &Rc<RefCell<Box<Item>>>) -> bool {
+	pub fn can_accept(&self, item: &ItemRef) -> bool {
 		(item.borrow().get_size() + self.get_size()) <= self.capacity
 	}
 
-	pub fn drop_on_death(&mut self, safe_loc: &Rc<RefCell<Box<Location>>>, current_loc: &Rc<RefCell<Box<Location>>>) {
+	pub fn drop_on_death(&mut self, safe_loc: &LocationRef, current_loc: &LocationRef) {
 		let removed = self.items.drain();
 		for (_, item) in removed {
 			if item.borrow().is_essential() {
