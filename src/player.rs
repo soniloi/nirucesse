@@ -445,6 +445,9 @@ impl Player {
 			terminal::write_full(data.get_response("genie"));
 		} else if item.borrow().is(::ITEM_ID_DRAGON) {
 			self.location.borrow_mut().remove_item_certain(item.borrow().get_id());
+			// FIXME: do this by ID instead of string
+			let tooth = data.get_item_certain(String::from("tooth"));
+			self.location.borrow_mut().insert_item(tooth.clone());
 			terminal::write_full(data.get_response("dragon"));
 		} else {
 			terminal::write_full(data.get_response("nointere"));
