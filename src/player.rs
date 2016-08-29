@@ -443,6 +443,9 @@ impl Player {
 	fn rub_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if item.borrow().is(::ITEM_ID_LAMP) {
 			terminal::write_full(data.get_response("genie"));
+		} else if item.borrow().is(::ITEM_ID_DRAGON) {
+			self.location.borrow_mut().remove_item_certain(item.borrow().get_id());
+			terminal::write_full(data.get_response("dragon"));
 		} else {
 			terminal::write_full(data.get_response("nointere"));
 		}
