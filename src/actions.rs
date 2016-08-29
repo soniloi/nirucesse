@@ -81,6 +81,10 @@ pub fn do_read(data: &DataCollection, arg: String, player: &mut Player) {
 	manipulate_item(data, arg, player, Player::read);
 }
 
+pub fn do_rub(data: &DataCollection, arg: String, player: &mut Player) {
+	manipulate_item(data, arg, player, Player::rub);
+}
+
 #[allow(unused_variables)]
 pub fn do_score(data: &DataCollection, arg: String, player: &mut Player) {
 	player.decrement_instructions(); // Requesting score does not count as an instruction

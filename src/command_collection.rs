@@ -50,6 +50,7 @@ impl CommandCollection {
 		acts.insert("quench", actions::do_quench);
 		acts.insert("quit", actions::do_quit);
 		acts.insert("read", actions::do_read);
+		acts.insert("rub", actions::do_rub);
 		acts.insert("score", actions::do_score);
 		acts.insert("south", actions::do_go);
 		acts.insert("southeast", actions::do_go);

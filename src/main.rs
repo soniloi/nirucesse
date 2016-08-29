@@ -30,6 +30,7 @@ pub const LOCATION_ID_AIRLOCKEOUT: u32 = 36; // The area immediately outside Air
 
 // ID numbers of specific items
 pub const ITEM_ID_BREAD: u32 = 1010;
+pub const ITEM_ID_LAMP: u32 = 1043;
 pub const ITEM_ID_MATCHES: u32 = 1048;
 pub const ITEM_ID_ROBOT: u32 = 1061;
 pub const ITEM_ID_TOAST: u32 = 1069;

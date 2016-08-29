@@ -436,6 +436,18 @@ impl Player {
 		terminal::write_full(&item.borrow().mk_writing_string(data.get_response("nowritin"), data.get_response("writstar"), data.get_response("writend")));
 	}
 
+	pub fn rub(&mut self, data: &DataCollection, item: &ItemRef) {
+		self.manipulate_item_present(data, item, Player::rub_final);
+	}
+
+	fn rub_final(&mut self, data: &DataCollection, item: &ItemRef) {
+		if item.borrow().is(::ITEM_ID_LAMP) {
+			terminal::write_full(data.get_response("genie"));
+		} else {
+			terminal::write_full(data.get_response("nointere"));
+		}
+	}
+
 	pub fn throw(&mut self, data: &DataCollection, item: &ItemRef) {
 		self.manipulate_item_inventory(data, item, Player::throw_final);
 	}
