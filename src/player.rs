@@ -208,7 +208,7 @@ impl Player {
 			return;
 		}
 
-		if !item.borrow().is_mobile() {
+		if !item.borrow().is_mobile() || item.borrow().is_obstruction() {
 			terminal::write_full(data.get_response("takenoca"));
 			return;
 		}
