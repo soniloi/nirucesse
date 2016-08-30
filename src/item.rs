@@ -49,7 +49,7 @@ impl Item {
 		self.properties &= !property;
 	}
 
-	pub fn is_mobile(&self) -> bool {
+	fn is_mobile(&self) -> bool {
 		self.has_property(CTRL_ITEM_MOBILE)
 	}
 
@@ -95,6 +95,10 @@ impl Item {
 
 	pub fn get_shortname(&self) -> &str {
 		&self.shortname
+	}
+
+	pub fn is_portable(&self) -> bool {
+		self.is_mobile() && !self.is_obstruction()
 	}
 
 	fn get_switch_status(&self) -> String {
