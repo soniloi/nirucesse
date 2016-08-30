@@ -434,12 +434,26 @@ impl Player {
 
 	fn play_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if item.borrow().is(::ITEM_ID_WHISTLE) {
-			let mut tune = terminal::read_question(data.get_response("whatplay"));
-			while tune.is_empty() {
-				tune = terminal::read_question(data.get_response("whatplay"));
+			let mut tune_words = terminal::read_question(data.get_response("whatplay"));
+			while tune_words.is_empty() {
+				tune_words = terminal::read_question(data.get_response("whatplay"));
 			}
-			let response = String::from(data.get_response("playstar")) + &tune[0] + data.get_response("playend");
+
+			let tune = &tune_words[0];
+			let response = String::from(data.get_response("playstar")) + tune + data.get_response("playend");
 			terminal::write_full(&response);
+
+			if tune == data.get_response("cabbage") {
+				match self.location.borrow().get_obstruction() {
+					None => {},
+					Some(obstruction) => {
+						if obstruction.borrow().is(::ITEM_ID_LION) {
+							obstruction.borrow_mut().set_obstruction(false);
+							terminal::write_full(data.get_response("liontune"));
+						}
+					},
+				}
+			}
 		} else {
 			terminal::write_full(data.get_response("nonohow"));
 		}

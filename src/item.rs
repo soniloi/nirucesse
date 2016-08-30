@@ -41,6 +41,14 @@ impl Item {
 		self.properties & property != 0
 	}
 
+	fn set_property(&mut self, property: u32) {
+		self.properties |= property;
+	}
+
+	fn unset_property(&mut self, property: u32) {
+		self.properties &= !property;
+	}
+
 	pub fn is_mobile(&self) -> bool {
 		self.has_property(CTRL_ITEM_MOBILE)
 	}
@@ -55,6 +63,14 @@ impl Item {
 
 	pub fn is_obstruction(&self) -> bool {
 		self.has_property(CTRL_ITEM_OBSTRUCTION)
+	}
+
+	pub fn set_obstruction(&mut self, on: bool) {
+		if on {
+			self.set_property(CTRL_ITEM_OBSTRUCTION);
+		} else {
+			self.unset_property(CTRL_ITEM_OBSTRUCTION);
+		}
 	}
 
 	pub fn is_wearable(&self) -> bool {
