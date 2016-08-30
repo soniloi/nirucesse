@@ -428,6 +428,23 @@ impl Player {
 		self.location.borrow().mk_full_string()
 	}
 
+	pub fn play(&mut self, data: &DataCollection, item: &ItemRef) {
+		self.observe_item(data, item, Player::play_final);
+	}
+
+	fn play_final(&mut self, data: &DataCollection, item: &ItemRef) {
+		if item.borrow().is(::ITEM_ID_WHISTLE) {
+			let mut tune = terminal::read_question(data.get_response("whatplay"));
+			while tune.is_empty() {
+				tune = terminal::read_question(data.get_response("whatplay"));
+			}
+			let response = String::from(data.get_response("playstar")) + &tune[0] + data.get_response("playend");
+			terminal::write_full(&response);
+		} else {
+			terminal::write_full(data.get_response("nonohow"));
+		}
+	}
+
 	pub fn read(&mut self, data: &DataCollection, item: &ItemRef) {
 		self.observe_item(data, item, Player::read_final);
 	}

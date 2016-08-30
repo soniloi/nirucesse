@@ -68,6 +68,10 @@ pub fn do_look(data: &DataCollection, arg: String, player: &mut Player) {
 	terminal::write_full(&player.get_look(data));
 }
 
+pub fn do_play(data: &DataCollection, arg: String, player: &mut Player) {
+	manipulate_item(data, arg, player, Player::play);
+}
+
 pub fn do_quench(data: &DataCollection, arg: String, player: &mut Player) {
 	manipulate_item(data, arg, player, Player::quench);
 }
