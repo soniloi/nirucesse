@@ -130,7 +130,7 @@ impl Player {
 	// Manipulate an item present strictly in the player's inventory
 	fn manipulate_item_inventory(&mut self, data: &DataCollection, item: &ItemRef, act: ItemManipFinalFn) {
 		if !self.inventory.contains_item(item) {
-			let response = String::from(data.get_response("nocarry")) + &item.borrow().get_shortname() + ".";
+			let response = String::from(data.get_response("nocastar")) + &item.borrow().get_shortname() + data.get_response("nocaend");
 			terminal::write_full(&response);
 			return;
 		}
@@ -237,8 +237,7 @@ impl Player {
 		let it = self.inventory.remove_item_certain(item.borrow().get_id());
 		self.location.borrow_mut().insert_item(it);
 
-		terminal::write_full(data.get_response("dropgood"));
-
+		let mut response = data.get_response("dropgood");
 		if item.borrow().is(::ITEM_ID_LION) {
 			let obstruction = self.location.borrow().get_obstruction();
 			match obstruction {
@@ -246,11 +245,13 @@ impl Player {
 				Some(obstruction) => {
 					if obstruction.borrow().is(::ITEM_ID_WOLF) {
 						self.location.borrow_mut().remove_item_certain(obstruction.borrow().get_id());
-						terminal::write_full(data.get_response("lionwolf"));
+						response = data.get_response("lionwolf");
 					}
 				}
 			}
 		}
+
+		terminal::write_full(response);
 	}
 
 	// Describe an item in the player's inventory or at the player's location

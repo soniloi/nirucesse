@@ -57,11 +57,11 @@ impl Command {
 		if self.takes_arg() {
 			// Command takes an argument, but player didn't give one
 			if !self.is_movement() && actual_arg.is_empty() {
-				let question = String::from("What would you like to ") + &self.name + "?";
+				let question = String::from(data.get_response("whatstar")) + &self.name + data.get_response("whatend");
 				let further_args = terminal::read_question(&question);
 
 				if further_args.len() != 1 || (!further_args.is_empty() && further_args[0].is_empty()) {
-					terminal::write_full("I do not understand that instruction.");
+					terminal::write_full(data.get_response("notuigin"));
 					return;
 				} else {
 					// FIXME: fix the lifetime on actual_arg/further_args
@@ -73,7 +73,7 @@ impl Command {
 		} else {
 			// Command takes no argument, but player gave one anyway
 			if !actual_arg.is_empty() {
-				terminal::write_full("I do not understand that instruction.");
+				terminal::write_full(data.get_response("notuigin"));
 				return;
 			}
 		}
