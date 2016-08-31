@@ -42,16 +42,35 @@ impl Game {
 			return;
 		}
 
-		let cmd_name = inputs[0].clone();
 		self.player.increment_instructions();
-		match self.data.get_command(cmd_name.clone()) {
+
+		// First try verb-noun
+		let mut cmd_name_tentative = inputs[0].clone();
+		match self.data.get_command(cmd_name_tentative.clone()) {
+			None => {},
 			Some(cmd) => {
 				let arg: String = if inputs.len() > 1 { inputs[1].clone() } else { String::from("") };
 				(**cmd).execute(&self.data, arg, &mut self.player);
+				return;
 			},
-			None => {
-				terminal::write_full(self.data.get_response("notuigin"));
-			},
+		}
+
+		// That didn't parse, so try noun-verb instead
+		if inputs.len() < 2 {
+			terminal::write_full(self.data.get_response("notuigin"));
+			return;
+		}
+		cmd_name_tentative = inputs[1].clone();
+		match self.data.get_command(cmd_name_tentative.clone()) {
+			None => terminal::write_full(self.data.get_response("notuigin")),
+			Some(cmd) => {
+				if !cmd.is_invertible() {
+					terminal::write_full(self.data.get_response("notuigin"));
+				} else {
+					let arg: String = inputs[0].clone();
+					(**cmd).execute(&self.data, arg, &mut self.player);
+				}
+			}
 		}
 	}
 

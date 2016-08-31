@@ -37,6 +37,10 @@ impl Command {
 		self.has_property(CTRL_COMMAND_COMPOUND)
 	}
 
+	pub fn is_invertible(&self) -> bool {
+		self.has_property(CTRL_COMMAND_INVERTIBLE)
+	}
+
 	fn is_movement(&self) -> bool {
 		self.has_property(CTRL_COMMAND_MOVEMENT)
 	}
