@@ -236,7 +236,21 @@ impl Player {
 	fn drop_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		let it = self.inventory.remove_item_certain(item.borrow().get_id());
 		self.location.borrow_mut().insert_item(it);
+
 		terminal::write_full(data.get_response("dropgood"));
+
+		if item.borrow().is(::ITEM_ID_LION) {
+			let obstruction = self.location.borrow().get_obstruction();
+			match obstruction {
+				None => {},
+				Some(obstruction) => {
+					if obstruction.borrow().is(::ITEM_ID_WOLF) {
+						self.location.borrow_mut().remove_item_certain(obstruction.borrow().get_id());
+						terminal::write_full(data.get_response("lionwolf"));
+					}
+				}
+			}
+		}
 	}
 
 	// Describe an item in the player's inventory or at the player's location
