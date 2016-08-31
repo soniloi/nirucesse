@@ -56,22 +56,21 @@ impl Game {
 		}
 
 		// That didn't parse, so try noun-verb instead
-		if inputs.len() < 2 {
-			terminal::write_full(self.data.get_response("notuigin"));
-			return;
-		}
-		cmd_name_tentative = inputs[1].clone();
-		match self.data.get_command(cmd_name_tentative.clone()) {
-			None => terminal::write_full(self.data.get_response("notuigin")),
-			Some(cmd) => {
-				if !cmd.is_invertible() {
-					terminal::write_full(self.data.get_response("notuigin"));
-				} else {
-					let arg: String = inputs[0].clone();
-					(**cmd).execute(&self.data, arg, &mut self.player);
+		if inputs.len() >= 2 {
+			cmd_name_tentative = inputs[1].clone();
+			match self.data.get_command(cmd_name_tentative.clone()) {
+				None => {},
+				Some(cmd) => {
+					if cmd.is_invertible() {
+						let arg: String = inputs[0].clone();
+						(**cmd).execute(&self.data, arg, &mut self.player);
+						return;
+					}
 				}
 			}
 		}
+
+		terminal::write_full(self.data.get_response("notuigin"));
 	}
 
 	// Reincarnate the player, if requested
