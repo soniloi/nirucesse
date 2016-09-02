@@ -31,6 +31,7 @@ pub const LOCATION_ID_AIRLOCKEOUT: u32 = 36; // The area immediately outside Air
 // ID numbers of specific items
 pub const ITEM_ID_BREAD: u32 = 1010;
 pub const ITEM_ID_DRAGON: u32 = 1027;
+pub const ITEM_ID_KOHLRABI: u32 = 1042;
 pub const ITEM_ID_LAMP: u32 = 1043;
 pub const ITEM_ID_LION: u32 = 1045;
 pub const ITEM_ID_MATCHES: u32 = 1048;

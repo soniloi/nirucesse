@@ -6,6 +6,7 @@ const CTRL_ITEM_GIVES_AIR: u32 = 0x20; // Whether the item enables player to bre
 const CTRL_ITEM_FRAGILE: u32 = 0x200; // Whether the item would survive throwing, dropping from heights, etc
 const CTRL_ITEM_WEARABLE: u32 = 0x400; // Whether the item is to be worn by the player rather than carried
 const CTRL_ITEM_ESSENTIAL: u32 = 0x1000; // Whether the item is essential to basic gameplay
+const CTRL_ITEM_EDIBLE: u32 = 0x2000; // Whether the item is any sort of food or drink
 
 pub struct Item {
 	id: u32,
@@ -87,6 +88,10 @@ impl Item {
 
 	pub fn is_switchable(&self) -> bool {
 		self.has_property(CTRL_ITEM_SWITCHABLE)
+	}
+
+	pub fn is_edible(&self) -> bool {
+		self.has_property(CTRL_ITEM_EDIBLE)
 	}
 
 	pub fn get_id(&self) -> u32 {

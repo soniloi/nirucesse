@@ -276,11 +276,34 @@ impl Player {
 
 		match data.get_item(food_str[0].clone()) {
 			None => terminal::write_full(data.get_response("nonowhat")),
-			Some(food) => self.feed_final(data, food, item),
+			Some(food) => {
+				if self.inventory.contains_item_by_id(food.borrow().get_id()) {
+					self.feed_final(data, food, item)
+				} else {
+					let response = String::from(data.get_response("nocastar")) + &food.borrow().get_shortname() + data.get_response("nocaend");
+					terminal::write_full(&response);
+				}
+			},
 		}
 	}
 
 	fn feed_final(&mut self, data: &DataCollection, direct: &ItemRef, indirect: &ItemRef) {
+
+		// The lion's reactions when we attempt to feed her various things
+		if indirect.borrow().is(::ITEM_ID_LION) {
+			if direct.borrow().is_edible() {
+				self.inventory.remove_item_certain(direct.borrow().get_id());
+				if direct.borrow().is(::ITEM_ID_KOHLRABI) {
+					terminal::write_full(data.get_response("lionkill"));
+					self.die(data);
+				} else {
+					terminal::write_full(data.get_response("lionwhet"));
+				}
+				return;
+			}
+		}
+
+		// Default response: not interested
 		let response = String::from(data.get_response("thestar")) + indirect.borrow().get_shortname() + data.get_response("nointerd") +
 			direct.borrow().get_shortname() + data.get_response("dotend");
 		terminal::write_full(&response);
