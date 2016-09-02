@@ -264,10 +264,10 @@ impl Player {
 	}
 
 	pub fn feed(&mut self, data: &DataCollection, item: &ItemRef) {
-		self.manipulate_item_present(data, item, Player::feed_final);
+		self.manipulate_item_present(data, item, Player::feed_item);
 	}
 
-	fn feed_final(&mut self, data: &DataCollection, item: &ItemRef) {
+	fn feed_item(&mut self, data: &DataCollection, item: &ItemRef) {
 		let question = String::from(data.get_response("whatfeed")) + item.borrow().get_shortname() + data.get_response("whatend");
 		let mut food_str: Vec<String> = terminal::read_question(&question);
 		while food_str.is_empty() {
@@ -276,12 +276,14 @@ impl Player {
 
 		match data.get_item(food_str[0].clone()) {
 			None => terminal::write_full(data.get_response("nonowhat")),
-			Some(food) => {
-				let response = String::from(data.get_response("thestar")) + item.borrow().get_shortname() + data.get_response("nointerd") +
-					food.borrow().get_shortname() + data.get_response("dotend");
-				terminal::write_full(&response);
-			}
+			Some(food) => self.feed_final(data, food, item),
 		}
+	}
+
+	fn feed_final(&mut self, data: &DataCollection, direct: &ItemRef, indirect: &ItemRef) {
+		let response = String::from(data.get_response("thestar")) + indirect.borrow().get_shortname() + data.get_response("nointerd") +
+			direct.borrow().get_shortname() + data.get_response("dotend");
+		terminal::write_full(&response);
 	}
 
 	// Have player travel to an adjacent location
