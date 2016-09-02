@@ -38,6 +38,7 @@ impl CommandCollection {
 		acts.insert("drop", actions::do_drop);
 		acts.insert("east", actions::do_go);
 		acts.insert("explain", actions::do_explain);
+		acts.insert("feed", actions::do_feed);
 		acts.insert("go", actions::do_go_disambiguate);
 		acts.insert("help", actions::do_help);
 		acts.insert("hint", actions::do_hint);

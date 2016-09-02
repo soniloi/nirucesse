@@ -38,6 +38,10 @@ pub fn do_go(data: &DataCollection, arg: String, player: &mut Player) {
 	player.go(data, dir);
 }
 
+pub fn do_feed(data: &DataCollection, arg: String, player: &mut Player) {
+	manipulate_item(data, arg, player, Player::feed);
+}
+
 #[allow(unused_variables)]
 pub fn do_go_disambiguate(data: &DataCollection, arg: String, player: &mut Player) {
 	terminal::write_full(data.get_response("godisamb"));

@@ -260,7 +260,28 @@ impl Player {
 	}
 
 	fn describe_final(&mut self, data: &DataCollection, item: &ItemRef) {
-		terminal::write_full(&item.borrow().mk_full_string(data.get_response("descstar"), data.get_response("descend")));
+		terminal::write_full(&item.borrow().mk_full_string(data.get_response("descstar"), data.get_response("dotend")));
+	}
+
+	pub fn feed(&mut self, data: &DataCollection, item: &ItemRef) {
+		self.manipulate_item_present(data, item, Player::feed_final);
+	}
+
+	fn feed_final(&mut self, data: &DataCollection, item: &ItemRef) {
+		let question = String::from(data.get_response("whatfeed")) + item.borrow().get_shortname() + data.get_response("whatend");
+		let mut food_str: Vec<String> = terminal::read_question(&question);
+		while food_str.is_empty() {
+			food_str = terminal::read_question(&question);
+		}
+
+		match data.get_item(food_str[0].clone()) {
+			None => terminal::write_full(data.get_response("nonowhat")),
+			Some(food) => {
+				let response = String::from(data.get_response("thestar")) + item.borrow().get_shortname() + data.get_response("nointerd") +
+					food.borrow().get_shortname() + data.get_response("dotend");
+				terminal::write_full(&response);
+			}
+		}
 	}
 
 	// Have player travel to an adjacent location
