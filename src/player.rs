@@ -276,10 +276,7 @@ impl Player {
 
 		// Find out what player wants to feed it to
 		let question = String::from(data.get_response("whatfeac")) + direct.borrow().get_shortname() + data.get_response("toendq");
-		let mut indirect_str: Vec<String> = terminal::read_question(&question);
-		while indirect_str.is_empty() {
-			indirect_str = terminal::read_question(&question);
-		}
+		let indirect_str = terminal::read_question_nonempty(&question);
 
 		// Feed food to recipient, if it exists and player is carrying it
 		match data.get_item(indirect_str[0].clone()) {
@@ -300,10 +297,7 @@ impl Player {
 
 		// Find out what player wants to feed to it
 		let question = String::from(data.get_response("whatfeda")) + indirect.borrow().get_shortname() + data.get_response("whatend");
-		let mut direct_str: Vec<String> = terminal::read_question(&question);
-		while direct_str.is_empty() {
-			direct_str = terminal::read_question(&question);
-		}
+		let direct_str = terminal::read_question_nonempty(&question);
 
 		// Feed food to recipient, if it exists and player is carrying it
 		match data.get_item(direct_str[0].clone()) {
