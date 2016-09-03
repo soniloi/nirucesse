@@ -92,13 +92,8 @@ impl Game {
 
 // Look for an answer to a yes-no question FIXME: maybe move to a utility file
 fn get_yes_no(question: &str, default: &str) -> bool {
-
 	loop {
-		let mut response: Vec<String> = terminal::read_question(question);
-		while response.is_empty() {
-			response = terminal::read_question(question);
-		}
-
+		let response: Vec<String> = terminal::read_question(question);
 		match response[0].as_ref() {
 			"yes" | "y" | "true" => return true,
 			"no" | "n" | "false" => return false,

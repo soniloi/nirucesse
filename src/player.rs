@@ -276,7 +276,7 @@ impl Player {
 
 		// Find out what player wants to feed it to
 		let question = String::from(data.get_response("whatfeac")) + direct.borrow().get_shortname() + data.get_response("toendq");
-		let indirect_str = terminal::read_question_nonempty(&question);
+		let indirect_str = terminal::read_question(&question);
 
 		// Feed food to recipient, if it exists and player is carrying it
 		match data.get_item(indirect_str[0].clone()) {
@@ -297,7 +297,7 @@ impl Player {
 
 		// Find out what player wants to feed to it
 		let question = String::from(data.get_response("whatfeda")) + indirect.borrow().get_shortname() + data.get_response("whatend");
-		let direct_str = terminal::read_question_nonempty(&question);
+		let direct_str = terminal::read_question(&question);
 
 		// Feed food to recipient, if it exists and player is carrying it
 		match data.get_item(direct_str[0].clone()) {
@@ -528,11 +528,7 @@ impl Player {
 
 	fn play_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if item.borrow().is(::ITEM_ID_WHISTLE) {
-			let mut tune_words = terminal::read_question(data.get_response("whatplay"));
-			while tune_words.is_empty() {
-				tune_words = terminal::read_question(data.get_response("whatplay"));
-			}
-
+			let tune_words = terminal::read_question(data.get_response("whatplay"));
 			let tune = &tune_words[0];
 			let response = String::from(data.get_response("playstar")) + tune + data.get_response("playend");
 			terminal::write_full(&response);

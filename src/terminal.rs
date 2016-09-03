@@ -93,16 +93,17 @@ pub fn read_stub(stubname: &str) -> Vec<String> {
 	read_prompted(&(prompt + PROMPT_END))
 }
 
-pub fn read_question_nonempty(question: &str) -> Vec<String> {
-	let mut response: Vec<String> = read_question(&question);
-	while response.is_empty() {
-		response = read_question(&question);
+pub fn read_question(question: &str) -> Vec<String> {
+	loop {
+		let response = read_question_final(&question);
+		if !response.is_empty() {
+			return response;
+		}
 	}
-	response
 }
 
 // Create a prompt based on a short question
-pub fn read_question(question: &str) -> Vec<String> {
+fn read_question_final(question: &str) -> Vec<String> {
 	let mut prompt: String = String::from(PROMPT_FULL);
 	prompt = prompt + question + " ";
 	read_prompted(&prompt)
