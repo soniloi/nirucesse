@@ -264,32 +264,55 @@ impl Player {
 	}
 
 	pub fn feed(&mut self, data: &DataCollection, item: &ItemRef) {
-		self.manipulate_item_present(data, item, Player::feed_item);
+		if item.borrow().is_recipient() {
+			self.manipulate_item_present(data, item, Player::feed_dative);
+		} else {
+			self.manipulate_item_inventory(data, item, Player::feed_accusative);
+		}
 	}
 
-	fn feed_item(&mut self, data: &DataCollection, item: &ItemRef) {
-		// Cannot feed non-feedable items
-		if !item.borrow().is_recipient() {
-			let response = String::from(data.get_response("thestar")) + item.borrow().get_shortname() + data.get_response("nofeed");
-			terminal::write_full(&response);
-			return;
-		}
+	// Feed, where the direct object is known and the indirect is not
+	fn feed_accusative(&mut self, data: &DataCollection, direct: &ItemRef) {
 
-		// Find out what player wants to feed to it
-		let question = String::from(data.get_response("whatfeed")) + item.borrow().get_shortname() + data.get_response("whatend");
-		let mut food_str: Vec<String> = terminal::read_question(&question);
-		while food_str.is_empty() {
-			food_str = terminal::read_question(&question);
+		// Find out what player wants to feed it to
+		let question = String::from(data.get_response("whatfeac")) + direct.borrow().get_shortname() + data.get_response("toendq");
+		let mut indirect_str: Vec<String> = terminal::read_question(&question);
+		while indirect_str.is_empty() {
+			indirect_str = terminal::read_question(&question);
 		}
 
 		// Feed food to recipient, if it exists and player is carrying it
-		match data.get_item(food_str[0].clone()) {
+		match data.get_item(indirect_str[0].clone()) {
 			None => terminal::write_full(data.get_response("nonowhat")),
-			Some(food) => {
-				if self.inventory.contains_item_by_id(food.borrow().get_id()) {
-					self.feed_final(data, food, item)
+			Some(indirect) => {
+				if self.inventory.contains_item(indirect) || self.location.borrow().contains_item(indirect) {
+					self.feed_final(data, direct, indirect)
 				} else {
-					let response = String::from(data.get_response("nocastar")) + &food.borrow().get_shortname() + data.get_response("nocaend");
+					let response = String::from(data.get_response("nosee")) + &indirect.borrow().get_shortname() + data.get_response("noseeher");
+					terminal::write_full(&response);
+				}
+			},
+		}
+	}
+
+	// Feed, where the indirect object is known and the direct is not
+	fn feed_dative(&mut self, data: &DataCollection, indirect: &ItemRef) {
+
+		// Find out what player wants to feed to it
+		let question = String::from(data.get_response("whatfeda")) + indirect.borrow().get_shortname() + data.get_response("whatend");
+		let mut direct_str: Vec<String> = terminal::read_question(&question);
+		while direct_str.is_empty() {
+			direct_str = terminal::read_question(&question);
+		}
+
+		// Feed food to recipient, if it exists and player is carrying it
+		match data.get_item(direct_str[0].clone()) {
+			None => terminal::write_full(data.get_response("nonowhat")),
+			Some(direct) => {
+				if self.inventory.contains_item_by_id(direct.borrow().get_id()) {
+					self.feed_final(data, direct, indirect)
+				} else {
+					let response = String::from(data.get_response("nocastar")) + &direct.borrow().get_shortname() + data.get_response("nocaend");
 					terminal::write_full(&response);
 				}
 			},
@@ -297,6 +320,13 @@ impl Player {
 	}
 
 	fn feed_final(&mut self, data: &DataCollection, direct: &ItemRef, indirect: &ItemRef) {
+
+		// Cannot feed non-feedable items
+		if !indirect.borrow().is_recipient() {
+			let response = String::from(data.get_response("thestar")) + indirect.borrow().get_shortname() + data.get_response("nofeed");
+			terminal::write_full(&response);
+			return;
+		}
 
 		// The lion's reactions when we attempt to feed her various things
 		if indirect.borrow().is(::ITEM_ID_LION) {
