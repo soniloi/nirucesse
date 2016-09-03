@@ -268,12 +268,21 @@ impl Player {
 	}
 
 	fn feed_item(&mut self, data: &DataCollection, item: &ItemRef) {
+		// Cannot feed non-feedable items
+		if !item.borrow().is_recipient() {
+			let response = String::from(data.get_response("thestar")) + item.borrow().get_shortname() + data.get_response("nofeed");
+			terminal::write_full(&response);
+			return;
+		}
+
+		// Find out what player wants to feed to it
 		let question = String::from(data.get_response("whatfeed")) + item.borrow().get_shortname() + data.get_response("whatend");
 		let mut food_str: Vec<String> = terminal::read_question(&question);
 		while food_str.is_empty() {
 			food_str = terminal::read_question(&question);
 		}
 
+		// Feed food to recipient, if it exists and player is carrying it
 		match data.get_item(food_str[0].clone()) {
 			None => terminal::write_full(data.get_response("nonowhat")),
 			Some(food) => {

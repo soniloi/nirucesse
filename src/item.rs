@@ -7,6 +7,7 @@ const CTRL_ITEM_FRAGILE: u32 = 0x200; // Whether the item would survive throwing
 const CTRL_ITEM_WEARABLE: u32 = 0x400; // Whether the item is to be worn by the player rather than carried
 const CTRL_ITEM_ESSENTIAL: u32 = 0x1000; // Whether the item is essential to basic gameplay
 const CTRL_ITEM_EDIBLE: u32 = 0x2000; // Whether the item is any sort of food or drink
+const CTRL_ITEM_RECIPIENT: u32 = 0x80000; // Whether the item may be a recipient (i.e. of gifts or food)
 
 pub struct Item {
 	id: u32,
@@ -104,6 +105,10 @@ impl Item {
 
 	pub fn is_portable(&self) -> bool {
 		self.is_mobile() && !self.is_obstruction()
+	}
+
+	pub fn is_recipient(&self) -> bool {
+		self.has_property(CTRL_ITEM_RECIPIENT)
 	}
 
 	fn get_switch_status(&self) -> String {
