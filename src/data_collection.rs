@@ -115,6 +115,11 @@ impl DataCollection {
 	pub fn get_direction_enum(&self, dir_str: &str) -> &Direction {
 		self.locations.get_direction_enum(dir_str)
 	}
+
+	pub fn get_stowed_treasure_count(&self) -> u32 {
+		let stowed_location = self.get_location_certain(::LOCATION_ID_TREASURESTORE);
+		stowed_location.borrow().get_treasure_count()
+	}
 }
 
 pub fn str_to_u32(st: &str, radix: u32) -> u32 {

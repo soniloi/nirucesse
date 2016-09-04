@@ -24,9 +24,13 @@ use file_buffer::FileBuffer;
 use game::Game;
 use player::Player;
 
+pub const SCORE_PUZZLE: u32 = 20; // The score the player gets for every puzzle solved
+pub const SCORE_TREASURE: u32 = 10; // The score the player gets for each treasure stowed
+
 // ID numbers of specific locations
 pub const LOCATION_ID_AIRLOCKE: u32 = 31; // The airlock just off the Recreation Hub
 pub const LOCATION_ID_AIRLOCKEOUT: u32 = 36; // The area immediately outside Airlock East
+pub const LOCATION_ID_TREASURESTORE: u32 = 23; // Where the player must bring treasure to
 
 // ID numbers of specific items
 pub const ITEM_ID_BREAD: u32 = 1010;

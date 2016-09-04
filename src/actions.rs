@@ -96,7 +96,7 @@ pub fn do_rub(data: &DataCollection, arg: String, player: &mut Player) {
 #[allow(unused_variables)]
 pub fn do_score(data: &DataCollection, arg: String, player: &mut Player) {
 	player.decrement_instructions(); // Requesting score does not count as an instruction
-	terminal::write_full(&player.get_score_str());
+	terminal::write_full(&player.get_score_str(data));
 }
 
 pub fn do_take(data: &DataCollection, arg: String, player: &mut Player) {

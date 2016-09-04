@@ -16,7 +16,7 @@ pub struct Player {
 	location: LocationRef,
 	previous_true: LocationRef,
 	previous: Option<LocationRef>,
-	score: u32, // player's current score
+	achievement_count: u32, // number of puzzles player has solved
 	playing: bool, // whether player is currently playing
 	hints: u32, // number of hints player has requested
 	instructions: u32, // number of instructions player has entered
@@ -32,7 +32,7 @@ impl Player {
 			location: initial.clone(),
 			previous_true: initial.clone(),
 			previous: None,
-			score: 0u32,
+			achievement_count: 0u32,
 			playing: true,
 			hints: 0u32,
 			instructions: 0u32,
@@ -491,8 +491,12 @@ impl Player {
 		item.borrow_mut().set_on(false);
 	}
 
-	pub fn get_score_str(&self) -> String {
-		String::from("You currently have a score of ") + &self.score.to_string() +
+	pub fn get_score_str(&self, data: &DataCollection) -> String {
+		let stowed_treasure_count = data.get_stowed_treasure_count();
+		let treasure_score = stowed_treasure_count * ::SCORE_TREASURE;
+		let achievement_score = self.achievement_count * ::SCORE_PUZZLE;
+		let total_score = treasure_score + achievement_score;
+		String::from("You currently have a score of ") + &total_score.to_string() +
 		" point(s). You have died " + &self.deaths.to_string() +
 		" time(s). You have entered " + &self.instructions.to_string() +
 		" instruction(s), and requested " + &self.hints.to_string() + " hint(s)."
