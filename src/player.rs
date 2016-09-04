@@ -500,7 +500,8 @@ impl Player {
 		let achievement_score = self.achievement_count * ::SCORE_PUZZLE;
 		let total_score = treasure_score + achievement_score;
 		String::from("You currently have a score of ") + &total_score.to_string() +
-		" point(s). You have died " + &self.deaths.to_string() +
+		" point(s) from a possible " + &data.get_max_score().to_string() +
+		". You have died " + &self.deaths.to_string() +
 		" time(s). You have entered " + &self.instructions.to_string() +
 		" instruction(s), and requested " + &self.hints.to_string() + " hint(s)."
 	}

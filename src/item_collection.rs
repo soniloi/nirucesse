@@ -34,7 +34,7 @@ impl ItemCollection {
 		}
 	}
 
-	pub fn init(&mut self, buffer: &mut FileBuffer, locations: &mut LocationCollection) {
+	pub fn init(&mut self, buffer: &mut FileBuffer, locations: &mut LocationCollection, treasure_count: &mut u32) {
 
 		let mut line = buffer.get_line();
 		while !buffer.eof() {
@@ -48,6 +48,10 @@ impl ItemCollection {
 					// Create item and copy a reference into this collection
 					let item_parsed = self.parse_and_insert_item(&words);
 					let item = item_parsed.0;
+
+					if item.borrow().is_treasure() {
+						*treasure_count = *treasure_count + 1;
+					}
 
 					// Point item's starting location at it
 					let initial = item_parsed.1;

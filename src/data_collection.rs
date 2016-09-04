@@ -25,6 +25,7 @@ pub struct DataCollection {
 	explanations: StringCollection,
 	responses: StringCollection,
 	events: StringCollection,
+	max_score: u32,
 }
 
 impl DataCollection {
@@ -38,17 +39,20 @@ impl DataCollection {
 			explanations: StringCollection::new(),
 			responses: StringCollection::new(),
 			events: StringCollection::new(),
+			max_score: 0u32,
 		}
 	}
 
 	pub fn init(&mut self, mut buffer: &mut FileBuffer) {
+		let mut treasure_count: u32 = 0;
 		self.commands.init(&mut buffer);
 		self.locations.init(&mut buffer);
-		self.items.init(&mut buffer, &mut self.locations);
+		self.items.init(&mut buffer, &mut self.locations, &mut treasure_count);
 		self.hints.init(&mut buffer);
 		self.explanations.init(&mut buffer);
 		self.responses.init(&mut buffer);
 		self.events.init(&mut buffer);
+		self.max_score = treasure_count * ::SCORE_TREASURE;
 	}
 
 	pub fn get_command(&self, key: String) -> Option<&Rc<Box<Command>>> {
@@ -119,6 +123,10 @@ impl DataCollection {
 	pub fn get_stowed_treasure_count(&self) -> u32 {
 		let stowed_location = self.get_location_certain(::LOCATION_ID_TREASURESTORE);
 		stowed_location.borrow().get_treasure_count()
+	}
+
+	pub fn get_max_score(&self) -> u32 {
+		self.max_score
 	}
 }
 
