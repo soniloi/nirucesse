@@ -150,6 +150,7 @@ impl Player {
 			},
 		}
 		if robot_here {
+			self.achievement_count = self.achievement_count + 1;
 			terminal::write_full(data.get_response("robot"));
 		} else {
 			terminal::write_full(data.get_response("nohappen"));
@@ -186,6 +187,7 @@ impl Player {
 					let out_loc = data.get_location_certain(::LOCATION_ID_AIRLOCKEOUT);
 					self_loc.set_direction(Direction::Southwest, out_loc.clone());
 					self_loc.set_air(false);
+					self.achievement_count = self.achievement_count + 1;
 					terminal::write_full(data.get_response("toastalm"));
 				} else {
 					terminal::write_full(data.get_response("ashmouse"));
@@ -246,6 +248,7 @@ impl Player {
 					if obstruction.borrow().is(::ITEM_ID_WOLF) {
 						self.location.borrow_mut().remove_item_certain(obstruction.borrow().get_id());
 						response = data.get_response("lionwolf");
+						self.achievement_count = self.achievement_count + 1;
 					}
 				}
 			}
@@ -543,6 +546,7 @@ impl Player {
 					Some(obstruction) => {
 						if obstruction.borrow().is(::ITEM_ID_LION) {
 							obstruction.borrow_mut().set_obstruction(false);
+							self.achievement_count = self.achievement_count + 1;
 							terminal::write_full(data.get_response("liontune"));
 						}
 					},
@@ -573,6 +577,7 @@ impl Player {
 			// FIXME: do this by ID instead of string
 			let tooth = data.get_item_certain(String::from("tooth"));
 			self.location.borrow_mut().insert_item(tooth.clone());
+			self.achievement_count = self.achievement_count + 1;
 			terminal::write_full(data.get_response("dragon"));
 		} else {
 			terminal::write_full(data.get_response("nointere"));
