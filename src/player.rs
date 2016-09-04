@@ -495,15 +495,21 @@ impl Player {
 	}
 
 	pub fn get_score_str(&self, data: &DataCollection) -> String {
-		let stowed_treasure_count = data.get_stowed_treasure_count();
-		let treasure_score = stowed_treasure_count * ::SCORE_TREASURE;
-		let achievement_score = self.achievement_count * ::SCORE_PUZZLE;
-		let total_score = treasure_score + achievement_score;
+		let total_score = self.calculate_score(data);
 		String::from("You currently have a score of ") + &total_score.to_string() +
 		" point(s) from a possible " + &data.get_max_score().to_string() +
 		". You have died " + &self.deaths.to_string() +
 		" time(s). You have entered " + &self.instructions.to_string() +
 		" instruction(s), and requested " + &self.hints.to_string() + " hint(s)."
+	}
+
+	fn calculate_score(&self, data: &DataCollection) -> u32 {
+		let treasure_score = data.get_stowed_treasure_count() * ::SCORE_TREASURE;
+		let achievement_score = self.achievement_count * ::SCORE_PUZZLE;
+		let death_penalty = (self.deaths * ::PENALTY_DEATH) as i32 * -1;
+		let hint_penalty = (self.hints * ::PENALTY_HINT) as i32 * -1;
+		let total_score = treasure_score as i32 + achievement_score as i32 + death_penalty + hint_penalty;
+		if total_score < 0 {0} else {total_score as u32}
 	}
 
 	pub fn increment_hints(&mut self) {

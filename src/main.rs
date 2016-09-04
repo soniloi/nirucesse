@@ -26,6 +26,8 @@ use player::Player;
 
 pub const SCORE_PUZZLE: u32 = 20; // The score the player gets for every puzzle solved
 pub const SCORE_TREASURE: u32 = 10; // The score the player gets for each treasure stowed
+pub const PENALTY_DEATH: u32 = 25; // The value deducted from player's score for every death
+pub const PENALTY_HINT: u32 = 10; // The value deducted from player's score for every hint they request
 
 // ID numbers of specific locations
 pub const LOCATION_ID_AIRLOCKE: u32 = 31; // The airlock just off the Recreation Hub
