@@ -54,8 +54,14 @@ pub fn do_help(data: &DataCollection, arg: String, player: &mut Player) {
 }
 
 pub fn do_hint(data: &DataCollection, arg: String, player: &mut Player) {
-	terminal::write_full(data.get_hint(&arg));
-	player.increment_hints();
+	terminal::write_full(data.get_response("hintwarn"));
+	let confirm = get_yes_no(data.get_response("asksure"), data.get_response("notuigse"));
+	if confirm {
+		terminal::write_full(data.get_hint(&arg));
+		player.increment_hints();
+	} else {
+		terminal::write_full(data.get_response("ok"));
+	}
 }
 
 #[allow(unused_variables)]
@@ -116,5 +122,17 @@ fn manipulate_item(data: &DataCollection, arg: String, player: &mut Player, act:
 	match data.get_item(arg) {
 		None => terminal::write_full(data.get_response("nonowhat")),
 		Some(i) => act(player, data, i),
+	}
+}
+
+// Look for an answer to a yes-no question FIXME: maybe move to a utility file
+fn get_yes_no(question: &str, default: &str) -> bool {
+	loop {
+		let response: Vec<String> = terminal::read_question(question);
+		match response[0].as_ref() {
+			"yes" | "y" | "true" => return true,
+			"no" | "n" | "false" => return false,
+			_ => terminal::write_full(default),
+		}
 	}
 }

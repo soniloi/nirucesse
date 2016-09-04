@@ -496,11 +496,11 @@ impl Player {
 
 	pub fn get_score_str(&self, data: &DataCollection) -> String {
 		let total_score = self.calculate_score(data);
-		String::from("You currently have a score of ") + &total_score.to_string() +
-		" point(s) from a possible " + &data.get_max_score().to_string() +
-		". You have died " + &self.deaths.to_string() +
-		" time(s). You have entered " + &self.instructions.to_string() +
-		" instruction(s), and requested " + &self.hints.to_string() + " hint(s)."
+		String::from(data.get_response("scorintr")) + &total_score.to_string() +
+		data.get_response("scorpnts") + &data.get_max_score().to_string() +
+		data.get_response("scordied") + &self.deaths.to_string() +
+		data.get_response("scordths") + &self.instructions.to_string() +
+		data.get_response("scorinss") + &self.hints.to_string() + data.get_response("scorhnts")
 	}
 
 	fn calculate_score(&self, data: &DataCollection) -> u32 {
