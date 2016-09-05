@@ -90,8 +90,12 @@ impl DataCollection {
 		self.locations.get_location_safe()
 	}
 
-	pub fn get_hint(&self, key: &str) -> &str {
-		DataCollection::get_value_or_default(&self.hints, key)
+	pub fn get_hint(&self, key: &str) -> Option<&String> {
+		self.hints.get_uncertain(key)
+	}
+
+	pub fn get_hint_certain(&self, key: &str) -> &str {
+		self.hints.get_certain(key)
 	}
 
 	pub fn get_explanation(&self, key: &str) -> &str {

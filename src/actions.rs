@@ -54,13 +54,18 @@ pub fn do_help(data: &DataCollection, arg: String, player: &mut Player) {
 }
 
 pub fn do_hint(data: &DataCollection, arg: String, player: &mut Player) {
-	terminal::write_full(data.get_response("hintwarn"));
-	let confirm = terminal::get_yes_no(data.get_response("asksure"), data.get_response("notuigse"));
-	if confirm {
-		terminal::write_full(data.get_hint(&arg));
-		player.increment_hints();
-	} else {
-		terminal::write_full(data.get_response("ok"));
+	match data.get_hint(&arg) {
+		None => terminal::write_full(data.get_hint_certain("default")),
+		Some(hint) => {
+			terminal::write_full(data.get_response("hintwarn"));
+			let confirm = terminal::get_yes_no(data.get_response("asksure"), data.get_response("notuigse"));
+			if confirm {
+				terminal::write_full(hint);
+				player.increment_hints();
+			} else {
+				terminal::write_full(data.get_response("ok"));
+			}
+		},
 	}
 }
 
