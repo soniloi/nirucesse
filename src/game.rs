@@ -76,7 +76,7 @@ impl Game {
 	// Reincarnate the player, if requested
 	fn process_reincarnation(&mut self) {
 		terminal::write_full(self.data.get_response("desreinc"));
-		let reincarnate: bool = get_yes_no(self.data.get_response("askreinc"), self.data.get_response("notuigse"));
+		let reincarnate: bool = terminal::get_yes_no(self.data.get_response("askreinc"), self.data.get_response("notuigse"));
 		match reincarnate {
 			true => {
 				terminal::write_full(self.data.get_response("doreinc"));
@@ -86,18 +86,6 @@ impl Game {
 				terminal::write_full(self.data.get_response("ok"));
 				self.player.set_playing(false);
 			},
-		}
-	}
-}
-
-// Look for an answer to a yes-no question FIXME: maybe move to a utility file
-fn get_yes_no(question: &str, default: &str) -> bool {
-	loop {
-		let response: Vec<String> = terminal::read_question(question);
-		match response[0].as_ref() {
-			"yes" | "y" | "true" => return true,
-			"no" | "n" | "false" => return false,
-			_ => terminal::write_full(default),
 		}
 	}
 }

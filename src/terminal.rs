@@ -179,3 +179,16 @@ fn to_str(chs: &[char]) -> String {
 	}
 	result
 }
+
+
+// Look for an answer to a yes-no question FIXME: localize the yes/nos
+pub fn get_yes_no(question: &str, default: &str) -> bool {
+	loop {
+		let response: Vec<String> = read_question(question);
+		match response[0].as_ref() {
+			"yes" | "y" | "true" => return true,
+			"no" | "n" | "false" => return false,
+			_ => write_full(default),
+		}
+	}
+}
