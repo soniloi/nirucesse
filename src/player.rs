@@ -139,21 +139,15 @@ impl Player {
 
 	pub fn avnarand(&mut self, data: &DataCollection) {
 		let mut self_loc = self.location.borrow_mut();
-		let mut robot_here = false;
 		match self_loc.get_obstruction() {
-			None => {},
+			None => terminal::write_full(data.get_response("nohappen")),
 			Some(obstruction) => {
 				if obstruction.borrow().is(::ITEM_ID_ROBOT) {
 					self_loc.remove_item_certain(obstruction.borrow().get_id());
-					robot_here = true;
+					self.achievement_count = self.achievement_count + 1;
+					terminal::write_full(data.get_response("robot"));
 				}
 			},
-		}
-		if robot_here {
-			self.achievement_count = self.achievement_count + 1;
-			terminal::write_full(data.get_response("robot"));
-		} else {
-			terminal::write_full(data.get_response("nohappen"));
 		}
 	}
 
@@ -393,11 +387,11 @@ impl Player {
 					match (**self_loc).get_obstruction() {
 						None => {},
 						Some(obstruction) => {
-							let mut response =  String::from("You cannot get past ");
+							let mut response =  String::from(data.get_response("obststar"));
 							if self.has_light() {
-								response = response + "the " + obstruction.borrow().get_shortname() + ".";
+								response = response + data.get_response("themid") + obstruction.borrow().get_shortname() + data.get_response("dotend");
 							} else {
-								response = response + "some obstruction at this location.";
+								response = response + data.get_response("obstend");
 							}
 							terminal::write_full(&response);
 							return false;
