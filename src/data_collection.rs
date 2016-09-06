@@ -47,15 +47,16 @@ impl DataCollection {
 
 	pub fn init(&mut self, mut buffer: &mut FileBuffer) {
 		let mut treasure_count: u32 = 0;
-		let mut achievement_count: u32 = 0;
 		self.commands.init(&mut buffer);
 		self.locations.init(&mut buffer);
 		self.items.init(&mut buffer, &mut self.locations, &mut treasure_count);
-		self.hints.init(&mut buffer, &mut achievement_count);
-		self.explanations.init(&mut buffer, &mut achievement_count);
-		self.responses.init(&mut buffer, &mut achievement_count);
-		self.puzzles.init(&mut buffer, &mut achievement_count);
-		self.events.init(&mut buffer, &mut achievement_count);
+		self.hints.init(&mut buffer);
+		self.explanations.init(&mut buffer);
+		self.responses.init(&mut buffer);
+		self.puzzles.init(&mut buffer);
+		self.events.init(&mut buffer);
+
+		let achievement_count: u32 = self.puzzles.count_strings();
 		self.max_score = treasure_count * ::SCORE_TREASURE + achievement_count * ::SCORE_PUZZLE;
 	}
 
