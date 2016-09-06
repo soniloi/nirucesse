@@ -5,7 +5,6 @@ const CTRL_COMMAND_TAKES_ARG: u32 = 0x08; // Whether the command must take an ar
 const CTRL_COMMAND_SECRET: u32 = 0x10; // Whether the command is secret (not to be listed)
 const CTRL_COMMAND_INVERTIBLE: u32 = 0x20; // Whether the command appears in order contrary to the usual e.g. "off" in "lamp off"
 const CTRL_COMMAND_MOVEMENT: u32 = 0x40; // Whether the command intends movement
-const CTRL_COMMAND_COMPOUND: u32 = 0x80; // Whether the command is compound e.g. "go" in "go north"
 
 use data_collection::DataCollection;
 use player::Player;
@@ -31,10 +30,6 @@ impl Command {
 
 	fn has_property(&self, property: u32) -> bool {
 		self.properties & property != 0
-	}
-
-	fn is_compound(&self) -> bool {
-		self.has_property(CTRL_COMMAND_COMPOUND)
 	}
 
 	pub fn is_invertible(&self) -> bool {
@@ -82,11 +77,9 @@ impl Command {
 			}
 		}
 
-		// Movement aliasing
+		// Movement handling
 		if self.is_movement() {
-			if !self.is_compound() {
-				actual_arg = String::new() + &self.name;
-			}
+			actual_arg = String::new() + &self.name;
 		}
 
 		h(data, actual_arg, player);
