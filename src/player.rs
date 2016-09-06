@@ -145,7 +145,7 @@ impl Player {
 				if obstruction.borrow().is(::ITEM_ID_ROBOT) {
 					self_loc.remove_item_certain(obstruction.borrow().get_id());
 					self.achievement_count = self.achievement_count + 1;
-					terminal::write_full(data.get_response("robot"));
+					terminal::write_full(data.get_puzzle("robot"));
 				}
 			},
 		}
@@ -182,7 +182,7 @@ impl Player {
 					self_loc.set_direction(Direction::Southwest, out_loc.clone());
 					self_loc.set_air(false);
 					self.achievement_count = self.achievement_count + 1;
-					terminal::write_full(data.get_response("toastalm"));
+					terminal::write_full(data.get_puzzle("toastalm"));
 				} else {
 					terminal::write_full(data.get_response("ashmouse"));
 				}
@@ -241,7 +241,7 @@ impl Player {
 				Some(obstruction) => {
 					if obstruction.borrow().is(::ITEM_ID_WOLF) {
 						self.location.borrow_mut().remove_item_certain(obstruction.borrow().get_id());
-						response = data.get_response("lionwolf");
+						response = data.get_puzzle("lionwolf");
 						self.achievement_count = self.achievement_count + 1;
 					}
 				}
@@ -548,7 +548,7 @@ impl Player {
 						if obstruction.borrow().is(::ITEM_ID_LION) {
 							obstruction.borrow_mut().set_obstruction(false);
 							self.achievement_count = self.achievement_count + 1;
-							terminal::write_full(data.get_response("liontune"));
+							terminal::write_full(data.get_puzzle("liontune"));
 						}
 					},
 				}
@@ -579,7 +579,7 @@ impl Player {
 			let tooth = data.get_item_certain(String::from("tooth"));
 			self.location.borrow_mut().insert_item(tooth.clone());
 			self.achievement_count = self.achievement_count + 1;
-			terminal::write_full(data.get_response("dragon"));
+			terminal::write_full(data.get_puzzle("dragon"));
 		} else {
 			terminal::write_full(data.get_response("nointere"));
 		}

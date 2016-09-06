@@ -24,6 +24,7 @@ pub struct DataCollection {
 	hints: StringCollection,
 	explanations: StringCollection,
 	responses: StringCollection,
+	puzzles: StringCollection,
 	events: StringCollection,
 	max_score: u32,
 }
@@ -38,6 +39,7 @@ impl DataCollection {
 			hints: StringCollection::new(),
 			explanations: StringCollection::new(),
 			responses: StringCollection::new(),
+			puzzles: StringCollection::new(),
 			events: StringCollection::new(),
 			max_score: 0u32,
 		}
@@ -52,6 +54,7 @@ impl DataCollection {
 		self.hints.init(&mut buffer, &mut achievement_count);
 		self.explanations.init(&mut buffer, &mut achievement_count);
 		self.responses.init(&mut buffer, &mut achievement_count);
+		self.puzzles.init(&mut buffer, &mut achievement_count);
 		self.events.init(&mut buffer, &mut achievement_count);
 		self.max_score = treasure_count * ::SCORE_TREASURE + achievement_count * ::SCORE_PUZZLE;
 	}
@@ -111,6 +114,10 @@ impl DataCollection {
 
 	pub fn get_response(&self, key: &str) -> &str {
 		self.responses.get_certain(key)
+	}
+
+	pub fn get_puzzle(&self, key: &str) -> &str {
+		self.puzzles.get_certain(key)
 	}
 
 	pub fn get_event(&self, key: &str) -> Option<&String> {
