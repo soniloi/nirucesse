@@ -52,29 +52,17 @@ impl Command {
 		let h = self.handler;
 		let mut actual_arg = arg;
 
-		// Argument counting
-		if self.takes_arg() {
-			// Command takes an argument, but player didn't give one
-			if !self.is_movement() && actual_arg.is_empty() {
-				let question = String::from(data.get_response("whatstar")) + &self.name + data.get_response("whatend");
-				let further_args = terminal::read_question(&question);
+		// Command takes no argument, but player gave one anyway
+		if !self.takes_arg() && !actual_arg.is_empty() {
+			terminal::write_full(data.get_response("notuigin"));
+			return;
+		}
 
-				if further_args.len() != 1 || (!further_args.is_empty() && further_args[0].is_empty()) {
-					terminal::write_full(data.get_response("notuigin"));
-					return;
-				} else {
-					// FIXME: fix the lifetime on actual_arg/further_args
-					let actual_arg = String::new() + &further_args[0];
-					h(data, actual_arg, player);
-					return;
-				}
-			}
-		} else {
-			// Command takes no argument, but player gave one anyway
-			if !actual_arg.is_empty() {
-				terminal::write_full(data.get_response("notuigin"));
-				return;
-			}
+		// Command takes an argument, but player didn't give one
+		if self.takes_arg() && actual_arg.is_empty() && !self.is_movement() {
+			let question = String::from(data.get_response("whatstar")) + &self.name + data.get_response("whatend");
+			let further_args = terminal::read_question(&question);
+			actual_arg = String::new() + &further_args[0];
 		}
 
 		// Movement handling
