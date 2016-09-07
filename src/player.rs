@@ -493,7 +493,8 @@ impl Player {
 		}
 
 		// Make sure there is nothing already in the container
-		match container.borrow().get_within() {
+		let within = container.borrow().get_within();
+		match within {
 			Some(it) => {
 				if it.borrow().is(item.borrow().get_id()) {
 					terminal::write_full(data.get_response("contitem"));
@@ -503,10 +504,11 @@ impl Player {
 			},
 			None => {
 				if self.inventory.contains_item(item) {
-					// TODO
+					self.inventory.remove_item_certain(item.borrow().get_id());
 				} else if self.location.borrow().contains_item(item) {
-					// TODO
+					self.location.borrow_mut().remove_item_certain(item.borrow().get_id());
 				}
+				container.borrow_mut().set_within(Some(item.clone()));
 			}
 		}
 	}
