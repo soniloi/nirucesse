@@ -121,7 +121,7 @@ impl Item {
 		self.has_property(CTRL_ITEM_TREASURE)
 	}
 
-	fn is_container(&self) -> bool {
+	pub fn is_container(&self) -> bool {
 		self.has_property(CTRL_ITEM_CONTAINER)
 	}
 
@@ -169,6 +169,10 @@ impl Item {
 
 	pub fn set_on(&mut self, next: bool) {
 		self.on = next;
+	}
+
+	pub fn get_within(&self) -> Option<ItemRef> {
+		self.within.clone()
 	}
 
 	pub fn mk_full_string(&self, description_start: &str, description_end: &str) -> String {

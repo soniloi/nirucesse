@@ -69,6 +69,10 @@ pub fn do_hint(data: &DataCollection, arg: String, player: &mut Player) {
 	}
 }
 
+pub fn do_insert(data: &DataCollection, arg: String, player: &mut Player) {
+	manipulate_item(data, arg, player, Player::insert);
+}
+
 #[allow(unused_variables)]
 pub fn do_inventory(data: &DataCollection, arg: String, player: &mut Player) {
 	terminal::write_full(&player.mk_inventory_string());

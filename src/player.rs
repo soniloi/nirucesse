@@ -449,6 +449,68 @@ impl Player {
 		}
 	}
 
+	pub fn insert(&mut self, data: &DataCollection, item: &ItemRef) {
+		self.manipulate_item_present(data, item, Player::insert_portable);
+	}
+
+	fn insert_portable(&mut self, data: &DataCollection, item: &ItemRef) {
+		// Objects cannot be inserted if they are immobile
+		if !item.borrow().is_portable() {
+			terminal::write_full(data.get_response("takenoca"));
+			return;
+		}
+
+		// Objects cannot be inserted if they would be worn
+		if item.borrow().is_wearable() {
+			terminal::write_full(data.get_response("takenoca"));
+			return;
+		}
+
+		// Find out what player wants to insert it into
+		let question = String::from(data.get_response("whatinse")) + item.borrow().get_shortname() + data.get_response("intoendq");
+		let container_str = terminal::read_question(&question);
+
+		// Insert item into container, if container exists and is present
+		match data.get_item(container_str[0].clone()) {
+			None => terminal::write_full(data.get_response("nonowhat")),
+			Some(container) => {
+				if self.inventory.contains_item(container) || self.location.borrow().contains_item(container) {
+					self.insert_final(data, item, container)
+				} else {
+					let response = String::from(data.get_response("nosee")) + &container.borrow().get_shortname() + data.get_response("noseeher");
+					terminal::write_full(&response);
+				}
+			},
+		}
+	}
+
+	fn insert_final(&mut self, data: &DataCollection, item: &ItemRef, container: &ItemRef) {
+		// Make sure the "container" is a container
+		if !container.borrow().is_container() {
+			let response = String::from(data.get_response("thestar")) + &container.borrow().get_shortname() + data.get_response("contnot");
+			terminal::write_full(&response);
+			return;
+		}
+
+		// Make sure there is nothing already in the container
+		match container.borrow().get_within() {
+			Some(it) => {
+				if it.borrow().is(item.borrow().get_id()) {
+					terminal::write_full(data.get_response("contitem"));
+				} else {
+					terminal::write_full(data.get_response("contfull"));
+				}
+			},
+			None => {
+				if self.inventory.contains_item(item) {
+					// TODO
+				} else if self.location.borrow().contains_item(item) {
+					// TODO
+				}
+			}
+		}
+	}
+
 	pub fn light(&mut self, data: &DataCollection, item: &ItemRef) {
 		self.manipulate_item_present(data, item, Player::light_final);
 	}

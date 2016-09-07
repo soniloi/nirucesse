@@ -42,6 +42,7 @@ impl CommandCollection {
 		acts.insert("go", actions::do_go_disambiguate);
 		acts.insert("help", actions::do_help);
 		acts.insert("hint", actions::do_hint);
+		acts.insert("insert", actions::do_insert);
 		acts.insert("inventory", actions::do_inventory);
 		acts.insert("light", actions::do_light);
 		acts.insert("look", actions::do_look);
