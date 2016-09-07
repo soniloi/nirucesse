@@ -1,3 +1,4 @@
+const CTRL_ITEM_CONTAINER: u32 = 0x1;  // Whether the item may contain other items
 const CTRL_ITEM_MOBILE: u32 = 0x2; // Whether the item is fixed or mobile (carryable)
 const CTRL_ITEM_OBSTRUCTION: u32 = 0x4; // Whether the item is an obstruction
 const CTRL_ITEM_SWITCHABLE: u32 = 0x8; // Whether the item can be lit/quenched
@@ -10,6 +11,8 @@ const CTRL_ITEM_EDIBLE: u32 = 0x2000; // Whether the item is any sort of food or
 const CTRL_ITEM_TREASURE: u32 = 0x8000; // Whether the item is a treasure
 const CTRL_ITEM_RECIPIENT: u32 = 0x80000; // Whether the item may be a recipient (i.e. of gifts or food)
 
+use data_collection::ItemRef;
+
 pub struct Item {
 	id: u32,
 	properties: u32,
@@ -19,6 +22,7 @@ pub struct Item {
 	description: String,
 	writing: Option<String>,
 	on: bool,
+	within: Option<ItemRef>,
 }
 
 impl Item {
@@ -33,6 +37,7 @@ impl Item {
 			description: description,
 			writing: writing,
 			on: false,
+			within: None,
 		}
 	}
 
@@ -116,6 +121,10 @@ impl Item {
 		self.has_property(CTRL_ITEM_TREASURE)
 	}
 
+	fn is_container(&self) -> bool {
+		self.has_property(CTRL_ITEM_CONTAINER)
+	}
+
 	fn get_switch_status(&self) -> String {
 		String::from("currently ") + if self.on {"on"} else {"off"}
 	}
@@ -129,6 +138,12 @@ impl Item {
 		result = result + &self.longname;
 		if self.is_switchable() {
 			result = result + " (" + &self.get_switch_status() + ")"
+		}
+		if self.is_container() {
+			match self.within.clone() {
+				None => result = result + " (empty)",
+				Some(contained) => result = result + " (containing " + &contained.borrow().get_inventoryname() + ")",
+			}
 		}
 		result
 	}
