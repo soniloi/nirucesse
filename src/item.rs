@@ -134,6 +134,15 @@ impl Item {
 		String::from("currently ") + if self.on {"on"} else {"off"}
 	}
 
+	fn get_within_status(&self) -> String {
+		let mut result = String::new();
+		match self.within.clone() {
+			None => result = result + "empty",
+			Some(contained) => result = result + "containing " + &contained.borrow().get_inventoryname(),
+		}
+		result
+	}
+
 	// Return the name of this item as it would be displayed in an inventory listing
 	pub fn get_inventoryname(&self) -> String {
 		let mut result: String = String::new();
@@ -145,10 +154,7 @@ impl Item {
 			result = result + " (" + &self.get_switch_status() + ")"
 		}
 		if self.is_container() {
-			match self.within.clone() {
-				None => result = result + " (empty)",
-				Some(contained) => result = result + " (containing " + &contained.borrow().get_inventoryname() + ")",
-			}
+			result = result + " (" + &self.get_within_status() + ")";
 		}
 		result
 	}
@@ -158,6 +164,9 @@ impl Item {
 		let mut result: String = String::from("\nThere is ") + &self.longname;
 		if self.is_switchable() {
 			result = result + " (" + &self.get_switch_status() + ")"
+		}
+		if self.is_container() {
+			result = result + " (" + &self.get_within_status() + ")";
 		}
 		result = result + " here";
 		result = result + if self.is_obstruction() || self.is_treasure() {"!"} else {"."};
@@ -194,6 +203,13 @@ impl Item {
 		let mut result = String::from(description_start) + &self.description;
 		if self.is_switchable() {
 			result = result + ". It is " + &self.get_switch_status();
+		}
+		if self.is_container() {
+			result = result + ". It ";
+			match self.within.clone() {
+				None => result = result + "is empty",
+				Some(contained) => result = result + "contains " + &contained.borrow().get_inventoryname() + "",
+			}
 		}
 		result + description_end
 	}
