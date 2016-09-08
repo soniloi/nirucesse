@@ -134,17 +134,31 @@ impl Item {
 		String::from("currently ") + if self.on {"on"} else {"off"}
 	}
 
-	fn get_within_status(&self) -> String {
-		let mut result = String::new();
+	fn get_within_status_short(&self, depth: u32) -> String {
+		let mut result = String::from(" (");
 		match self.within.clone() {
 			None => result = result + "empty",
-			Some(contained) => result = result + "containing " + &contained.borrow().get_inventoryname(),
+			Some(contained) => result = result + "containing " + &contained.borrow().get_inventoryname_nested(depth + 1),
+		}
+		result + ")"
+	}
+
+	fn get_within_status_long(&self) -> String {
+		let mut result = String::from(". It ");
+		match self.within.clone() {
+			None => result = result + "is empty",
+			Some(contained) => result = result + "contains " + &contained.borrow().get_inventoryname(),
 		}
 		result
 	}
 
 	// Return the name of this item as it would be displayed in an inventory listing
 	pub fn get_inventoryname(&self) -> String {
+		self.get_inventoryname_nested(1)
+	}
+
+	// Return the name of this item as it would be displayed in an inventory listing
+	pub fn get_inventoryname_nested(&self, depth: u32) -> String {
 		let mut result: String = String::new();
 		if self.is_wearable() {
 			result = result + "(wearing) ";
@@ -154,7 +168,11 @@ impl Item {
 			result = result + " (" + &self.get_switch_status() + ")"
 		}
 		if self.is_container() {
-			result = result + " (" + &self.get_within_status() + ")";
+			result = result + "\n\t";
+			for _ in 0..depth {
+				result = result + "\t";
+			}
+			result = result + &self.get_within_status_short(depth);
 		}
 		result
 	}
@@ -166,7 +184,7 @@ impl Item {
 			result = result + " (" + &self.get_switch_status() + ")"
 		}
 		if self.is_container() {
-			result = result + " (" + &self.get_within_status() + ")";
+			result = result + &self.get_within_status_short(0);
 		}
 		result = result + " here";
 		result = result + if self.is_obstruction() || self.is_treasure() {"!"} else {"."};
@@ -205,11 +223,7 @@ impl Item {
 			result = result + ". It is " + &self.get_switch_status();
 		}
 		if self.is_container() {
-			result = result + ". It ";
-			match self.within.clone() {
-				None => result = result + "is empty",
-				Some(contained) => result = result + "contains " + &contained.borrow().get_inventoryname() + "",
-			}
+			result = result + &self.get_within_status_long();
 		}
 		result + description_end
 	}
