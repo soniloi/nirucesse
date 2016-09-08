@@ -125,6 +125,11 @@ impl Item {
 		self.has_property(CTRL_ITEM_CONTAINER)
 	}
 
+	// Return whether an item could fit inside this item, assuming it is a container
+	pub fn can_accept(&self, item: &ItemRef) -> bool {
+		item.borrow().get_size() < self.size
+	}
+
 	fn get_switch_status(&self) -> String {
 		String::from("currently ") + if self.on {"on"} else {"off"}
 	}
