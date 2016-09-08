@@ -134,6 +134,14 @@ impl Item {
 		String::from("currently ") + if self.on {"on"} else {"off"}
 	}
 
+	fn get_switch_status_short(&self) -> String {
+		String::from(" (") + &self.get_switch_status() + ")"
+	}
+
+	fn get_switch_status_long(&self) -> String {
+		String::from(". It is ") + &self.get_switch_status()
+	}
+
 	fn get_within_status_short(&self, depth: u32) -> String {
 		let mut result = String::from(" (");
 		match self.within.clone() {
@@ -165,7 +173,7 @@ impl Item {
 		}
 		result = result + &self.longname;
 		if self.is_switchable() {
-			result = result + " (" + &self.get_switch_status() + ")"
+			result = result + &self.get_switch_status_short();
 		}
 		if self.is_container() {
 			result = result + "\n\t";
@@ -181,7 +189,7 @@ impl Item {
 	pub fn get_locationname(&self) -> String {
 		let mut result: String = String::from("\nThere is ") + &self.longname;
 		if self.is_switchable() {
-			result = result + " (" + &self.get_switch_status() + ")"
+			result = result + &self.get_switch_status_short();
 		}
 		if self.is_container() {
 			result = result + &self.get_within_status_short(0);
@@ -220,7 +228,7 @@ impl Item {
 	pub fn mk_full_string(&self, description_start: &str, description_end: &str) -> String {
 		let mut result = String::from(description_start) + &self.description;
 		if self.is_switchable() {
-			result = result + ". It is " + &self.get_switch_status();
+			result = result + &self.get_switch_status_long();
 		}
 		if self.is_container() {
 			result = result + &self.get_within_status_long();
