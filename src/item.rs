@@ -179,6 +179,12 @@ impl Item {
 		self.within = within;
 	}
 
+	pub fn remove_within(&mut self) -> Option<ItemRef> {
+		let within = self.within.clone();
+		self.within = None;
+		within
+	}
+
 	pub fn mk_full_string(&self, description_start: &str, description_end: &str) -> String {
 		let mut result = String::from(description_start) + &self.description;
 		if self.is_switchable() {

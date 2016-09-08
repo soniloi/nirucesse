@@ -260,6 +260,34 @@ impl Player {
 		terminal::write_full(&item.borrow().mk_full_string(data.get_response("descstar"), data.get_response("dotend")));
 	}
 
+	pub fn empty(&mut self, data: &DataCollection, item: &ItemRef) {
+		self.manipulate_item_present(data, item, Player::empty_final);
+	}
+
+	fn empty_final(&mut self, data: &DataCollection, item: &ItemRef) {
+		if !item.borrow().is_container() {
+			let response = String::from(data.get_response("thestar")) + &item.borrow().get_shortname() + data.get_response("contnot");
+			terminal::write_full(&response);
+			return;
+		}
+
+		let within_ref = item.borrow_mut().remove_within();
+		match within_ref {
+			None => terminal::write_full(data.get_response("emptalre")),
+			Some(within) => {
+				if self.inventory.contains_item(item) {
+					self.inventory.insert_item(within.clone());
+					let response = String::from(data.get_response("emptstar")) + &within.borrow().get_shortname() + data.get_response("emptendc");
+					terminal::write_full(&response);
+				} else {
+					self.location.borrow_mut().insert_item(within.clone());
+					let response = String::from(data.get_response("emptstar")) + &within.borrow().get_shortname() + data.get_response("emptendl");
+					terminal::write_full(&response);
+				}
+			},
+		}
+	}
+
 	pub fn feed(&mut self, data: &DataCollection, item: &ItemRef) {
 		if item.borrow().is_recipient() {
 			self.manipulate_item_present(data, item, Player::feed_dative);

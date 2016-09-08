@@ -26,6 +26,10 @@ pub fn do_drop(data: &DataCollection, arg: String, player: &mut Player) {
 	manipulate_item(data, arg, player, Player::drop);
 }
 
+pub fn do_empty(data: &DataCollection, arg: String, player: &mut Player) {
+	manipulate_item(data, arg, player, Player::empty);
+}
+
 #[allow(unused_variables)]
 pub fn do_explain(data: &DataCollection, arg: String, player: &mut Player) {
 	terminal::write_full(data.get_explanation(&arg));
