@@ -120,7 +120,7 @@ impl Player {
 	// Manipulate an item present either in the player's inventory or at the player's location
 	fn manipulate_item_present(&mut self, data: &DataCollection, item: &ItemRef, act: ItemManipFinalFn) {
 		let item_id = item.borrow().get_id();
-		if !self.inventory.contains_item(item_id) && !self.location.borrow().contains_item(item) {
+		if !self.inventory.contains_item(item_id) && !self.location.borrow().contains_item(item_id) {
 			let response = String::from(data.get_response("nosee")) + &item.borrow().get_shortname() + data.get_response("noseeher");
 			terminal::write_full(&response);
 			return;
@@ -311,7 +311,7 @@ impl Player {
 			None => terminal::write_full(data.get_response("nonowhat")),
 			Some(indirect) => {
 				let indirect_id = indirect.borrow().get_id();
-				if self.inventory.contains_item(indirect_id) || self.location.borrow().contains_item(indirect) {
+				if self.inventory.contains_item(indirect_id) || self.location.borrow().contains_item(indirect_id) {
 					self.feed_final(data, direct, indirect)
 				} else {
 					let response = String::from(data.get_response("nosee")) + &indirect.borrow().get_shortname() + data.get_response("noseeher");
@@ -508,7 +508,7 @@ impl Player {
 			None => terminal::write_full(data.get_response("nonowhat")),
 			Some(container) => {
 				let container_id = container.borrow().get_id();
-				if self.inventory.contains_item(container_id) || self.location.borrow().contains_item(container) {
+				if self.inventory.contains_item(container_id) || self.location.borrow().contains_item(container_id) {
 					self.insert_final(data, item, container)
 				} else {
 					let response = String::from(data.get_response("nosee")) + &container.borrow().get_shortname() + data.get_response("noseeher");
@@ -545,7 +545,7 @@ impl Player {
 				let item_id = item.borrow().get_id();
 				if self.inventory.contains_item(item_id) {
 					self.inventory.remove_item_certain(item_id);
-				} else if self.location.borrow().contains_item(item) {
+				} else if self.location.borrow().contains_item(item_id) {
 					if !self.inventory.can_accept(&item) {
 						terminal::write_full(data.get_response("takeover"));
 						return;
