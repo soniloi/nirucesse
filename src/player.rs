@@ -53,8 +53,8 @@ impl Player {
 		self.inventory.has_air() || self.location.borrow().has_air()
 	}
 
-	pub fn contains_item(&self, item_ptr: &ItemRef) -> bool {
-		self.inventory.contains_item(item_ptr)
+	pub fn contains_item(&self, item: &ItemRef) -> bool {
+		self.inventory.contains_item(item.borrow().get_id())
 	}
 
 	pub fn insert_item(&mut self, item_ptr: ItemRef) {
@@ -119,7 +119,8 @@ impl Player {
 
 	// Manipulate an item present either in the player's inventory or at the player's location
 	fn manipulate_item_present(&mut self, data: &DataCollection, item: &ItemRef, act: ItemManipFinalFn) {
-		if !self.inventory.contains_item(item) && !self.location.borrow().contains_item(item) {
+		let item_id = item.borrow().get_id();
+		if !self.inventory.contains_item(item_id) && !self.location.borrow().contains_item(item) {
 			let response = String::from(data.get_response("nosee")) + &item.borrow().get_shortname() + data.get_response("noseeher");
 			terminal::write_full(&response);
 			return;
@@ -129,7 +130,8 @@ impl Player {
 
 	// Manipulate an item present strictly in the player's inventory
 	fn manipulate_item_inventory(&mut self, data: &DataCollection, item: &ItemRef, act: ItemManipFinalFn) {
-		if !self.inventory.contains_item(item) {
+		let item_id = item.borrow().get_id();
+		if !self.inventory.contains_item(item_id) {
 			let response = String::from(data.get_response("nocastar")) + &item.borrow().get_shortname() + data.get_response("nocaend");
 			terminal::write_full(&response);
 			return;
@@ -156,7 +158,7 @@ impl Player {
 	}
 
 	fn burn_final(&mut self, data: &DataCollection, item: &ItemRef) {
-		if !self.inventory.contains_item_by_id(::ITEM_ID_MATCHES) {
+		if !self.inventory.contains_item(::ITEM_ID_MATCHES) {
 			terminal::write_full(data.get_response("nomatch"));
 			return;
 		}
@@ -275,7 +277,8 @@ impl Player {
 		match within_ref {
 			None => terminal::write_full(data.get_response("emptalre")),
 			Some(within) => {
-				if self.inventory.contains_item(item) {
+				let item_id = item.borrow().get_id();
+				if self.inventory.contains_item(item_id) {
 					self.inventory.insert_item(within.clone());
 					let response = String::from(data.get_response("emptstar")) + &within.borrow().get_shortname() + data.get_response("emptendc");
 					terminal::write_full(&response);
@@ -307,7 +310,8 @@ impl Player {
 		match data.get_item(indirect_str[0].clone()) {
 			None => terminal::write_full(data.get_response("nonowhat")),
 			Some(indirect) => {
-				if self.inventory.contains_item(indirect) || self.location.borrow().contains_item(indirect) {
+				let indirect_id = indirect.borrow().get_id();
+				if self.inventory.contains_item(indirect_id) || self.location.borrow().contains_item(indirect) {
 					self.feed_final(data, direct, indirect)
 				} else {
 					let response = String::from(data.get_response("nosee")) + &indirect.borrow().get_shortname() + data.get_response("noseeher");
@@ -328,7 +332,8 @@ impl Player {
 		match data.get_item(direct_str[0].clone()) {
 			None => terminal::write_full(data.get_response("nonowhat")),
 			Some(direct) => {
-				if self.inventory.contains_item_by_id(direct.borrow().get_id()) {
+				let direct_id = direct.borrow().get_id();
+				if self.inventory.contains_item(direct_id) {
 					self.feed_final(data, direct, indirect)
 				} else {
 					let response = String::from(data.get_response("nocastar")) + &direct.borrow().get_shortname() + data.get_response("nocaend");
@@ -502,7 +507,8 @@ impl Player {
 		match data.get_item(container_str[0].clone()) {
 			None => terminal::write_full(data.get_response("nonowhat")),
 			Some(container) => {
-				if self.inventory.contains_item(container) || self.location.borrow().contains_item(container) {
+				let container_id = container.borrow().get_id();
+				if self.inventory.contains_item(container_id) || self.location.borrow().contains_item(container) {
 					self.insert_final(data, item, container)
 				} else {
 					let response = String::from(data.get_response("nosee")) + &container.borrow().get_shortname() + data.get_response("noseeher");
@@ -536,14 +542,15 @@ impl Player {
 				    return;
 				}
 
-				if self.inventory.contains_item(item) {
-					self.inventory.remove_item_certain(item.borrow().get_id());
+				let item_id = item.borrow().get_id();
+				if self.inventory.contains_item(item_id) {
+					self.inventory.remove_item_certain(item_id);
 				} else if self.location.borrow().contains_item(item) {
 					if !self.inventory.can_accept(&item) {
 						terminal::write_full(data.get_response("takeover"));
 						return;
 					}
-					self.location.borrow_mut().remove_item_certain(item.borrow().get_id());
+					self.location.borrow_mut().remove_item_certain(item_id);
 				}
 				container.borrow_mut().set_within(Some(item.clone()));
 				terminal::write_full(data.get_response("insegood"));

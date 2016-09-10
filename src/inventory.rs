@@ -36,12 +36,8 @@ impl Inventory {
 		false
 	}
 
-	pub fn contains_item_by_id(&self, id: u32) -> bool {
+	pub fn contains_item(&self, id: u32) -> bool {
 		self.items.contains_key(&id)
-	}
-
-	pub fn contains_item(&self, item: &ItemRef) -> bool {
-		self.items.contains_key(&item.borrow().get_id())
 	}
 
 	pub fn insert_item(&mut self, item: ItemRef) {
