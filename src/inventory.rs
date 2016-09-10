@@ -37,7 +37,12 @@ impl Inventory {
 	}
 
 	pub fn contains_item(&self, id: u32) -> bool {
-		self.items.contains_key(&id)
+		for item in self.items.values() {
+			if item.borrow().is(id) || item.borrow().contains_item(id) {
+				return true;
+			}
+		}
+		false
 	}
 
 	pub fn insert_item(&mut self, item: ItemRef) {
@@ -49,10 +54,18 @@ impl Inventory {
 	}
 
 	pub fn remove_item_certain(&mut self, id: u32) -> ItemRef {
-		 match self.items.remove(&id) {
-			 None => panic!("Data corruption seeking item [{}], fail.", id),
-			 Some(item) => item,
-		 }
+		if self.items.contains_key(&id) {
+			match self.items.remove(&id) {
+				None => {},
+				Some(item) => return item,
+			}
+		}
+		for item in self.items.values() {
+			if item.borrow().contains_item(id) {
+				return item.borrow_mut().remove_item_certain(id);
+			}
+		}
+		panic!("Data corruption seeking item [{}], fail.", id);
 	}
 
 	// Return combined size of all items currently in inventory

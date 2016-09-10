@@ -215,6 +215,26 @@ impl Item {
 		self.on = next;
 	}
 
+	pub fn contains_item(&self, id: u32) -> bool {
+		match self.within.clone() {
+			None => false,
+			Some(within) => within.borrow().is(id) || within.borrow().contains_item(id),
+		}
+	}
+
+	pub fn remove_item_certain(&mut self, id: u32) -> ItemRef {
+		match self.within.clone() {
+			None => panic!("Data corruption seeking item [{}], fail.", id),
+			Some(within) => {
+				if within.borrow().is(id) {
+					self.within = None;
+					return within;
+				}
+				return within.borrow_mut().remove_item_certain(id);
+			},
+		}
+	}
+
 	pub fn get_within(&self) -> Option<ItemRef> {
 		self.within.clone()
 	}
