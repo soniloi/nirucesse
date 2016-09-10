@@ -122,7 +122,12 @@ impl Location {
 	}
 
 	pub fn contains_item(&self, id: u32) -> bool {
-		self.items.contains_key(&id)
+		for item in self.items.values() {
+			if item.borrow().is(id) || item.borrow().contains_item(id) {
+				return true;
+			}
+		}
+		false
 	}
 
 	pub fn insert_item(&mut self, item: ItemRef) {
@@ -134,10 +139,17 @@ impl Location {
 	}
 
 	pub fn remove_item_certain(&mut self, id: u32) {
-		match self.items.remove(&id) {
-			None => panic!("Error: Location or item [{}] corrupt.", id),
-			Some(_) => {},
+		if self.items.contains_key(&id) {
+			self.items.remove(&id);
+			return;
 		}
+		for item in self.items.values() {
+			if item.borrow().contains_item(id) {
+				item.borrow_mut().remove_item_certain(id);
+				return;
+			}
+		}
+		panic!("Data corruption seeking item [{}], fail.", id);
 	}
 
 	pub fn get_shortname(&self) -> String {
