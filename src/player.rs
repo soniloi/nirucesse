@@ -537,12 +537,12 @@ impl Player {
 				}
 
 				if self.inventory.contains_item(item) {
+					self.inventory.remove_item_certain(item.borrow().get_id());
+				} else if self.location.borrow().contains_item(item) {
 					if !self.inventory.can_accept(&item) {
 						terminal::write_full(data.get_response("takeover"));
 						return;
 					}
-					self.inventory.remove_item_certain(item.borrow().get_id());
-				} else if self.location.borrow().contains_item(item) {
 					self.location.borrow_mut().remove_item_certain(item.borrow().get_id());
 				}
 				container.borrow_mut().set_within(Some(item.clone()));

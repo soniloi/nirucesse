@@ -199,8 +199,12 @@ impl Item {
 		result
 	}
 
+	// Return size of item; this is safe, as non-containers simply have a None within
 	pub fn get_size(&self) -> u32 {
-		self.size
+		match self.within.clone() {
+			None => return self.size,
+			Some(within) => return self.size + within.borrow().get_size(),
+		}
 	}
 
 	pub fn is_on(&self) -> bool {
