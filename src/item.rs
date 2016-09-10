@@ -127,7 +127,7 @@ impl Item {
 
 	// Return whether an item could fit inside this item, assuming it is a container
 	pub fn can_accept(&self, item: &ItemRef) -> bool {
-		item.borrow().get_size() < self.size
+		item.borrow().get_capacity() < self.size
 	}
 
 	fn get_switch_status(&self) -> String {
@@ -197,6 +197,10 @@ impl Item {
 		result = result + " here";
 		result = result + if self.is_obstruction() || self.is_treasure() {"!"} else {"."};
 		result
+	}
+
+	pub fn get_capacity(&self) -> u32 {
+		self.size
 	}
 
 	// Return size of item; this is safe, as non-containers simply have a None within
