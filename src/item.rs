@@ -109,6 +109,10 @@ impl Item {
 		&self.shortname
 	}
 
+	pub fn get_longname(&self) -> &str {
+		&self.longname
+	}
+
 	pub fn is_portable(&self) -> bool {
 		self.is_mobile() && !self.is_obstruction()
 	}
@@ -142,31 +146,45 @@ impl Item {
 		String::from(". It is ") + &self.get_switch_status()
 	}
 
-	fn get_within_status_short(&self, depth: u32) -> String {
-		let mut result = String::from(" (");
-		match self.within.clone() {
-			None => result = result + "empty",
-			Some(contained) => result = result + "containing " + &contained.borrow().get_inventoryname_nested(depth + 1),
+	fn get_within_status_short(&self, nest: bool, depth: u32) -> String {
+		let mut result = String::new();
+		if self.is_container() {
+			match self.within.clone() {
+				None => return String::from(" (empty)"),
+				Some(contained) => {
+					let mut nest_next = false;
+					let mut pre = String::new();
+					let mut post = String::new();
+					if nest {
+						nest_next = true;
+						pre = pre + "\n\t";
+						for _ in 0..depth {
+						    pre = pre + "\t";
+						}
+						pre = pre + " ";
+					} else {
+						pre = pre + " (";
+						post = post + ")";
+					}
+					result = result + &pre + "containing " + &contained.borrow().get_longname() + &contained.borrow().get_within_status_short(nest_next, depth + 1) + &post;
+				},
+			}
 		}
-		result + ")"
+		result
 	}
 
 	fn get_within_status_long(&self) -> String {
 		let mut result = String::from(". It ");
 		match self.within.clone() {
 			None => result = result + "is empty",
-			Some(contained) => result = result + "contains " + &contained.borrow().get_inventoryname(),
+			Some(contained) => result = result + "contains " + &contained.borrow().get_longname() + &contained.borrow().get_within_status_short(false, 1),
 		}
 		result
 	}
 
 	// Return the name of this item as it would be displayed in an inventory listing
 	pub fn get_inventoryname(&self) -> String {
-		self.get_inventoryname_nested(1)
-	}
 
-	// Return the name of this item as it would be displayed in an inventory listing
-	pub fn get_inventoryname_nested(&self, depth: u32) -> String {
 		let mut result: String = String::new();
 		if self.is_wearable() {
 			result = result + "(wearing) ";
@@ -175,14 +193,7 @@ impl Item {
 		if self.is_switchable() {
 			result = result + &self.get_switch_status_short();
 		}
-		if self.is_container() {
-			result = result + "\n\t";
-			for _ in 0..depth {
-				result = result + "\t";
-			}
-			result = result + &self.get_within_status_short(depth);
-		}
-		result
+		result + &self.get_within_status_short(true, 1)
 	}
 
 	// Return the name of this item as it would be displayed in a location listing
@@ -191,10 +202,7 @@ impl Item {
 		if self.is_switchable() {
 			result = result + &self.get_switch_status_short();
 		}
-		if self.is_container() {
-			result = result + &self.get_within_status_short(0);
-		}
-		result = result + " here";
+		result = result + &self.get_within_status_short(false, 1) + " here";
 		result = result + if self.is_obstruction() || self.is_treasure() {"!"} else {"."};
 		result
 	}
