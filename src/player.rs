@@ -526,6 +526,11 @@ impl Player {
 			return;
 		}
 
+		if container.borrow().is(item.borrow().get_id()) {
+			terminal::write_full(data.get_response("contrecu"));
+			return;
+		}
+
 		// Make sure there is nothing already in the container
 		let within = container.borrow().get_within();
 		match within {
