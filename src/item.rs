@@ -62,7 +62,13 @@ impl Item {
 	}
 
 	pub fn has_light(&self) -> bool {
-		self.has_property(CTRL_ITEM_GIVES_LIGHT) && self.on
+		if self.has_property(CTRL_ITEM_GIVES_LIGHT) && self.on {
+			return true;
+		}
+		match self.within.clone() {
+			None => return false,
+			Some (within) => return within.borrow().has_light(),
+		}
 	}
 
 	pub fn has_air(&self) -> bool {
