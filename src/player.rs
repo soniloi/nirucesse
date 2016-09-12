@@ -65,10 +65,6 @@ impl Player {
 		self.inventory.insert_item(item_ptr);
 	}
 
-	pub fn get_location(&self) -> &LocationRef {
-		&self.location
-	}
-
 	pub fn is_playing(&self) -> bool {
 		self.playing
 	}
@@ -166,21 +162,24 @@ impl Player {
 			terminal::write_full(data.get_response("nomatch"));
 			return;
 		}
-		match item.borrow().get_id() {
+		let item_id = item.borrow().get_id();
+		match item_id {
 			::ITEM_ID_BREAD => {
-				match self.inventory.remove_item(item) {
-					None => self.location.borrow_mut().remove_item_certain(item.borrow().get_id()),
-					Some(_) => {},
-				};
+				if self.inventory.contains_item(item_id) {
+					self.inventory.remove_item_certain(item_id);
+				} else {
+					self.location.borrow_mut().remove_item_certain(item_id);
+				}
 				let toast = data.get_item_certain(String::from("toast"));
 				self.location.borrow_mut().insert_item(toast.clone());
 				terminal::write_full(data.get_response("bread"));
 			},
 			::ITEM_ID_TOAST => {
-				match self.inventory.remove_item(item) {
-					None => self.location.borrow_mut().remove_item_certain(item.borrow().get_id()),
-					Some(_) => {},
-				};
+				if self.inventory.contains_item(item_id) {
+					self.inventory.remove_item_certain(item_id);
+				} else {
+					self.location.borrow_mut().remove_item_certain(item_id);
+				}
 				terminal::write_full(data.get_response("toast"));
 				let mut self_loc = self.location.borrow_mut();
 				if self_loc.is(::LOCATION_ID_AIRLOCKE) {

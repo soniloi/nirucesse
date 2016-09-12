@@ -139,10 +139,6 @@ impl Location {
 		self.items.insert(item.borrow().get_id(), item.clone());
 	}
 
-	pub fn remove_item(&mut self, item: &ItemRef) -> Option<ItemRef> {
-		self.items.remove(&item.borrow().get_id())
-	}
-
 	pub fn remove_item_certain(&mut self, id: u32) {
 		if self.items.contains_key(&id) {
 			self.items.remove(&id);
