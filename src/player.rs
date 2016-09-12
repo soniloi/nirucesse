@@ -53,6 +53,10 @@ impl Player {
 		self.inventory.has_air() || self.location.borrow().has_air()
 	}
 
+	pub fn has_gravity(&self) -> bool {
+		self.inventory.has_gravity() || self.location.borrow().has_gravity()
+	}
+
 	pub fn contains_item(&self, item: &ItemRef) -> bool {
 		self.inventory.contains_item(item.borrow().get_id())
 	}

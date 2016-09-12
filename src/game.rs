@@ -28,6 +28,11 @@ impl Game {
 				self.player.die(&self.data);
 			}
 
+			if !self.player.has_gravity() {
+				terminal::write_full(self.data.get_response("nograv"));
+				self.player.die(&self.data);
+			}
+
 			if !self.player.is_alive() {
 				self.player.drop_on_death(self.data.get_location_safe());
 				self.process_reincarnation();

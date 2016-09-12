@@ -36,6 +36,15 @@ impl Inventory {
 		false
 	}
 
+	pub fn has_gravity(&self) -> bool {
+		for item in self.items.values() {
+			if item.borrow().has_gravity() {
+				return true
+			}
+		}
+		false
+	}
+
 	pub fn contains_item(&self, id: u32) -> bool {
 		for item in self.items.values() {
 			if item.borrow().is(id) || item.borrow().contains_item(id) {
