@@ -46,6 +46,24 @@ impl Item {
 		id == self.id
 	}
 
+	// FIXME: probably refactor this out
+	pub fn contains_item(&self, id: u32) -> bool {
+		match self.within.clone() {
+			None => false,
+			Some(within) => within.borrow().is(id) || within.borrow().contains_item(id),
+		}
+	}
+
+	pub fn is_or_contains_item(&self, id: u32) -> bool {
+		if self.id == id {
+			return true;
+		}
+		match self.within.clone() {
+			None => false,
+			Some(within) => within.borrow().is_or_contains_item(id),
+		}
+	}
+
 	fn has_property(&self, property: u32) -> bool {
 		self.properties & property != 0
 	}
@@ -236,13 +254,6 @@ impl Item {
 
 	pub fn set_on(&mut self, next: bool) {
 		self.on = next;
-	}
-
-	pub fn contains_item(&self, id: u32) -> bool {
-		match self.within.clone() {
-			None => false,
-			Some(within) => within.borrow().is(id) || within.borrow().contains_item(id),
-		}
 	}
 
 	pub fn remove_item_certain(&mut self, id: u32) -> ItemRef {

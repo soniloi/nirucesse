@@ -122,12 +122,7 @@ impl Location {
 	}
 
 	pub fn contains_item(&self, id: u32) -> bool {
-		for item in self.items.values() {
-			if item.borrow().is(id) || item.borrow().contains_item(id) {
-				return true;
-			}
-		}
-		false
+		self.items.values().any(|x| x.borrow().is_or_contains_item(id))
 	}
 
 	pub fn insert_item(&mut self, item: ItemRef) {
