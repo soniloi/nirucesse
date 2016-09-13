@@ -18,31 +18,15 @@ impl Inventory {
 	}
 
 	pub fn has_light(&self) -> bool {
-		// Inventory has light if any item within it has light
-		for item in self.items.values() {
-			if item.borrow().has_light() {
-				return true;
-			}
-		}
-		false
+		self.items.values().any(|x| x.borrow().has_light())
 	}
 
 	pub fn has_air(&self) -> bool {
-		for item in self.items.values() {
-			if item.borrow().has_air() {
-				return true
-			}
-		}
-		false
+		self.items.values().any(|x| x.borrow().has_air())
 	}
 
 	pub fn has_gravity(&self) -> bool {
-		for item in self.items.values() {
-			if item.borrow().has_gravity() {
-				return true
-			}
-		}
-		false
+		self.items.values().any(|x| x.borrow().has_gravity())
 	}
 
 	pub fn contains_item(&self, id: u32) -> bool {

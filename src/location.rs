@@ -80,12 +80,7 @@ impl Location {
 
 	// Return whether any item resting at this location emits light
 	pub fn has_light_item(&self) -> bool {
-		for item in self.items.values() {
-			if item.borrow().has_light() {
-				return true
-			}
-		}
-		false
+		self.items.values().any(|x| x.borrow().has_light())
 	}
 
 	pub fn has_air(&self) -> bool {
