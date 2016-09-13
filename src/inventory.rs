@@ -54,11 +54,7 @@ impl Inventory {
 
 	// Return combined size of all items currently in inventory
 	fn get_size(&self) -> u32 {
-		let mut result = 0;
-		for (_, item) in &self.items {
-			result += item.borrow().get_size();
-		}
-		result
+		self.items.values().fold(0, |acc, x| acc + x.borrow().get_size())
 	}
 
 	// Return whether an item could fit in the inventory

@@ -109,7 +109,6 @@ impl Location {
 				return Some(item.clone());
 			}
 		}
-
 		None
 	}
 
@@ -149,13 +148,8 @@ impl Location {
 
 	// Return whether another location can be reached in one step from this one
 	pub fn can_reach(&self, other: &LocationRef) -> bool {
-		for dir in self.directions.values() {
-			if dir.borrow().get_id() == other.borrow().get_id() {
-				return true;
-			}
-		}
-
-		false
+		let other_id = other.borrow().get_id();
+		self.directions.values().any(|x| x.borrow().get_id() == other_id)
 	}
 
 	// Return the number of treasures at this location
