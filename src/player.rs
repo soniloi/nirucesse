@@ -141,16 +141,18 @@ impl Player {
 
 	pub fn avnarand(&mut self, data: &DataCollection) {
 		let mut self_loc = self.location.borrow_mut();
+		let mut response = data.get_response("nohappen");
 		match self_loc.get_obstruction() {
-			None => terminal::write_full(data.get_response("nohappen")),
+			None => {},
 			Some(obstruction) => {
 				if obstruction.borrow().is(::ITEM_ID_ROBOT) {
-					self_loc.remove_item_certain(obstruction.borrow().get_id());
+					self_loc.remove_item_certain(::ITEM_ID_ROBOT);
 					self.achievement_count = self.achievement_count + 1;
-					terminal::write_full(data.get_puzzle("robot"));
+					response = data.get_puzzle("robot");
 				}
 			},
 		}
+		terminal::write_full(response);
 	}
 
 	pub fn burn(&mut self, data: &DataCollection, item: &ItemRef) {
@@ -377,7 +379,6 @@ impl Player {
 			} else {
 				terminal::write_full(data.get_response("trolyawn"));
 			}
-			return;
 		}
 
 		// Default response: not interested
