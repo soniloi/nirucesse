@@ -73,6 +73,10 @@ pub fn do_hint(data: &DataCollection, arg: String, player: &mut Player) {
 	}
 }
 
+pub fn do_ignore(data: &DataCollection, arg: String, player: &mut Player) {
+	manipulate_item(data, arg, player, Player::ignore);
+}
+
 pub fn do_insert(data: &DataCollection, arg: String, player: &mut Player) {
 	manipulate_item(data, arg, player, Player::insert);
 }

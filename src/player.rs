@@ -369,6 +369,17 @@ impl Player {
 			}
 		}
 
+		if indirect.borrow().is(::ITEM_ID_TROLL) {
+			if direct.borrow().is_edible() {
+				self.inventory.remove_item_certain(direct.borrow().get_id());
+				terminal::write_full(data.get_response("trolled"));
+				self.die(data);
+			} else {
+				terminal::write_full(data.get_response("trolyawn"));
+			}
+			return;
+		}
+
 		// Default response: not interested
 		let response = String::from(data.get_response("thestar")) + indirect.borrow().get_shortname() + data.get_response("nointerd") +
 			direct.borrow().get_shortname() + data.get_response("dotend");
@@ -482,6 +493,20 @@ impl Player {
 		match previous {
 			None => return false,
 			Some(prev) => prev.borrow().get_id() == next.borrow().get_id(),
+		}
+	}
+
+	pub fn ignore(&mut self, data: &DataCollection, item: &ItemRef) {
+		self.manipulate_item_present(data, item, Player::ignore_final);
+	}
+
+	pub fn ignore_final(&mut self, data: &DataCollection, item: &ItemRef) {
+		if item.borrow().is(::ITEM_ID_TROLL) {
+			self.location.borrow_mut().remove_item_certain(::ITEM_ID_TROLL);
+			self.achievement_count = self.achievement_count + 1;
+			terminal::write_full(data.get_puzzle("troll"));
+		} else {
+			 terminal::write_full(data.get_response("ignogain"));
 		}
 	}
 
