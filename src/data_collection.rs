@@ -117,6 +117,12 @@ impl DataCollection {
 		self.responses.get_certain(key)
 	}
 
+	// TODO: more than one parameter; make generic with get_response
+	pub fn get_response_param(&self, key: &str, param: &str) -> String {
+		let response = String::from(self.responses.get_certain(key));
+		response.replace("$0", param)
+	}
+
 	pub fn get_puzzle(&self, key: &str) -> &str {
 		self.puzzles.get_certain(key)
 	}

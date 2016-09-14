@@ -53,7 +53,7 @@ impl StringCollection {
 	}
 
 	// Return a String we are certain is in the collection
-	pub fn get_certain(&self, key: &str) -> &String {
+	pub fn get_certain(&self, key: &str) -> &str {
 		match self.strings.get(&String::from(key)) {
 			None => panic!("Error: Data collection corrupt, or key [{}] malformed.", key),
 			Some(st) => return st,

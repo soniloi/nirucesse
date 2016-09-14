@@ -121,8 +121,7 @@ impl Player {
 	fn manipulate_item_present(&mut self, data: &DataCollection, item: &ItemRef, act: ItemManipFinalFn) {
 		let item_id = item.borrow().get_id();
 		if !self.inventory.contains_item(item_id) && !self.location.borrow().contains_item(item_id) {
-			let response = String::from(data.get_response("nosee")) + &item.borrow().get_shortname() + data.get_response("noseeher");
-			terminal::write_full(&response);
+			terminal::write_full(&data.get_response_param("noseeh", &item.borrow().get_shortname()));
 			return;
 		}
 		act(self, data, item);
@@ -132,8 +131,7 @@ impl Player {
 	fn manipulate_item_inventory(&mut self, data: &DataCollection, item: &ItemRef, act: ItemManipFinalFn) {
 		let item_id = item.borrow().get_id();
 		if !self.inventory.contains_item(item_id) {
-			let response = String::from(data.get_response("nocastar")) + &item.borrow().get_shortname() + data.get_response("nocaend");
-			terminal::write_full(&response);
+			terminal::write_full(&data.get_response_param("nocarry", &item.borrow().get_shortname()));
 			return;
 		}
 		act(self, data, item);
