@@ -271,8 +271,7 @@ impl Player {
 
 	fn empty_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !item.borrow().is_container() {
-			let response = String::from(data.get_response("thestar")) + &item.borrow().get_shortname() + data.get_response("contnot");
-			terminal::write_full(&response);
+			terminal::write_full(&data.get_response_param("contnot", &item.borrow().get_shortname()));
 			return;
 		}
 
@@ -283,12 +282,10 @@ impl Player {
 				let item_id = item.borrow().get_id();
 				if self.inventory.contains_item(item_id) {
 					self.inventory.insert_item(within.clone());
-					let response = String::from(data.get_response("emptstar")) + &within.borrow().get_shortname() + data.get_response("emptendc");
-					terminal::write_full(&response);
+					terminal::write_full(&data.get_response_param("emptcarr", &within.borrow().get_shortname()));
 				} else {
 					self.location.borrow_mut().insert_item(within.clone());
-					let response = String::from(data.get_response("emptstar")) + &within.borrow().get_shortname() + data.get_response("emptendl");
-					terminal::write_full(&response);
+					terminal::write_full(&data.get_response_param("emptloca", &within.borrow().get_shortname()));
 				}
 			},
 		}
@@ -306,8 +303,7 @@ impl Player {
 	fn feed_accusative(&mut self, data: &DataCollection, direct: &ItemRef) {
 
 		// Find out what player wants to feed it to
-		let question = String::from(data.get_response("whatfeac")) + direct.borrow().get_shortname() + data.get_response("toendq");
-		let indirect_str = terminal::read_question(&question);
+		let indirect_str = terminal::read_question(&data.get_response_param("whatfeac", direct.borrow().get_shortname()));
 
 		// Feed food to recipient, if it exists and player is carrying it
 		match data.get_item(indirect_str[0].clone()) {
@@ -317,8 +313,7 @@ impl Player {
 				if self.inventory.contains_item(indirect_id) || self.location.borrow().contains_item(indirect_id) {
 					self.feed_final(data, direct, indirect)
 				} else {
-					let response = String::from(data.get_response("nosee")) + &indirect.borrow().get_shortname() + data.get_response("noseeher");
-					terminal::write_full(&response);
+					terminal::write_full(&data.get_response_param("noseeh", &indirect.borrow().get_shortname()));
 				}
 			},
 		}
@@ -328,8 +323,7 @@ impl Player {
 	fn feed_dative(&mut self, data: &DataCollection, indirect: &ItemRef) {
 
 		// Find out what player wants to feed to it
-		let question = String::from(data.get_response("whatfeda")) + indirect.borrow().get_shortname() + data.get_response("whatend");
-		let direct_str = terminal::read_question(&question);
+		let direct_str = terminal::read_question(&data.get_response_param("whatfeda", indirect.borrow().get_shortname()));
 
 		// Feed food to recipient, if it exists and player is carrying it
 		match data.get_item(direct_str[0].clone()) {
@@ -339,8 +333,7 @@ impl Player {
 				if self.inventory.contains_item(direct_id) {
 					self.feed_final(data, direct, indirect)
 				} else {
-					let response = String::from(data.get_response("nocastar")) + &direct.borrow().get_shortname() + data.get_response("nocaend");
-					terminal::write_full(&response);
+					terminal::write_full(&data.get_response_param("nocarry", &direct.borrow().get_shortname()));
 				}
 			},
 		}
