@@ -10,6 +10,7 @@ const CTRL_ITEM_WEARABLE: u32 = 0x400; // Whether the item is to be worn by the 
 const CTRL_ITEM_ESSENTIAL: u32 = 0x1000; // Whether the item is essential to basic gameplay
 const CTRL_ITEM_EDIBLE: u32 = 0x2000; // Whether the item is any sort of food or drink
 const CTRL_ITEM_TREASURE: u32 = 0x8000; // Whether the item is a treasure
+const CTRL_ITEM_SILENT: u32 = 0x20000; // Whether the item should be shown in location descriptions
 const CTRL_ITEM_RECIPIENT: u32 = 0x80000; // Whether the item may be a recipient (i.e. of gifts or food)
 
 use data_collection::ItemRef;
@@ -158,6 +159,10 @@ impl Item {
 		self.has_property(CTRL_ITEM_CONTAINER)
 	}
 
+	fn is_silent(&self) -> bool {
+		self.has_property(CTRL_ITEM_SILENT)
+	}
+
 	// Return whether an item could fit inside this item, assuming it is a container
 	pub fn can_accept(&self, item: &ItemRef) -> bool {
 		item.borrow().get_capacity() < self.size
@@ -227,12 +232,15 @@ impl Item {
 
 	// Return the name of this item as it would be displayed in a location listing
 	pub fn get_locationname(&self) -> String {
-		let mut result: String = String::from("\nThere is ") + &self.longname;
-		if self.is_switchable() {
-			result = result + &self.get_switch_status_short();
+		let mut result = String::new();
+		if !self.is_silent() {
+			result = result + "\nThere is " + &self.longname;
+			if self.is_switchable() {
+				result = result + &self.get_switch_status_short();
+			}
+			result = result + &self.get_within_status_short(false, 1) + " here";
+			result = result + if self.is_obstruction() || self.is_treasure() {"!"} else {"."};
 		}
-		result = result + &self.get_within_status_short(false, 1) + " here";
-		result = result + if self.is_obstruction() || self.is_treasure() {"!"} else {"."};
 		result
 	}
 
