@@ -110,13 +110,14 @@ impl CommandCollection {
 		self.commands.get(&key)
 	}
 
-	pub fn mk_non_secret_string(&self) -> String {
-		let mut result: String = String::from("I understand the following commands (and possibly others):\n");
+	pub fn mk_non_secret_string(&self, intro: &str) -> String {
+		let mut comms = Vec::new();
 		for (tag, command) in self.commands.iter() {
 			if !command.is_secret() {
-				result = result + "[" + tag + "] ";
+				comms.push(String::from("[") + tag + "] ");
 			}
 		}
-		result
+		comms.sort();
+		String::from(intro) + "\n" + &comms.concat()
 	}
 }
