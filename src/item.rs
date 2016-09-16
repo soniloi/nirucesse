@@ -151,7 +151,7 @@ impl Item {
 		self.has_property(CTRL_ITEM_RECIPIENT)
 	}
 
-	pub fn is_treasure(&self) -> bool {
+	fn is_treasure(&self) -> bool {
 		self.has_property(CTRL_ITEM_TREASURE)
 	}
 
@@ -161,6 +161,21 @@ impl Item {
 
 	fn is_silent(&self) -> bool {
 		self.has_property(CTRL_ITEM_SILENT)
+	}
+
+	pub fn get_treasure_value(&self) -> u32 {
+		self.count_treasure_value(0)
+	}
+
+	fn count_treasure_value(&self, acc: u32) -> u32 {
+		let mut result = acc;
+		if self.is_treasure() {
+			result += 1;
+		}
+		match self.within.clone() {
+			None => result,
+			Some(within) => within.borrow().count_treasure_value(result)
+		}
 	}
 
 	// Return whether an item could fit inside this item, assuming it is a container

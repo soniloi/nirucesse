@@ -49,9 +49,7 @@ impl ItemCollection {
 					let item_parsed = self.parse_and_insert_item(&words);
 					let item = item_parsed.0;
 
-					if item.borrow().is_treasure() {
-						*treasure_count = *treasure_count + 1;
-					}
+					*treasure_count = *treasure_count + item.borrow().get_treasure_value();
 
 					// Point item's starting location at it
 					let initial = item_parsed.1;

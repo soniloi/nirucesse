@@ -156,9 +156,7 @@ impl Location {
 	pub fn get_treasure_count(&self) -> u32 {
 		let mut result = 0;
 		for item in self.items.values() {
-			if item.borrow().is_treasure() {
-				result = result + 1;
-			}
+			result = result + item.borrow().get_treasure_value();
 		}
 		result
 	}
