@@ -5,8 +5,10 @@ const CTRL_ITEM_SWITCHABLE: u32 = 0x8; // Whether the item can be lit/quenched
 const CTRL_ITEM_GIVES_LIGHT: u32 = 0x10; // Whether the item emits light
 const CTRL_ITEM_GIVES_AIR: u32 = 0x20; // Whether the item enables player to breathe
 const CTRL_ITEM_GIVES_GRAVITY: u32 = 0x40; // Whether the item holds the player down
+const CTRL_ITEM_CONTAINER_LIQUID: u32 = 0x100; // Whether the container may contain liquids rather than solids
 const CTRL_ITEM_FRAGILE: u32 = 0x200; // Whether the item would survive throwing, dropping from heights, etc
 const CTRL_ITEM_WEARABLE: u32 = 0x400; // Whether the item is to be worn by the player rather than carried
+const CTRL_ITEM_LIQUID: u32 = 0x800; // Whether item is a liquid, i.e. needs a special container to carry it
 const CTRL_ITEM_ESSENTIAL: u32 = 0x1000; // Whether the item is essential to basic gameplay
 const CTRL_ITEM_EDIBLE: u32 = 0x2000; // Whether the item is any sort of food or drink
 const CTRL_ITEM_TREASURE: u32 = 0x8000; // Whether the item is a treasure
@@ -159,8 +161,16 @@ impl Item {
 		self.has_property(CTRL_ITEM_CONTAINER)
 	}
 
+	pub fn is_container_liquid(&self) -> bool {
+		self.has_property(CTRL_ITEM_CONTAINER_LIQUID)
+	}
+
 	fn is_silent(&self) -> bool {
 		self.has_property(CTRL_ITEM_SILENT)
+	}
+
+	pub fn is_liquid(&self) -> bool {
+		self.has_property(CTRL_ITEM_LIQUID)
 	}
 
 	pub fn get_treasure_value(&self) -> u32 {

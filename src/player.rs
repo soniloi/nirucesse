@@ -539,15 +539,24 @@ impl Player {
 	}
 
 	fn insert_final(&mut self, data: &DataCollection, item: &ItemRef, container: &ItemRef) {
-		// Make sure the "container" is a container
+		// Make sure the "container" is a container, that we are not inserting an item into itself, and that it is the right kind of container
 		if !container.borrow().is_container() {
-			let response = String::from(data.get_response("thestar")) + &container.borrow().get_shortname() + data.get_response("contnot");
-			terminal::write_full(&response);
+			terminal::write_full(&data.get_response_param("contnot", container.borrow().get_shortname()));
 			return;
 		}
 
 		if container.borrow().is(item.borrow().get_id()) {
 			terminal::write_full(data.get_response("contrecu"));
+			return;
+		}
+
+		if container.borrow().is_container_liquid() && !item.borrow().is_liquid() {
+			terminal::write_full(&data.get_response_param("contnos", &container.borrow().get_shortname()));
+			return;
+		}
+
+		if !container.borrow().is_container_liquid() && item.borrow().is_liquid() {
+			terminal::write_full(&data.get_response_param("contnol", &container.borrow().get_shortname()));
 			return;
 		}
 
