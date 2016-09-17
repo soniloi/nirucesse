@@ -549,7 +549,7 @@ impl Player {
 				if self.inventory.contains_item(container_id) || self.location.borrow().contains_item(container_id) {
 					self.insert_final(data, item, container)
 				} else {
-					let response = String::from(data.get_response("nosee")) + &container.borrow().get_shortname() + data.get_response("noseeher");
+					let response = String::from(data.get_response_param("noseeh", &container.borrow().get_shortname()));
 					terminal::write_full(&response);
 				}
 			},

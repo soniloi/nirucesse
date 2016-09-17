@@ -129,17 +129,22 @@ impl Location {
 	}
 
 	pub fn remove_item_certain(&mut self, id: u32) {
-		if self.items.contains_key(&id) {
-			self.items.remove(&id);
-			return;
-		}
 		for item in self.items.values() {
 			if item.borrow().contains_item(id) {
 				item.borrow_mut().remove_item_certain(id);
 				return;
 			}
 		}
-		panic!("Data corruption seeking item [{}], fail.", id);
+		match self.items.get(&id) {
+			None => panic!("Data corruption seeking item [{}], fail.", id),
+			Some(item) => {
+				// Liquids don't get removed ONLY if they were at a location and not within a container
+				if item.borrow().is_liquid() {
+					return;
+				}
+			}
+		}
+		self.items.remove(&id);
 	}
 
 	pub fn get_shortname(&self) -> String {
