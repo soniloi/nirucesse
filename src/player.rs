@@ -219,6 +219,12 @@ impl Player {
 			return;
 		}
 
+		// Liquids require a container
+		if item.borrow().is_liquid() {
+			self.insert_portable(data, item);
+			return;
+		}
+
 		self.location.borrow_mut().remove_item_certain(item.borrow().get_id());
 		self.insert_item(item.clone());
 
@@ -236,9 +242,17 @@ impl Player {
 
 	fn drop_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		let it = self.inventory.remove_item_certain(item.borrow().get_id());
-		self.location.borrow_mut().insert_item(it);
-
 		let mut response = data.get_response("dropgood");
+
+		// When dropped, liquids drain away
+		let liquid = it.borrow().is_liquid();
+		if !liquid {
+			self.location.borrow_mut().insert_item(it);
+		} else {
+			response = data.get_response("emptliqu");
+		}
+
+		// Specific item drops
 		if item.borrow().is(::ITEM_ID_LION) {
 			let obstruction = self.location.borrow().get_obstruction();
 			match obstruction {
