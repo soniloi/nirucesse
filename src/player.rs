@@ -293,13 +293,17 @@ impl Player {
 		match within_ref {
 			None => terminal::write_full(data.get_response("emptalre")),
 			Some(within) => {
-				let item_id = item.borrow().get_id();
-				if self.inventory.contains_item(item_id) {
-					self.inventory.insert_item(within.clone());
-					terminal::write_full(&data.get_response_param("emptcarr", &within.borrow().get_shortname()));
+				if within.borrow().is_liquid() {
+					terminal::write_full(data.get_response("emptliqu"));
 				} else {
-					self.location.borrow_mut().insert_item(within.clone());
-					terminal::write_full(&data.get_response_param("emptloca", &within.borrow().get_shortname()));
+					let item_id = item.borrow().get_id();
+					if self.inventory.contains_item(item_id) {
+						self.inventory.insert_item(within.clone());
+						terminal::write_full(&data.get_response_param("emptcarr", &within.borrow().get_shortname()));
+					} else {
+						self.location.borrow_mut().insert_item(within.clone());
+						terminal::write_full(&data.get_response_param("emptloca", &within.borrow().get_shortname()));
+					}
 				}
 			},
 		}
