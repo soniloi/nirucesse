@@ -204,7 +204,7 @@ impl Player {
 	}
 
 	fn take_final(&mut self, data: &DataCollection, item: &ItemRef) {
-		if self.contains_item(item) {
+		if self.contains_item(item) && !item.borrow().is_liquid() {
 			terminal::write_full(data.get_response("takealre"));
 			return;
 		}
@@ -578,10 +578,10 @@ impl Player {
 			return;
 		}
 
-		// Make sure there is nothing already in the container
 		let within = container.borrow().get_within();
 		match within {
 			Some(it) => {
+				// Make sure there is nothing already in the container
 				if it.borrow().is(item.borrow().get_id()) {
 					terminal::write_full(data.get_response("contitem"));
 				} else {
@@ -589,20 +589,22 @@ impl Player {
 				}
 			},
 			None => {
+				// Make sure item will fit in container
 				if !container.borrow().can_accept(&item) {
 				    terminal::write_full(data.get_response("nofit"));
 				    return;
 				}
 
 				let item_id = item.borrow().get_id();
-				if self.inventory.contains_item(item_id) {
-					self.inventory.remove_item_certain(item_id);
-				} else if self.location.borrow().contains_item(item_id) {
+				let mut self_loc = self.location.borrow_mut();
+				if self_loc.contains_item(item_id) {
 					if !self.inventory.can_accept(&item) {
 						terminal::write_full(data.get_response("takeover"));
 						return;
 					}
-					self.location.borrow_mut().remove_item_certain(item_id);
+					self_loc.remove_item_certain(item_id);
+				} else if self.inventory.contains_item(item_id) {
+					self.inventory.remove_item_certain(item_id);
 				}
 				container.borrow_mut().set_within(Some(item.clone()));
 				terminal::write_full(data.get_response("insegood"));

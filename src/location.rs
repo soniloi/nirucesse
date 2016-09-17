@@ -128,20 +128,21 @@ impl Location {
 		self.items.insert(item.borrow().get_id(), item.clone());
 	}
 
+	// FIXME: clean up the flow here
 	pub fn remove_item_certain(&mut self, id: u32) {
-		for item in self.items.values() {
-			if item.borrow().contains_item(id) {
-				item.borrow_mut().remove_item_certain(id);
-				return;
-			}
-		}
 		match self.items.get(&id) {
-			None => panic!("Data corruption seeking item [{}], fail.", id),
+			None => {},
 			Some(item) => {
 				// Liquids don't get removed ONLY if they were at a location and not within a container
 				if item.borrow().is_liquid() {
 					return;
 				}
+			}
+		}
+		for item in self.items.values() {
+			if item.borrow().contains_item(id) {
+				item.borrow_mut().remove_item_certain(id);
+				return;
 			}
 		}
 		self.items.remove(&id);
