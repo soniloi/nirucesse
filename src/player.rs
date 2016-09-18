@@ -137,20 +137,19 @@ impl Player {
 		act(self, data, item);
 	}
 
-	pub fn avnarand(&mut self, data: &DataCollection) {
-		let mut self_loc = self.location.borrow_mut();
-		let mut response = data.get_response("nohappen");
-		match self_loc.get_obstruction() {
-			None => {},
-			Some(obstruction) => {
-				if obstruction.borrow().is(::ITEM_ID_ROBOT) {
-					self_loc.remove_item_certain(::ITEM_ID_ROBOT);
-					self.achievement_count = self.achievement_count + 1;
-					response = data.get_puzzle("robot");
-				}
-			},
-		}
+	fn remove_obstruction(&mut self, obstruction_id: u32, response: &str) {
+		self.location.borrow_mut().remove_item_certain(obstruction_id);
+		self.achievement_count = self.achievement_count + 1;
 		terminal::write_full(response);
+	}
+
+	pub fn avnarand(&mut self, data: &DataCollection) {
+		let robot_present = self.location.borrow().contains_item(::ITEM_ID_ROBOT);
+		if robot_present {
+			self.remove_obstruction(::ITEM_ID_ROBOT, data.get_puzzle("robot"));
+		} else {
+			terminal::write_full(data.get_response("nohappen"));
+		}
 	}
 
 	pub fn burn(&mut self, data: &DataCollection, item: &ItemRef) {
@@ -513,9 +512,7 @@ impl Player {
 
 	pub fn ignore_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if item.borrow().is(::ITEM_ID_TROLL) {
-			self.location.borrow_mut().remove_item_certain(::ITEM_ID_TROLL);
-			self.achievement_count = self.achievement_count + 1;
-			terminal::write_full(data.get_puzzle("troll"));
+			self.remove_obstruction(::ITEM_ID_TROLL, data.get_puzzle("troll"));
 		} else {
 			 terminal::write_full(data.get_response("ignogain"));
 		}
