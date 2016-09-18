@@ -160,11 +160,7 @@ impl Location {
 
 	// Return the number of treasures at this location
 	pub fn get_treasure_count(&self) -> u32 {
-		let mut result = 0;
-		for item in self.items.values() {
-			result = result + item.borrow().get_treasure_value();
-		}
-		result
+		self.items.values().fold(0, |acc, x| acc + x.borrow().get_treasure_value())
 	}
 
 	fn mk_basic_string(&self) -> String {
@@ -172,14 +168,10 @@ impl Location {
 	}
 
 	pub fn mk_full_string(&self) -> String {
-		let mut result = self.mk_basic_string();
-		result = result + &self.description + ".";
-		if !self.items.is_empty() {
-			for item in self.items.values() {
-				result = result + &item.borrow().get_locationname();
-			}
+		let mut result = self.mk_basic_string() + &self.description;
+		for item in self.items.values() {
+			result = result + &item.borrow().get_locationname();
 		}
-
 		result
 	}
 }
