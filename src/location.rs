@@ -29,7 +29,7 @@ pub struct Location {
 	shortname: String,
 	longname: String,
 	description: String,
-
+	visited: bool,
 	directions: HashMap<Direction, LocationRef>,
 	items: HashMap<u32, ItemRef>,
 }
@@ -43,6 +43,7 @@ impl Location {
 			shortname: shortname,
 			longname: longname,
 			description: description,
+			visited: false,
 			directions: HashMap::with_capacity(10),
 			items: HashMap::new(),
 		}
@@ -54,6 +55,10 @@ impl Location {
 
 	pub fn is(&self, id: u32) -> bool {
 		id == self.id
+	}
+
+	pub fn set_visited(&mut self, vis: bool) {
+		self.visited = vis;
 	}
 
 	fn has_property(&self, property: u32) -> bool {
@@ -165,6 +170,13 @@ impl Location {
 
 	fn mk_basic_string(&self) -> String {
 		String::from("You are ") + &self.longname
+	}
+
+	pub fn mk_arrival_string(&self) -> String {
+		if self.visited {
+			return self.mk_basic_string() + ".";
+		}
+		self.mk_full_string()
 	}
 
 	pub fn mk_full_string(&self) -> String {

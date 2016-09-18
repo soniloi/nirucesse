@@ -413,6 +413,7 @@ impl Player {
 		}
 
 		self.update_previous(move_success, &temp_loc);
+		self.location.borrow_mut().set_visited(true);
 	}
 
 	// Attempt to move to previous location; return true if move was successful
@@ -477,7 +478,7 @@ impl Player {
 			return false;
 		} else {
 			self.location = next.clone();
-			terminal::write_full(&self.get_effective_appearance(data, self.location.borrow().mk_full_string()));
+			terminal::write_full(&self.get_effective_appearance(data, self.location.borrow().mk_arrival_string()));
 			return true;
 		}
 	}
