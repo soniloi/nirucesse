@@ -172,18 +172,18 @@ impl Location {
 		String::from("You are ") + &self.longname
 	}
 
+	fn mk_contents_string(&self) -> String {
+		self.items.values().fold(String::new(), |acc, x| acc + &x.borrow().get_locationname())
+	}
+
 	pub fn mk_arrival_string(&self) -> String {
 		if self.visited {
-			return self.mk_basic_string() + ".";
+			return self.mk_basic_string() + "." + &self.mk_contents_string();
 		}
 		self.mk_full_string()
 	}
 
 	pub fn mk_full_string(&self) -> String {
-		let mut result = self.mk_basic_string() + &self.description;
-		for item in self.items.values() {
-			result = result + &item.borrow().get_locationname();
-		}
-		result
+		self.mk_basic_string() + &self.description + &self.mk_contents_string()
 	}
 }
