@@ -137,7 +137,7 @@ impl Player {
 		act(self, data, item);
 	}
 
-	fn remove_obstruction(&mut self, obstruction_id: u32, response: &str) {
+	fn complete_obstruction_achievement(&mut self, obstruction_id: u32, response: &str) {
 		self.location.borrow_mut().remove_item_certain(obstruction_id);
 		self.complete_achievement(response);
 	}
@@ -150,7 +150,7 @@ impl Player {
 	pub fn avnarand(&mut self, data: &DataCollection) {
 		let robot_present = self.location.borrow().contains_item(::ITEM_ID_ROBOT);
 		if robot_present {
-			self.remove_obstruction(::ITEM_ID_ROBOT, data.get_puzzle("robot"));
+			self.complete_obstruction_achievement(::ITEM_ID_ROBOT, data.get_puzzle("robot"));
 		} else {
 			terminal::write_full(data.get_response("nohappen"));
 		}
@@ -184,13 +184,12 @@ impl Player {
 					self.location.borrow_mut().remove_item_certain(item_id);
 				}
 				terminal::write_full(data.get_response("toast"));
-				let mut self_loc = self.location.borrow_mut();
-				if self_loc.is(::LOCATION_ID_AIRLOCKE) {
+				let at_airlocke = self.location.borrow().is(::LOCATION_ID_AIRLOCKE);
+				if at_airlocke {
 					let out_loc = data.get_location_certain(::LOCATION_ID_AIRLOCKEOUT);
-					self_loc.set_direction(Direction::Southwest, out_loc.clone());
-					self_loc.set_air(false);
-					self.achievement_count = self.achievement_count + 1;
-					terminal::write_full(data.get_puzzle("toastalm"));
+					self.location.borrow_mut().set_direction(Direction::Southwest, out_loc.clone());
+					self.location.borrow_mut().set_air(false);
+					self.complete_achievement(data.get_puzzle("toastalm"));
 				} else {
 					terminal::write_full(data.get_response("ashmouse"));
 				}
@@ -245,32 +244,23 @@ impl Player {
 
 	fn drop_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		let it = self.inventory.remove_item_certain(item.borrow().get_id());
-		let mut response = data.get_response("dropgood");
 
 		// When dropped, liquids drain away
 		let liquid = it.borrow().is_liquid();
 		if !liquid {
 			self.location.borrow_mut().insert_item(it);
+			terminal::write_full(data.get_response("dropgood"));
 		} else {
-			response = data.get_response("emptliqu");
+			terminal::write_full(data.get_response("emptliqu"));
 		}
 
 		// Specific item drops
 		if item.borrow().is(::ITEM_ID_LION) {
-			let obstruction = self.location.borrow().get_obstruction();
-			match obstruction {
-				None => {},
-				Some(obstruction) => {
-					if obstruction.borrow().is(::ITEM_ID_WOLF) {
-						self.location.borrow_mut().remove_item_certain(obstruction.borrow().get_id());
-						response = data.get_puzzle("lionwolf");
-						self.achievement_count = self.achievement_count + 1;
-					}
-				}
+			let wolf_present = self.location.borrow().contains_item(::ITEM_ID_WOLF);
+			if wolf_present {
+				self.complete_obstruction_achievement(::ITEM_ID_WOLF, data.get_puzzle("lionwolf"));
 			}
 		}
-
-		terminal::write_full(response);
 	}
 
 	// Describe an item in the player's inventory or at the player's location
@@ -516,7 +506,7 @@ impl Player {
 
 	pub fn ignore_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if item.borrow().is(::ITEM_ID_TROLL) {
-			self.remove_obstruction(::ITEM_ID_TROLL, data.get_puzzle("troll"));
+			self.complete_obstruction_achievement(::ITEM_ID_TROLL, data.get_puzzle("troll"));
 		} else {
 			 terminal::write_full(data.get_response("ignogain"));
 		}
@@ -707,15 +697,14 @@ impl Player {
 			terminal::write_full(&response);
 
 			if tune == data.get_response("cabbage") {
-				match self.location.borrow().get_obstruction() {
-					None => {},
-					Some(obstruction) => {
-						if obstruction.borrow().is(::ITEM_ID_LION) {
-							obstruction.borrow_mut().set_obstruction(false);
-							self.achievement_count = self.achievement_count + 1;
-							terminal::write_full(data.get_puzzle("liontune"));
-						}
-					},
+				let lion_present = self.location.borrow().contains_item(::ITEM_ID_LION);
+				if lion_present {
+					let lion = data.get_item_certain(String::from("lion")); // FIXME:
+					let lion_obstruction = lion.borrow().is_obstruction();
+					if lion_obstruction {
+						lion.borrow_mut().set_obstruction(false);
+						self.complete_achievement(data.get_puzzle("liontune"));
+					}
 				}
 			}
 		} else {
@@ -739,12 +728,10 @@ impl Player {
 		if item.borrow().is(::ITEM_ID_LAMP) {
 			terminal::write_full(data.get_response("genie"));
 		} else if item.borrow().is(::ITEM_ID_DRAGON) {
-			self.location.borrow_mut().remove_item_certain(item.borrow().get_id());
 			// FIXME: do this by ID instead of string
 			let tooth = data.get_item_certain(String::from("tooth"));
 			self.location.borrow_mut().insert_item(tooth.clone());
-			self.achievement_count = self.achievement_count + 1;
-			terminal::write_full(data.get_puzzle("dragon"));
+			self.complete_obstruction_achievement(::ITEM_ID_DRAGON, data.get_puzzle("dragon"));
 		} else {
 			terminal::write_full(data.get_response("nointere"));
 		}
