@@ -35,6 +35,7 @@ impl CommandCollection {
 		acts.insert("commands", actions::do_commands);
 		acts.insert("describe", actions::do_describe);
 		acts.insert("down", actions::do_go);
+		acts.insert("drink", actions::do_drink);
 		acts.insert("drop", actions::do_drop);
 		acts.insert("east", actions::do_go);
 		acts.insert("empty", actions::do_empty);

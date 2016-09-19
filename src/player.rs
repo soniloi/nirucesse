@@ -237,6 +237,30 @@ impl Player {
 		}
 	}
 
+	// Describe an item in the player's inventory or at the player's location
+	pub fn describe(&mut self, data: &DataCollection, item: &ItemRef) {
+		self.observe_item(data, item, Player::describe_final);
+	}
+
+	fn describe_final(&mut self, data: &DataCollection, item: &ItemRef) {
+		terminal::write_full(&item.borrow().mk_full_string(data.get_response("descstar"), data.get_response("dotend")));
+	}
+
+	pub fn drink(&mut self, data: &DataCollection, item: &ItemRef) {
+		self.manipulate_item_inventory(data, item, Player::drink_final);
+	}
+
+	fn drink_final(&mut self, data: &DataCollection, item: &ItemRef) {
+		if !item.borrow().is_liquid() {
+			terminal::write_full(data.get_response("nonodrin"));
+			return;
+		}
+
+		let item_id = item.borrow().get_id();
+		self.inventory.remove_item_certain(item_id);
+		terminal::write_full(data.get_response("drink"));
+	}
+
 	// Have player attempt to drop item from inventory to current location
 	pub fn drop(&mut self, data: &DataCollection, item: &ItemRef) {
 		self.manipulate_item_inventory(data, item, Player::drop_final);
@@ -261,15 +285,6 @@ impl Player {
 				self.complete_obstruction_achievement(::ITEM_ID_WOLF, data.get_puzzle("lionwolf"));
 			}
 		}
-	}
-
-	// Describe an item in the player's inventory or at the player's location
-	pub fn describe(&mut self, data: &DataCollection, item: &ItemRef) {
-		self.observe_item(data, item, Player::describe_final);
-	}
-
-	fn describe_final(&mut self, data: &DataCollection, item: &ItemRef) {
-		terminal::write_full(&item.borrow().mk_full_string(data.get_response("descstar"), data.get_response("dotend")));
 	}
 
 	pub fn empty(&mut self, data: &DataCollection, item: &ItemRef) {

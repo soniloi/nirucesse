@@ -22,6 +22,10 @@ pub fn do_describe(data: &DataCollection, arg: String, player: &mut Player) {
 	manipulate_item(data, arg, player, Player::describe);
 }
 
+pub fn do_drink(data: &DataCollection, arg: String, player: &mut Player) {
+	manipulate_item(data, arg, player, Player::drink);
+}
+
 pub fn do_drop(data: &DataCollection, arg: String, player: &mut Player) {
 	manipulate_item(data, arg, player, Player::drop);
 }
