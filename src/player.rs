@@ -139,6 +139,10 @@ impl Player {
 
 	fn remove_obstruction(&mut self, obstruction_id: u32, response: &str) {
 		self.location.borrow_mut().remove_item_certain(obstruction_id);
+		self.complete_achievement(response);
+	}
+
+	fn complete_achievement(&mut self, response: &str) {
 		self.achievement_count = self.achievement_count + 1;
 		terminal::write_full(response);
 	}
