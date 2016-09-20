@@ -754,16 +754,18 @@ impl Player {
 
 	pub fn tezazzle(&mut self, data: &DataCollection) {
 		let loc_id = self.location.borrow().get_id();
-		match loc_id {
-			::LOCATION_ID_TELEPORT_0 => {
-				self.location = data.get_location_certain(::LOCATION_ID_TELEPORT_1).clone();
+		let loc_next = match loc_id {
+			::LOCATION_ID_TELEPORT_0 => Some(::LOCATION_ID_TELEPORT_1),
+			::LOCATION_ID_TELEPORT_1 => Some(::LOCATION_ID_TELEPORT_0),
+			_ => None,
+		};
+		match loc_next {
+			None => terminal::write_full(data.get_response("nohappen")),
+			Some(next_id) => {
+				self.inventory.drop_all(&self.location);
+				self.location = data.get_location_certain(next_id).clone();
 				terminal::write_full(data.get_response("teleport"));
 			},
-			::LOCATION_ID_TELEPORT_1 => {
-				self.location = data.get_location_certain(::LOCATION_ID_TELEPORT_0).clone();
-				terminal::write_full(data.get_response("teleport"));
-			},
-			_ => terminal::write_full(data.get_response("nohappen")),
 		}
 	}
 

@@ -73,6 +73,13 @@ impl Inventory {
 		}
 	}
 
+	pub fn drop_all(&mut self, current_loc: &LocationRef) {
+		let removed = self.items.drain();
+		for (_, item) in removed {
+			current_loc.borrow_mut().insert_item(item.clone());
+		}
+	}
+
 	pub fn mk_string(&self) -> String {
 		let mut result = String::new();
 		if self.items.is_empty() {
