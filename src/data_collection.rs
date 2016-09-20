@@ -64,12 +64,12 @@ impl DataCollection {
 		self.commands.get(key)
 	}
 
-	pub fn get_item(&self, key: String) -> Option<&ItemRef> {
-		self.items.get(key)
+	pub fn get_item_by_name(&self, key: String) -> Option<&ItemRef> {
+		self.items.get_by_name(key)
 	}
 
-	pub fn get_item_certain(&self, key: String) -> &ItemRef {
-		match self.items.get(key.clone()) {
+	pub fn get_item_by_id_certain(&self, key: u32) -> &ItemRef {
+		match self.items.get_by_id(key.clone()) {
 			None => panic!("Error: Data collection corrupt when searching for item [{}].", key),
 			Some(item) => return item,
 		}

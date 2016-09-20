@@ -173,7 +173,7 @@ impl Player {
 				} else {
 					self.location.borrow_mut().remove_item_certain(item_id);
 				}
-				let toast = data.get_item_certain(String::from("toast"));
+				let toast = data.get_item_by_id_certain(::ITEM_ID_TOAST);
 				self.location.borrow_mut().insert_item(toast.clone());
 				terminal::write_full(data.get_response("bread"));
 			},
@@ -332,7 +332,7 @@ impl Player {
 		let indirect_str = terminal::read_question(&data.get_response_param("whatfeac", direct.borrow().get_shortname()));
 
 		// Feed food to recipient, if it exists and player is carrying it
-		match data.get_item(indirect_str[0].clone()) {
+		match data.get_item_by_name(indirect_str[0].clone()) {
 			None => terminal::write_full(data.get_response("nonowhat")),
 			Some(indirect) => {
 				let indirect_id = indirect.borrow().get_id();
@@ -352,7 +352,7 @@ impl Player {
 		let direct_str = terminal::read_question(&data.get_response_param("whatfeda", indirect.borrow().get_shortname()));
 
 		// Feed food to recipient, if it exists and player is carrying it
-		match data.get_item(direct_str[0].clone()) {
+		match data.get_item_by_name(direct_str[0].clone()) {
 			None => terminal::write_full(data.get_response("nonowhat")),
 			Some(direct) => {
 				let direct_id = direct.borrow().get_id();
@@ -549,7 +549,7 @@ impl Player {
 		let container_str = terminal::read_question(&question);
 
 		// Insert item into container, if container exists and is present
-		match data.get_item(container_str[0].clone()) {
+		match data.get_item_by_name(container_str[0].clone()) {
 			None => terminal::write_full(data.get_response("nonowhat")),
 			Some(container) => {
 				let container_id = container.borrow().get_id();
@@ -714,7 +714,7 @@ impl Player {
 			if tune == data.get_response("cabbage") {
 				let lion_present = self.location.borrow().contains_item(::ITEM_ID_LION);
 				if lion_present {
-					let lion = data.get_item_certain(String::from("lion")); // FIXME:
+					let lion = data.get_item_by_id_certain(::ITEM_ID_LION);
 					let lion_obstruction = lion.borrow().is_obstruction();
 					if lion_obstruction {
 						lion.borrow_mut().set_obstruction(false);
@@ -743,8 +743,7 @@ impl Player {
 		if item.borrow().is(::ITEM_ID_LAMP) {
 			terminal::write_full(data.get_response("genie"));
 		} else if item.borrow().is(::ITEM_ID_DRAGON) {
-			// FIXME: do this by ID instead of string
-			let tooth = data.get_item_certain(String::from("tooth"));
+			let tooth = data.get_item_by_id_certain(::ITEM_ID_TOOTH);
 			self.location.borrow_mut().insert_item(tooth.clone());
 			self.complete_obstruction_achievement(::ITEM_ID_DRAGON, data.get_puzzle("dragon"));
 		} else {

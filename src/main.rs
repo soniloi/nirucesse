@@ -45,6 +45,7 @@ pub const ITEM_ID_LION: u32 = 1045;
 pub const ITEM_ID_MATCHES: u32 = 1048;
 pub const ITEM_ID_ROBOT: u32 = 1061;
 pub const ITEM_ID_TOAST: u32 = 1069;
+pub const ITEM_ID_TOOTH: u32 = 1070;
 pub const ITEM_ID_TROLL: u32 = 1073;
 pub const ITEM_ID_WHISTLE: u32 = 1077;
 pub const ITEM_ID_WOLF: u32 = 1080;

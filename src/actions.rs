@@ -145,7 +145,7 @@ pub fn do_xyzzy(data: &DataCollection, arg: String, player: &mut Player) {
 }
 
 fn manipulate_item(data: &DataCollection, arg: String, player: &mut Player, act: ItemManipFn) {
-	match data.get_item(arg) {
+	match data.get_item_by_name(arg) {
 		None => terminal::write_full(data.get_response("nonowhat")),
 		Some(i) => act(player, data, i),
 	}

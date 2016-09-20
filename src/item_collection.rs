@@ -23,14 +23,16 @@ const ITEM_WRITING_NONE: &'static str = "0"; // String indicating that there is 
 const SEP_SECTION: &'static str = "---"; // String separating sections
 
 pub struct ItemCollection {
-	items: HashMap<String, ItemRef>,
+	items_by_id: HashMap<u32, ItemRef>,
+	items_by_name: HashMap<String, ItemRef>,
 }
 
 impl ItemCollection {
 
 	pub fn new() -> ItemCollection {
 		ItemCollection {
-			items: HashMap::new(),
+			items_by_id: HashMap::new(),
+			items_by_name: HashMap::new(),
 		}
 	}
 
@@ -74,10 +76,11 @@ impl ItemCollection {
 		};
 
 		let item = Rc::new(RefCell::new(Box::new(Item::new(id, properties, size, shortname, longname, description, writing))));
-		self.items.insert(String::from(item.borrow().get_shortname()), item.clone());
+		self.items_by_id.insert(id, item.clone());
+		self.items_by_name.insert(String::from(item.borrow().get_shortname()), item.clone());
 		for i in FILE_INDEX_ITEM_ALIAS_START..words.len() {
 			if !words[i].is_empty() {
-				self.items.insert(String::from(words[i]), item.clone());
+				self.items_by_name.insert(String::from(words[i]), item.clone());
 			}
 		}
 
@@ -92,7 +95,11 @@ impl ItemCollection {
 	  initial_loc.borrow_mut().insert_item(item);
 	}
 
-	pub fn get(&self, key: String) -> Option<&ItemRef> {
-		self.items.get(&key)
+	pub fn get_by_id(&self, key: u32) -> Option<&ItemRef> {
+		self.items_by_id.get(&key)
+	}
+
+	pub fn get_by_name(&self, key: String) -> Option<&ItemRef> {
+		self.items_by_name.get(&key)
 	}
 }
