@@ -126,6 +126,11 @@ pub fn do_score(data: &DataCollection, arg: String, player: &mut Player) {
 	terminal::write_full(&player.get_score_str(data));
 }
 
+#[allow(unused_variables)]
+pub fn do_tezazzle(data: &DataCollection, arg: String, player: &mut Player) {
+	player.tezazzle(data);
+}
+
 pub fn do_take(data: &DataCollection, arg: String, player: &mut Player) {
 	manipulate_item(data, arg, player, Player::take);
 }

@@ -33,6 +33,8 @@ pub const PENALTY_HINT: u32 = 10; // The value deducted from player's score for 
 pub const LOCATION_ID_AIRLOCKE: u32 = 31; // The airlock just off the Recreation Hub
 pub const LOCATION_ID_AIRLOCKEOUT: u32 = 36; // The area immediately outside Airlock East
 pub const LOCATION_ID_TREASURESTORE: u32 = 23; // Where the player must bring treasure to
+pub const LOCATION_ID_TELEPORT_0: u32 = 107; // Location of teleporter connected to Experiment Area
+pub const LOCATION_ID_TELEPORT_1: u32 = 128; // Location of teleporter connected to Chasm
 
 // ID numbers of specific items
 pub const ITEM_ID_BREAD: u32 = 1010;
