@@ -17,7 +17,7 @@ const FILE_INDEX_ITEM_LONGNAME: usize = 5;
 const FILE_INDEX_ITEM_DESCRIPTION: usize = 6;
 const FILE_INDEX_ITEM_WRITING: usize = 7;
 const FILE_INDEX_ITEM_ALIAS_START: usize = 8;
-//const ITEM_INDEX_START: usize = 1000; // ID numbers before this index are used for locations, everything from here on for items
+const ITEM_INDEX_START: u32 = 1000; // ID numbers before this index are used for locations, everything from here on for items
 const ITEM_WRITING_NONE: &'static str = "0"; // String indicating that there is no writing
 
 const SEP_SECTION: &'static str = "---"; // String separating sections
@@ -38,6 +38,7 @@ impl ItemCollection {
 
 	pub fn init(&mut self, buffer: &mut FileBuffer, locations: &mut LocationCollection, treasure_count: &mut u32) {
 
+		let mut initial_locations: HashMap<u32, u32> = HashMap::new();
 		let mut line = buffer.get_line();
 		while !buffer.eof() {
 			match line.as_ref() {
@@ -53,12 +54,19 @@ impl ItemCollection {
 
 					*treasure_count = *treasure_count + item.borrow().get_treasure_value();
 
-					// Point item's starting location at it
+					// Note item's starting location
 					let initial = item_parsed.1;
-					ItemCollection::set_location(locations, initial, item);
+					initial_locations.insert(item.borrow().get_id(), initial);
 				},
 			}
 			line = buffer.get_line();
+		}
+
+		for (item_id, initial_id) in initial_locations {
+			match self.get_by_id(item_id) {
+				None => panic!("Unable to find item with ID: {}", item_id),
+				Some(item) => self.set_initial(locations, item, initial_id),
+			}
 		}
 	}
 
@@ -87,12 +95,21 @@ impl ItemCollection {
 		(item, initial)
 	}
 
-	fn set_location(locations: &mut LocationCollection, initial: u32, item: ItemRef) {
-	  let initial_loc = match locations.get(initial) {
-	    None => panic!("Unable to find location with ID: {}", initial),
-	    Some(loc) => loc,
-	  };
-	  initial_loc.borrow_mut().insert_item(item);
+	fn set_initial(&self, locations: &mut LocationCollection, item: &ItemRef, initial_id: u32) {
+		// FIXME: tidy this up
+		if initial_id <= ITEM_INDEX_START {
+			let initial_loc = match locations.get(initial_id) {
+				None => panic!("Unable to find location with ID: {}", initial_id),
+				Some(loc) => loc,
+			};
+			initial_loc.borrow_mut().insert_item(item.clone());
+		} else {
+			let initial_container = match self.get_by_id(initial_id) {
+				None => panic!("Unable to find container with ID: {}", initial_id),
+				Some(container) => container,
+			};
+			initial_container.borrow_mut().set_within(Some(item.clone()));
+		}
 	}
 
 	pub fn get_by_id(&self, key: u32) -> Option<&ItemRef> {
