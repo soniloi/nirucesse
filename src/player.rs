@@ -88,7 +88,7 @@ impl Player {
 	}
 
 	pub fn drop_on_death(&mut self, safe_loc: &LocationRef) {
-		self.inventory.drop_on_death(safe_loc, &self.previous_true);
+		self.inventory.drop_all(&self.previous_true, safe_loc, true);
 	}
 
 	fn get_effective_description(&self, haze_description: String, darkness_description: String, default_description: String) -> String {
@@ -762,7 +762,7 @@ impl Player {
 		match loc_next {
 			None => terminal::write_full(data.get_response("nohappen")),
 			Some(next_id) => {
-				self.inventory.drop_all(&self.location);
+				self.inventory.drop_all(&self.location, data.get_location_safe(), false);
 				self.location = data.get_location_certain(next_id).clone();
 				terminal::write_full(data.get_response("teleport"));
 			},
