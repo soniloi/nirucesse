@@ -18,6 +18,10 @@ pub fn do_commands(data: &DataCollection, arg: String, player: &mut Player) {
 	terminal::write_full(&data.get_commands_non_secret());
 }
 
+pub fn do_cook(data: &DataCollection, arg: String, player: &mut Player) {
+	manipulate_item(data, arg, player, Player::cook);
+}
+
 pub fn do_describe(data: &DataCollection, arg: String, player: &mut Player) {
 	manipulate_item(data, arg, player, Player::describe);
 }

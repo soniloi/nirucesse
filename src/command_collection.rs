@@ -33,6 +33,7 @@ impl CommandCollection {
 		acts.insert("back", actions::do_go);
 		acts.insert("burn", actions::do_burn);
 		acts.insert("commands", actions::do_commands);
+		acts.insert("cook", actions::do_cook);
 		acts.insert("describe", actions::do_describe);
 		acts.insert("down", actions::do_go);
 		acts.insert("drink", actions::do_drink);

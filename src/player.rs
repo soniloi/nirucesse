@@ -237,6 +237,22 @@ impl Player {
 		}
 	}
 
+	pub fn cook(&mut self, data: &DataCollection, item: &ItemRef) {
+		self.manipulate_item_present(data, item, Player::cook_final);
+	}
+
+	fn cook_final(&mut self, data: &DataCollection, item: &ItemRef) {
+		if !self.location.borrow().contains_item(::ITEM_ID_CAULDRON) {
+			terminal::write_full(data.get_response("nocooker"));
+			return;
+		}
+
+		let item_id = item.borrow().get_id();
+		match item_id {
+			_ => terminal::write_full(data.get_response("nonohow")),
+		}
+	}
+
 	// Describe an item in the player's inventory or at the player's location
 	pub fn describe(&mut self, data: &DataCollection, item: &ItemRef) {
 		self.observe_item(data, item, Player::describe_final);
