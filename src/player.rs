@@ -259,6 +259,16 @@ impl Player {
 		let item_id = item.borrow().get_id();
 		self.inventory.remove_item_certain(item_id);
 		terminal::write_full(data.get_response("drink"));
+
+		match item_id {
+			::ITEM_ID_AQUA => terminal::write_full(data.get_response("drinkaqu")),
+			::ITEM_ID_WATER => terminal::write_full(data.get_response("drinkwat")),
+			::ITEM_ID_POTION => {
+				terminal::write_full(data.get_response("drinkpot"));
+				self.die(data);
+			},
+			_ => terminal::write_full(data.get_response("nohappen")),
+		}
 	}
 
 	// Have player attempt to drop item from inventory to current location
