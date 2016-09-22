@@ -22,6 +22,7 @@ pub struct Player {
 	instructions: u32, // number of instructions player has entered
 	deaths: u32, // number of times player has died
 	alive: bool,
+	strong: bool,
 }
 
 impl Player {
@@ -38,6 +39,7 @@ impl Player {
 			instructions: 0u32,
 			deaths: 0u32,
 			alive: true,
+			strong: false,
 		}
 	}
 
@@ -78,7 +80,11 @@ impl Player {
 	}
 
 	pub fn set_alive(&mut self, b: bool) {
-		self.alive = b
+		self.alive = b;
+	}
+
+	fn set_strong(&mut self, b: bool) {
+		self.strong = b;
 	}
 
 	pub fn die(&mut self, data: &DataCollection) {
@@ -297,6 +303,11 @@ impl Player {
 		match item_id {
 			::ITEM_ID_AQUA => terminal::write_full(data.get_response("drinkaqu")),
 			::ITEM_ID_WATER => terminal::write_full(data.get_response("drinkwat")),
+			::ITEM_ID_STEW => terminal::write_full(data.get_response("drinkste")),
+			::ITEM_ID_ELIXIR => {
+				self.set_strong(true);
+				terminal::write_full(data.get_response("drinkeli"));
+			}
 			::ITEM_ID_POTION => {
 				terminal::write_full(data.get_response("drinkpot"));
 				self.die(data);
