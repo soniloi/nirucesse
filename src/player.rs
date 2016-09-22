@@ -248,14 +248,25 @@ impl Player {
 		}
 
 		let cauldron = data.get_item_by_id_certain(::ITEM_ID_CAULDRON);
+		if !cauldron.borrow().is_empty() {
+		        terminal::write_full(data.get_response("caulfull"));
+		        return;
+		}
+
 		let item_id = item.borrow().get_id();
 		match item_id {
+			::ITEM_ID_KOHLRABI => {
+			        self.inventory.remove_item_certain(::ITEM_ID_KOHLRABI);
+			        let stew = data.get_item_by_id_certain(::ITEM_ID_STEW);
+			        cauldron.borrow_mut().set_within(Some(stew.clone()));
+			        terminal::write_full(data.get_response("cabbcook"));
+			},
 			::ITEM_ID_RADISHES => {
 				self.inventory.remove_item_certain(::ITEM_ID_RADISHES);
 				let elixir = data.get_item_by_id_certain(::ITEM_ID_ELIXIR);
 				cauldron.borrow_mut().set_within(Some(elixir.clone()));
 				terminal::write_full(data.get_puzzle("radicook"));
-			}
+			},
 			_ => terminal::write_full(data.get_response("nonohow")),
 		}
 	}

@@ -49,6 +49,7 @@ pub const ITEM_ID_MATCHES: u32 = 1048;
 pub const ITEM_ID_POTION: u32 = 1059;
 pub const ITEM_ID_RADISHES: u32 = 1060;
 pub const ITEM_ID_ROBOT: u32 = 1061;
+pub const ITEM_ID_STEW: u32 = 1115;
 pub const ITEM_ID_TOAST: u32 = 1069;
 pub const ITEM_ID_TOOTH: u32 = 1070;
 pub const ITEM_ID_TROLL: u32 = 1073;

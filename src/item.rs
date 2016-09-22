@@ -302,6 +302,13 @@ impl Item {
 		}
 	}
 
+	pub fn is_empty(&self) -> bool {
+		match self.within {
+			None => true,
+			_ => false,
+		}
+	}
+
 	pub fn get_within(&self) -> Option<ItemRef> {
 		self.within.clone()
 	}
