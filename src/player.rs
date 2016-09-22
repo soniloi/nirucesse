@@ -247,8 +247,15 @@ impl Player {
 			return;
 		}
 
+		let cauldron = data.get_item_by_id_certain(::ITEM_ID_CAULDRON);
 		let item_id = item.borrow().get_id();
 		match item_id {
+			::ITEM_ID_RADISHES => {
+				self.inventory.remove_item_certain(::ITEM_ID_RADISHES);
+				let elixir = data.get_item_by_id_certain(::ITEM_ID_ELIXIR);
+				cauldron.borrow_mut().set_within(Some(elixir.clone()));
+				terminal::write_full(data.get_puzzle("radicook"));
+			}
 			_ => terminal::write_full(data.get_response("nonohow")),
 		}
 	}
