@@ -424,8 +424,7 @@ impl Player {
 
 		// Cannot feed non-feedable items
 		if !indirect.borrow().is_recipient() {
-			let response = String::from(data.get_response("thestar")) + indirect.borrow().get_shortname() + data.get_response("nofeed");
-			terminal::write_full(&response);
+			terminal::write_full(&data.get_response_param("nofeed", indirect.borrow().get_shortname()));
 			return;
 		}
 
@@ -600,8 +599,7 @@ impl Player {
 		}
 
 		// Find out what player wants to insert it into
-		let question = String::from(data.get_response("whatinse")) + item.borrow().get_shortname() + data.get_response("intoendq");
-		let container_str = terminal::read_question(&question);
+		let container_str = terminal::read_question(&data.get_response_param("whatinse", item.borrow().get_shortname()));
 
 		// Insert item into container, if container exists and is present
 		match data.get_item_by_name(container_str[0].clone()) {
@@ -611,8 +609,7 @@ impl Player {
 				if self.inventory.contains_item(container_id) || self.location.borrow().contains_item(container_id) {
 					self.insert_final(data, item, container)
 				} else {
-					let response = String::from(data.get_response_param("noseeh", &container.borrow().get_shortname()));
-					terminal::write_full(&response);
+					terminal::write_full(&data.get_response_param("noseeh", container.borrow().get_shortname()));
 				}
 			},
 		}
@@ -763,8 +760,7 @@ impl Player {
 		if item.borrow().is(::ITEM_ID_WHISTLE) {
 			let tune_words = terminal::read_question(data.get_response("whatplay"));
 			let tune = &tune_words[0];
-			let response = String::from(data.get_response("playstar")) + tune + data.get_response("playend");
-			terminal::write_full(&response);
+			terminal::write_full(&data.get_response_param("playwhis", tune));
 
 			if tune == data.get_response("cabbage") {
 				let lion_present = self.location.borrow().contains_item(::ITEM_ID_LION);
