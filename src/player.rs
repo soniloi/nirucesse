@@ -153,6 +153,22 @@ impl Player {
 		terminal::write_full(response);
 	}
 
+	pub fn attack(&mut self, data: &DataCollection, item: &ItemRef) {
+		self.manipulate_item_present(data, item, Player::attack_final);
+	}
+
+	fn attack_final(&mut self, data: &DataCollection, item: &ItemRef) {
+		let item_id = item.borrow().get_id();
+		match item_id {
+			::ITEM_ID_DOGS | ::ITEM_ID_DRAGON | ::ITEM_ID_LION | ::ITEM_ID_WOLF => {
+				terminal::write_full(data.get_response("nowiseat"))
+			},
+			_ => {
+				terminal::write_full(data.get_response("nonohow"));
+			},
+		}
+	}
+
 	pub fn avnarand(&mut self, data: &DataCollection) {
 		let robot_present = self.location.borrow().contains_item(::ITEM_ID_ROBOT);
 		if robot_present {
@@ -199,10 +215,10 @@ impl Player {
 				} else {
 					terminal::write_full(data.get_response("ashmouse"));
 				}
-			}
+			},
 			_ => {
 				terminal::write_full(data.get_response("nonohow"));
-			}
+			},
 		}
 	}
 

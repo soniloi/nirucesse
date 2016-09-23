@@ -4,6 +4,10 @@ use player::Player;
 
 use terminal;
 
+pub fn do_attack(data: &DataCollection, arg: String, player: &mut Player) {
+	manipulate_item(data, arg, player, Player::attack);
+}
+
 #[allow(unused_variables)]
 pub fn do_avnarand(data: &DataCollection, arg: String, player: &mut Player) {
 	player.avnarand(data);
