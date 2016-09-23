@@ -38,9 +38,11 @@ pub const LOCATION_ID_TELEPORT_1: u32 = 128; // Location of teleporter connected
 
 // ID numbers of specific items
 pub const ITEM_ID_AQUA: u32 = 1084;
+pub const ITEM_ID_BOULDER: u32 = 1008;
 pub const ITEM_ID_BREAD: u32 = 1010;
 pub const ITEM_ID_CAULDRON: u32 = 1018;
 pub const ITEM_ID_DOGS: u32 = 1026;
+pub const ITEM_ID_DUST: u32 = 1092;
 pub const ITEM_ID_DRAGON: u32 = 1027;
 pub const ITEM_ID_ELIXIR: u32 = 1028;
 pub const ITEM_ID_KOHLRABI: u32 = 1042;

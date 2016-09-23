@@ -83,10 +83,6 @@ impl Player {
 		self.alive = b;
 	}
 
-	fn set_strong(&mut self, b: bool) {
-		self.strong = b;
-	}
-
 	pub fn die(&mut self, data: &DataCollection) {
 		self.set_alive(false);
 		self.increment_deaths();
@@ -163,6 +159,15 @@ impl Player {
 			::ITEM_ID_DOGS | ::ITEM_ID_DRAGON | ::ITEM_ID_LION | ::ITEM_ID_WOLF => {
 				terminal::write_full(data.get_response("nowiseat"))
 			},
+			::ITEM_ID_BOULDER => {
+				if self.strong {
+					self.complete_obstruction_achievement(::ITEM_ID_BOULDER, data.get_puzzle("bouldpul"));
+					self.location.borrow_mut().insert_item(data.get_item_by_id_certain(::ITEM_ID_DUST).clone());
+					self.strong = false;
+				} else {
+					terminal::write_full(data.get_response("bouldatt"));
+				}
+			}
 			_ => {
 				terminal::write_full(data.get_response("nonohow"));
 			},
@@ -321,7 +326,7 @@ impl Player {
 			::ITEM_ID_WATER => terminal::write_full(data.get_response("drinkwat")),
 			::ITEM_ID_STEW => terminal::write_full(data.get_response("drinkste")),
 			::ITEM_ID_ELIXIR => {
-				self.set_strong(true);
+				self.strong = true;
 				terminal::write_full(data.get_response("drinkeli"));
 			}
 			::ITEM_ID_POTION => {
