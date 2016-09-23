@@ -1,6 +1,7 @@
 use rand;
 use rand::Rng;
 
+use constants;
 use data_collection::DataCollection;
 use data_collection::ItemRef;
 use data_collection::LocationRef;
@@ -156,13 +157,13 @@ impl Player {
 	fn attack_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
 		match item_id {
-			::ITEM_ID_DOGS | ::ITEM_ID_DRAGON | ::ITEM_ID_LION | ::ITEM_ID_WOLF => {
+			constants::ITEM_ID_DOGS | constants::ITEM_ID_DRAGON | constants::ITEM_ID_LION | constants::ITEM_ID_WOLF => {
 				terminal::write_full(data.get_response("nowiseat"))
 			},
-			::ITEM_ID_BOULDER => {
+			constants::ITEM_ID_BOULDER => {
 				if self.strong {
-					self.complete_obstruction_achievement(::ITEM_ID_BOULDER, data.get_puzzle("bouldpul"));
-					self.location.borrow_mut().insert_item(data.get_item_by_id_certain(::ITEM_ID_DUST).clone());
+					self.complete_obstruction_achievement(constants::ITEM_ID_BOULDER, data.get_puzzle("bouldpul"));
+					self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_DUST).clone());
 					self.strong = false;
 				} else {
 					terminal::write_full(data.get_response("bouldatt"));
@@ -175,9 +176,9 @@ impl Player {
 	}
 
 	pub fn avnarand(&mut self, data: &DataCollection) {
-		let robot_present = self.location.borrow().contains_item(::ITEM_ID_ROBOT);
+		let robot_present = self.location.borrow().contains_item(constants::ITEM_ID_ROBOT);
 		if robot_present {
-			self.complete_obstruction_achievement(::ITEM_ID_ROBOT, data.get_puzzle("robot"));
+			self.complete_obstruction_achievement(constants::ITEM_ID_ROBOT, data.get_puzzle("robot"));
 		} else {
 			terminal::write_full(data.get_response("nohappen"));
 		}
@@ -188,32 +189,32 @@ impl Player {
 	}
 
 	fn burn_final(&mut self, data: &DataCollection, item: &ItemRef) {
-		if !self.inventory.contains_item(::ITEM_ID_MATCHES) {
+		if !self.inventory.contains_item(constants::ITEM_ID_MATCHES) {
 			terminal::write_full(data.get_response("nomatch"));
 			return;
 		}
 		let item_id = item.borrow().get_id();
 		match item_id {
-			::ITEM_ID_BREAD => {
+			constants::ITEM_ID_BREAD => {
 				if self.inventory.contains_item(item_id) {
 					self.inventory.remove_item_certain(item_id);
 				} else {
 					self.location.borrow_mut().remove_item_certain(item_id);
 				}
-				let toast = data.get_item_by_id_certain(::ITEM_ID_TOAST);
+				let toast = data.get_item_by_id_certain(constants::ITEM_ID_TOAST);
 				self.location.borrow_mut().insert_item(toast.clone());
 				terminal::write_full(data.get_response("bread"));
 			},
-			::ITEM_ID_TOAST => {
+			constants::ITEM_ID_TOAST => {
 				if self.inventory.contains_item(item_id) {
 					self.inventory.remove_item_certain(item_id);
 				} else {
 					self.location.borrow_mut().remove_item_certain(item_id);
 				}
 				terminal::write_full(data.get_response("toast"));
-				let at_airlocke = self.location.borrow().is(::LOCATION_ID_AIRLOCKE);
+				let at_airlocke = self.location.borrow().is(constants::LOCATION_ID_AIRLOCKE);
 				if at_airlocke {
-					let out_loc = data.get_location_certain(::LOCATION_ID_AIRLOCKEOUT);
+					let out_loc = data.get_location_certain(constants::LOCATION_ID_AIRLOCKEOUT);
 					self.location.borrow_mut().set_direction(Direction::Southwest, out_loc.clone());
 					self.location.borrow_mut().set_air(false);
 					self.complete_achievement(data.get_puzzle("toastalm"));
@@ -269,12 +270,12 @@ impl Player {
 	}
 
 	fn cook_final(&mut self, data: &DataCollection, item: &ItemRef) {
-		if !self.location.borrow().contains_item(::ITEM_ID_CAULDRON) {
+		if !self.location.borrow().contains_item(constants::ITEM_ID_CAULDRON) {
 			terminal::write_full(data.get_response("nocooker"));
 			return;
 		}
 
-		let cauldron = data.get_item_by_id_certain(::ITEM_ID_CAULDRON);
+		let cauldron = data.get_item_by_id_certain(constants::ITEM_ID_CAULDRON);
 		if !cauldron.borrow().is_empty() {
 		        terminal::write_full(data.get_response("caulfull"));
 		        return;
@@ -282,15 +283,15 @@ impl Player {
 
 		let item_id = item.borrow().get_id();
 		match item_id {
-			::ITEM_ID_KOHLRABI => {
-			        self.inventory.remove_item_certain(::ITEM_ID_KOHLRABI);
-			        let stew = data.get_item_by_id_certain(::ITEM_ID_STEW);
+			constants::ITEM_ID_KOHLRABI => {
+			        self.inventory.remove_item_certain(constants::ITEM_ID_KOHLRABI);
+			        let stew = data.get_item_by_id_certain(constants::ITEM_ID_STEW);
 			        cauldron.borrow_mut().set_within(Some(stew.clone()));
 			        terminal::write_full(data.get_response("cabbcook"));
 			},
-			::ITEM_ID_RADISHES => {
-				self.inventory.remove_item_certain(::ITEM_ID_RADISHES);
-				let elixir = data.get_item_by_id_certain(::ITEM_ID_ELIXIR);
+			constants::ITEM_ID_RADISHES => {
+				self.inventory.remove_item_certain(constants::ITEM_ID_RADISHES);
+				let elixir = data.get_item_by_id_certain(constants::ITEM_ID_ELIXIR);
 				cauldron.borrow_mut().set_within(Some(elixir.clone()));
 				terminal::write_full(data.get_puzzle("radicook"));
 			},
@@ -322,14 +323,14 @@ impl Player {
 		terminal::write_full(data.get_response("drink"));
 
 		match item_id {
-			::ITEM_ID_AQUA => terminal::write_full(data.get_response("drinkaqu")),
-			::ITEM_ID_WATER => terminal::write_full(data.get_response("drinkwat")),
-			::ITEM_ID_STEW => terminal::write_full(data.get_response("drinkste")),
-			::ITEM_ID_ELIXIR => {
+			constants::ITEM_ID_AQUA => terminal::write_full(data.get_response("drinkaqu")),
+			constants::ITEM_ID_WATER => terminal::write_full(data.get_response("drinkwat")),
+			constants::ITEM_ID_STEW => terminal::write_full(data.get_response("drinkste")),
+			constants::ITEM_ID_ELIXIR => {
 				self.strong = true;
 				terminal::write_full(data.get_response("drinkeli"));
 			}
-			::ITEM_ID_POTION => {
+			constants::ITEM_ID_POTION => {
 				terminal::write_full(data.get_response("drinkpot"));
 				self.die(data);
 			},
@@ -355,10 +356,10 @@ impl Player {
 		}
 
 		// Specific item drops
-		if item.borrow().is(::ITEM_ID_LION) {
-			let wolf_present = self.location.borrow().contains_item(::ITEM_ID_WOLF);
+		if item.borrow().is(constants::ITEM_ID_LION) {
+			let wolf_present = self.location.borrow().contains_item(constants::ITEM_ID_WOLF);
 			if wolf_present {
-				self.complete_obstruction_achievement(::ITEM_ID_WOLF, data.get_puzzle("lionwolf"));
+				self.complete_obstruction_achievement(constants::ITEM_ID_WOLF, data.get_puzzle("lionwolf"));
 			}
 		}
 	}
@@ -450,10 +451,10 @@ impl Player {
 		}
 
 		// The lion's reactions when we attempt to feed her various things
-		if indirect.borrow().is(::ITEM_ID_LION) {
+		if indirect.borrow().is(constants::ITEM_ID_LION) {
 			if direct.borrow().is_edible() {
 				self.inventory.remove_item_certain(direct.borrow().get_id());
-				if direct.borrow().is(::ITEM_ID_KOHLRABI) {
+				if direct.borrow().is(constants::ITEM_ID_KOHLRABI) {
 					terminal::write_full(data.get_response("lionkill"));
 					self.die(data);
 				} else {
@@ -463,7 +464,7 @@ impl Player {
 			}
 		}
 
-		if indirect.borrow().is(::ITEM_ID_TROLL) {
+		if indirect.borrow().is(constants::ITEM_ID_TROLL) {
 			if direct.borrow().is_edible() {
 				self.inventory.remove_item_certain(direct.borrow().get_id());
 				terminal::write_full(data.get_response("trolled"));
@@ -595,8 +596,8 @@ impl Player {
 	}
 
 	pub fn ignore_final(&mut self, data: &DataCollection, item: &ItemRef) {
-		if item.borrow().is(::ITEM_ID_TROLL) {
-			self.complete_obstruction_achievement(::ITEM_ID_TROLL, data.get_puzzle("troll"));
+		if item.borrow().is(constants::ITEM_ID_TROLL) {
+			self.complete_obstruction_achievement(constants::ITEM_ID_TROLL, data.get_puzzle("troll"));
 		} else {
 			 terminal::write_full(data.get_response("ignogain"));
 		}
@@ -741,10 +742,10 @@ impl Player {
 	}
 
 	fn calculate_score(&self, data: &DataCollection) -> u32 {
-		let treasure_score = data.get_stowed_treasure_count() * ::SCORE_TREASURE;
-		let achievement_score = self.achievement_count * ::SCORE_PUZZLE;
-		let death_penalty = (self.deaths * ::PENALTY_DEATH) as i32 * -1;
-		let hint_penalty = (self.hints * ::PENALTY_HINT) as i32 * -1;
+		let treasure_score = data.get_stowed_treasure_count() * constants::SCORE_TREASURE;
+		let achievement_score = self.achievement_count * constants::SCORE_PUZZLE;
+		let death_penalty = (self.deaths * constants::PENALTY_DEATH) as i32 * -1;
+		let hint_penalty = (self.hints * constants::PENALTY_HINT) as i32 * -1;
 		let total_score = treasure_score as i32 + achievement_score as i32 + death_penalty + hint_penalty;
 		if total_score < 0 {0} else {total_score as u32}
 	}
@@ -778,15 +779,15 @@ impl Player {
 	}
 
 	fn play_final(&mut self, data: &DataCollection, item: &ItemRef) {
-		if item.borrow().is(::ITEM_ID_WHISTLE) {
+		if item.borrow().is(constants::ITEM_ID_WHISTLE) {
 			let tune_words = terminal::read_question(data.get_response("whatplay"));
 			let tune = &tune_words[0];
 			terminal::write_full(&data.get_response_param("playwhis", tune));
 
 			if tune == data.get_response("cabbage") {
-				let lion_present = self.location.borrow().contains_item(::ITEM_ID_LION);
+				let lion_present = self.location.borrow().contains_item(constants::ITEM_ID_LION);
 				if lion_present {
-					let lion = data.get_item_by_id_certain(::ITEM_ID_LION);
+					let lion = data.get_item_by_id_certain(constants::ITEM_ID_LION);
 					let lion_obstruction = lion.borrow().is_obstruction();
 					if lion_obstruction {
 						lion.borrow_mut().set_obstruction(false);
@@ -812,12 +813,12 @@ impl Player {
 	}
 
 	fn rub_final(&mut self, data: &DataCollection, item: &ItemRef) {
-		if item.borrow().is(::ITEM_ID_LAMP) {
+		if item.borrow().is(constants::ITEM_ID_LAMP) {
 			terminal::write_full(data.get_response("genie"));
-		} else if item.borrow().is(::ITEM_ID_DRAGON) {
-			let tooth = data.get_item_by_id_certain(::ITEM_ID_TOOTH);
+		} else if item.borrow().is(constants::ITEM_ID_DRAGON) {
+			let tooth = data.get_item_by_id_certain(constants::ITEM_ID_TOOTH);
 			self.location.borrow_mut().insert_item(tooth.clone());
-			self.complete_obstruction_achievement(::ITEM_ID_DRAGON, data.get_puzzle("dragon"));
+			self.complete_obstruction_achievement(constants::ITEM_ID_DRAGON, data.get_puzzle("dragon"));
 		} else {
 			terminal::write_full(data.get_response("nointere"));
 		}
@@ -826,8 +827,8 @@ impl Player {
 	pub fn tezazzle(&mut self, data: &DataCollection) {
 		let loc_id = self.location.borrow().get_id();
 		let loc_next = match loc_id {
-			::LOCATION_ID_TELEPORT_0 => Some(::LOCATION_ID_TELEPORT_1),
-			::LOCATION_ID_TELEPORT_1 => Some(::LOCATION_ID_TELEPORT_0),
+			constants::LOCATION_ID_TELEPORT_0 => Some(constants::LOCATION_ID_TELEPORT_1),
+			constants::LOCATION_ID_TELEPORT_1 => Some(constants::LOCATION_ID_TELEPORT_0),
 			_ => None,
 		};
 		match loc_next {

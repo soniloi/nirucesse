@@ -1,6 +1,7 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
+use constants;
 use file_buffer::FileBuffer;
 use command::Command;
 use command_collection::CommandCollection;
@@ -57,7 +58,7 @@ impl DataCollection {
 		self.events.init(&mut buffer);
 
 		let achievement_count: u32 = self.puzzles.count_strings();
-		self.max_score = treasure_count * ::SCORE_TREASURE + achievement_count * ::SCORE_PUZZLE;
+		self.max_score = treasure_count * constants::SCORE_TREASURE + achievement_count * constants::SCORE_PUZZLE;
 	}
 
 	pub fn get_command(&self, key: String) -> Option<&Rc<Box<Command>>> {
@@ -140,7 +141,7 @@ impl DataCollection {
 	}
 
 	pub fn get_stowed_treasure_count(&self) -> u32 {
-		let stowed_location = self.get_location_certain(::LOCATION_ID_TREASURESTORE);
+		let stowed_location = self.get_location_certain(constants::LOCATION_ID_TREASURESTORE);
 		stowed_location.borrow().get_treasure_count()
 	}
 
