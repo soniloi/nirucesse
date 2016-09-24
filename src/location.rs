@@ -130,6 +130,7 @@ impl Location {
 	}
 
 	pub fn insert_item(&mut self, item: ItemRef) {
+		item.borrow_mut().set_location(self.id);
 		self.items.insert(item.borrow().get_id(), item.clone());
 	}
 

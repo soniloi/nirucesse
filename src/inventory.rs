@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use constants;
 use data_collection::ItemRef;
 use data_collection::LocationRef;
 
@@ -34,6 +35,7 @@ impl Inventory {
 	}
 
 	pub fn insert_item(&mut self, item: ItemRef) {
+		item.borrow_mut().set_location(constants::LOCATION_ID_INVENTORY);
 		self.items.insert(item.borrow().get_id(), item.clone());
 	}
 
