@@ -83,7 +83,7 @@ impl ItemCollection {
 			writ => Some(String::from(writ)),
 		};
 
-		let item = Rc::new(RefCell::new(Box::new(Item::new(id, properties, size, shortname, longname, description, writing))));
+		let item = Rc::new(RefCell::new(Box::new(Item::new(id, properties, size, shortname, longname, description, writing, initial))));
 		self.items_by_id.insert(id, item.clone());
 		self.items_by_name.insert(String::from(item.borrow().get_shortname()), item.clone());
 		for i in FILE_INDEX_ITEM_ALIAS_START..words.len() {

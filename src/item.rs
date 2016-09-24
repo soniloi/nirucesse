@@ -25,13 +25,14 @@ pub struct Item {
 	longname: String,
 	description: String,
 	writing: Option<String>,
+	location: u32,
 	on: bool,
 	within: Option<ItemRef>,
 }
 
 impl Item {
 
-	pub fn new(id: u32, properties: u32, size: u32, shortname: String, longname: String, description: String, writing: Option<String>) -> Item {
+	pub fn new(id: u32, properties: u32, size: u32, shortname: String, longname: String, description: String, writing: Option<String>, location: u32) -> Item {
 		Item {
 			id: id,
 			properties: properties,
@@ -40,6 +41,7 @@ impl Item {
 			longname: longname,
 			description: description,
 			writing: writing,
+			location: location,
 			on: false,
 			within: None,
 		}
@@ -65,6 +67,10 @@ impl Item {
 			None => false,
 			Some(within) => within.borrow().is_or_contains_item(id),
 		}
+	}
+
+	pub fn set_location(&mut self, loc: u32) {
+		self.location = loc;
 	}
 
 	fn has_property(&self, property: u32) -> bool {
@@ -314,6 +320,10 @@ impl Item {
 	}
 
 	pub fn set_within(&mut self, within: Option<ItemRef>) {
+		match within.clone() {
+			None => {},
+			Some(with) => with.borrow_mut().set_location(self.id),
+		}
 		self.within = within;
 	}
 
