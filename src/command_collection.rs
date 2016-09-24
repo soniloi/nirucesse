@@ -60,6 +60,7 @@ impl CommandCollection {
 		acts.insert("read", actions::do_read);
 		acts.insert("rub", actions::do_rub);
 		acts.insert("score", actions::do_score);
+		acts.insert("sleep", actions::do_sleep);
 		acts.insert("south", actions::do_go);
 		acts.insert("southeast", actions::do_go);
 		acts.insert("southwest", actions::do_go);

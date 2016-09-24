@@ -135,6 +135,11 @@ pub fn do_score(data: &DataCollection, arg: String, player: &mut Player) {
 }
 
 #[allow(unused_variables)]
+pub fn do_sleep(data: &DataCollection, arg: String, player: &mut Player) {
+	player.sleep(data);
+}
+
+#[allow(unused_variables)]
 pub fn do_tezazzle(data: &DataCollection, arg: String, player: &mut Player) {
 	player.tezazzle(data);
 }

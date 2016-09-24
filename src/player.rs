@@ -824,6 +824,23 @@ impl Player {
 		}
 	}
 
+	pub fn sleep(&mut self, data: &DataCollection) {
+		let loc_id = self.location.borrow().get_id();
+		let loc_next = match loc_id {
+			constants::LOCATION_ID_SLEEP_0 => Some(constants::LOCATION_ID_SLEEP_1),
+			constants::LOCATION_ID_SLEEP_2 => Some(constants::LOCATION_ID_SLEEP_0),
+			_ => None,
+		};
+		match loc_next {
+			None => terminal::write_full(data.get_response("sleepno")),
+			Some(next_id) => {
+				self.inventory.drop_all(&self.location, data.get_location_safe(), false);
+				self.location = data.get_location_certain(next_id).clone();
+				terminal::write_full(data.get_response("sleep"));
+			},
+		}
+	}
+
 	pub fn tezazzle(&mut self, data: &DataCollection) {
 		let loc_id = self.location.borrow().get_id();
 		let loc_next = match loc_id {
