@@ -4,6 +4,10 @@ pub const SCORE_TREASURE: u32 = 10; // The score the player gets for each treasu
 pub const PENALTY_DEATH: u32 = 25; // The value deducted from player's score for every death
 pub const PENALTY_HINT: u32 = 10; // The value deducted from player's score for every hint they request
 
+// Turn bounds
+pub const MAX_MOVES_EVENT: u32 = 200; // Random events will all be printed by the time this number of instructions entered
+pub const MIN_MOVES_EVENT: u32 = 15; // Random events will not be printed before this number of instructions entered
+
 // ID numbers of specific locations
 pub const LOCATION_ID_AIRLOCKE: u32 = 31; // The airlock just off the Recreation Hub
 pub const LOCATION_ID_AIRLOCKEOUT: u32 = 36; // The area immediately outside Airlock East

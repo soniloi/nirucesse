@@ -1,4 +1,7 @@
 use std::cell::RefCell;
+use std::collections::HashMap;
+use rand;
+use rand::distributions::{IndependentSample, Range};
 use std::rc::Rc;
 
 use constants;
@@ -27,6 +30,7 @@ pub struct DataCollection {
 	responses: StringCollection,
 	puzzles: StringCollection,
 	events: StringCollection,
+	event_turns: HashMap<u32, String>,
 	max_score: u32,
 }
 
@@ -42,6 +46,7 @@ impl DataCollection {
 			responses: StringCollection::new(),
 			puzzles: StringCollection::new(),
 			events: StringCollection::new(),
+			event_turns: HashMap::new(),
 			max_score: 0u32,
 		}
 	}
@@ -57,8 +62,25 @@ impl DataCollection {
 		self.puzzles.init(&mut buffer);
 		self.events.init(&mut buffer);
 
+		self.init_event_turns();
 		let achievement_count: u32 = self.puzzles.count_strings();
 		self.max_score = treasure_count * constants::SCORE_TREASURE + achievement_count * constants::SCORE_PUZZLE;
+	}
+
+	// Assign a turn for an event to be printed on
+	fn init_event_turns(&mut self) {
+		let turn_bounds = Range::new(constants::MIN_MOVES_EVENT, constants::MAX_MOVES_EVENT);
+		let mut rng = rand::thread_rng();
+		let event_keys = self.events.get_keys();
+		for event_key in event_keys {
+			loop {
+				let event_turn = turn_bounds.ind_sample(&mut rng);
+				if !self.event_turns.contains_key(&event_turn) {
+					self.event_turns.insert(event_turn, String::from(event_key));
+					break;
+				}
+			}
+		}
 	}
 
 	pub fn get_command(&self, key: String) -> Option<&Rc<Box<Command>>> {

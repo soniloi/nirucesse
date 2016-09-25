@@ -47,6 +47,14 @@ impl StringCollection {
 		self.strings.len() as u32
 	}
 
+	pub fn get_keys(&self) -> Vec<&str> {
+		let mut result: Vec<&str> = Vec::new();
+		for key in self.strings.keys() {
+			result.push(key);
+		}
+		result
+	}
+
 	// Return a String Option
 	pub fn get_uncertain(&self, key: &str) -> Option<&String> {
 		self.strings.get(&String::from(key))
