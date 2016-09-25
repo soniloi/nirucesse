@@ -754,6 +754,10 @@ impl Player {
 		self.hints = self.hints + 1;
 	}
 
+	pub fn get_instructions(&self) -> u32 {
+		self.instructions
+	}
+
 	pub fn increment_instructions(&mut self) {
 		self.instructions = self.instructions + 1;
 	}

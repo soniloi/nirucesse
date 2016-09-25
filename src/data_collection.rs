@@ -150,8 +150,11 @@ impl DataCollection {
 		self.puzzles.get_certain(key)
 	}
 
-	pub fn get_event(&self, key: &str) -> Option<&String> {
-		self.events.get_uncertain(key)
+	pub fn get_event(&self, turn: u32) -> Option<&str> {
+		match self.event_turns.get(&turn) {
+			None => None,
+			Some(event_turn) => Some(self.events.get_certain(&event_turn)),
+		}
 	}
 
 	pub fn get_commands_non_secret(&self) -> String {

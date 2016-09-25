@@ -37,6 +37,11 @@ impl Game {
 				self.player.drop_on_death(self.data.get_location_safe());
 				self.process_reincarnation();
 			}
+
+			match self.data.get_event(self.player.get_instructions()) {
+				None => {},
+				Some(event) => terminal::write_full(event),
+			}
 		}
 	}
 
