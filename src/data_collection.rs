@@ -98,10 +98,6 @@ impl DataCollection {
 		}
 	}
 
-	pub fn get_location(&self, key: u32) -> Option<&LocationRef> {
-		self.locations.get(key)
-	}
-
 	pub fn get_location_certain(&self, key: u32) -> &LocationRef {
 		match self.locations.get(key) {
 			None => panic!("Error: Data collection corrupt when searching for location [{}].", key),
