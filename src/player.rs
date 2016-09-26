@@ -854,6 +854,7 @@ impl Player {
 			Some(next_id) => {
 				self.inventory.drop_all(&self.location, data.get_location_safe(), false);
 				self.location = data.get_location_certain(next_id).clone();
+				self.previous = None;
 				terminal::write_full(data.get_response("sleep"));
 			},
 		}
@@ -871,6 +872,7 @@ impl Player {
 			Some(next_id) => {
 				self.inventory.drop_all(&self.location, data.get_location_safe(), false);
 				self.location = data.get_location_certain(next_id).clone();
+				self.previous = None;
 				terminal::write_full(data.get_response("teleport"));
 			},
 		}
