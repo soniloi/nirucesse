@@ -28,6 +28,7 @@ pub const ITEM_ID_DOGS: u32 = 1026;
 pub const ITEM_ID_DUST: u32 = 1092;
 pub const ITEM_ID_DRAGON: u32 = 1027;
 pub const ITEM_ID_ELIXIR: u32 = 1028;
+pub const ITEM_ID_FAIRY: u32 = 1030;
 pub const ITEM_ID_KOHLRABI: u32 = 1042;
 pub const ITEM_ID_LAMP: u32 = 1043;
 pub const ITEM_ID_LION: u32 = 1045;

@@ -18,6 +18,11 @@ pub fn do_burn(data: &DataCollection, arg: String, player: &mut Player) {
 }
 
 #[allow(unused_variables)]
+pub fn do_chimbu(data: &DataCollection, arg: String, player: &mut Player) {
+	player.chimbu(data);
+}
+
+#[allow(unused_variables)]
 pub fn do_commands(data: &DataCollection, arg: String, player: &mut Player) {
 	terminal::write_full(&data.get_commands_non_secret());
 }

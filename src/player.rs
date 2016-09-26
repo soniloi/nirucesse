@@ -228,6 +228,15 @@ impl Player {
 		}
 	}
 
+	pub fn chimbu(&mut self, data: &DataCollection) {
+		let fairy_present = self.location.borrow().contains_item(constants::ITEM_ID_FAIRY);
+		if fairy_present {
+			self.complete_obstruction_achievement(constants::ITEM_ID_FAIRY, data.get_puzzle("fairy"));
+		} else {
+			terminal::write_full(data.get_response("nohappen"));
+		}
+	}
+
 	// Have player attempt to pick up item from current location
 	pub fn take(&mut self, data: &DataCollection, item: &ItemRef) {
 		self.manipulate_item_present(data, item, Player::take_final);
