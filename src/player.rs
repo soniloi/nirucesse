@@ -233,6 +233,9 @@ impl Player {
 		let envelope = data.get_item_by_id_certain(constants::ITEM_ID_ENVELOPE);
 		let tooth_within = envelope.borrow().contains_item(constants::ITEM_ID_TOOTH);
 		if fairy_present && tooth_within {
+			let coin = data.get_item_by_id_certain(constants::ITEM_ID_COIN);
+			envelope.borrow_mut().remove_item_certain(constants::ITEM_ID_TOOTH);
+			envelope.borrow_mut().set_within(Some(coin.clone()));
 			self.complete_obstruction_achievement(constants::ITEM_ID_FAIRY, data.get_puzzle("fairy"));
 		} else {
 			terminal::write_full(data.get_response("nohappen"));

@@ -24,6 +24,7 @@ pub const ITEM_ID_AQUA: u32 = 1084;
 pub const ITEM_ID_BOULDER: u32 = 1008;
 pub const ITEM_ID_BREAD: u32 = 1010;
 pub const ITEM_ID_CAULDRON: u32 = 1018;
+pub const ITEM_ID_COIN: u32 = 1089;
 pub const ITEM_ID_DOGS: u32 = 1026;
 pub const ITEM_ID_DUST: u32 = 1092;
 pub const ITEM_ID_DRAGON: u32 = 1027;
