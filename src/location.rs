@@ -1,7 +1,9 @@
 use std::collections::HashMap;
 
+use constants;
 use data_collection::ItemRef;
 use data_collection::LocationRef;
+use inventory::Inventory;
 
 const CTRL_LOC_HAS_LIGHT: u32 = 0x01; // Whether the location has ambient lighting
 const CTRL_LOC_HAS_AIR: u32 = 0x2; // Whether there is air at the location
@@ -134,6 +136,20 @@ impl Location {
 			item.borrow_mut().set_location(self.id);
 		}
 		self.items.insert(item.borrow().get_id(), item.clone());
+	}
+
+	// Release items that are marked as still in inventory, i.e. only at this location temporarily
+	pub fn release_temporary(&mut self, inventory: &mut Inventory) {
+		let mut to_remove: Vec<ItemRef> = Vec::new();
+		for item in self.items.values() {
+			if item.borrow().get_location() == constants::LOCATION_ID_INVENTORY {
+				to_remove.push(item.clone());
+			}
+		}
+		for item in to_remove {
+			self.items.remove(&item.borrow().get_id());
+			inventory.insert_item(item);
+		}
 	}
 
 	// FIXME: clean up the flow here

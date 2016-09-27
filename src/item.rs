@@ -69,6 +69,10 @@ impl Item {
 		}
 	}
 
+	pub fn get_location(&self) -> u32 {
+		self.location
+	}
+
 	pub fn set_location(&mut self, loc: u32) {
 		self.location = loc;
 	}

@@ -855,6 +855,7 @@ impl Player {
 				self.inventory.drop_all(&self.location, data.get_location_safe(), false, false);
 				self.location = data.get_location_certain(next_id).clone();
 				self.previous = None;
+				self.location.borrow_mut().release_temporary(&mut self.inventory);
 				terminal::write_full(data.get_response("sleep"));
 			},
 		}
