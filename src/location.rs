@@ -129,8 +129,10 @@ impl Location {
 		self.items.values().any(|x| x.borrow().is_or_contains_item(id))
 	}
 
-	pub fn insert_item(&mut self, item: ItemRef) {
-		item.borrow_mut().set_location(self.id);
+	pub fn insert_item(&mut self, item: ItemRef, permanent: bool) {
+		if permanent {
+			item.borrow_mut().set_location(self.id);
+		}
 		self.items.insert(item.borrow().get_id(), item.clone());
 	}
 

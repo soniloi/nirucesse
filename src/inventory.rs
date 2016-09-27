@@ -64,13 +64,13 @@ impl Inventory {
 		(item.borrow().get_size() + self.get_size()) <= self.capacity
 	}
 
-	pub fn drop_all(&mut self, current_loc: &LocationRef, safe_loc: &LocationRef, death: bool) {
+	pub fn drop_all(&mut self, current_loc: &LocationRef, safe_loc: &LocationRef, death: bool, permanent: bool) {
 		let removed = self.items.drain();
 		for (_, item) in removed {
 			if death && item.borrow().is_essential() {
-				safe_loc.borrow_mut().insert_item(item.clone());
+				safe_loc.borrow_mut().insert_item(item.clone(), permanent);
 			} else {
-				current_loc.borrow_mut().insert_item(item.clone());
+				current_loc.borrow_mut().insert_item(item.clone(), permanent);
 			}
 		}
 	}

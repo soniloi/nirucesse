@@ -91,7 +91,7 @@ impl Player {
 	}
 
 	pub fn drop_on_death(&mut self, safe_loc: &LocationRef) {
-		self.inventory.drop_all(&self.previous_true, safe_loc, true);
+		self.inventory.drop_all(&self.previous_true, safe_loc, true, true);
 	}
 
 	fn get_effective_description(&self, haze_description: String, darkness_description: String, default_description: String) -> String {
@@ -163,7 +163,7 @@ impl Player {
 			constants::ITEM_ID_BOULDER => {
 				if self.strong {
 					self.complete_obstruction_achievement(constants::ITEM_ID_BOULDER, data.get_puzzle("bouldpul"));
-					self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_DUST).clone());
+					self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_DUST).clone(), true);
 					self.strong = false;
 				} else {
 					terminal::write_full(data.get_response("bouldatt"));
@@ -202,7 +202,7 @@ impl Player {
 					self.location.borrow_mut().remove_item_certain(item_id);
 				}
 				let toast = data.get_item_by_id_certain(constants::ITEM_ID_TOAST);
-				self.location.borrow_mut().insert_item(toast.clone());
+				self.location.borrow_mut().insert_item(toast.clone(), true);
 				terminal::write_full(data.get_response("bread"));
 			},
 			constants::ITEM_ID_TOAST => {
@@ -363,7 +363,7 @@ impl Player {
 		// When dropped, liquids drain away
 		let liquid = it.borrow().is_liquid();
 		if !liquid {
-			self.location.borrow_mut().insert_item(it);
+			self.location.borrow_mut().insert_item(it, true);
 			terminal::write_full(data.get_response("dropgood"));
 		} else {
 			terminal::write_full(data.get_response("emptliqu"));
@@ -400,7 +400,7 @@ impl Player {
 						self.inventory.insert_item(within.clone());
 						terminal::write_full(&data.get_response_param("emptcarr", &within.borrow().get_shortname()));
 					} else {
-						self.location.borrow_mut().insert_item(within.clone());
+						self.location.borrow_mut().insert_item(within.clone(), true);
 						terminal::write_full(&data.get_response_param("emptloca", &within.borrow().get_shortname()));
 					}
 				}
@@ -835,7 +835,7 @@ impl Player {
 			terminal::write_full(data.get_response("genie"));
 		} else if item.borrow().is(constants::ITEM_ID_DRAGON) {
 			let tooth = data.get_item_by_id_certain(constants::ITEM_ID_TOOTH);
-			self.location.borrow_mut().insert_item(tooth.clone());
+			self.location.borrow_mut().insert_item(tooth.clone(), true);
 			self.complete_obstruction_achievement(constants::ITEM_ID_DRAGON, data.get_puzzle("dragon"));
 		} else {
 			terminal::write_full(data.get_response("nointere"));
@@ -852,7 +852,7 @@ impl Player {
 		match loc_next {
 			None => terminal::write_full(data.get_response("sleepno")),
 			Some(next_id) => {
-				self.inventory.drop_all(&self.location, data.get_location_safe(), false);
+				self.inventory.drop_all(&self.location, data.get_location_safe(), false, false);
 				self.location = data.get_location_certain(next_id).clone();
 				self.previous = None;
 				terminal::write_full(data.get_response("sleep"));
@@ -870,7 +870,7 @@ impl Player {
 		match loc_next {
 			None => terminal::write_full(data.get_response("nohappen")),
 			Some(next_id) => {
-				self.inventory.drop_all(&self.location, data.get_location_safe(), false);
+				self.inventory.drop_all(&self.location, data.get_location_safe(), false, true);
 				self.location = data.get_location_certain(next_id).clone();
 				self.previous = None;
 				terminal::write_full(data.get_response("teleport"));
@@ -891,7 +891,7 @@ impl Player {
 		if it_borrow.is_fragile() {
 			terminal::write_full(data.get_response("shatthro"));
 		} else {
-			self.location.borrow_mut().insert_item(it);
+			self.location.borrow_mut().insert_item(it, true);
 			terminal::write_full(data.get_response("dropgood"));
 		}
 	}
