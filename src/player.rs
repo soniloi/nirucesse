@@ -1,5 +1,6 @@
 use rand;
 use rand::Rng;
+use std::collections::HashMap;
 
 use constants;
 use data_collection::DataCollection;
@@ -148,6 +149,20 @@ impl Player {
 	fn complete_achievement(&mut self, response: &str) {
 		self.achievement_count = self.achievement_count + 1;
 		terminal::write_full(response);
+	}
+
+	fn teleport(&mut self, data: &DataCollection, tp_map: HashMap<u32, u32>, response_tag_no_teleport: &str, response_tag_teleport: &str) {
+		let loc_id = self.location.borrow().get_id();
+		match tp_map.get(&loc_id) {
+			None => terminal::write_full(data.get_response(response_tag_no_teleport)),
+			Some(next_id) => {
+				self.inventory.drop_all(&self.location, data.get_location_safe(), false, false);
+				self.location = data.get_location_certain(*next_id).clone();
+				self.previous = None;
+				self.location.borrow_mut().release_temporary(&mut self.inventory);
+				terminal::write_full(data.get_response(response_tag_teleport));
+			},
+		}
 	}
 
 	pub fn attack(&mut self, data: &DataCollection, item: &ItemRef) {
@@ -843,22 +858,10 @@ impl Player {
 	}
 
 	pub fn sleep(&mut self, data: &DataCollection) {
-		let loc_id = self.location.borrow().get_id();
-		let loc_next = match loc_id {
-			constants::LOCATION_ID_SLEEP_0 => Some(constants::LOCATION_ID_SLEEP_1),
-			constants::LOCATION_ID_SLEEP_2 => Some(constants::LOCATION_ID_SLEEP_0),
-			_ => None,
-		};
-		match loc_next {
-			None => terminal::write_full(data.get_response("sleepno")),
-			Some(next_id) => {
-				self.inventory.drop_all(&self.location, data.get_location_safe(), false, false);
-				self.location = data.get_location_certain(next_id).clone();
-				self.previous = None;
-				self.location.borrow_mut().release_temporary(&mut self.inventory);
-				terminal::write_full(data.get_response("sleep"));
-			},
-		}
+		let mut tp_map: HashMap<u32, u32> = HashMap::new();
+		tp_map.insert(constants::LOCATION_ID_SLEEP_0, constants::LOCATION_ID_SLEEP_1);
+		tp_map.insert(constants::LOCATION_ID_SLEEP_2, constants::LOCATION_ID_SLEEP_0);
+		self.teleport(data, tp_map, "sleepno", "sleep");
 	}
 
 	pub fn tezazzle(&mut self, data: &DataCollection) {
