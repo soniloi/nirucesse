@@ -861,10 +861,8 @@ impl Player {
 	fn throw_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		let it = self.inventory.remove_item_certain(item.borrow().get_id());
 		terminal::write_full(data.get_response("throw"));
-		// FIXME:
-		let it_ref = it.clone();
-		let it_borrow = it_ref.borrow();
-		if it_borrow.is_fragile() {
+		let is_fragile = it.borrow().is_fragile();
+		if is_fragile {
 			terminal::write_full(data.get_response("shatthro"));
 		} else {
 			self.location.borrow_mut().insert_item(it, true);
