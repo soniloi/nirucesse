@@ -274,7 +274,7 @@ impl Player {
 			return;
 		}
 
-		if !self.inventory.can_accept(&item) {
+		if !self.inventory.can_fit(&item) {
 			terminal::write_full(data.get_response("takeover"));
 			return;
 		}
@@ -668,25 +668,12 @@ impl Player {
 	}
 
 	fn insert_final(&mut self, data: &DataCollection, item: &ItemRef, container: &ItemRef) {
-		// Make sure the "container" is a container, that we are not inserting an item into itself, and that it is the right kind of container
-		if !container.borrow().is_container() {
-			terminal::write_full(&data.get_response_param("contnot", container.borrow().get_shortname()));
-			return;
-		}
-
-		if container.borrow().is(item.borrow().get_id()) {
-			terminal::write_full(data.get_response("contrecu"));
-			return;
-		}
-
-		if container.borrow().is_container_liquid() && !item.borrow().is_liquid() {
-			terminal::write_full(&data.get_response_param("contnos", &container.borrow().get_shortname()));
-			return;
-		}
-
-		if !container.borrow().is_container_liquid() && item.borrow().is_liquid() {
-			terminal::write_full(&data.get_response_param("contnol", &container.borrow().get_shortname()));
-			return;
+		match container.borrow().has_problem_accepting(item) {
+			None => {},
+			Some(reason) => {
+					terminal::write_full(&data.get_response_param(reason, container.borrow().get_shortname()));
+					return;
+			},
 		}
 
 		let within = container.borrow().get_within();
@@ -701,7 +688,7 @@ impl Player {
 			},
 			None => {
 				// Make sure item will fit in container
-				if !container.borrow().can_accept(&item) {
+				if !container.borrow().can_fit(&item) {
 				    terminal::write_full(data.get_response("nofit"));
 				    return;
 				}
@@ -709,7 +696,7 @@ impl Player {
 				let item_id = item.borrow().get_id();
 				let mut self_loc = self.location.borrow_mut();
 				if self_loc.contains_item(item_id) {
-					if !self.inventory.can_accept(&item) {
+					if !self.inventory.can_fit(&item) {
 						terminal::write_full(data.get_response("takeover"));
 						return;
 					}

@@ -60,7 +60,7 @@ impl Inventory {
 	}
 
 	// Return whether an item could fit in the inventory
-	pub fn can_accept(&self, item: &ItemRef) -> bool {
+	pub fn can_fit(&self, item: &ItemRef) -> bool {
 		(item.borrow().get_size() + self.get_size()) <= self.capacity
 	}
 

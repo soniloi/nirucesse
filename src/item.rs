@@ -199,8 +199,26 @@ impl Item {
 	}
 
 	// Return whether an item could fit inside this item, assuming it is a container
-	pub fn can_accept(&self, item: &ItemRef) -> bool {
+	pub fn can_fit(&self, item: &ItemRef) -> bool {
 		item.borrow().get_capacity() < self.size
+	}
+
+	// Check that a potential container is a container, that we are not inserting an item into itself, and that it is the right kind of container
+	// If there is a problem, return the string tag of the reason, otherwise return None
+	pub fn has_problem_accepting(&self, item: &ItemRef) -> Option<&str> {
+		if !self.is_container() {
+			return Some("contnot");
+		}
+		if self.is(item.borrow().get_id()) {
+			return Some("contrecu");
+		}
+		if self.is_container_liquid() && !item.borrow().is_liquid() {
+			return Some("contnos");
+		}
+		if !self.is_container_liquid() && item.borrow().is_liquid() {
+			return Some("contnol");
+		}
+		None
 	}
 
 	fn get_switch_status(&self) -> String {
