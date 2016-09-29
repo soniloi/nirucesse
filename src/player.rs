@@ -408,7 +408,8 @@ impl Player {
 		match within_ref {
 			None => terminal::write_full(data.get_response("emptalre")),
 			Some(within) => {
-				if within.borrow().is_liquid() {
+				let is_liquid = within.borrow().is_liquid();
+				if is_liquid {
 					terminal::write_full(data.get_response("emptliqu"));
 				} else {
 					let item_id = item.borrow().get_id();
