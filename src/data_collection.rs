@@ -31,6 +31,8 @@ pub struct DataCollection {
 	puzzles: StringCollection,
 	events: StringCollection,
 	event_turns: HashMap<u32, String>,
+	tp_map_sleep: HashMap<u32, u32>,
+	tp_map_witch: HashMap<u32, u32>,
 	max_score: u32,
 }
 
@@ -47,6 +49,8 @@ impl DataCollection {
 			puzzles: StringCollection::new(),
 			events: StringCollection::new(),
 			event_turns: HashMap::new(),
+			tp_map_sleep: HashMap::new(),
+			tp_map_witch: HashMap::new(),
 			max_score: 0u32,
 		}
 	}
@@ -63,6 +67,7 @@ impl DataCollection {
 		self.events.init(&mut buffer);
 
 		self.init_event_turns();
+		self.init_tp_maps();
 		let achievement_count: u32 = self.puzzles.count_strings();
 		self.max_score = treasure_count * constants::SCORE_TREASURE + achievement_count * constants::SCORE_PUZZLE;
 	}
@@ -81,6 +86,14 @@ impl DataCollection {
 				}
 			}
 		}
+	}
+
+	// Initialize teleport maps for sleep and witch rooms
+	fn init_tp_maps(&mut self) {
+		self.tp_map_sleep.insert(constants::LOCATION_ID_SLEEP_0, constants::LOCATION_ID_SLEEP_1);
+		self.tp_map_sleep.insert(constants::LOCATION_ID_SLEEP_2, constants::LOCATION_ID_SLEEP_0);
+		self.tp_map_witch.insert(constants::LOCATION_ID_WITCH_0, constants::LOCATION_ID_WITCH_1);
+		self.tp_map_witch.insert(constants::LOCATION_ID_WITCH_1, constants::LOCATION_ID_WITCH_0);
 	}
 
 	pub fn get_command(&self, key: String) -> Option<&Rc<Box<Command>>> {
@@ -159,6 +172,14 @@ impl DataCollection {
 
 	pub fn get_direction_enum(&self, dir_str: &str) -> &Direction {
 		self.locations.get_direction_enum(dir_str)
+	}
+
+	pub fn get_tp_map_sleep(&self) -> &HashMap<u32, u32> {
+		&self.tp_map_sleep
+	}
+
+	pub fn get_tp_map_witch(&self) -> &HashMap<u32, u32> {
+		&self.tp_map_witch
 	}
 
 	pub fn get_stowed_treasure_count(&self) -> u32 {

@@ -151,7 +151,7 @@ impl Player {
 		terminal::write_full(response);
 	}
 
-	fn teleport(&mut self, data: &DataCollection, tp_map: HashMap<u32, u32>, permanent: bool,
+	fn teleport(&mut self, data: &DataCollection, tp_map: &HashMap<u32, u32>, permanent: bool,
 		response_tag_no_teleport: &str, response_tag_teleport: &str) {
 		let loc_id = self.location.borrow().get_id();
 		match tp_map.get(&loc_id) {
@@ -859,17 +859,11 @@ impl Player {
 	}
 
 	pub fn sleep(&mut self, data: &DataCollection) {
-		let mut tp_map: HashMap<u32, u32> = HashMap::new();
-		tp_map.insert(constants::LOCATION_ID_SLEEP_0, constants::LOCATION_ID_SLEEP_1);
-		tp_map.insert(constants::LOCATION_ID_SLEEP_2, constants::LOCATION_ID_SLEEP_0);
-		self.teleport(data, tp_map, false, "sleepno", "sleep");
+		self.teleport(data, data.get_tp_map_sleep(), false, "sleepno", "sleep");
 	}
 
 	pub fn tezazzle(&mut self, data: &DataCollection) {
-		let mut tp_map: HashMap<u32, u32> = HashMap::new();
-		tp_map.insert(constants::LOCATION_ID_WITCH_0, constants::LOCATION_ID_WITCH_1);
-		tp_map.insert(constants::LOCATION_ID_WITCH_1, constants::LOCATION_ID_WITCH_0);
-		self.teleport(data, tp_map, true, "nohappen", "witch");
+		self.teleport(data, data.get_tp_map_witch(), true, "nohappen", "witch");
 	}
 
 	pub fn throw(&mut self, data: &DataCollection, item: &ItemRef) {
