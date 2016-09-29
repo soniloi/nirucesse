@@ -151,12 +151,13 @@ impl Player {
 		terminal::write_full(response);
 	}
 
-	fn teleport(&mut self, data: &DataCollection, tp_map: HashMap<u32, u32>, response_tag_no_teleport: &str, response_tag_teleport: &str) {
+	fn teleport(&mut self, data: &DataCollection, tp_map: HashMap<u32, u32>, permanent: bool,
+		response_tag_no_teleport: &str, response_tag_teleport: &str) {
 		let loc_id = self.location.borrow().get_id();
 		match tp_map.get(&loc_id) {
 			None => terminal::write_full(data.get_response(response_tag_no_teleport)),
 			Some(next_id) => {
-				self.inventory.drop_all(&self.location, data.get_location_safe(), false, false);
+				self.inventory.drop_all(&self.location, data.get_location_safe(), false, permanent);
 				self.location = data.get_location_certain(*next_id).clone();
 				self.previous = None;
 				self.location.borrow_mut().release_temporary(&mut self.inventory);
@@ -861,25 +862,14 @@ impl Player {
 		let mut tp_map: HashMap<u32, u32> = HashMap::new();
 		tp_map.insert(constants::LOCATION_ID_SLEEP_0, constants::LOCATION_ID_SLEEP_1);
 		tp_map.insert(constants::LOCATION_ID_SLEEP_2, constants::LOCATION_ID_SLEEP_0);
-		self.teleport(data, tp_map, "sleepno", "sleep");
+		self.teleport(data, tp_map, false, "sleepno", "sleep");
 	}
 
 	pub fn tezazzle(&mut self, data: &DataCollection) {
-		let loc_id = self.location.borrow().get_id();
-		let loc_next = match loc_id {
-			constants::LOCATION_ID_TELEPORT_0 => Some(constants::LOCATION_ID_TELEPORT_1),
-			constants::LOCATION_ID_TELEPORT_1 => Some(constants::LOCATION_ID_TELEPORT_0),
-			_ => None,
-		};
-		match loc_next {
-			None => terminal::write_full(data.get_response("nohappen")),
-			Some(next_id) => {
-				self.inventory.drop_all(&self.location, data.get_location_safe(), false, true);
-				self.location = data.get_location_certain(next_id).clone();
-				self.previous = None;
-				terminal::write_full(data.get_response("teleport"));
-			},
-		}
+		let mut tp_map: HashMap<u32, u32> = HashMap::new();
+		tp_map.insert(constants::LOCATION_ID_WITCH_0, constants::LOCATION_ID_WITCH_1);
+		tp_map.insert(constants::LOCATION_ID_WITCH_1, constants::LOCATION_ID_WITCH_0);
+		self.teleport(data, tp_map, true, "nohappen", "witch");
 	}
 
 	pub fn throw(&mut self, data: &DataCollection, item: &ItemRef) {

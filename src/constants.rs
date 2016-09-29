@@ -16,8 +16,8 @@ pub const LOCATION_ID_SLEEP_0: u32 = 91; // Cot room
 pub const LOCATION_ID_SLEEP_1: u32 = 92; // Start of the dream
 pub const LOCATION_ID_SLEEP_2: u32 = 97; // End of the dream
 pub const LOCATION_ID_TREASURESTORE: u32 = 23; // Where the player must bring treasure to
-pub const LOCATION_ID_TELEPORT_0: u32 = 107; // Location of teleporter connected to Experiment Area
-pub const LOCATION_ID_TELEPORT_1: u32 = 128; // Location of teleporter connected to Chasm
+pub const LOCATION_ID_WITCH_0: u32 = 107; // Location of teleporter connected to Experiment Area
+pub const LOCATION_ID_WITCH_1: u32 = 128; // Location of teleporter connected to Chasm
 
 // ID numbers of specific items
 pub const ITEM_ID_AQUA: u32 = 1084;
