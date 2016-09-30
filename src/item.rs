@@ -199,7 +199,7 @@ impl Item {
 	}
 
 	// Return whether an item could fit inside this item, assuming it is a container
-	pub fn can_fit(&self, item: &ItemRef) -> bool {
+	fn can_fit(&self, item: &ItemRef) -> bool {
 		item.borrow().get_capacity() < self.size
 	}
 
@@ -353,10 +353,6 @@ impl Item {
 			None => true,
 			_ => false,
 		}
-	}
-
-	pub fn get_within(&self) -> Option<ItemRef> {
-		self.within.clone()
 	}
 
 	pub fn set_within(&mut self, within: Option<ItemRef>) {
