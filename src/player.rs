@@ -151,6 +151,30 @@ impl Player {
 		terminal::write_full(response);
 	}
 
+	fn release_item(&mut self, data: &DataCollection, item: &ItemRef, thrown: bool) {
+		let it = self.inventory.remove_item_certain(item.borrow().get_id());
+
+		// When dropped, liquids drain away
+		let liquid = it.borrow().is_liquid();
+		let is_fragile = it.borrow().is_fragile();
+		if liquid {
+			terminal::write_full(data.get_response("emptliqu"));
+		} else if is_fragile && thrown { // When thrown, fragile items shatter
+			terminal::write_full(data.get_response("shatthro"));
+		} else { // When dropped, liquids drain away
+			self.location.borrow_mut().insert_item(it, true);
+			terminal::write_full(data.get_response("dropgood"));
+		}
+
+		// Specific item drops
+		if item.borrow().is(constants::ITEM_ID_LION) {
+			let wolf_present = self.location.borrow().contains_item(constants::ITEM_ID_WOLF);
+			if wolf_present {
+				self.complete_obstruction_achievement(constants::ITEM_ID_WOLF, data.get_puzzle("lionwolf"));
+			}
+		}
+	}
+
 	fn teleport(&mut self, data: &DataCollection, tp_map: &HashMap<u32, u32>, permanent: bool,
 		response_tag_no_teleport: &str, response_tag_teleport: &str) {
 		let loc_id = self.location.borrow().get_id();
@@ -374,24 +398,7 @@ impl Player {
 	}
 
 	fn drop_final(&mut self, data: &DataCollection, item: &ItemRef) {
-		let it = self.inventory.remove_item_certain(item.borrow().get_id());
-
-		// When dropped, liquids drain away
-		let liquid = it.borrow().is_liquid();
-		if !liquid {
-			self.location.borrow_mut().insert_item(it, true);
-			terminal::write_full(data.get_response("dropgood"));
-		} else {
-			terminal::write_full(data.get_response("emptliqu"));
-		}
-
-		// Specific item drops
-		if item.borrow().is(constants::ITEM_ID_LION) {
-			let wolf_present = self.location.borrow().contains_item(constants::ITEM_ID_WOLF);
-			if wolf_present {
-				self.complete_obstruction_achievement(constants::ITEM_ID_WOLF, data.get_puzzle("lionwolf"));
-			}
-		}
+		self.release_item(data, item, false);
 	}
 
 	pub fn empty(&mut self, data: &DataCollection, item: &ItemRef) {
@@ -859,14 +866,7 @@ impl Player {
 	}
 
 	fn throw_final(&mut self, data: &DataCollection, item: &ItemRef) {
-		let it = self.inventory.remove_item_certain(item.borrow().get_id());
 		terminal::write_full(data.get_response("throw"));
-		let is_fragile = it.borrow().is_fragile();
-		if is_fragile {
-			terminal::write_full(data.get_response("shatthro"));
-		} else {
-			self.location.borrow_mut().insert_item(it, true);
-			terminal::write_full(data.get_response("dropgood"));
-		}
+		self.release_item(data, item, true);
 	}
 }
