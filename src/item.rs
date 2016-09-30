@@ -239,6 +239,15 @@ impl Item {
 		None
 	}
 
+	// Check that an item can be inserted
+	// If there is a problem, return the string tag of the reason, otherwise return None
+	pub fn has_problem_inserting(&self) -> Option<&str> {
+		if !self.is_portable() || self.is_wearable() { // Items cannot be inserted if they are immobile or would be worn
+			return Some("takenoca");
+		}
+		None
+	}
+
 	fn get_switch_status(&self) -> String {
 		String::from("currently ") + if self.on {"on"} else {"off"}
 	}

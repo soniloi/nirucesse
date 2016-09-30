@@ -646,16 +646,12 @@ impl Player {
 	}
 
 	fn insert_portable(&mut self, data: &DataCollection, item: &ItemRef) {
-		// Objects cannot be inserted if they are immobile
-		if !item.borrow().is_portable() {
-			terminal::write_full(data.get_response("takenoca"));
-			return;
-		}
-
-		// Objects cannot be inserted if they would be worn
-		if item.borrow().is_wearable() {
-			terminal::write_full(data.get_response("takenoca"));
-			return;
+		match item.borrow().has_problem_inserting() {
+			None => {},
+			Some(reason) => {
+					terminal::write_full(&data.get_response_param(reason, item.borrow().get_shortname()));
+					return;
+			},
 		}
 
 		// Find out what player wants to insert it into
