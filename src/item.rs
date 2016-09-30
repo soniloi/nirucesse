@@ -203,9 +203,11 @@ impl Item {
 		item.borrow().get_capacity() < self.size
 	}
 
-	// Check that a potential container is a container, that we are not inserting an item into itself, and that it is the right kind of container
+	// Check that a potential container is a container, that we are not inserting an item into itself, that it is the right kind of container,
+	// 	that it is empty, and that it is large enough to hold the item
 	// If there is a problem, return the string tag of the reason, otherwise return None
 	pub fn has_problem_accepting(&self, item: &ItemRef) -> Option<&str> {
+		// Check attributes of container
 		if !self.is_container() {
 			return Some("contnot");
 		}
@@ -217,6 +219,22 @@ impl Item {
 		}
 		if !self.is_container_liquid() && item.borrow().is_liquid() {
 			return Some("contnol");
+		}
+
+		// Make sure there is nothing already in the container
+		match self.within.clone() {
+			Some(within) => {
+				if within.borrow().is(item.borrow().get_id()) {
+					return Some("contitem");
+				} else {
+					return Some("contfull");
+				}
+			},
+			None => {
+				if !self.can_fit(&item) {
+					return Some("nofit");
+				}
+			},
 		}
 		None
 	}

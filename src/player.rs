@@ -684,38 +684,19 @@ impl Player {
 			},
 		}
 
-		let within = container.borrow().get_within();
-		match within {
-			Some(it) => {
-				// Make sure there is nothing already in the container
-				if it.borrow().is(item.borrow().get_id()) {
-					terminal::write_full(data.get_response("contitem"));
-				} else {
-					terminal::write_full(data.get_response("contfull"));
-				}
-			},
-			None => {
-				// Make sure item will fit in container
-				if !container.borrow().can_fit(&item) {
-				    terminal::write_full(data.get_response("nofit"));
-				    return;
-				}
-
-				let item_id = item.borrow().get_id();
-				let mut self_loc = self.location.borrow_mut();
-				if self_loc.contains_item(item_id) {
-					if !self.inventory.can_fit(&item) {
-						terminal::write_full(data.get_response("takeover"));
-						return;
-					}
-					self_loc.remove_item_certain(item_id);
-				} else if self.inventory.contains_item(item_id) {
-					self.inventory.remove_item_certain(item_id);
-				}
-				container.borrow_mut().set_within(Some(item.clone()));
-				terminal::write_full(data.get_response("insegood"));
+		let item_id = item.borrow().get_id();
+		let mut self_loc = self.location.borrow_mut();
+		if self_loc.contains_item(item_id) {
+			if !self.inventory.can_fit(&item) {
+				terminal::write_full(data.get_response("takeover"));
+				return;
 			}
+			self_loc.remove_item_certain(item_id);
+		} else if self.inventory.contains_item(item_id) {
+			self.inventory.remove_item_certain(item_id);
 		}
+		container.borrow_mut().set_within(Some(item.clone()));
+		terminal::write_full(data.get_response("insegood"));
 	}
 
 	pub fn light(&mut self, data: &DataCollection, item: &ItemRef) {
