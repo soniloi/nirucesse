@@ -5,7 +5,7 @@ pub const PENALTY_DEATH: u32 = 25; // The value deducted from player's score for
 pub const PENALTY_HINT: u32 = 10; // The value deducted from player's score for every hint they request
 
 // Turn bounds
-pub const MAX_MOVES_EVENT: u32 = 200; // Random events will all be printed by the time this number of instructions entered
+pub const MAX_MOVES_EVENT: u32 = 150; // Random events will all be printed by the time this number of instructions entered
 pub const MIN_MOVES_EVENT: u32 = 15; // Random events will not be printed before this number of instructions entered
 
 // ID numbers of specific locations
