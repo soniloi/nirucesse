@@ -9,6 +9,7 @@ pub const MAX_MOVES_EVENT: u32 = 200; // Random events will all be printed by th
 pub const MIN_MOVES_EVENT: u32 = 15; // Random events will not be printed before this number of instructions entered
 
 // ID numbers of specific locations
+pub const LOCATION_ID_CELLAR: u32 = 29; // The only cellar
 pub const LOCATION_ID_AIRLOCKE: u32 = 31; // The airlock just off the Recreation Hub
 pub const LOCATION_ID_AIRLOCKEOUT: u32 = 36; // The area immediately outside Airlock East
 pub const LOCATION_ID_INVENTORY: u32 = 1; // Dummy value

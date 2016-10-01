@@ -204,6 +204,9 @@ impl Player {
 				if self.strong {
 					self.complete_obstruction_achievement(constants::ITEM_ID_BOULDER, data.get_puzzle("bouldpul"));
 					self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_DUST).clone(), true);
+					let cellar = data.get_location_certain(constants::LOCATION_ID_CELLAR);
+					self.location.borrow_mut().set_direction(Direction::Down, cellar.clone());
+					cellar.borrow_mut().set_direction(Direction::Up, self.location.clone());
 					self.strong = false;
 				} else {
 					terminal::write_full(data.get_response("bouldatt"));
