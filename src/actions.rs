@@ -158,6 +158,11 @@ pub fn do_throw(data: &DataCollection, arg: String, player: &mut Player) {
 }
 
 #[allow(unused_variables)]
+pub fn do_xyro(data: &DataCollection, arg: String, player: &mut Player) {
+	player.xyro(data);
+}
+
+#[allow(unused_variables)]
 pub fn do_xyzzy(data: &DataCollection, arg: String, player: &mut Player) {
 	terminal::write_full(data.get_response("ok"));
 }

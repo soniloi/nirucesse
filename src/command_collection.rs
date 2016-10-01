@@ -70,6 +70,7 @@ impl CommandCollection {
 		acts.insert("throw", actions::do_throw);
 		acts.insert("up", actions::do_go);
 		acts.insert("west", actions::do_go);
+		acts.insert("xyro", actions::do_xyro);
 		acts.insert("xyzzy", actions::do_xyzzy);
 		acts
 	}

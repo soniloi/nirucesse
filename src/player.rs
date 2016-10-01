@@ -849,4 +849,20 @@ impl Player {
 		terminal::write_full(data.get_response("throw"));
 		self.release_item(data, item, true);
 	}
+
+	pub fn xyro(&mut self, data: &DataCollection) {
+		let wizard_present = self.location.borrow().contains_item(constants::ITEM_ID_WIZARD);
+		let mirror_present = self.inventory.contains_item(constants::ITEM_ID_MIRROR);
+		if wizard_present {
+			// TODO: what if player is invisible?
+			if mirror_present {
+				self.complete_obstruction_achievement(constants::ITEM_ID_WIZARD, data.get_puzzle("wizmirro"));
+			} else {
+				terminal::write_full(data.get_response("wizarded"));
+				self.die(data);
+			}
+		} else {
+			terminal::write_full(data.get_response("shmagic"));
+		}
+	}
 }
