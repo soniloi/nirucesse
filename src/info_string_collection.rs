@@ -19,12 +19,12 @@ impl InfoStringCollection {
 		}
 	}
 
-	pub fn init(&mut self, buffer: &mut FileBuffer) {
+	pub fn init(&mut self, buffer: &mut FileBuffer, expected_count: usize, validate: bool) {
 
 		let mut line = buffer.get_line();
 	    while !buffer.eof() {
 			match line.as_ref() {
-				SEP_SECTION => return,
+				SEP_SECTION => break,
 				x => {
 
 					let words_split = x.split("\t");
@@ -35,6 +35,10 @@ impl InfoStringCollection {
 				},
 			}
 			line = buffer.get_line();
+		}
+
+		if validate && (self.strings.len() != expected_count) {
+			panic!("Error in string collection. Expected {} entries but found {}.", expected_count, self.strings.len());
 		}
 	}
 

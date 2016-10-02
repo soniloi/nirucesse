@@ -48,3 +48,7 @@ pub const ITEM_ID_WATER: u32 = 1076;
 pub const ITEM_ID_WHISTLE: u32 = 1077;
 pub const ITEM_ID_WIZARD: u32 = 1079;
 pub const ITEM_ID_WOLF: u32 = 1080;
+
+// Validation for various collections
+pub const EXPECTED_STRINGS_RESPONSES: usize = 169;
+pub const EXPECTED_STRINGS_PUZZLES: usize = 24;

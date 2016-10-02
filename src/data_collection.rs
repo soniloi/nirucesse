@@ -63,9 +63,9 @@ impl DataCollection {
 		self.items.init(&mut buffer, &mut self.locations, &mut treasure_count);
 		self.hints.init(&mut buffer);
 		self.explanations.init(&mut buffer);
-		self.responses.init(&mut buffer);
-		self.puzzles.init(&mut buffer);
-		self.events.init(&mut buffer);
+		self.responses.init(&mut buffer, constants::EXPECTED_STRINGS_RESPONSES, true);
+		self.puzzles.init(&mut buffer, constants::EXPECTED_STRINGS_PUZZLES, true);
+		self.events.init(&mut buffer, 0, false);
 
 		self.init_event_turns();
 		self.init_tp_maps();
