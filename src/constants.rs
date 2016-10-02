@@ -50,5 +50,7 @@ pub const ITEM_ID_WIZARD: u32 = 1079;
 pub const ITEM_ID_WOLF: u32 = 1080;
 
 // Validation for various collections
+pub const EXPECTED_ITEMS: u32 = 117;
+pub const EXPECTED_LOCATIONS: u32 = 134;
 pub const EXPECTED_STRINGS_RESPONSES: u32 = 170;
 pub const EXPECTED_STRINGS_PUZZLES: u32 = 24;

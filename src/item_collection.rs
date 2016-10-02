@@ -36,7 +36,7 @@ impl ItemCollection {
 		}
 	}
 
-	pub fn init(&mut self, buffer: &mut FileBuffer, locations: &mut LocationCollection, treasure_count: &mut u32) {
+	pub fn init(&mut self, buffer: &mut FileBuffer, expected_max: u32, locations: &mut LocationCollection, treasure_count: &mut u32) {
 
 		let mut initial_locations: HashMap<u32, u32> = HashMap::new();
 		let mut line = buffer.get_line();
@@ -68,6 +68,8 @@ impl ItemCollection {
 				Some(item) => self.set_initial(locations, item, initial_id),
 			}
 		}
+
+		self.validate(ITEM_INDEX_START, expected_max + ITEM_INDEX_START);
 	}
 
 	fn parse_and_insert_item(&mut self, words: &Vec<&str>) -> (ItemRef, u32) {
@@ -116,6 +118,15 @@ impl ItemCollection {
 				panic!("Container with ID: {} is not the right kind of container for item: {}", initial_id, item.borrow().get_shortname());
 			}
 			initial_container.borrow_mut().set_within(Some(item.clone()));
+		}
+	}
+
+	// Ensure that all the necessary ids will be available
+	fn validate(&self, expected_min: u32, expected_max: u32) {
+		for id in expected_min..expected_max {
+			if !self.items_by_id.contains_key(&id) {
+				panic!("Error in item collection. ID [{}] not found", id);
+			}
 		}
 	}
 
