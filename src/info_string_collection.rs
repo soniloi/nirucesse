@@ -19,7 +19,7 @@ impl InfoStringCollection {
 		}
 	}
 
-	pub fn init(&mut self, buffer: &mut FileBuffer, expected_count: usize, validate: bool) {
+	pub fn init(&mut self, buffer: &mut FileBuffer, expected_max: u32, validate: bool) {
 
 		let mut line = buffer.get_line();
 	    while !buffer.eof() {
@@ -37,8 +37,8 @@ impl InfoStringCollection {
 			line = buffer.get_line();
 		}
 
-		if validate && (self.strings.len() != expected_count) {
-			panic!("Error in string collection. Expected {} entries but found {}.", expected_count, self.strings.len());
+		if validate {
+			self.validate(expected_max);
 		}
 	}
 
@@ -46,6 +46,15 @@ impl InfoStringCollection {
 		let tag = data_collection::str_to_u32(words[FILE_INDEX_STRING_TAG], 10);
 		let content = words[FILE_INDEX_STRING_CONTENT];
 		return (tag, String::from(content))
+	}
+
+	// Ensure that all the necessary ids will be available
+	fn validate(&self, expected_max: u32) {
+		for id in 0..expected_max {
+			if !self.strings.contains_key(&id) {
+				panic!("Error in string collection. ID [{}] not found", id);
+			}
+		}
 	}
 
 	pub fn count_strings(&self) -> u32 {
