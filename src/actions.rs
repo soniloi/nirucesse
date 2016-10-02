@@ -65,26 +65,26 @@ pub fn do_feed(data: &DataCollection, arg: String, player: &mut Player) {
 
 #[allow(unused_variables)]
 pub fn do_go_disambiguate(data: &DataCollection, arg: String, player: &mut Player) {
-	terminal::write_full(data.get_response("godisamb"));
+	terminal::write_full(data.get_response(49));
 }
 
 #[allow(unused_variables)]
 pub fn do_help(data: &DataCollection, arg: String, player: &mut Player) {
 	player.decrement_instructions(); // Requesting help does not count as an instruction
-	terminal::write_full(data.get_response("help"));
+	terminal::write_full(data.get_response(50));
 }
 
 pub fn do_hint(data: &DataCollection, arg: String, player: &mut Player) {
 	match data.get_hint(&arg) {
 		None => terminal::write_full(data.get_hint_certain("default")),
 		Some(hint) => {
-			terminal::write_full(data.get_response("hintwarn"));
-			let confirm = terminal::get_yes_no(data.get_response("asksure"), data.get_response("notuigse"));
+			terminal::write_full(data.get_response(55));
+			let confirm = terminal::get_yes_no(data.get_response(9), data.get_response(104));
 			if confirm {
 				terminal::write_full(hint);
 				player.increment_hints();
 			} else {
-				terminal::write_full(data.get_response("ok"));
+				terminal::write_full(data.get_response(110));
 			}
 		},
 	}
@@ -164,12 +164,12 @@ pub fn do_xyro(data: &DataCollection, arg: String, player: &mut Player) {
 
 #[allow(unused_variables)]
 pub fn do_xyzzy(data: &DataCollection, arg: String, player: &mut Player) {
-	terminal::write_full(data.get_response("ok"));
+	terminal::write_full(data.get_response(110));
 }
 
 fn manipulate_item(data: &DataCollection, arg: String, player: &mut Player, act: ItemManipFn) {
 	match data.get_item_by_name(arg) {
-		None => terminal::write_full(data.get_response("nonowhat")),
+		None => terminal::write_full(data.get_response(98)),
 		Some(i) => act(player, data, i),
 	}
 }

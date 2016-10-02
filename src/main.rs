@@ -8,13 +8,14 @@ mod data_collection;
 mod file_buffer;
 mod file_util;
 mod game;
+mod help_string_collection;
+mod info_string_collection;
 mod inventory;
 mod item;
 mod item_collection;
 mod location;
 mod location_collection;
 mod player;
-mod string_collection;
 mod terminal;
 
 use std::env;

@@ -54,13 +54,13 @@ impl Command {
 
 		// Command takes no argument, but player gave one anyway
 		if !self.takes_arg() && !actual_arg.is_empty() {
-			terminal::write_full(data.get_response("notuigin"));
+			terminal::write_full(data.get_response(103));
 			return;
 		}
 
 		// Command takes an argument, but player didn't give one
 		if self.takes_arg() && actual_arg.is_empty() && !self.is_movement() {
-			let question = String::from(data.get_response("whatstar")) + &self.name + data.get_response("whatend");
+			let question = String::from(data.get_response(162)) + &self.name + data.get_response(158);
 			let further_args = terminal::read_question(&question);
 			actual_arg = String::new() + &further_args[0];
 		}

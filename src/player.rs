@@ -106,7 +106,7 @@ impl Player {
 	}
 
 	fn get_effective_appearance(&self, data: &DataCollection, default_description: String) -> String {
-		self.get_effective_description(String::from(data.get_response("cantseeh")), String::from(data.get_response("cantseed")), default_description)
+		self.get_effective_description(String::from(data.get_response(16)), String::from(data.get_response(15)), default_description)
 	}
 
 	pub fn get_location_stubname(&self) -> String {
@@ -115,7 +115,7 @@ impl Player {
 
 	fn observe_item(&mut self, data: &DataCollection, item: &ItemRef, act: ItemManipFinalFn) {
 		if !self.has_light() {
-			terminal::write_full(data.get_response("cantseed"));
+			terminal::write_full(data.get_response(15));
 			return;
 		}
 		self.manipulate_item_present(data, item, act);
@@ -125,7 +125,7 @@ impl Player {
 	fn manipulate_item_present(&mut self, data: &DataCollection, item: &ItemRef, act: ItemManipFinalFn) {
 		let item_id = item.borrow().get_id();
 		if !self.inventory.contains_item(item_id) && !self.location.borrow().contains_item(item_id) {
-			terminal::write_full(&data.get_response_param("noseeh", &item.borrow().get_shortname()));
+			terminal::write_full(&data.get_response_param(100, &item.borrow().get_shortname()));
 			return;
 		}
 		act(self, data, item);
@@ -135,7 +135,7 @@ impl Player {
 	fn manipulate_item_inventory(&mut self, data: &DataCollection, item: &ItemRef, act: ItemManipFinalFn) {
 		let item_id = item.borrow().get_id();
 		if !self.inventory.contains_item(item_id) {
-			terminal::write_full(&data.get_response_param("nocarry", &item.borrow().get_shortname()));
+			terminal::write_full(&data.get_response_param(74, &item.borrow().get_shortname()));
 			return;
 		}
 		act(self, data, item);
@@ -158,25 +158,25 @@ impl Player {
 		let liquid = it.borrow().is_liquid();
 		let is_fragile = it.borrow().is_fragile();
 		if liquid {
-			terminal::write_full(data.get_response("emptliqu"));
+			terminal::write_full(data.get_response(42));
 		} else if is_fragile && thrown { // When thrown, fragile items shatter
-			terminal::write_full(data.get_response("shatthro"));
+			terminal::write_full(data.get_response(136));
 		} else { // When dropped, liquids drain away
 			self.location.borrow_mut().insert_item(it, true);
-			terminal::write_full(data.get_response("dropgood"));
+			terminal::write_full(data.get_response(37));
 		}
 
 		// Specific item drops
 		if item.borrow().is(constants::ITEM_ID_LION) {
 			let wolf_present = self.location.borrow().contains_item(constants::ITEM_ID_WOLF);
 			if wolf_present {
-				self.complete_obstruction_achievement(constants::ITEM_ID_WOLF, data.get_puzzle("lionwolf"));
+				self.complete_obstruction_achievement(constants::ITEM_ID_WOLF, data.get_puzzle(13));
 			}
 		}
 	}
 
 	fn teleport(&mut self, data: &DataCollection, tp_map: &HashMap<u32, u32>, permanent: bool,
-		response_tag_no_teleport: &str, response_tag_teleport: &str) {
+		response_tag_no_teleport: u32, response_tag_teleport: u32) {
 		let loc_id = self.location.borrow().get_id();
 		match tp_map.get(&loc_id) {
 			None => terminal::write_full(data.get_response(response_tag_no_teleport)),
@@ -198,22 +198,22 @@ impl Player {
 		let item_id = item.borrow().get_id();
 		match item_id {
 			constants::ITEM_ID_DOGS | constants::ITEM_ID_DRAGON | constants::ITEM_ID_LION | constants::ITEM_ID_WOLF => {
-				terminal::write_full(data.get_response("nowiseat"))
+				terminal::write_full(data.get_response(106))
 			},
 			constants::ITEM_ID_BOULDER => {
 				if self.strong {
-					self.complete_obstruction_achievement(constants::ITEM_ID_BOULDER, data.get_puzzle("bouldpul"));
+					self.complete_obstruction_achievement(constants::ITEM_ID_BOULDER, data.get_puzzle(5));
 					self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_DUST).clone(), true);
 					let cellar = data.get_location_certain(constants::LOCATION_ID_CELLAR);
 					self.location.borrow_mut().set_direction(Direction::Down, cellar.clone());
 					cellar.borrow_mut().set_direction(Direction::Up, self.location.clone());
 					self.strong = false;
 				} else {
-					terminal::write_full(data.get_response("bouldatt"));
+					terminal::write_full(data.get_response(11));
 				}
 			}
 			_ => {
-				terminal::write_full(data.get_response("nonohow"));
+				terminal::write_full(data.get_response(94));
 			},
 		}
 	}
@@ -221,9 +221,9 @@ impl Player {
 	pub fn avnarand(&mut self, data: &DataCollection) {
 		let robot_present = self.location.borrow().contains_item(constants::ITEM_ID_ROBOT);
 		if robot_present {
-			self.complete_obstruction_achievement(constants::ITEM_ID_ROBOT, data.get_puzzle("robot"));
+			self.complete_obstruction_achievement(constants::ITEM_ID_ROBOT, data.get_puzzle(18));
 		} else {
-			terminal::write_full(data.get_response("nohappen"));
+			terminal::write_full(data.get_response(86));
 		}
 	}
 
@@ -233,7 +233,7 @@ impl Player {
 
 	fn burn_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !self.inventory.contains_item(constants::ITEM_ID_MATCHES) {
-			terminal::write_full(data.get_response("nomatch"));
+			terminal::write_full(data.get_response(92));
 			return;
 		}
 		let item_id = item.borrow().get_id();
@@ -246,7 +246,7 @@ impl Player {
 				}
 				let toast = data.get_item_by_id_certain(constants::ITEM_ID_TOAST);
 				self.location.borrow_mut().insert_item(toast.clone(), true);
-				terminal::write_full(data.get_response("bread"));
+				terminal::write_full(data.get_response(12));
 			},
 			constants::ITEM_ID_TOAST => {
 				if self.inventory.contains_item(item_id) {
@@ -254,19 +254,19 @@ impl Player {
 				} else {
 					self.location.borrow_mut().remove_item_certain(item_id);
 				}
-				terminal::write_full(data.get_response("toast"));
+				terminal::write_full(data.get_response(152));
 				let at_airlocke = self.location.borrow().is(constants::LOCATION_ID_AIRLOCKE);
 				if at_airlocke {
 					let out_loc = data.get_location_certain(constants::LOCATION_ID_AIRLOCKEOUT);
 					self.location.borrow_mut().set_direction(Direction::Southwest, out_loc.clone());
 					self.location.borrow_mut().set_air(false);
-					self.complete_achievement(data.get_puzzle("toastalm"));
+					self.complete_achievement(data.get_puzzle(21));
 				} else {
-					terminal::write_full(data.get_response("ashmouse"));
+					terminal::write_full(data.get_response(6));
 				}
 			},
 			_ => {
-				terminal::write_full(data.get_response("nonohow"));
+				terminal::write_full(data.get_response(94));
 			},
 		}
 	}
@@ -279,9 +279,9 @@ impl Player {
 			let coin = data.get_item_by_id_certain(constants::ITEM_ID_COIN);
 			envelope.borrow_mut().remove_item_certain(constants::ITEM_ID_TOOTH);
 			envelope.borrow_mut().set_within(Some(coin.clone()));
-			self.complete_obstruction_achievement(constants::ITEM_ID_FAIRY, data.get_puzzle("fairy"));
+			self.complete_obstruction_achievement(constants::ITEM_ID_FAIRY, data.get_puzzle(9));
 		} else {
-			terminal::write_full(data.get_response("nohappen"));
+			terminal::write_full(data.get_response(86));
 		}
 	}
 
@@ -292,17 +292,17 @@ impl Player {
 
 	fn take_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if self.contains_item(item) && !item.borrow().is_liquid() {
-			terminal::write_full(data.get_response("takealre"));
+			terminal::write_full(data.get_response(145));
 			return;
 		}
 
 		if !item.borrow().is_portable() {
-			terminal::write_full(data.get_response("takenoca"));
+			terminal::write_full(data.get_response(146));
 			return;
 		}
 
 		if !self.inventory.can_fit(&item) {
-			terminal::write_full(data.get_response("takeover"));
+			terminal::write_full(data.get_response(147));
 			return;
 		}
 
@@ -316,9 +316,9 @@ impl Player {
 		self.insert_item(item.clone());
 
 		if item.borrow().is_wearable() {
-			terminal::write_full(data.get_response("wear"));
+			terminal::write_full(data.get_response(157));
 		} else {
-			terminal::write_full(data.get_response("takegood"));
+			terminal::write_full(data.get_response(148));
 		}
 	}
 
@@ -328,13 +328,13 @@ impl Player {
 
 	fn cook_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !self.location.borrow().contains_item(constants::ITEM_ID_CAULDRON) {
-			terminal::write_full(data.get_response("nocooker"));
+			terminal::write_full(data.get_response(76));
 			return;
 		}
 
 		let cauldron = data.get_item_by_id_certain(constants::ITEM_ID_CAULDRON);
 		if !cauldron.borrow().is_empty() {
-		        terminal::write_full(data.get_response("caulfull"));
+		        terminal::write_full(data.get_response(17));
 		        return;
 		}
 
@@ -344,15 +344,15 @@ impl Player {
 			        self.inventory.remove_item_certain(constants::ITEM_ID_KOHLRABI);
 			        let stew = data.get_item_by_id_certain(constants::ITEM_ID_STEW);
 			        cauldron.borrow_mut().set_within(Some(stew.clone()));
-			        terminal::write_full(data.get_response("cabbcook"));
+			        terminal::write_full(data.get_response(14));
 			},
 			constants::ITEM_ID_RADISHES => {
 				self.inventory.remove_item_certain(constants::ITEM_ID_RADISHES);
 				let elixir = data.get_item_by_id_certain(constants::ITEM_ID_ELIXIR);
 				cauldron.borrow_mut().set_within(Some(elixir.clone()));
-				terminal::write_full(data.get_puzzle("radicook"));
+				terminal::write_full(data.get_puzzle(17));
 			},
-			_ => terminal::write_full(data.get_response("nonohow")),
+			_ => terminal::write_full(data.get_response(94)),
 		}
 	}
 
@@ -362,7 +362,7 @@ impl Player {
 	}
 
 	fn describe_final(&mut self, data: &DataCollection, item: &ItemRef) {
-		terminal::write_full(&item.borrow().mk_full_string(data.get_response("descstar"), data.get_response("dotend")));
+		terminal::write_full(&item.borrow().mk_full_string(data.get_response(26), data.get_response(29)));
 	}
 
 	pub fn drink(&mut self, data: &DataCollection, item: &ItemRef) {
@@ -371,27 +371,27 @@ impl Player {
 
 	fn drink_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !item.borrow().is_liquid() {
-			terminal::write_full(data.get_response("nonodrin"));
+			terminal::write_full(data.get_response(93));
 			return;
 		}
 
 		let item_id = item.borrow().get_id();
 		self.inventory.remove_item_certain(item_id);
-		terminal::write_full(data.get_response("drink"));
+		terminal::write_full(data.get_response(30));
 
 		match item_id {
-			constants::ITEM_ID_AQUA => terminal::write_full(data.get_response("drinkaqu")),
-			constants::ITEM_ID_WATER => terminal::write_full(data.get_response("drinkwat")),
-			constants::ITEM_ID_STEW => terminal::write_full(data.get_response("drinkste")),
+			constants::ITEM_ID_AQUA => terminal::write_full(data.get_response(31)),
+			constants::ITEM_ID_WATER => terminal::write_full(data.get_response(35)),
+			constants::ITEM_ID_STEW => terminal::write_full(data.get_response(34)),
 			constants::ITEM_ID_ELIXIR => {
 				self.strong = true;
-				terminal::write_full(data.get_response("drinkeli"));
+				terminal::write_full(data.get_response(32));
 			}
 			constants::ITEM_ID_POTION => {
-				terminal::write_full(data.get_response("drinkpot"));
+				terminal::write_full(data.get_response(33));
 				self.die(data);
 			},
-			_ => terminal::write_full(data.get_response("nohappen")),
+			_ => terminal::write_full(data.get_response(86)),
 		}
 	}
 
@@ -410,25 +410,25 @@ impl Player {
 
 	fn empty_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !item.borrow().is_container() {
-			terminal::write_full(&data.get_response_param("contnot", &item.borrow().get_shortname()));
+			terminal::write_full(&data.get_response_param(24, &item.borrow().get_shortname()));
 			return;
 		}
 
 		let within_ref = item.borrow_mut().remove_within();
 		match within_ref {
-			None => terminal::write_full(data.get_response("emptalre")),
+			None => terminal::write_full(data.get_response(40)),
 			Some(within) => {
 				let is_liquid = within.borrow().is_liquid();
 				if is_liquid {
-					terminal::write_full(data.get_response("emptliqu"));
+					terminal::write_full(data.get_response(42));
 				} else {
 					let item_id = item.borrow().get_id();
 					if self.inventory.contains_item(item_id) {
 						self.inventory.insert_item(within.clone());
-						terminal::write_full(&data.get_response_param("emptcarr", &within.borrow().get_shortname()));
+						terminal::write_full(&data.get_response_param(41, &within.borrow().get_shortname()));
 					} else {
 						self.location.borrow_mut().insert_item(within.clone(), true);
-						terminal::write_full(&data.get_response_param("emptloca", &within.borrow().get_shortname()));
+						terminal::write_full(&data.get_response_param(43, &within.borrow().get_shortname()));
 					}
 				}
 			},
@@ -447,17 +447,17 @@ impl Player {
 	fn feed_accusative(&mut self, data: &DataCollection, direct: &ItemRef) {
 
 		// Find out what player wants to feed it to
-		let indirect_str = terminal::read_question(&data.get_response_param("whatfeac", direct.borrow().get_shortname()));
+		let indirect_str = terminal::read_question(&data.get_response_param(159, direct.borrow().get_shortname()));
 
 		// Feed food to recipient, if it exists and player is carrying it
 		match data.get_item_by_name(indirect_str[0].clone()) {
-			None => terminal::write_full(data.get_response("nonowhat")),
+			None => terminal::write_full(data.get_response(98)),
 			Some(indirect) => {
 				let indirect_id = indirect.borrow().get_id();
 				if self.inventory.contains_item(indirect_id) || self.location.borrow().contains_item(indirect_id) {
 					self.feed_final(data, direct, indirect)
 				} else {
-					terminal::write_full(&data.get_response_param("noseeh", &indirect.borrow().get_shortname()));
+					terminal::write_full(&data.get_response_param(100, &indirect.borrow().get_shortname()));
 				}
 			},
 		}
@@ -467,17 +467,17 @@ impl Player {
 	fn feed_dative(&mut self, data: &DataCollection, indirect: &ItemRef) {
 
 		// Find out what player wants to feed to it
-		let direct_str = terminal::read_question(&data.get_response_param("whatfeda", indirect.borrow().get_shortname()));
+		let direct_str = terminal::read_question(&data.get_response_param(160, indirect.borrow().get_shortname()));
 
 		// Feed food to recipient, if it exists and player is carrying it
 		match data.get_item_by_name(direct_str[0].clone()) {
-			None => terminal::write_full(data.get_response("nonowhat")),
+			None => terminal::write_full(data.get_response(98)),
 			Some(direct) => {
 				let direct_id = direct.borrow().get_id();
 				if self.inventory.contains_item(direct_id) {
 					self.feed_final(data, direct, indirect)
 				} else {
-					terminal::write_full(&data.get_response_param("nocarry", &direct.borrow().get_shortname()));
+					terminal::write_full(&data.get_response_param(74, &direct.borrow().get_shortname()));
 				}
 			},
 		}
@@ -487,7 +487,7 @@ impl Player {
 
 		// Cannot feed non-feedable items
 		if !indirect.borrow().is_recipient() {
-			terminal::write_full(&data.get_response_param("nofeed", indirect.borrow().get_shortname()));
+			terminal::write_full(&data.get_response_param(79, indirect.borrow().get_shortname()));
 			return;
 		}
 
@@ -496,10 +496,10 @@ impl Player {
 			if direct.borrow().is_edible() {
 				self.inventory.remove_item_certain(direct.borrow().get_id());
 				if direct.borrow().is(constants::ITEM_ID_KOHLRABI) {
-					terminal::write_full(data.get_response("lionkill"));
+					terminal::write_full(data.get_response(60));
 					self.die(data);
 				} else {
-					terminal::write_full(data.get_response("lionwhet"));
+					terminal::write_full(data.get_response(61));
 				}
 				return;
 			}
@@ -508,16 +508,16 @@ impl Player {
 		if indirect.borrow().is(constants::ITEM_ID_TROLL) {
 			if direct.borrow().is_edible() {
 				self.inventory.remove_item_certain(direct.borrow().get_id());
-				terminal::write_full(data.get_response("trolled"));
+				terminal::write_full(data.get_response(154));
 				self.die(data);
 			} else {
-				terminal::write_full(data.get_response("trolyawn"));
+				terminal::write_full(data.get_response(155));
 			}
 		}
 
 		// Default response: not interested
-		let response = String::from(data.get_response("thestar")) + indirect.borrow().get_shortname() + data.get_response("nointerd") +
-			direct.borrow().get_shortname() + data.get_response("dotend");
+		let response = String::from(data.get_response(149)) + indirect.borrow().get_shortname() + data.get_response(88) +
+			direct.borrow().get_shortname() + data.get_response(29);
 		terminal::write_full(&response);
 	}
 
@@ -534,7 +534,7 @@ impl Player {
 		};
 
 		if move_success && !self.has_light() {
-			terminal::write_full(data.get_response("lampno"));
+			terminal::write_full(data.get_response(59));
 		}
 
 		self.update_previous(move_success, &temp_loc);
@@ -545,7 +545,7 @@ impl Player {
 	fn try_move_back(&mut self, data: &DataCollection) -> bool {
 		match self.previous.clone() {
 			None => {
-				terminal::write_full(data.get_response("movnorem"));
+				terminal::write_full(data.get_response(71));
 				return false;
 			},
 			Some(prev) => {
@@ -562,7 +562,7 @@ impl Player {
 
 		match self_loc.get_direction(dir) {
 			None => {
-				terminal::write_full(data.get_response("movnoway"));
+				terminal::write_full(data.get_response(72));
 				return false;
 			},
 			Some(next) => {
@@ -570,11 +570,11 @@ impl Player {
 					match (**self_loc).get_obstruction() {
 						None => {},
 						Some(obstruction) => {
-							let mut response =  String::from(data.get_response("obststar"));
+							let mut response =  String::from(data.get_response(108));
 							if self.has_light() {
-								response = response + data.get_response("themid") + obstruction.borrow().get_shortname() + data.get_response("dotend");
+								response = response + data.get_response(150) + obstruction.borrow().get_shortname() + data.get_response(29);
 							} else {
-								response = response + data.get_response("obstend");
+								response = response + data.get_response(109);
 							}
 							terminal::write_full(&response);
 							return false;
@@ -583,7 +583,7 @@ impl Player {
 				}
 
 				if !next.borrow().has_air() && !self.inventory.has_air() {
-					terminal::write_full(data.get_response("movnoair"));
+					terminal::write_full(data.get_response(66));
 					return false;
 				}
 
@@ -598,7 +598,7 @@ impl Player {
 		let death_rand: u32 = rng.gen();
 		let death = death_rand % 4 == 0;
 		if !self.has_light() && !next.borrow().has_light() && death {
-			terminal::write_full(data.get_response("nolight"));
+			terminal::write_full(data.get_response(91));
 			self.die(data);
 			return false;
 		} else {
@@ -638,9 +638,9 @@ impl Player {
 
 	pub fn ignore_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if item.borrow().is(constants::ITEM_ID_TROLL) {
-			self.complete_obstruction_achievement(constants::ITEM_ID_TROLL, data.get_puzzle("troll"));
+			self.complete_obstruction_achievement(constants::ITEM_ID_TROLL, data.get_puzzle(22));
 		} else {
-			 terminal::write_full(data.get_response("ignogain"));
+			 terminal::write_full(data.get_response(55));
 		}
 	}
 
@@ -658,17 +658,17 @@ impl Player {
 		}
 
 		// Find out what player wants to insert it into
-		let container_str = terminal::read_question(&data.get_response_param("whatinse", item.borrow().get_shortname()));
+		let container_str = terminal::read_question(&data.get_response_param(161, item.borrow().get_shortname()));
 
 		// Insert item into container, if container exists and is present
 		match data.get_item_by_name(container_str[0].clone()) {
-			None => terminal::write_full(data.get_response("nonowhat")),
+			None => terminal::write_full(data.get_response(98)),
 			Some(container) => {
 				let container_id = container.borrow().get_id();
 				if self.inventory.contains_item(container_id) || self.location.borrow().contains_item(container_id) {
 					self.insert_final(data, item, container)
 				} else {
-					terminal::write_full(&data.get_response_param("noseeh", container.borrow().get_shortname()));
+					terminal::write_full(&data.get_response_param(100, container.borrow().get_shortname()));
 				}
 			},
 		}
@@ -687,7 +687,7 @@ impl Player {
 		let mut self_loc = self.location.borrow_mut();
 		if self_loc.contains_item(item_id) {
 			if !self.inventory.can_fit(&item) {
-				terminal::write_full(data.get_response("takeover"));
+				terminal::write_full(data.get_response(147));
 				return;
 			}
 			self_loc.remove_item_certain(item_id);
@@ -695,7 +695,7 @@ impl Player {
 			self.inventory.remove_item_certain(item_id);
 		}
 		container.borrow_mut().set_within(Some(item.clone()));
-		terminal::write_full(data.get_response("insegood"));
+		terminal::write_full(data.get_response(58));
 	}
 
 	pub fn light(&mut self, data: &DataCollection, item: &ItemRef) {
@@ -704,14 +704,14 @@ impl Player {
 
 	fn light_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !item.borrow().is_switchable() {
-			terminal::write_full(data.get_response("nonoligh"));
+			terminal::write_full(data.get_response(97));
 			return;
 		}
 		if item.borrow().is_on() {
-			terminal::write_full(data.get_response("alreadon"));
+			terminal::write_full(data.get_response(2));
 			return;
 		}
-		terminal::write_full(data.get_response("lit"));
+		terminal::write_full(data.get_response(62));
 		item.borrow_mut().set_on(true);
 	}
 
@@ -726,24 +726,24 @@ impl Player {
 
 	fn quench_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !item.borrow().is_switchable() {
-			terminal::write_full(data.get_response("nonoquen"));
+			terminal::write_full(data.get_response(96));
 			return;
 		}
 		if !item.borrow().is_on() {
-			terminal::write_full(data.get_response("alreadof"));
+			terminal::write_full(data.get_response(3));
 			return;
 		}
-		terminal::write_full(data.get_response("quenched"));
+		terminal::write_full(data.get_response(123));
 		item.borrow_mut().set_on(false);
 	}
 
 	pub fn get_score_str(&self, data: &DataCollection) -> String {
 		let total_score = self.calculate_score(data);
-		String::from(data.get_response("scorintr")) + &total_score.to_string() +
-		data.get_response("scorpnts") + &data.get_max_score().to_string() +
-		data.get_response("scordied") + &self.deaths.to_string() +
-		data.get_response("scordths") + &self.instructions.to_string() +
-		data.get_response("scorinss") + &self.hints.to_string() + data.get_response("scorhnts")
+		String::from(data.get_response(132)) + &total_score.to_string() +
+		data.get_response(133) + &data.get_max_score().to_string() +
+		data.get_response(128) + &self.deaths.to_string() +
+		data.get_response(129) + &self.instructions.to_string() +
+		data.get_response(131) + &self.hints.to_string() + data.get_response(130)
 	}
 
 	fn calculate_score(&self, data: &DataCollection) -> u32 {
@@ -789,23 +789,23 @@ impl Player {
 
 	fn play_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if item.borrow().is(constants::ITEM_ID_WHISTLE) {
-			let tune_words = terminal::read_question(data.get_response("whatplay"));
+			let tune_words = terminal::read_question(data.get_response(163));
 			let tune = &tune_words[0];
-			terminal::write_full(&data.get_response_param("playwhis", tune));
+			terminal::write_full(&data.get_response_param(121, tune));
 
-			if tune == data.get_response("cabbage") {
+			if tune == data.get_response(13) {
 				let lion_present = self.location.borrow().contains_item(constants::ITEM_ID_LION);
 				if lion_present {
 					let lion = data.get_item_by_id_certain(constants::ITEM_ID_LION);
 					let lion_obstruction = lion.borrow().is_obstruction();
 					if lion_obstruction {
 						lion.borrow_mut().set_obstruction(false);
-						self.complete_achievement(data.get_puzzle("liontune"));
+						self.complete_achievement(data.get_puzzle(12));
 					}
 				}
 			}
 		} else {
-			terminal::write_full(data.get_response("nonohow"));
+			terminal::write_full(data.get_response(94));
 		}
 	}
 
@@ -814,7 +814,7 @@ impl Player {
 	}
 
 	fn read_final(&mut self, data: &DataCollection, item: &ItemRef) {
-		terminal::write_full(&item.borrow().mk_writing_string(data.get_response("nowritin"), data.get_response("writstar"), data.get_response("writend")));
+		terminal::write_full(&item.borrow().mk_writing_string(data.get_response(107), data.get_response(169), data.get_response(168)));
 	}
 
 	pub fn rub(&mut self, data: &DataCollection, item: &ItemRef) {
@@ -823,22 +823,22 @@ impl Player {
 
 	fn rub_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if item.borrow().is(constants::ITEM_ID_LAMP) {
-			terminal::write_full(data.get_response("genie"));
+			terminal::write_full(data.get_response(47));
 		} else if item.borrow().is(constants::ITEM_ID_DRAGON) {
 			let tooth = data.get_item_by_id_certain(constants::ITEM_ID_TOOTH);
 			self.location.borrow_mut().insert_item(tooth.clone(), true);
-			self.complete_obstruction_achievement(constants::ITEM_ID_DRAGON, data.get_puzzle("dragon"));
+			self.complete_obstruction_achievement(constants::ITEM_ID_DRAGON, data.get_puzzle(8));
 		} else {
-			terminal::write_full(data.get_response("nointere"));
+			terminal::write_full(data.get_response(89));
 		}
 	}
 
 	pub fn sleep(&mut self, data: &DataCollection) {
-		self.teleport(data, data.get_tp_map_sleep(), false, "sleepno", "sleep");
+		self.teleport(data, data.get_tp_map_sleep(), false, 141, 140);
 	}
 
 	pub fn tezazzle(&mut self, data: &DataCollection) {
-		self.teleport(data, data.get_tp_map_witch(), true, "nohappen", "witch");
+		self.teleport(data, data.get_tp_map_witch(), true, 86, 165);
 	}
 
 	pub fn throw(&mut self, data: &DataCollection, item: &ItemRef) {
@@ -846,7 +846,7 @@ impl Player {
 	}
 
 	fn throw_final(&mut self, data: &DataCollection, item: &ItemRef) {
-		terminal::write_full(data.get_response("throw"));
+		terminal::write_full(data.get_response(151));
 		self.release_item(data, item, true);
 	}
 
@@ -856,13 +856,13 @@ impl Player {
 		if wizard_present {
 			// TODO: what if player is invisible?
 			if mirror_present {
-				self.complete_obstruction_achievement(constants::ITEM_ID_WIZARD, data.get_puzzle("wizmirro"));
+				self.complete_obstruction_achievement(constants::ITEM_ID_WIZARD, data.get_puzzle(23));
 			} else {
-				terminal::write_full(data.get_response("wizarded"));
+				terminal::write_full(data.get_response(166));
 				self.die(data);
 			}
 		} else {
-			terminal::write_full(data.get_response("shmagic"));
+			terminal::write_full(data.get_response(139));
 		}
 	}
 }

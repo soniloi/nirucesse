@@ -18,18 +18,18 @@ impl Game {
 
 	pub fn play(&mut self) {
 
-		terminal::write_full(self.data.get_response("initial"));
+		terminal::write_full(self.data.get_response(57));
 
 		while self.player.is_playing() {
 			self.process_input();
 
 			if !self.player.has_air() {
-				terminal::write_full(self.data.get_response("noair"));
+				terminal::write_full(self.data.get_response(73));
 				self.player.die(&self.data);
 			}
 
 			if !self.player.has_gravity() {
-				terminal::write_full(self.data.get_response("nograv"));
+				terminal::write_full(self.data.get_response(85));
 				self.player.die(&self.data);
 			}
 
@@ -80,20 +80,20 @@ impl Game {
 			}
 		}
 
-		terminal::write_full(self.data.get_response("notuigin"));
+		terminal::write_full(self.data.get_response(103));
 	}
 
 	// Reincarnate the player, if requested
 	fn process_reincarnation(&mut self) {
-		terminal::write_full(self.data.get_response("desreinc"));
-		let reincarnate: bool = terminal::get_yes_no(self.data.get_response("askreinc"), self.data.get_response("notuigse"));
+		terminal::write_full(self.data.get_response(27));
+		let reincarnate: bool = terminal::get_yes_no(self.data.get_response(8), self.data.get_response(103));
 		match reincarnate {
 			true => {
-				terminal::write_full(self.data.get_response("doreinc"));
+				terminal::write_full(self.data.get_response(28));
 				self.player.set_alive(true);
 			},
 			false => {
-				terminal::write_full(self.data.get_response("ok"));
+				terminal::write_full(self.data.get_response(110));
 				self.player.set_playing(false);
 			},
 		}

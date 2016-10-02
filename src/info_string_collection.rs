@@ -1,19 +1,20 @@
 use std::collections::HashMap;
 
+use data_collection;
 use file_buffer::FileBuffer;
 
 const FILE_INDEX_STRING_TAG: usize = 0;
 const FILE_INDEX_STRING_CONTENT: usize = 1;
 const SEP_SECTION: &'static str = "---"; // String separating sections
 
-pub struct StringCollection {
-	strings: HashMap<String, String>,
+pub struct InfoStringCollection {
+	strings: HashMap<u32, String>,
 }
 
-impl StringCollection {
+impl InfoStringCollection {
 
-	pub fn new() -> StringCollection {
-		StringCollection {
+	pub fn new() -> InfoStringCollection {
+		InfoStringCollection {
 			strings: HashMap::new(),
 		}
 	}
@@ -29,7 +30,7 @@ impl StringCollection {
 					let words_split = x.split("\t");
 					let words: Vec<&str> = words_split.collect();
 
-					let string_parsed = StringCollection::parse_string(&words);
+					let string_parsed = InfoStringCollection::parse_string(&words);
 					self.strings.insert(string_parsed.0, string_parsed.1);
 				},
 			}
@@ -37,32 +38,27 @@ impl StringCollection {
 		}
 	}
 
-	fn parse_string(words: &Vec<&str>) -> (String, String) {
-		let tag = words[FILE_INDEX_STRING_TAG];
+	fn parse_string(words: &Vec<&str>) -> (u32, String) {
+		let tag = data_collection::str_to_u32(words[FILE_INDEX_STRING_TAG], 10);
 		let content = words[FILE_INDEX_STRING_CONTENT];
-		return (String::from(tag), String::from(content))
+		return (tag, String::from(content))
 	}
 
 	pub fn count_strings(&self) -> u32 {
 		self.strings.len() as u32
 	}
 
-	pub fn get_keys(&self) -> Vec<&str> {
-		let mut result: Vec<&str> = Vec::new();
+	pub fn get_keys(&self) -> Vec<u32> {
+		let mut result: Vec<u32> = Vec::new();
 		for key in self.strings.keys() {
-			result.push(key);
+			result.push(*key);
 		}
 		result
 	}
 
-	// Return a String Option
-	pub fn get_uncertain(&self, key: &str) -> Option<&String> {
-		self.strings.get(&String::from(key))
-	}
-
 	// Return a String we are certain is in the collection
-	pub fn get_certain(&self, key: &str) -> &str {
-		match self.strings.get(&String::from(key)) {
+	pub fn get_certain(&self, key: u32) -> &str {
+		match self.strings.get(&key) {
 			None => panic!("Error: Data collection corrupt, or key [{}] malformed.", key),
 			Some(st) => return st,
 		}

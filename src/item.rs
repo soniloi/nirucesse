@@ -206,33 +206,33 @@ impl Item {
 	// Check that a potential container is a container, that we are not inserting an item into itself, that it is the right kind of container,
 	// 	that it is empty, and that it is large enough to hold the item
 	// If there is a problem, return the string tag of the reason, otherwise return None
-	pub fn has_problem_accepting(&self, item: &ItemRef) -> Option<&str> {
+	pub fn has_problem_accepting(&self, item: &ItemRef) -> Option<u32> {
 		// Check attributes of container
 		if !self.is_container() {
-			return Some("contnot");
+			return Some(24);
 		}
 		if self.is(item.borrow().get_id()) {
-			return Some("contrecu");
+			return Some(25);
 		}
 		if self.is_container_liquid() && !item.borrow().is_liquid() {
-			return Some("contnos");
+			return Some(23);
 		}
 		if !self.is_container_liquid() && item.borrow().is_liquid() {
-			return Some("contnol");
+			return Some(22);
 		}
 
 		// Make sure there is nothing already in the container
 		match self.within.clone() {
 			Some(within) => {
 				if within.borrow().is(item.borrow().get_id()) {
-					return Some("contitem");
+					return Some(21);
 				} else {
-					return Some("contfull");
+					return Some(20);
 				}
 			},
 			None => {
 				if !self.can_fit(&item) {
-					return Some("nofit");
+					return Some(81);
 				}
 			},
 		}
@@ -241,9 +241,9 @@ impl Item {
 
 	// Check that an item can be inserted
 	// If there is a problem, return the string tag of the reason, otherwise return None
-	pub fn has_problem_inserting(&self) -> Option<&str> {
+	pub fn has_problem_inserting(&self) -> Option<u32> {
 		if !self.is_portable() || self.is_wearable() { // Items cannot be inserted if they are immobile or would be worn
-			return Some("takenoca");
+			return Some(146);
 		}
 		None
 	}

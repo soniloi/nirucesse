@@ -8,12 +8,13 @@ use constants;
 use file_buffer::FileBuffer;
 use command::Command;
 use command_collection::CommandCollection;
+use help_string_collection::HelpStringCollection;
+use info_string_collection::InfoStringCollection;
 use item::Item;
 use item_collection::ItemCollection;
 use location::Direction;
 use location::Location;
 use location_collection::LocationCollection;
-use string_collection::StringCollection;
 
 pub type GenericRcBox<T> = Rc<Box<T>>;
 pub type GenericRcRefCellBox<T> = Rc<RefCell<Box<T>>>;
@@ -25,12 +26,12 @@ pub struct DataCollection {
 	commands: CommandCollection,
 	items: ItemCollection,
 	locations: LocationCollection,
-	hints: StringCollection,
-	explanations: StringCollection,
-	responses: StringCollection,
-	puzzles: StringCollection,
-	events: StringCollection,
-	event_turns: HashMap<u32, String>,
+	hints: HelpStringCollection,
+	explanations: HelpStringCollection,
+	responses: InfoStringCollection,
+	puzzles: InfoStringCollection,
+	events: InfoStringCollection,
+	event_turns: HashMap<u32, u32>,
 	tp_map_sleep: HashMap<u32, u32>,
 	tp_map_witch: HashMap<u32, u32>,
 	max_score: u32,
@@ -43,11 +44,11 @@ impl DataCollection {
 			commands: CommandCollection::new(),
 			items: ItemCollection::new(),
 			locations: LocationCollection::new(),
-			hints: StringCollection::new(),
-			explanations: StringCollection::new(),
-			responses: StringCollection::new(),
-			puzzles: StringCollection::new(),
-			events: StringCollection::new(),
+			hints: HelpStringCollection::new(),
+			explanations: HelpStringCollection::new(),
+			responses: InfoStringCollection::new(),
+			puzzles: InfoStringCollection::new(),
+			events: InfoStringCollection::new(),
 			event_turns: HashMap::new(),
 			tp_map_sleep: HashMap::new(),
 			tp_map_witch: HashMap::new(),
@@ -81,7 +82,7 @@ impl DataCollection {
 			loop {
 				let event_turn = turn_bounds.ind_sample(&mut rng);
 				if !self.event_turns.contains_key(&event_turn) {
-					self.event_turns.insert(event_turn, String::from(event_key));
+					self.event_turns.insert(event_turn, event_key);
 					break;
 				}
 			}
@@ -138,36 +139,36 @@ impl DataCollection {
 		DataCollection::get_value_or_default(&self.explanations, key)
 	}
 
-	fn get_value_or_default<'a>(collection: &'a StringCollection, key: &str) -> &'a str {
+	fn get_value_or_default<'a>(collection: &'a HelpStringCollection, key: &str) -> &'a str {
 		match collection.get_uncertain(key) {
 			None => collection.get_certain("default"),
 			Some(value) => value
 		}
 	}
 
-	pub fn get_response(&self, key: &str) -> &str {
+	pub fn get_response(&self, key: u32) -> &str {
 		self.responses.get_certain(key)
 	}
 
 	// TODO: more than one parameter; make generic with get_response
-	pub fn get_response_param(&self, key: &str, param: &str) -> String {
+	pub fn get_response_param(&self, key: u32, param: &str) -> String {
 		let response = String::from(self.responses.get_certain(key));
 		response.replace("$0", param)
 	}
 
-	pub fn get_puzzle(&self, key: &str) -> &str {
+	pub fn get_puzzle(&self, key: u32) -> &str {
 		self.puzzles.get_certain(key)
 	}
 
 	pub fn get_event(&self, turn: u32) -> Option<&str> {
 		match self.event_turns.get(&turn) {
 			None => None,
-			Some(event_turn) => Some(self.events.get_certain(&event_turn)),
+			Some(event_turn) => Some(self.events.get_certain(*event_turn)),
 		}
 	}
 
 	pub fn get_commands_non_secret(&self) -> String {
-		self.commands.mk_non_secret_string(self.get_response("commands"))
+		self.commands.mk_non_secret_string(self.get_response(19))
 	}
 
 	pub fn get_direction_enum(&self, dir_str: &str) -> &Direction {
