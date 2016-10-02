@@ -23,7 +23,7 @@ impl HelpStringCollection {
 		let mut line = buffer.get_line();
 	    while !buffer.eof() {
 			match line.as_ref() {
-				SEP_SECTION => return,
+				SEP_SECTION => break,
 				x => {
 
 					let words_split = x.split("\t");
@@ -35,12 +35,20 @@ impl HelpStringCollection {
 			}
 			line = buffer.get_line();
 		}
+
+		self.validate();
 	}
 
 	fn parse_string(words: &Vec<&str>) -> (String, String) {
 		let tag = words[FILE_INDEX_STRING_TAG];
 		let content = words[FILE_INDEX_STRING_CONTENT];
 		return (String::from(tag), String::from(content))
+	}
+
+	fn validate(&self) {
+		if !self.strings.contains_key("default") {
+			panic!("Error in help string collection. Key [default] not found.");
+		}
 	}
 
 	// Return a String Option
