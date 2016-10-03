@@ -60,8 +60,7 @@ impl Command {
 
 		// Command takes an argument, but player didn't give one
 		if self.takes_arg() && actual_arg.is_empty() && !self.is_movement() {
-			let question = String::from(data.get_response(162)) + &self.name + data.get_response(158);
-			let further_args = terminal::read_question(&question);
+			let further_args = terminal::read_question(&data.get_response_param(162, &self.name));
 			actual_arg = String::new() + &further_args[0];
 		}
 
