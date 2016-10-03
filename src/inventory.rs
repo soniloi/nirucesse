@@ -39,16 +39,15 @@ impl Inventory {
 		self.items.insert(item.borrow().get_id(), item.clone());
 	}
 
-	pub fn remove_item_certain(&mut self, id: u32) -> ItemRef {
+	pub fn remove_item_certain(&mut self, id: u32) {
 		if self.items.contains_key(&id) {
-			match self.items.remove(&id) {
-				None => {},
-				Some(item) => return item,
-			}
+			self.items.remove(&id);
+			return;
 		}
 		for item in self.items.values() {
 			if item.borrow().contains_item(id) {
-				return item.borrow_mut().remove_item_certain(id);
+				item.borrow_mut().remove_item_certain(id);
+				return;
 			}
 		}
 		panic!("Data corruption seeking item [{}], fail.", id);

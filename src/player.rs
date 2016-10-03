@@ -152,17 +152,17 @@ impl Player {
 	}
 
 	fn release_item(&mut self, data: &DataCollection, item: &ItemRef, thrown: bool) {
-		let it = self.inventory.remove_item_certain(item.borrow().get_id());
+		self.inventory.remove_item_certain(item.borrow().get_id());
 
 		// When dropped, liquids drain away
-		let liquid = it.borrow().is_liquid();
-		let is_fragile = it.borrow().is_fragile();
+		let liquid = item.borrow().is_liquid();
+		let is_fragile = item.borrow().is_fragile();
 		if liquid {
 			terminal::write_full(data.get_response(42));
 		} else if is_fragile && thrown { // When thrown, fragile items shatter
 			terminal::write_full(data.get_response(136));
 		} else { // When dropped, liquids drain away
-			self.location.borrow_mut().insert_item(it, true);
+			self.location.borrow_mut().insert_item(item.clone(), true);
 			terminal::write_full(data.get_response(37));
 		}
 

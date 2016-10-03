@@ -55,7 +55,7 @@ impl Item {
 	pub fn contains_item(&self, id: u32) -> bool {
 		match self.within.clone() {
 			None => false,
-			Some(within) => within.borrow().is(id) || within.borrow().contains_item(id),
+			Some(within) => within.borrow().is_or_contains_item(id),
 		}
 	}
 
