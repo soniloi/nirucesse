@@ -344,15 +344,16 @@ impl Item {
 		self.on = next;
 	}
 
-	pub fn remove_item_certain(&mut self, id: u32) -> ItemRef {
+	pub fn remove_item_certain(&mut self, id: u32) {
 		match self.within.clone() {
 			None => panic!("Data corruption seeking item [{}], fail.", id),
 			Some(within) => {
-				if within.borrow().is(id) {
+				let is_item = within.borrow().is(id);
+				if is_item {
 					self.within = None;
-					return within;
+				} else {
+					within.borrow_mut().remove_item_certain(id);
 				}
-				return within.borrow_mut().remove_item_certain(id);
 			},
 		}
 	}
