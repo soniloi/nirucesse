@@ -30,6 +30,8 @@ pub const ITEM_ID_BOULDER: u32 = 1008;
 pub const ITEM_ID_BREAD: u32 = 1010;
 pub const ITEM_ID_CAULDRON: u32 = 1018;
 pub const ITEM_ID_COIN: u32 = 1089;
+pub const ITEM_ID_CONSOLE_BROKEN: u32 = 1021;
+pub const ITEM_ID_CONSOLE_FIXED: u32 = 1057;
 pub const ITEM_ID_DOGS: u32 = 1026;
 pub const ITEM_ID_DUST: u32 = 1092;
 pub const ITEM_ID_DRAGON: u32 = 1027;
@@ -50,11 +52,12 @@ pub const ITEM_ID_TOOTH: u32 = 1070;
 pub const ITEM_ID_TROLL: u32 = 1073;
 pub const ITEM_ID_WATER: u32 = 1076;
 pub const ITEM_ID_WHISTLE: u32 = 1077;
+pub const ITEM_ID_WIRE: u32 = 1078;
 pub const ITEM_ID_WIZARD: u32 = 1079;
 pub const ITEM_ID_WOLF: u32 = 1080;
 
 // Validation for various collections
 pub const EXPECTED_ITEMS: u32 = 117;
 pub const EXPECTED_LOCATIONS: u32 = 134;
-pub const EXPECTED_STRINGS_RESPONSES: u32 = 170;
+pub const EXPECTED_STRINGS_RESPONSES: u32 = 171;
 pub const EXPECTED_STRINGS_PUZZLES: u32 = 24;

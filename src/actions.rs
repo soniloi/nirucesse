@@ -129,6 +129,10 @@ pub fn do_read(data: &DataCollection, arg: String, player: &mut Player) {
 	manipulate_item(data, arg, player, Player::read);
 }
 
+pub fn do_repair(data: &DataCollection, arg: String, player: &mut Player) {
+	manipulate_item(data, arg, player, Player::repair);
+}
+
 pub fn do_rub(data: &DataCollection, arg: String, player: &mut Player) {
 	manipulate_item(data, arg, player, Player::rub);
 }

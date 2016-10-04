@@ -59,6 +59,7 @@ impl CommandCollection {
 		acts.insert("quench", actions::do_quench);
 		acts.insert("quit", actions::do_quit);
 		acts.insert("read", actions::do_read);
+		acts.insert("repair", actions::do_repair);
 		acts.insert("rub", actions::do_rub);
 		acts.insert("score", actions::do_score);
 		acts.insert("sleep", actions::do_sleep);

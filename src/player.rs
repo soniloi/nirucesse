@@ -316,7 +316,7 @@ impl Player {
 		self.insert_item(item.clone());
 
 		if item.borrow().is_wearable() {
-			terminal::write_full(data.get_response(157));
+			terminal::write_full(data.get_response(156));
 		} else {
 			terminal::write_full(data.get_response(148));
 		}
@@ -815,6 +815,27 @@ impl Player {
 
 	fn read_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		terminal::write_full(&item.borrow().mk_writing_string(data.get_response(107), data.get_response(169), data.get_response(168)));
+	}
+
+	pub fn repair(&mut self, data: &DataCollection, item: &ItemRef) {
+		self.manipulate_item_present(data, item, Player::repair_final);
+	}
+
+	fn repair_final(&mut self, data: &DataCollection, item: &ItemRef) {
+		if item.borrow().is(constants::ITEM_ID_CONSOLE_FIXED) {
+			terminal::write_full(data.get_response(157));
+		} else if item.borrow().is(constants::ITEM_ID_CONSOLE_BROKEN) {
+			if !self.inventory.contains_item(constants::ITEM_ID_WIRE) {
+				terminal::write_full(data.get_response(158));
+			} else {
+				let panel = data.get_item_by_id_certain(constants::ITEM_ID_CONSOLE_FIXED);
+				self.location.borrow_mut().insert_item(panel.clone(), true);
+				self.inventory.remove_item_certain(constants::ITEM_ID_WIRE);
+				self.complete_obstruction_achievement(constants::ITEM_ID_CONSOLE_BROKEN, data.get_puzzle(6));
+			}
+		} else {
+			terminal::write_full(data.get_response(94));
+		}
 	}
 
 	pub fn rub(&mut self, data: &DataCollection, item: &ItemRef) {
