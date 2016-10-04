@@ -72,6 +72,7 @@ impl CommandCollection {
 		acts.insert("west", actions::do_go);
 		acts.insert("xyro", actions::do_xyro);
 		acts.insert("xyzzy", actions::do_xyzzy);
+		acts.insert("ziqua", actions::do_ziqua);
 		acts
 	}
 

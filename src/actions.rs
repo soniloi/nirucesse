@@ -167,6 +167,11 @@ pub fn do_xyzzy(data: &DataCollection, arg: String, player: &mut Player) {
 	terminal::write_full(data.get_response(110));
 }
 
+#[allow(unused_variables)]
+pub fn do_ziqua(data: &DataCollection, arg: String, player: &mut Player) {
+	player.ziqua(data);
+}
+
 fn manipulate_item(data: &DataCollection, arg: String, player: &mut Player, act: ItemManipFn) {
 	match data.get_item_by_name(arg) {
 		None => terminal::write_full(data.get_response(98)),

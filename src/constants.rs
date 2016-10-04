@@ -12,15 +12,19 @@ pub const MIN_MOVES_EVENT: u32 = 15; // Random events will not be printed before
 pub const LOCATION_ID_CELLAR: u32 = 29; // The only cellar
 pub const LOCATION_ID_AIRLOCKE: u32 = 31; // The airlock just off the Recreation Hub
 pub const LOCATION_ID_AIRLOCKEOUT: u32 = 36; // The area immediately outside Airlock East
+pub const LOCATION_ID_GARDEN: u32 = 27; // The garden, at the foot of the tree
 pub const LOCATION_ID_INVENTORY: u32 = 1; // Dummy value
+pub const LOCATION_ID_NOWHERE: u32 = 0; // Default location of items before they appear after solving puzzles etc.
 pub const LOCATION_ID_SLEEP_0: u32 = 91; // Cot room
 pub const LOCATION_ID_SLEEP_1: u32 = 92; // Start of the dream
 pub const LOCATION_ID_SLEEP_2: u32 = 97; // End of the dream
 pub const LOCATION_ID_TREASURESTORE: u32 = 23; // Where the player must bring treasure to
+pub const LOCATION_ID_TREETOP: u32 = 28; // The tree in the garden
 pub const LOCATION_ID_WITCH_0: u32 = 107; // Location of teleporter connected to Experiment Area
 pub const LOCATION_ID_WITCH_1: u32 = 128; // Location of teleporter connected to Chasm
 
 // ID numbers of specific items
+pub const ITEM_ID_ACORN: u32 = 1082;
 pub const ITEM_ID_AQUA: u32 = 1084;
 pub const ITEM_ID_BOULDER: u32 = 1008;
 pub const ITEM_ID_BREAD: u32 = 1010;

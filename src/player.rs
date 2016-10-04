@@ -865,4 +865,19 @@ impl Player {
 			terminal::write_full(data.get_response(139));
 		}
 	}
+
+	pub fn ziqua(&mut self, data: &DataCollection) {
+		let at_treetop = self.location.borrow().is(constants::LOCATION_ID_TREETOP);
+		if at_treetop {
+			let acorn = data.get_item_by_id_certain(constants::ITEM_ID_ACORN);
+			let acorn_is_new = acorn.borrow().get_location() == constants::LOCATION_ID_NOWHERE;
+			if acorn_is_new {
+				let garden = data.get_location_certain(constants::LOCATION_ID_GARDEN);
+				garden.borrow_mut().insert_item(acorn.clone(), true);
+				self.complete_achievement(data.get_puzzle(0));
+				return;
+			}
+		}
+		terminal::write_full(data.get_response(86));
+	}
 }
