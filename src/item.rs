@@ -379,21 +379,21 @@ impl Item {
 		within
 	}
 
-	pub fn mk_full_string(&self, description_start: &str, description_end: &str) -> String {
-		let mut result = String::from(description_start) + &self.description;
+	pub fn mk_full_string(&self, description_wrapper: &str) -> String {
+		let mut full = String::new() + &self.description;
 		if self.is_switchable() {
-			result = result + &self.get_switch_status_long();
+			full = full + &self.get_switch_status_long();
 		}
 		if self.is_container() {
-			result = result + &self.get_within_status_long();
+			full = full + &self.get_within_status_long();
 		}
-		result + description_end
+		String::from(description_wrapper).replace("$0", &full)
 	}
 
-	pub fn mk_writing_string(&self, no_writing: &str, writing_start: &str, writing_end: &str) -> String {
+	pub fn mk_writing_string(&self, no_writing: &str, writing_wrapper: &str) -> String {
 		match self.writing.clone() {
 			None => String::from(no_writing),
-			Some(writ) => String::from(writing_start) + &writ + writing_end,
+			Some(writ) => String::from(writing_wrapper).replace("$0", &writ),
 		}
 	}
 }

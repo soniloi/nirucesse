@@ -362,7 +362,7 @@ impl Player {
 	}
 
 	fn describe_final(&mut self, data: &DataCollection, item: &ItemRef) {
-		terminal::write_full(&item.borrow().mk_full_string(data.get_response(26), data.get_response(29)));
+		terminal::write_full(&item.borrow().mk_full_string(data.get_response(26)));
 	}
 
 	pub fn drink(&mut self, data: &DataCollection, item: &ItemRef) {
@@ -814,7 +814,7 @@ impl Player {
 	}
 
 	fn read_final(&mut self, data: &DataCollection, item: &ItemRef) {
-		terminal::write_full(&item.borrow().mk_writing_string(data.get_response(107), data.get_response(169), data.get_response(168)));
+		terminal::write_full(&item.borrow().mk_writing_string(data.get_response(107), data.get_response(169)));
 	}
 
 	pub fn repair(&mut self, data: &DataCollection, item: &ItemRef) {
