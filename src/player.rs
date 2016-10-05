@@ -121,6 +121,11 @@ impl Player {
 		self.manipulate_item_present(data, item, act);
 	}
 
+	pub fn has_item_present(&self, item: &ItemRef) -> bool {
+	        let item_id = item.borrow().get_id();
+	        self.inventory.contains_item(item_id) || self.location.borrow().contains_item(item_id)
+	}
+
 	// Manipulate an item present either in the player's inventory or at the player's location
 	fn manipulate_item_present(&mut self, data: &DataCollection, item: &ItemRef, act: ItemManipFinalFn) {
 		let item_id = item.borrow().get_id();
@@ -285,12 +290,7 @@ impl Player {
 		}
 	}
 
-	// Have player attempt to pick up item from current location
 	pub fn take(&mut self, data: &DataCollection, item: &ItemRef) {
-		self.manipulate_item_present(data, item, Player::take_final);
-	}
-
-	fn take_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if self.contains_item(item) && !item.borrow().is_liquid() {
 			terminal::write_full(data.get_response(145));
 			return;
@@ -395,12 +395,7 @@ impl Player {
 		}
 	}
 
-	// Have player attempt to drop item from inventory to current location
 	pub fn drop(&mut self, data: &DataCollection, item: &ItemRef) {
-		self.manipulate_item_inventory(data, item, Player::drop_final);
-	}
-
-	fn drop_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		self.release_item(data, item, false);
 	}
 

@@ -10,6 +10,7 @@ use data_collection::DataCollection;
 use player::Player;
 use terminal;
 
+#[derive(PartialEq, Eq)]
 pub enum ArgumentType {
 	Any,
 	Present,
