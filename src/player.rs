@@ -114,7 +114,7 @@ impl Player {
 			terminal::write_full(data.get_response(15));
 			return;
 		}
-		self.manipulate_item_present(data, item, act);
+		act(self, data, item);
 	}
 
 	pub fn has_item_inventory(&self, item_id: u32) -> bool {
@@ -123,26 +123,6 @@ impl Player {
 
 	pub fn has_item_present(&self, item_id: u32) -> bool {
 	        self.inventory.contains_item(item_id) || self.location.borrow().contains_item(item_id)
-	}
-
-	// Manipulate an item present either in the player's inventory or at the player's location
-	fn manipulate_item_present(&mut self, data: &DataCollection, item: &ItemRef, act: ItemManipFinalFn) {
-		let item_id = item.borrow().get_id();
-		if !self.inventory.contains_item(item_id) && !self.location.borrow().contains_item(item_id) {
-			terminal::write_full(&data.get_response_param(100, &item.borrow().get_shortname()));
-			return;
-		}
-		act(self, data, item);
-	}
-
-	// Manipulate an item present strictly in the player's inventory
-	fn manipulate_item_inventory(&mut self, data: &DataCollection, item: &ItemRef, act: ItemManipFinalFn) {
-		let item_id = item.borrow().get_id();
-		if !self.inventory.contains_item(item_id) {
-			terminal::write_full(&data.get_response_param(74, &item.borrow().get_shortname()));
-			return;
-		}
-		act(self, data, item);
 	}
 
 	fn complete_obstruction_achievement(&mut self, obstruction_id: u32, response: &str) {
@@ -411,9 +391,13 @@ impl Player {
 
 	pub fn feed(&mut self, data: &DataCollection, item: &ItemRef) {
 		if item.borrow().is_recipient() {
-			self.manipulate_item_present(data, item, Player::feed_dative);
+			self.feed_dative(data, item);
 		} else {
-			self.manipulate_item_inventory(data, item, Player::feed_accusative);
+			if !self.inventory.contains_item(item.borrow().get_id()) {
+				terminal::write_full(&data.get_response_param(74, &item.borrow().get_shortname()));
+				return;
+			}
+			self.feed_accusative(data, item);
 		}
 	}
 
