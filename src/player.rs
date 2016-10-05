@@ -196,10 +196,6 @@ impl Player {
 	}
 
 	pub fn attack(&mut self, data: &DataCollection, item: &ItemRef) {
-		self.manipulate_item_present(data, item, Player::attack_final);
-	}
-
-	fn attack_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
 		match item_id {
 			constants::ITEM_ID_DOGS | constants::ITEM_ID_DRAGON | constants::ITEM_ID_LION | constants::ITEM_ID_WOLF => {
@@ -233,10 +229,6 @@ impl Player {
 	}
 
 	pub fn burn(&mut self, data: &DataCollection, item: &ItemRef) {
-		self.manipulate_item_present(data, item, Player::burn_final);
-	}
-
-	fn burn_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !self.inventory.contains_item(constants::ITEM_ID_MATCHES) {
 			terminal::write_full(data.get_response(92));
 			return;
@@ -308,7 +300,7 @@ impl Player {
 
 		// Liquids require a container
 		if item.borrow().is_liquid() {
-			self.insert_portable(data, item);
+			self.insert(data, item);
 			return;
 		}
 
@@ -323,10 +315,6 @@ impl Player {
 	}
 
 	pub fn cook(&mut self, data: &DataCollection, item: &ItemRef) {
-		self.manipulate_item_present(data, item, Player::cook_final);
-	}
-
-	fn cook_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !self.location.borrow().contains_item(constants::ITEM_ID_CAULDRON) {
 			terminal::write_full(data.get_response(76));
 			return;
@@ -366,10 +354,6 @@ impl Player {
 	}
 
 	pub fn drink(&mut self, data: &DataCollection, item: &ItemRef) {
-		self.manipulate_item_inventory(data, item, Player::drink_final);
-	}
-
-	fn drink_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !item.borrow().is_liquid() {
 			terminal::write_full(data.get_response(93));
 			return;
@@ -400,10 +384,6 @@ impl Player {
 	}
 
 	pub fn empty(&mut self, data: &DataCollection, item: &ItemRef) {
-		self.manipulate_item_present(data, item, Player::empty_final);
-	}
-
-	fn empty_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !item.borrow().is_container() {
 			terminal::write_full(&data.get_response_param(24, &item.borrow().get_shortname()));
 			return;
@@ -628,10 +608,6 @@ impl Player {
 	}
 
 	pub fn ignore(&mut self, data: &DataCollection, item: &ItemRef) {
-		self.manipulate_item_present(data, item, Player::ignore_final);
-	}
-
-	pub fn ignore_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if item.borrow().is(constants::ITEM_ID_TROLL) {
 			self.complete_obstruction_achievement(constants::ITEM_ID_TROLL, data.get_puzzle(22));
 		} else {
@@ -640,10 +616,6 @@ impl Player {
 	}
 
 	pub fn insert(&mut self, data: &DataCollection, item: &ItemRef) {
-		self.manipulate_item_present(data, item, Player::insert_portable);
-	}
-
-	fn insert_portable(&mut self, data: &DataCollection, item: &ItemRef) {
 		match item.borrow().has_problem_inserting() {
 			None => {},
 			Some(reason) => {
@@ -694,10 +666,6 @@ impl Player {
 	}
 
 	pub fn light(&mut self, data: &DataCollection, item: &ItemRef) {
-		self.manipulate_item_present(data, item, Player::light_final);
-	}
-
-	fn light_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !item.borrow().is_switchable() {
 			terminal::write_full(data.get_response(97));
 			return;
@@ -716,10 +684,6 @@ impl Player {
 	}
 
 	pub fn quench(&mut self, data: &DataCollection, item: &ItemRef) {
-		self.manipulate_item_present(data, item, Player::quench_final);
-	}
-
-	fn quench_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !item.borrow().is_switchable() {
 			terminal::write_full(data.get_response(96));
 			return;
@@ -779,10 +743,6 @@ impl Player {
 	}
 
 	pub fn play(&mut self, data: &DataCollection, item: &ItemRef) {
-		self.observe_item(data, item, Player::play_final);
-	}
-
-	fn play_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if item.borrow().is(constants::ITEM_ID_WHISTLE) {
 			let tune_words = terminal::read_question(data.get_response(163));
 			let tune = &tune_words[0];
@@ -813,10 +773,6 @@ impl Player {
 	}
 
 	pub fn repair(&mut self, data: &DataCollection, item: &ItemRef) {
-		self.manipulate_item_present(data, item, Player::repair_final);
-	}
-
-	fn repair_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if item.borrow().is(constants::ITEM_ID_CONSOLE_FIXED) {
 			terminal::write_full(data.get_response(157));
 		} else if item.borrow().is(constants::ITEM_ID_CONSOLE_BROKEN) {
@@ -834,10 +790,6 @@ impl Player {
 	}
 
 	pub fn rub(&mut self, data: &DataCollection, item: &ItemRef) {
-		self.manipulate_item_present(data, item, Player::rub_final);
-	}
-
-	fn rub_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		if item.borrow().is(constants::ITEM_ID_LAMP) {
 			terminal::write_full(data.get_response(47));
 		} else if item.borrow().is(constants::ITEM_ID_DRAGON) {
@@ -858,10 +810,6 @@ impl Player {
 	}
 
 	pub fn throw(&mut self, data: &DataCollection, item: &ItemRef) {
-		self.manipulate_item_inventory(data, item, Player::throw_final);
-	}
-
-	fn throw_final(&mut self, data: &DataCollection, item: &ItemRef) {
 		terminal::write_full(data.get_response(151));
 		self.release_item(data, item, true);
 	}
