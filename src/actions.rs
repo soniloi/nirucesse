@@ -182,18 +182,24 @@ fn manipulate_item(data: &DataCollection, arg: String, arg_type: ArgumentType, p
 	match data.get_item_by_name(arg) {
 		None => terminal::write_full(data.get_response(98)),
 		Some(i) => {
-			if arg_type == ArgumentType::Inventory {
-				if !player.contains_item(i) {
-					terminal::write_full(&data.get_response_param(74, &i.borrow().get_shortname()));
-					return;
-				}
-			} else if arg_type == ArgumentType::Present {
-				if !player.has_item_present(i) {
-					terminal::write_full(&data.get_response_param(100, &i.borrow().get_shortname()));
-					return;
-				}
+			let item_id = i.borrow().get_id();
+			match problem_with_item_manipulation(player, item_id, arg_type) {
+				Some(problem) => terminal::write_full(&data.get_response_param(problem, &i.borrow().get_shortname())),
+				None => act(player, data, i),
 			}
-			act(player, data, i);
 		},
 	}
+}
+
+fn problem_with_item_manipulation(player: &Player, item_id: u32, arg_type: ArgumentType) -> Option<u32> {
+	if arg_type == ArgumentType::Inventory {
+		if !player.has_item_inventory(item_id) {
+			return Some(74);
+		}
+	} else if arg_type == ArgumentType::Present {
+		if !player.has_item_present(item_id) {
+			return Some(100);
+		}
+	}
+	None
 }

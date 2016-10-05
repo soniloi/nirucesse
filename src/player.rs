@@ -61,10 +61,6 @@ impl Player {
 		self.inventory.has_gravity() || self.location.borrow().has_gravity()
 	}
 
-	pub fn contains_item(&self, item: &ItemRef) -> bool {
-		self.inventory.contains_item(item.borrow().get_id())
-	}
-
 	pub fn insert_item(&mut self, item_ptr: ItemRef) {
 		self.inventory.insert_item(item_ptr);
 	}
@@ -121,8 +117,11 @@ impl Player {
 		self.manipulate_item_present(data, item, act);
 	}
 
-	pub fn has_item_present(&self, item: &ItemRef) -> bool {
-	        let item_id = item.borrow().get_id();
+	pub fn has_item_inventory(&self, item_id: u32) -> bool {
+		self.inventory.contains_item(item_id)
+	}
+
+	pub fn has_item_present(&self, item_id: u32) -> bool {
 	        self.inventory.contains_item(item_id) || self.location.borrow().contains_item(item_id)
 	}
 
@@ -283,7 +282,7 @@ impl Player {
 	}
 
 	pub fn take(&mut self, data: &DataCollection, item: &ItemRef) {
-		if self.contains_item(item) && !item.borrow().is_liquid() {
+		if self.inventory.contains_item(item.borrow().get_id()) && !item.borrow().is_liquid() {
 			terminal::write_full(data.get_response(145));
 			return;
 		}
