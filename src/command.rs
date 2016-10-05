@@ -10,7 +10,13 @@ use data_collection::DataCollection;
 use player::Player;
 use terminal;
 
-pub type ActionFn = fn(items: &DataCollection, arg: String, player: &mut Player);
+pub enum ArgumentType {
+	Any,
+	Present,
+	Inventory,
+}
+
+pub type ActionFn = fn(items: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType);
 
 pub struct Command {
 	name: String,
@@ -48,6 +54,14 @@ impl Command {
 		self.has_property(CTRL_COMMAND_SECRET)
 	}
 
+	fn needs_arg_inventory(&self) -> bool {
+		self.has_property(CTRL_COMMAND_INVENTORY)
+	}
+
+	fn needs_arg_present(&self) -> bool {
+		self.has_property(CTRL_COMMAND_PRESENT)
+	}
+
 	pub fn execute(&self, data: &DataCollection, arg: String, player: &mut Player) {
 		let h = self.handler;
 		let mut actual_arg = arg;
@@ -69,6 +83,14 @@ impl Command {
 			actual_arg = String::new() + &self.name;
 		}
 
-		h(data, actual_arg, player);
+		// Argument type
+		let mut arg_type = ArgumentType::Any;
+		if self.needs_arg_inventory() {
+			arg_type = ArgumentType::Inventory;
+		} else if self.needs_arg_present() {
+			arg_type = ArgumentType::Present;
+		}
+
+		h(data, actual_arg, player, arg_type);
 	}
 }

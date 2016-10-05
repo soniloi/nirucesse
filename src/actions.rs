@@ -1,80 +1,81 @@
+use command::ArgumentType;
 use data_collection::DataCollection;
 use player::ItemManipFn;
 use player::Player;
 
 use terminal;
 
-pub fn do_attack(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_attack(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, player, Player::attack);
 }
 
 #[allow(unused_variables)]
-pub fn do_avnarand(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_avnarand(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	player.avnarand(data);
 }
 
-pub fn do_burn(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_burn(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, player, Player::burn);
 }
 
 #[allow(unused_variables)]
-pub fn do_chimbu(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_chimbu(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	player.chimbu(data);
 }
 
 #[allow(unused_variables)]
-pub fn do_commands(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_commands(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	terminal::write_full(&data.get_commands_non_secret());
 }
 
-pub fn do_cook(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_cook(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, player, Player::cook);
 }
 
-pub fn do_describe(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_describe(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, player, Player::describe);
 }
 
-pub fn do_drink(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_drink(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, player, Player::drink);
 }
 
-pub fn do_drop(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_drop(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, player, Player::drop);
 }
 
-pub fn do_empty(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_empty(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, player, Player::empty);
 }
 
 #[allow(unused_variables)]
-pub fn do_explain(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_explain(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	terminal::write_full(data.get_explanation(&arg));
 }
 
 #[allow(unused_variables)]
-pub fn do_go(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_go(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	// FIXME: this should be passing the direction tag, not the localized primary name
 	let dir = data.get_direction_enum(&arg);
 	player.go(data, dir);
 }
 
-pub fn do_feed(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_feed(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, player, Player::feed);
 }
 
 #[allow(unused_variables)]
-pub fn do_go_disambiguate(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_go_disambiguate(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	terminal::write_full(data.get_response(49));
 }
 
 #[allow(unused_variables)]
-pub fn do_help(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_help(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	player.decrement_instructions(); // Requesting help does not count as an instruction
 	terminal::write_full(data.get_response(50));
 }
 
-pub fn do_hint(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_hint(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	match data.get_hint(&arg) {
 		None => terminal::write_full(data.get_hint_certain("default")),
 		Some(hint) => {
@@ -90,89 +91,89 @@ pub fn do_hint(data: &DataCollection, arg: String, player: &mut Player) {
 	}
 }
 
-pub fn do_ignore(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_ignore(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, player, Player::ignore);
 }
 
-pub fn do_insert(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_insert(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, player, Player::insert);
 }
 
 #[allow(unused_variables)]
-pub fn do_inventory(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_inventory(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	terminal::write_full(&player.mk_inventory_string());
 }
 
-pub fn do_light(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_light(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, player, Player::light);
 }
 
 #[allow(unused_variables)]
-pub fn do_look(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_look(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	terminal::write_full(&player.get_look(data));
 }
 
-pub fn do_play(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_play(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, player, Player::play);
 }
 
-pub fn do_quench(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_quench(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, player, Player::quench);
 }
 
 #[allow(unused_variables)]
-pub fn do_quit(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_quit(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	player.set_playing(false);
 }
 
-pub fn do_read(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_read(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, player, Player::read);
 }
 
-pub fn do_repair(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_repair(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, player, Player::repair);
 }
 
-pub fn do_rub(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_rub(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, player, Player::rub);
 }
 
 #[allow(unused_variables)]
-pub fn do_score(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_score(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	player.decrement_instructions(); // Requesting score does not count as an instruction
 	terminal::write_full(&player.get_score_str(data));
 }
 
 #[allow(unused_variables)]
-pub fn do_sleep(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_sleep(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	player.sleep(data);
 }
 
 #[allow(unused_variables)]
-pub fn do_tezazzle(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_tezazzle(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	player.tezazzle(data);
 }
 
-pub fn do_take(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_take(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, player, Player::take);
 }
 
-pub fn do_throw(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_throw(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, player, Player::throw);
 }
 
 #[allow(unused_variables)]
-pub fn do_xyro(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_xyro(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	player.xyro(data);
 }
 
 #[allow(unused_variables)]
-pub fn do_xyzzy(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_xyzzy(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	terminal::write_full(data.get_response(110));
 }
 
 #[allow(unused_variables)]
-pub fn do_ziqua(data: &DataCollection, arg: String, player: &mut Player) {
+pub fn do_ziqua(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	player.ziqua(data);
 }
 
