@@ -479,6 +479,31 @@ impl Player {
 		terminal::write_full(&response);
 	}
 
+	pub fn give(&mut self, data: &DataCollection, item: &ItemRef) {
+		// Find out what player wants to feed it to
+		let recipient_str = terminal::read_question(&data.get_response_param(168, item.borrow().get_shortname()));
+
+		// Feed food to recipient, if it exists and player is carrying it
+		match data.get_item_by_name(recipient_str[0].clone()) {
+			None => terminal::write_full(data.get_response(98)),
+			Some(recipient) => {
+				let recipient_id = recipient.borrow().get_id();
+				if self.inventory.contains_item(recipient_id) || self.location.borrow().contains_item(recipient_id) {
+					self.give_final(data, item, recipient)
+				} else {
+					terminal::write_full(&data.get_response_param(100, &recipient.borrow().get_shortname()));
+				}
+			},
+		}
+	}
+
+	fn give_final(&mut self, data: &DataCollection, direct: &ItemRef, indirect: &ItemRef) {
+		// Default response: not interested
+		let response = String::from(data.get_response(149)) + indirect.borrow().get_shortname() + data.get_response(88) +
+			direct.borrow().get_shortname() + data.get_response(29);
+		terminal::write_full(&response);
+	}
+
 	// Have player travel to an adjacent location
 	// TODO: I don't really like this very much, especially the 'back' part; there's probably a better way
 	pub fn go(&mut self, data: &DataCollection, dir: &Direction) {
