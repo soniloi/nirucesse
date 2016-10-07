@@ -817,8 +817,14 @@ impl Player {
 		}
 	}
 
-	pub fn say(&mut self, data: &DataCollection, statement: String) {
-		terminal::write_full(&data.get_response_param(170, &statement));
+	pub fn say(&mut self, data: &DataCollection, statement: &str) {
+		terminal::write_full(&data.get_response_param(170, statement));
+		if statement == data.get_response(171) {
+			let alien_present = self.location.borrow().contains_item(constants::ITEM_ID_ALIEN);
+			if alien_present {
+				terminal::write_full(data.get_response(52));
+			}
+		}
 	}
 
 	pub fn sleep(&mut self, data: &DataCollection) {

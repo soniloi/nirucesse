@@ -84,7 +84,7 @@ pub fn do_hint(data: &DataCollection, arg: String, player: &mut Player, arg_type
 	match data.get_hint(&arg) {
 		None => terminal::write_full(data.get_hint_certain("default")),
 		Some(hint) => {
-			terminal::write_full(data.get_response(55));
+			terminal::write_full(data.get_response(54));
 			let confirm = terminal::get_yes_no(data.get_response(9), data.get_response(104));
 			if confirm {
 				terminal::write_full(hint);
@@ -145,7 +145,7 @@ pub fn do_rub(data: &DataCollection, arg: String, player: &mut Player, arg_type:
 
 #[allow(unused_variables)]
 pub fn do_say(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
-	player.say(data, arg);
+	player.say(data, &arg);
 }
 
 #[allow(unused_variables)]

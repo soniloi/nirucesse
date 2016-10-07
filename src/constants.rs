@@ -25,6 +25,7 @@ pub const LOCATION_ID_WITCH_1: u32 = 128; // Location of teleporter connected to
 
 // ID numbers of specific items
 pub const ITEM_ID_ACORN: u32 = 1082;
+pub const ITEM_ID_ALIEN: u32 = 1000;
 pub const ITEM_ID_AQUA: u32 = 1084;
 pub const ITEM_ID_BOULDER: u32 = 1008;
 pub const ITEM_ID_BREAD: u32 = 1010;
@@ -62,5 +63,5 @@ pub const ITEM_ID_WOLF: u32 = 1080;
 // Validation for various collections
 pub const EXPECTED_ITEMS: u32 = 119;
 pub const EXPECTED_LOCATIONS: u32 = 134;
-pub const EXPECTED_STRINGS_RESPONSES: u32 = 171;
+pub const EXPECTED_STRINGS_RESPONSES: u32 = 173;
 pub const EXPECTED_STRINGS_PUZZLES: u32 = 24;
