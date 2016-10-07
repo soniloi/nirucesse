@@ -144,6 +144,11 @@ pub fn do_rub(data: &DataCollection, arg: String, player: &mut Player, arg_type:
 }
 
 #[allow(unused_variables)]
+pub fn do_say(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	player.say(data, arg);
+}
+
+#[allow(unused_variables)]
 pub fn do_score(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	player.decrement_instructions(); // Requesting score does not count as an instruction
 	terminal::write_full(&player.get_score_str(data));

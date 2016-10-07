@@ -817,6 +817,10 @@ impl Player {
 		}
 	}
 
+	pub fn say(&mut self, data: &DataCollection, statement: String) {
+		terminal::write_full(&data.get_response_param(170, &statement));
+	}
+
 	pub fn sleep(&mut self, data: &DataCollection) {
 		self.teleport(data, data.get_tp_map_sleep(), false, 141, 140);
 	}
