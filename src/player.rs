@@ -176,7 +176,7 @@ impl Player {
 	pub fn attack(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
 		match item_id {
-			constants::ITEM_ID_DOGS | constants::ITEM_ID_DRAGON | constants::ITEM_ID_LION | constants::ITEM_ID_WOLF => {
+			constants::ITEM_ID_DOGS | constants::ITEM_ID_DRAGON | constants::ITEM_ID_LION | constants::ITEM_ID_WOLF | constants::ITEM_ID_GUNSLINGER => {
 				terminal::write_full(data.get_response(106))
 			},
 			constants::ITEM_ID_BOULDER => {
