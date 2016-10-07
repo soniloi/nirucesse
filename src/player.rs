@@ -138,14 +138,13 @@ impl Player {
 	fn release_item(&mut self, data: &DataCollection, item: &ItemRef, thrown: bool) {
 		self.inventory.remove_item_certain(item.borrow().get_id());
 
-		// When dropped, liquids drain away
 		let liquid = item.borrow().is_liquid();
 		let is_fragile = item.borrow().is_fragile();
-		if liquid {
+		if liquid { // When dropped, liquids drain away
 			terminal::write_full(data.get_response(42));
 		} else if is_fragile && thrown { // When thrown, fragile items shatter
 			terminal::write_full(data.get_response(136));
-		} else { // When dropped, liquids drain away
+		} else {
 			self.location.borrow_mut().insert_item(item.clone(), true);
 			terminal::write_full(data.get_response(37));
 		}
@@ -241,9 +240,7 @@ impl Player {
 					terminal::write_full(data.get_response(6));
 				}
 			},
-			_ => {
-				terminal::write_full(data.get_response(94));
-			},
+			_ => terminal::write_full(data.get_response(94)),
 		}
 	}
 
@@ -480,10 +477,10 @@ impl Player {
 	}
 
 	pub fn give(&mut self, data: &DataCollection, item: &ItemRef) {
-		// Find out what player wants to feed it to
+		// Find out what player wants to give item to
 		let recipient_str = terminal::read_question(&data.get_response_param(168, item.borrow().get_shortname()));
 
-		// Feed food to recipient, if it exists and player is carrying it
+		// Give item to recipient, if it exists and player is carrying it
 		match data.get_item_by_name(recipient_str[0].clone()) {
 			None => terminal::write_full(data.get_response(98)),
 			Some(recipient) => {
@@ -497,10 +494,21 @@ impl Player {
 		}
 	}
 
-	fn give_final(&mut self, data: &DataCollection, direct: &ItemRef, indirect: &ItemRef) {
+	fn give_final(&mut self, data: &DataCollection, gift: &ItemRef, recipient: &ItemRef) {
+
+		let recipient_id = recipient.borrow().get_id();
+		let gift_id = gift.borrow().get_id();
+		if recipient_id == constants::ITEM_ID_GUNSLINGER && gift_id == constants::ITEM_ID_MAGAZINE {
+			let cartridge = data.get_item_by_id_certain(constants::ITEM_ID_CARTRIDGE);
+			self.location.borrow_mut().insert_item(cartridge.clone(), true);
+			self.inventory.remove_item_certain(constants::ITEM_ID_MAGAZINE);
+			self.complete_obstruction_achievement(constants::ITEM_ID_GUNSLINGER, data.get_puzzle(10));
+			return;
+		}
+
 		// Default response: not interested
-		let response = String::from(data.get_response(149)) + indirect.borrow().get_shortname() + data.get_response(88) +
-			direct.borrow().get_shortname() + data.get_response(29);
+		let response = String::from(data.get_response(149)) + recipient.borrow().get_shortname() + data.get_response(88) +
+			gift.borrow().get_shortname() + data.get_response(29);
 		terminal::write_full(&response);
 	}
 
