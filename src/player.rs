@@ -181,9 +181,15 @@ impl Player {
 		let gift_edible = gift.borrow().is_edible();
 
 		if recipient_id == constants::ITEM_ID_ALIEN {
+			let chart_used = data.get_item_by_id_certain(constants::ITEM_ID_CHART).borrow().get_location() == constants::LOCATION_ID_GRAVEYARD;
 			if gift_id == constants::ITEM_ID_CHART {
 				self.inventory.remove_item_certain(gift_id);
+				gift.borrow_mut().set_location(constants::LOCATION_ID_GRAVEYARD);
 				self.complete_achievement(data.get_puzzle(2));
+			} else if gift_id == constants::ITEM_ID_TRANSMITTER && chart_used {
+				self.inventory.remove_item_certain(gift_id);
+				gift.borrow_mut().set_location(constants::LOCATION_ID_GRAVEYARD);
+				self.complete_achievement(data.get_puzzle(1));
 			} else {
 				terminal::write_full(data.get_response(1));
 			}
@@ -818,7 +824,12 @@ impl Player {
 		if statement == data.get_response(171) {
 			let alien_present = self.location.borrow().contains_item(constants::ITEM_ID_ALIEN);
 			if alien_present {
-				terminal::write_full(data.get_response(52));
+				let chart_used = data.get_item_by_id_certain(constants::ITEM_ID_CHART).borrow().get_location() == constants::LOCATION_ID_GRAVEYARD;
+				if chart_used {
+					terminal::write_full(data.get_response(51));
+				} else {
+					terminal::write_full(data.get_response(52));
+				}
 			}
 		}
 	}
