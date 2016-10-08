@@ -173,6 +173,48 @@ impl Player {
 		}
 	}
 
+	// Attempt to transfer an item from the player to a recipient
+	fn transfer_item(&mut self, data: &DataCollection, gift: &ItemRef, recipient: &ItemRef) {
+
+		let recipient_id = recipient.borrow().get_id();
+		let gift_id = gift.borrow().get_id();
+
+		if recipient_id == constants::ITEM_ID_GUNSLINGER && gift_id == constants::ITEM_ID_MAGAZINE {
+			let cartridge = data.get_item_by_id_certain(constants::ITEM_ID_CARTRIDGE);
+			self.location.borrow_mut().insert_item(cartridge.clone(), true);
+			self.inventory.remove_item_certain(constants::ITEM_ID_MAGAZINE);
+			self.complete_obstruction_achievement(constants::ITEM_ID_GUNSLINGER, data.get_puzzle(10));
+			return;
+
+		} else if recipient_id == constants::ITEM_ID_LION {
+			if gift.borrow().is_edible() {
+				self.inventory.remove_item_certain(gift_id);
+				if gift_id == constants::ITEM_ID_KOHLRABI {
+					terminal::write_full(data.get_response(60));
+					self.die(data);
+				} else {
+					terminal::write_full(data.get_response(61));
+				}
+				return;
+			}
+
+		} else if recipient_id == constants::ITEM_ID_TROLL {
+			if gift.borrow().is_edible() {
+				self.inventory.remove_item_certain(gift_id);
+				terminal::write_full(data.get_response(154));
+				self.die(data);
+			} else {
+				terminal::write_full(data.get_response(155));
+			}
+			return;
+		}
+
+		// Default response: not interested
+		let response = String::from(data.get_response(149)) + recipient.borrow().get_shortname() + data.get_response(88) +
+			gift.borrow().get_shortname() + data.get_response(29);
+		terminal::write_full(&response);
+	}
+
 	pub fn attack(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
 		match item_id {
@@ -410,7 +452,7 @@ impl Player {
 			Some(indirect) => {
 				let indirect_id = indirect.borrow().get_id();
 				if self.inventory.contains_item(indirect_id) || self.location.borrow().contains_item(indirect_id) {
-					self.feed_final(data, direct, indirect)
+					self.feed_item_unknown(data, direct, indirect);
 				} else {
 					terminal::write_full(&data.get_response_param(100, &indirect.borrow().get_shortname()));
 				}
@@ -430,7 +472,7 @@ impl Player {
 			Some(direct) => {
 				let direct_id = direct.borrow().get_id();
 				if self.inventory.contains_item(direct_id) {
-					self.feed_final(data, direct, indirect)
+					self.feed_item_unknown(data, direct, indirect);
 				} else {
 					terminal::write_full(&data.get_response_param(74, &direct.borrow().get_shortname()));
 				}
@@ -438,42 +480,13 @@ impl Player {
 		}
 	}
 
-	fn feed_final(&mut self, data: &DataCollection, direct: &ItemRef, indirect: &ItemRef) {
-
-		// Cannot feed non-feedable items
+	// Attempt to feed item, when we are not sure if the recipient can accept or not
+	fn feed_item_unknown(&mut self, data: &DataCollection, direct: &ItemRef, indirect: &ItemRef) {
 		if !indirect.borrow().is_recipient() {
 			terminal::write_full(&data.get_response_param(79, indirect.borrow().get_shortname()));
 			return;
 		}
-
-		// The lion's reactions when we attempt to feed her various things
-		if indirect.borrow().is(constants::ITEM_ID_LION) {
-			if direct.borrow().is_edible() {
-				self.inventory.remove_item_certain(direct.borrow().get_id());
-				if direct.borrow().is(constants::ITEM_ID_KOHLRABI) {
-					terminal::write_full(data.get_response(60));
-					self.die(data);
-				} else {
-					terminal::write_full(data.get_response(61));
-				}
-				return;
-			}
-		}
-
-		if indirect.borrow().is(constants::ITEM_ID_TROLL) {
-			if direct.borrow().is_edible() {
-				self.inventory.remove_item_certain(direct.borrow().get_id());
-				terminal::write_full(data.get_response(154));
-				self.die(data);
-			} else {
-				terminal::write_full(data.get_response(155));
-			}
-		}
-
-		// Default response: not interested
-		let response = String::from(data.get_response(149)) + indirect.borrow().get_shortname() + data.get_response(88) +
-			direct.borrow().get_shortname() + data.get_response(29);
-		terminal::write_full(&response);
+		self.transfer_item(data, direct, indirect);
 	}
 
 	pub fn give(&mut self, data: &DataCollection, item: &ItemRef) {
@@ -486,30 +499,12 @@ impl Player {
 			Some(recipient) => {
 				let recipient_id = recipient.borrow().get_id();
 				if self.inventory.contains_item(recipient_id) || self.location.borrow().contains_item(recipient_id) {
-					self.give_final(data, item, recipient)
+					self.transfer_item(data, item, recipient);
 				} else {
 					terminal::write_full(&data.get_response_param(100, &recipient.borrow().get_shortname()));
 				}
 			},
 		}
-	}
-
-	fn give_final(&mut self, data: &DataCollection, gift: &ItemRef, recipient: &ItemRef) {
-
-		let recipient_id = recipient.borrow().get_id();
-		let gift_id = gift.borrow().get_id();
-		if recipient_id == constants::ITEM_ID_GUNSLINGER && gift_id == constants::ITEM_ID_MAGAZINE {
-			let cartridge = data.get_item_by_id_certain(constants::ITEM_ID_CARTRIDGE);
-			self.location.borrow_mut().insert_item(cartridge.clone(), true);
-			self.inventory.remove_item_certain(constants::ITEM_ID_MAGAZINE);
-			self.complete_obstruction_achievement(constants::ITEM_ID_GUNSLINGER, data.get_puzzle(10));
-			return;
-		}
-
-		// Default response: not interested
-		let response = String::from(data.get_response(149)) + recipient.borrow().get_shortname() + data.get_response(88) +
-			gift.borrow().get_shortname() + data.get_response(29);
-		terminal::write_full(&response);
 	}
 
 	// Have player travel to an adjacent location
