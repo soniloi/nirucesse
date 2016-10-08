@@ -178,41 +178,42 @@ impl Player {
 
 		let recipient_id = recipient.borrow().get_id();
 		let gift_id = gift.borrow().get_id();
+		let gift_edible = gift.borrow().is_edible();
 
-		if recipient_id == constants::ITEM_ID_GUNSLINGER && gift_id == constants::ITEM_ID_MAGAZINE {
+		if recipient_id == constants::ITEM_ID_ALIEN {
+			if gift_id == constants::ITEM_ID_CHART {
+				self.inventory.remove_item_certain(gift_id);
+				self.complete_achievement(data.get_puzzle(2));
+			} else {
+				terminal::write_full(data.get_response(1));
+			}
+
+		} else if recipient_id == constants::ITEM_ID_GUNSLINGER && gift_id == constants::ITEM_ID_MAGAZINE {
 			let cartridge = data.get_item_by_id_certain(constants::ITEM_ID_CARTRIDGE);
 			self.location.borrow_mut().insert_item(cartridge.clone(), true);
-			self.inventory.remove_item_certain(constants::ITEM_ID_MAGAZINE);
+			self.inventory.remove_item_certain(gift_id);
 			self.complete_obstruction_achievement(constants::ITEM_ID_GUNSLINGER, data.get_puzzle(10));
-			return;
 
-		} else if recipient_id == constants::ITEM_ID_LION {
-			if gift.borrow().is_edible() {
-				self.inventory.remove_item_certain(gift_id);
-				if gift_id == constants::ITEM_ID_KOHLRABI {
-					terminal::write_full(data.get_response(60));
-					self.die(data);
-				} else {
-					terminal::write_full(data.get_response(61));
-				}
-				return;
-			}
-
-		} else if recipient_id == constants::ITEM_ID_TROLL {
-			if gift.borrow().is_edible() {
-				self.inventory.remove_item_certain(gift_id);
-				terminal::write_full(data.get_response(154));
+		} else if recipient_id == constants::ITEM_ID_LION && gift_edible {
+			self.inventory.remove_item_certain(gift_id);
+			if gift_id == constants::ITEM_ID_KOHLRABI {
+				terminal::write_full(data.get_response(60));
 				self.die(data);
 			} else {
-				terminal::write_full(data.get_response(155));
+				terminal::write_full(data.get_response(61));
 			}
-			return;
-		}
 
-		// Default response: not interested
-		let response = String::from(data.get_response(149)) + recipient.borrow().get_shortname() + data.get_response(88) +
-			gift.borrow().get_shortname() + data.get_response(29);
-		terminal::write_full(&response);
+		} else if recipient_id == constants::ITEM_ID_TROLL && gift_edible {
+			self.inventory.remove_item_certain(gift_id);
+			terminal::write_full(data.get_response(154));
+			self.die(data);
+
+		} else {
+			// Default response: not interested
+			let response = String::from(data.get_response(149)) + recipient.borrow().get_shortname() + data.get_response(88) +
+				gift.borrow().get_shortname() + data.get_response(29);
+			terminal::write_full(&response);
+		}
 	}
 
 	pub fn attack(&mut self, data: &DataCollection, item: &ItemRef) {
