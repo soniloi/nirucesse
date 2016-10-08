@@ -45,6 +45,7 @@ pub const ITEM_ID_FAIRY: u32 = 1030;
 pub const ITEM_ID_GUNSLINGER: u32 = 1037;
 pub const ITEM_ID_KOHLRABI: u32 = 1042;
 pub const ITEM_ID_LAMP: u32 = 1043;
+pub const ITEM_ID_LENS: u32 = 1044;
 pub const ITEM_ID_LION: u32 = 1045;
 pub const ITEM_ID_MAGAZINE: u32 = 1047;
 pub const ITEM_ID_MATCHES: u32 = 1048;

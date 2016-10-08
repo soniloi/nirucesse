@@ -182,6 +182,7 @@ impl Player {
 
 		if recipient_id == constants::ITEM_ID_ALIEN {
 			let chart_used = data.get_item_by_id_certain(constants::ITEM_ID_CHART).borrow().get_location() == constants::LOCATION_ID_GRAVEYARD;
+			let transmitter_used = data.get_item_by_id_certain(constants::ITEM_ID_TRANSMITTER).borrow().get_location() == constants::LOCATION_ID_GRAVEYARD;
 			if gift_id == constants::ITEM_ID_CHART {
 				self.inventory.remove_item_certain(gift_id);
 				gift.borrow_mut().set_location(constants::LOCATION_ID_GRAVEYARD);
@@ -190,6 +191,10 @@ impl Player {
 				self.inventory.remove_item_certain(gift_id);
 				gift.borrow_mut().set_location(constants::LOCATION_ID_GRAVEYARD);
 				self.complete_achievement(data.get_puzzle(1));
+			} else if gift_id == constants::ITEM_ID_LENS && transmitter_used {
+				self.inventory.remove_item_certain(gift_id);
+				gift.borrow_mut().set_location(constants::LOCATION_ID_GRAVEYARD);
+				self.complete_obstruction_achievement(constants::ITEM_ID_ALIEN, data.get_puzzle(3));
 			} else {
 				terminal::write_full(data.get_response(1));
 			}
@@ -825,7 +830,10 @@ impl Player {
 			let alien_present = self.location.borrow().contains_item(constants::ITEM_ID_ALIEN);
 			if alien_present {
 				let chart_used = data.get_item_by_id_certain(constants::ITEM_ID_CHART).borrow().get_location() == constants::LOCATION_ID_GRAVEYARD;
-				if chart_used {
+				let transmitter_used = data.get_item_by_id_certain(constants::ITEM_ID_TRANSMITTER).borrow().get_location() == constants::LOCATION_ID_GRAVEYARD;
+				if transmitter_used {
+					terminal::write_full(data.get_response(53));
+				} else if chart_used {
 					terminal::write_full(data.get_response(51));
 				} else {
 					terminal::write_full(data.get_response(52));
