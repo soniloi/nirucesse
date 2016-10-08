@@ -50,6 +50,7 @@ pub const ITEM_ID_LION: u32 = 1045;
 pub const ITEM_ID_MAGAZINE: u32 = 1047;
 pub const ITEM_ID_MATCHES: u32 = 1048;
 pub const ITEM_ID_MIRROR: u32 = 1050;
+pub const ITEM_ID_PENDANT: u32 = 1097;
 pub const ITEM_ID_POTION: u32 = 1059;
 pub const ITEM_ID_RADISHES: u32 = 1060;
 pub const ITEM_ID_ROBOT: u32 = 1061;
