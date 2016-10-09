@@ -168,6 +168,25 @@ impl Player {
 		}
 	}
 
+	fn switch_item(&mut self, data: &DataCollection, item: &ItemRef, on_next: bool) {
+		if !item.borrow().is_switchable() {
+			terminal::write_full(data.get_response(96));
+			return;
+		}
+		if (item.borrow().is_on() && on_next) || (!item.borrow().is_on() && !on_next) {
+			terminal::write_full(data.get_response(2));
+			return;
+		}
+
+		item.borrow_mut().set_on(on_next);
+		terminal::write_full(data.get_response(62));
+		if item.borrow().is(constants::ITEM_ID_BUTTON) { // When the button is off, ambient gravity in the anteroom is on, and vice-versa
+			let anteroom = data.get_location_certain(constants::LOCATION_ID_ANTEROOM);
+			anteroom.borrow_mut().set_gravity(!on_next);
+			terminal::write_full(data.get_response(86));
+		}
+	}
+
 	fn teleport(&mut self, data: &DataCollection, tp_map: &HashMap<u32, u32>, permanent: bool,
 		response_tag_no_teleport: u32, response_tag_teleport: u32) {
 		let loc_id = self.location.borrow().get_id();
@@ -705,23 +724,7 @@ impl Player {
 	}
 
 	pub fn light(&mut self, data: &DataCollection, item: &ItemRef) {
-		if !item.borrow().is_switchable() {
-			terminal::write_full(data.get_response(97));
-			return;
-		}
-		if item.borrow().is_on() {
-			terminal::write_full(data.get_response(2));
-			return;
-		}
-
-		item.borrow_mut().set_on(true);
-		if item.borrow().is(constants::ITEM_ID_BUTTON) { // When the button is on, ambient gravity in the anteroom is off
-			let anteroom = data.get_location_certain(constants::LOCATION_ID_ANTEROOM);
-			anteroom.borrow_mut().set_gravity(false);
-			terminal::write_full(data.get_response(86));
-		} else {
-			terminal::write_full(data.get_response(62));
-		}
+		self.switch_item(data, item, true);
 	}
 
 	// Return a description of what the player sees when they look
@@ -730,23 +733,7 @@ impl Player {
 	}
 
 	pub fn quench(&mut self, data: &DataCollection, item: &ItemRef) {
-		if !item.borrow().is_switchable() {
-			terminal::write_full(data.get_response(96));
-			return;
-		}
-		if !item.borrow().is_on() {
-			terminal::write_full(data.get_response(3));
-			return;
-		}
-
-		item.borrow_mut().set_on(false);
-		if item.borrow().is(constants::ITEM_ID_BUTTON) { // When the button is off, ambient gravity in the anteroom is on
-			let anteroom = data.get_location_certain(constants::LOCATION_ID_ANTEROOM);
-			anteroom.borrow_mut().set_gravity(true);
-			terminal::write_full(data.get_response(86));
-		} else {
-			terminal::write_full(data.get_response(123));
-		}
+		self.switch_item(data, item, false);
 	}
 
 	pub fn get_score_str(&self, data: &DataCollection) -> String {
