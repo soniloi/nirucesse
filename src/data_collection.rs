@@ -171,8 +171,8 @@ impl DataCollection {
 		self.commands.mk_non_secret_string(self.get_response(19))
 	}
 
-	pub fn get_direction_enum(&self, dir_str: &str) -> &Direction {
-		self.locations.get_direction_enum(dir_str)
+	pub fn get_direction_enum(&self, dir_str: &str) -> Direction {
+		*self.locations.get_direction_enum(dir_str)
 	}
 
 	pub fn get_tp_map_sleep(&self) -> &HashMap<u32, u32> {

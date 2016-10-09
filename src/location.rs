@@ -9,6 +9,7 @@ const CTRL_LOC_HAS_LIGHT: u32 = 0x01; // Whether the location has ambient lighti
 const CTRL_LOC_HAS_AIR: u32 = 0x2; // Whether there is air at the location
 const CTRL_LOC_HAS_GRAVITY: u32 = 0x4; // Whether there is gravity at the location
 const CTRL_LOC_NEEDSNO_LIGHT: u32 = 0x10; // Whether the location requires no portable lighting in order for the player to be able to see clearly
+const CTRL_LOC_NEEDSNO_GRAVITY: u32 = 0x40; // Whether the location requires that there be no gravity
 
 #[derive(PartialEq, Eq, Hash, Clone, Copy)]
 pub enum Direction {
@@ -108,6 +109,10 @@ impl Location {
 
 	pub fn needsno_light(&self) -> bool {
 		self.has_property(CTRL_LOC_NEEDSNO_LIGHT)
+	}
+
+	pub fn needsno_gravity(&self) -> bool {
+		self.has_property(CTRL_LOC_NEEDSNO_GRAVITY)
 	}
 
 	pub fn get_obstruction(&self) -> Option<ItemRef> {

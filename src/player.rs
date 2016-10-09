@@ -524,12 +524,12 @@ impl Player {
 
 	// Have player travel to an adjacent location
 	// TODO: I don't really like this very much, especially the 'back' part; there's probably a better way
-	pub fn go(&mut self, data: &DataCollection, dir: &Direction) {
+	pub fn go(&mut self, data: &DataCollection, dir: Direction) {
 
 		self.previous_true = self.location.clone();
 		let temp_loc = self.location.clone();
 
-		let move_success = match *dir {
+		let move_success = match dir {
 			Direction::Back => self.try_move_back(data),
 			_ => self.try_move_other(data, dir),
 		};
@@ -557,11 +557,11 @@ impl Player {
 	}
 
 	// Attempt to move to some location, which may not be reachable from the current location; return true if move was successful
-	fn try_move_other(&mut self, data: &DataCollection, dir: &Direction) -> bool {
+	fn try_move_other(&mut self, data: &DataCollection, dir: Direction) -> bool {
 		let loc_clone = self.location.clone();
 		let self_loc = loc_clone.borrow();
 
-		match self_loc.get_direction(dir) {
+		match self_loc.get_direction(&dir) {
 			None => {
 				terminal::write_full(data.get_response(72));
 				return false;
@@ -583,11 +583,14 @@ impl Player {
 					}
 				}
 
-				if !next.borrow().has_air() && !self.inventory.has_air() {
+				if !next.borrow().has_air() && !self.inventory.has_air() { // Refuse to proceed if there is no air at the next location
 					terminal::write_full(data.get_response(66));
 					return false;
 				}
-
+				if dir == Direction::Up && self.has_gravity() && self_loc.needsno_gravity() { // Gravity is preventing the player from going up
+					terminal::write_full(data.get_response(67));
+					return false;
+				}
 				return self.try_move_to(data, &next);
 			},
 		}
