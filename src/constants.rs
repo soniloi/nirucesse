@@ -9,9 +9,10 @@ pub const MAX_MOVES_EVENT: u32 = 150; // Random events will all be printed by th
 pub const MIN_MOVES_EVENT: u32 = 15; // Random events will not be printed before this number of instructions entered
 
 // ID numbers of specific locations
-pub const LOCATION_ID_CELLAR: u32 = 29; // The only cellar
 pub const LOCATION_ID_AIRLOCKE: u32 = 31; // The airlock just off the Recreation Hub
 pub const LOCATION_ID_AIRLOCKEOUT: u32 = 36; // The area immediately outside Airlock East
+pub const LOCATION_ID_ANTEROOM: u32 = 125; // The room beneath the observatory
+pub const LOCATION_ID_CELLAR: u32 = 29; // The only cellar
 pub const LOCATION_ID_GARDEN: u32 = 27; // The garden, at the foot of the tree
 pub const LOCATION_ID_GRAVEYARD: u32 = 0; // Where retired items go
 pub const LOCATION_ID_INVENTORY: u32 = 1; // Dummy value
@@ -30,6 +31,7 @@ pub const ITEM_ID_ALIEN: u32 = 1000;
 pub const ITEM_ID_AQUA: u32 = 1084;
 pub const ITEM_ID_BOULDER: u32 = 1008;
 pub const ITEM_ID_BREAD: u32 = 1010;
+pub const ITEM_ID_BUTTON: u32 = 1013;
 pub const ITEM_ID_CARTRIDGE: u32 = 1017;
 pub const ITEM_ID_CAULDRON: u32 = 1018;
 pub const ITEM_ID_CHART: u32 = 1019;

@@ -703,8 +703,15 @@ impl Player {
 			terminal::write_full(data.get_response(2));
 			return;
 		}
-		terminal::write_full(data.get_response(62));
+
 		item.borrow_mut().set_on(true);
+		if item.borrow().is(constants::ITEM_ID_BUTTON) { // When the button is on, ambient gravity in the anteroom is off
+			let anteroom = data.get_location_certain(constants::LOCATION_ID_ANTEROOM);
+			anteroom.borrow_mut().set_gravity(false);
+			terminal::write_full(data.get_response(86));
+		} else {
+			terminal::write_full(data.get_response(62));
+		}
 	}
 
 	// Return a description of what the player sees when they look
@@ -721,8 +728,15 @@ impl Player {
 			terminal::write_full(data.get_response(3));
 			return;
 		}
-		terminal::write_full(data.get_response(123));
+
 		item.borrow_mut().set_on(false);
+		if item.borrow().is(constants::ITEM_ID_BUTTON) { // When the button is off, ambient gravity in the anteroom is on
+			let anteroom = data.get_location_certain(constants::LOCATION_ID_ANTEROOM);
+			anteroom.borrow_mut().set_gravity(true);
+			terminal::write_full(data.get_response(86));
+		} else {
+			terminal::write_full(data.get_response(123));
+		}
 	}
 
 	pub fn get_score_str(&self, data: &DataCollection) -> String {

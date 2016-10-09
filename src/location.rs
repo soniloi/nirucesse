@@ -107,6 +107,14 @@ impl Location {
 		self.has_property(CTRL_LOC_HAS_GRAVITY)
 	}
 
+	pub fn set_gravity(&mut self, on: bool) {
+		if on {
+			self.set_property(CTRL_LOC_HAS_GRAVITY);
+		} else {
+			self.unset_property(CTRL_LOC_HAS_GRAVITY);
+		}
+	}
+
 	pub fn needsno_light(&self) -> bool {
 		self.has_property(CTRL_LOC_NEEDSNO_LIGHT)
 	}
