@@ -29,8 +29,7 @@ impl Game {
 			}
 
 			if !self.player.has_gravity() {
-				terminal::write_full(self.data.get_response(85));
-				self.player.die(&self.data);
+				self.player.float(&self.data);
 			}
 
 			if !self.player.is_alive() {

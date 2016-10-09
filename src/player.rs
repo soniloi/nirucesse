@@ -135,6 +135,16 @@ impl Player {
 		terminal::write_full(response);
 	}
 
+	pub fn float(&mut self, data: &DataCollection) {
+		let has_ceiling = self.location.borrow().has_ceiling();
+		if has_ceiling { // There is a ceiling; player is safe
+			terminal::write_full(data.get_response(153));
+		} else { // There is nothing above, so player floats away and dies
+			terminal::write_full(data.get_response(85));
+			self.die(data);
+		}
+	}
+
 	fn release_item(&mut self, data: &DataCollection, item: &ItemRef, thrown: bool) {
 		self.inventory.remove_item_certain(item.borrow().get_id());
 
