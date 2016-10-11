@@ -18,6 +18,10 @@ pub fn do_burn(data: &DataCollection, arg: String, player: &mut Player, arg_type
 	manipulate_item(data, arg, arg_type, player, Player::burn);
 }
 
+pub fn do_call(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	manipulate_item(data, arg, arg_type, player, Player::call);
+}
+
 #[allow(unused_variables)]
 pub fn do_chimbu(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	player.chimbu(data);

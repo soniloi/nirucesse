@@ -336,6 +336,23 @@ impl Player {
 		}
 	}
 
+	pub fn call(&mut self, data: &DataCollection, item: &ItemRef) {
+		let panel_present = self.location.borrow().contains_item(constants::ITEM_ID_CONSOLE_FIXED);
+		if !panel_present {
+			terminal::write_full(data.get_response(101));
+			return;
+		}
+
+		let callee_id = item.borrow().get_id();
+		if callee_id == constants::ITEM_ID_SHIP {
+			let console = data.get_item_by_id_certain(constants::ITEM_ID_CONSOLE_BROKEN);
+			self.location.borrow_mut().insert_item(console.clone(), true);
+			self.complete_obstruction_achievement(constants::ITEM_ID_CONSOLE_FIXED, data.get_puzzle(7));
+		} else {
+			terminal::write_full(data.get_response(94));
+		}
+	}
+
 	pub fn chimbu(&mut self, data: &DataCollection) {
 		let fairy_present = self.location.borrow().contains_item(constants::ITEM_ID_FAIRY);
 		let envelope = data.get_item_by_id_certain(constants::ITEM_ID_ENVELOPE);

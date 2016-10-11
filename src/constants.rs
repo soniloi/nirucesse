@@ -58,6 +58,7 @@ pub const ITEM_ID_PENDANT: u32 = 1097;
 pub const ITEM_ID_POTION: u32 = 1059;
 pub const ITEM_ID_RADISHES: u32 = 1060;
 pub const ITEM_ID_ROBOT: u32 = 1061;
+pub const ITEM_ID_SHIP: u32 = 1062;
 pub const ITEM_ID_SKELETON: u32 = 1065;
 pub const ITEM_ID_STEW: u32 = 1115;
 pub const ITEM_ID_TOAST: u32 = 1069;
