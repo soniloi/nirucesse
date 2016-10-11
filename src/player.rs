@@ -397,16 +397,16 @@ impl Player {
 		let item_id = item.borrow().get_id();
 		match item_id {
 			constants::ITEM_ID_KOHLRABI => {
-			        self.inventory.remove_item_certain(constants::ITEM_ID_KOHLRABI);
-			        let stew = data.get_item_by_id_certain(constants::ITEM_ID_STEW);
-			        cauldron.borrow_mut().set_within(Some(stew.clone()));
-			        terminal::write_full(data.get_response(14));
+			    self.inventory.remove_item_certain(constants::ITEM_ID_KOHLRABI);
+			    let stew = data.get_item_by_id_certain(constants::ITEM_ID_STEW);
+			    cauldron.borrow_mut().set_within(Some(stew.clone()));
+			    terminal::write_full(data.get_response(14));
 			},
 			constants::ITEM_ID_RADISHES => {
 				self.inventory.remove_item_certain(constants::ITEM_ID_RADISHES);
 				let elixir = data.get_item_by_id_certain(constants::ITEM_ID_ELIXIR);
 				cauldron.borrow_mut().set_within(Some(elixir.clone()));
-				terminal::write_full(data.get_puzzle(17));
+				self.complete_achievement(data.get_puzzle(17));
 			},
 			_ => terminal::write_full(data.get_response(94)),
 		}
