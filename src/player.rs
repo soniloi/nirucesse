@@ -246,6 +246,12 @@ impl Player {
 				terminal::write_full(data.get_response(61));
 			}
 
+		} else if recipient_id == constants::ITEM_ID_SKELETON && gift_id == constants::ITEM_ID_MILK {
+			let brooch = data.get_item_by_id_certain(constants::ITEM_ID_BROOCH);
+			self.location.borrow_mut().insert_item(brooch.clone(), true);
+			self.inventory.remove_item_certain(gift_id);
+			self.complete_obstruction_achievement(constants::ITEM_ID_SKELETON, data.get_puzzle(19));
+
 		} else if recipient_id == constants::ITEM_ID_TROLL && gift_edible {
 			self.inventory.remove_item_certain(gift_id);
 			terminal::write_full(data.get_response(154));
