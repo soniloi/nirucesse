@@ -13,6 +13,8 @@ pub const LOCATION_ID_AIRLOCKE: u32 = 31; // The airlock just off the Recreation
 pub const LOCATION_ID_AIRLOCKEOUT: u32 = 36; // The area immediately outside Airlock East
 pub const LOCATION_ID_ANTEROOM: u32 = 125; // The room beneath the observatory
 pub const LOCATION_ID_CELLAR: u32 = 29; // The only cellar
+pub const LOCATION_ID_CHECKPOINT: u32 = 32; // The security checkpoint between the Recreation Hub and the Control Hub
+pub const LOCATION_ID_DOCKINGCONTROL: u32 = 19; // The docking control area
 pub const LOCATION_ID_GARDEN: u32 = 27; // The garden, at the foot of the tree
 pub const LOCATION_ID_GRAVEYARD: u32 = 0; // Where retired items go
 pub const LOCATION_ID_INVENTORY: u32 = 1; // Dummy value
@@ -26,7 +28,9 @@ pub const LOCATION_ID_WITCH_0: u32 = 107; // Location of teleporter connected to
 pub const LOCATION_ID_WITCH_1: u32 = 128; // Location of teleporter connected to Chasm
 
 pub const LOCATION_ID_SAFE_INITIAL: u32 = 34; // Safe location before pirates arrive
+pub const LOCATION_ID_SAFE_PIRATES: u32 = 50; // Safe location after pirates arrive
 pub const LOCATION_ID_WAKE_INITIAL: u32 = 9; // Wake location before pirates arrive
+pub const LOCATION_ID_WAKE_PIRATES: u32 = 79; // Wake location after pirates arrive
 
 // ID numbers of specific items
 pub const ITEM_ID_ACORN: u32 = 1082;
@@ -35,6 +39,7 @@ pub const ITEM_ID_AQUA: u32 = 1084;
 pub const ITEM_ID_BOULDER: u32 = 1008;
 pub const ITEM_ID_BREAD: u32 = 1010;
 pub const ITEM_ID_BROOCH: u32 = 1087;
+pub const ITEM_ID_BUCCANEER: u32 = 1014;
 pub const ITEM_ID_BUTTON: u32 = 1013;
 pub const ITEM_ID_CARTRIDGE: u32 = 1017;
 pub const ITEM_ID_CAULDRON: u32 = 1018;
@@ -42,6 +47,7 @@ pub const ITEM_ID_CHART: u32 = 1019;
 pub const ITEM_ID_COIN: u32 = 1089;
 pub const ITEM_ID_CONSOLE_BROKEN: u32 = 1021;
 pub const ITEM_ID_CONSOLE_FIXED: u32 = 1057;
+pub const ITEM_ID_CORSAIR: u32 = 1022;
 pub const ITEM_ID_DOGS: u32 = 1026;
 pub const ITEM_ID_DUST: u32 = 1092;
 pub const ITEM_ID_DRAGON: u32 = 1027;

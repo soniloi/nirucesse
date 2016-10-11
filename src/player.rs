@@ -351,6 +351,19 @@ impl Player {
 		if callee_id == constants::ITEM_ID_SHIP {
 			let console = data.get_item_by_id_certain(constants::ITEM_ID_CONSOLE_BROKEN);
 			self.location.borrow_mut().insert_item(console.clone(), true);
+
+			// Player's safe and wake locations must now be west of the checkpoint, rather than east
+			self.location_id_safe = constants::LOCATION_ID_SAFE_PIRATES;
+			self.location_id_wake = constants::LOCATION_ID_WAKE_PIRATES;
+
+			// Pirates arrive on the Asterbase
+			let checkpoint = data.get_location_certain(constants::LOCATION_ID_CHECKPOINT);
+			let corsair = data.get_item_by_id_certain(constants::ITEM_ID_CORSAIR);
+			checkpoint.borrow_mut().insert_item(corsair.clone(), true);
+			let docking_ctrl = data.get_location_certain(constants::LOCATION_ID_DOCKINGCONTROL);
+			let buccaneer = data.get_item_by_id_certain(constants::ITEM_ID_BUCCANEER);
+			docking_ctrl.borrow_mut().insert_item(buccaneer.clone(), true);
+
 			self.complete_obstruction_achievement(constants::ITEM_ID_CONSOLE_FIXED, data.get_puzzle(7));
 		} else {
 			terminal::write_full(data.get_response(94));
