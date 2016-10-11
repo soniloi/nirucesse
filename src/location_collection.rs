@@ -25,15 +25,10 @@ const FILE_INDEX_LOCATION_LONGNAME: usize = 13;
 const FILE_INDEX_LOCATION_DESCRIPTION: usize = 14;
 const KEY_DIRECTION_NONE: u32 = 0;
 
-const LOCATION_INDEX_SAFE: u32 = 34;
-const LOCATION_INDEX_WAKE: u32 = 9;
-
 const SEP_SECTION: &'static str = "---"; // String separating sections
 
 pub struct LocationCollection {
 	locations: HashMap<u32, LocationRef>,
-	location_wake: u32, // Where player wakes on game start, or after being reincarnated
-	location_safe: u32, // Where player's items get dropped on death
 	direction_map: HashMap<&'static str, Direction>, // Map of direction strings to direction enum
 }
 
@@ -42,8 +37,6 @@ impl LocationCollection {
 	pub fn new() -> LocationCollection {
 		LocationCollection {
 			locations: HashMap::new(),
-			location_wake: LOCATION_INDEX_WAKE,
-			location_safe: LOCATION_INDEX_SAFE,
 			direction_map: HashMap::new(),
 		}
 	}
@@ -153,14 +146,6 @@ impl LocationCollection {
 			None => panic!("Location collection corruption for location id [{}], fail.", key),
 			Some(location) => return location,
 		}
-	}
-
-	pub fn get_location_wake(&self) -> &LocationRef {
-		self.get_certain(self.location_wake)
-	}
-
-	pub fn get_location_safe(&self) -> &LocationRef {
-		self.get_certain(self.location_safe)
 	}
 
 	// Get a Direction from a string

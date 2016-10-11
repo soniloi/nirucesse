@@ -119,14 +119,6 @@ impl DataCollection {
 		}
 	}
 
-	pub fn get_location_wake(&self) -> &LocationRef {
-		self.locations.get_location_wake()
-	}
-
-	pub fn get_location_safe(&self) -> &LocationRef {
-		self.locations.get_location_safe()
-	}
-
 	pub fn get_hint(&self, key: &str) -> Option<&String> {
 		self.hints.get_uncertain(key)
 	}

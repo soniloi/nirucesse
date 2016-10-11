@@ -25,6 +25,8 @@ pub struct Player {
 	deaths: u32, // number of times player has died
 	alive: bool,
 	strong: bool,
+	location_id_safe: u32, // where player's important items get dropped on death
+	location_id_wake: u32, // where player wakes after being reincarnated
 }
 
 impl Player {
@@ -42,6 +44,8 @@ impl Player {
 			deaths: 0u32,
 			alive: true,
 			strong: false,
+			location_id_safe: constants::LOCATION_ID_SAFE_INITIAL,
+			location_id_wake: constants::LOCATION_ID_WAKE_INITIAL,
 		}
 	}
 
@@ -84,11 +88,11 @@ impl Player {
 	pub fn die(&mut self, data: &DataCollection) {
 		self.set_alive(false);
 		self.increment_deaths();
-		self.location = data.get_location_wake().clone();
+		self.location = data.get_location_certain(self.location_id_wake).clone();
 	}
 
-	pub fn drop_on_death(&mut self, safe_loc: &LocationRef) {
-		self.inventory.drop_all(&self.previous_true, safe_loc, true, true);
+	pub fn drop_on_death(&mut self, data: &DataCollection) {
+		self.inventory.drop_all(&self.previous_true, data.get_location_certain(self.location_id_safe), true, true);
 	}
 
 	fn get_effective_description(&self, haze_description: String, darkness_description: String, default_description: String) -> String {
@@ -193,7 +197,7 @@ impl Player {
 		match tp_map.get(&loc_id) {
 			None => terminal::write_full(data.get_response(response_tag_no_teleport)),
 			Some(next_id) => {
-				self.inventory.drop_all(&self.location, data.get_location_safe(), false, permanent);
+				self.inventory.drop_all(&self.location, data.get_location_certain(self.location_id_safe), false, permanent);
 				self.location = data.get_location_certain(*next_id).clone();
 				self.previous = None;
 				self.location.borrow_mut().release_temporary(&mut self.inventory);

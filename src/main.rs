@@ -56,6 +56,6 @@ fn init_data(filename: &String) -> DataCollection {
 }
 
 fn init_player(data: &DataCollection) -> Player {
-	let start_loc = data.get_location_wake();
+	let start_loc = data.get_location_certain(constants::LOCATION_ID_WAKE_INITIAL);
 	Player::new(start_loc.clone())
 }

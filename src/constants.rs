@@ -25,6 +25,9 @@ pub const LOCATION_ID_TREETOP: u32 = 28; // The tree in the garden
 pub const LOCATION_ID_WITCH_0: u32 = 107; // Location of teleporter connected to Experiment Area
 pub const LOCATION_ID_WITCH_1: u32 = 128; // Location of teleporter connected to Chasm
 
+pub const LOCATION_ID_SAFE_INITIAL: u32 = 34; // Safe location before pirates arrive
+pub const LOCATION_ID_WAKE_INITIAL: u32 = 9; // Wake location before pirates arrive
+
 // ID numbers of specific items
 pub const ITEM_ID_ACORN: u32 = 1082;
 pub const ITEM_ID_ALIEN: u32 = 1000;

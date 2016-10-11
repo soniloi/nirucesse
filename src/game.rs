@@ -33,7 +33,7 @@ impl Game {
 			}
 
 			if !self.player.is_alive() {
-				self.player.drop_on_death(self.data.get_location_safe());
+				self.player.drop_on_death(&self.data);
 				self.process_reincarnation();
 			} else if self.player.is_playing() {
 				match self.data.get_event(self.player.get_instructions()) {
