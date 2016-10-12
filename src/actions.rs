@@ -131,6 +131,11 @@ pub fn do_play(data: &DataCollection, arg: String, player: &mut Player, arg_type
 	manipulate_item(data, arg, arg_type, player, Player::play);
 }
 
+#[allow(unused_variables)]
+pub fn do_plugh(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	terminal::write_full(data.get_response(122));
+}
+
 pub fn do_quench(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, arg_type, player, Player::quench);
 }
