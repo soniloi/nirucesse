@@ -113,6 +113,11 @@ pub fn do_inventory(data: &DataCollection, arg: String, player: &mut Player, arg
 	terminal::write_full(&player.mk_inventory_string());
 }
 
+#[allow(unused_variables)]
+pub fn do_knit(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	player.knit(data);
+}
+
 pub fn do_light(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, arg_type, player, Player::light);
 }

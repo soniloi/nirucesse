@@ -52,6 +52,7 @@ impl CommandCollection {
 		acts.insert("ignore", actions::do_ignore);
 		acts.insert("insert", actions::do_insert);
 		acts.insert("inventory", actions::do_inventory);
+		acts.insert("knit", actions::do_knit);
 		acts.insert("light", actions::do_light);
 		acts.insert("look", actions::do_look);
 		acts.insert("north", actions::do_go);

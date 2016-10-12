@@ -55,6 +55,7 @@ pub const ITEM_ID_ELIXIR: u32 = 1028;
 pub const ITEM_ID_ENVELOPE: u32 = 1029;
 pub const ITEM_ID_FAIRY: u32 = 1030;
 pub const ITEM_ID_GUNSLINGER: u32 = 1037;
+pub const ITEM_ID_JUMPER: u32 = 1040;
 pub const ITEM_ID_KOHLRABI: u32 = 1042;
 pub const ITEM_ID_LAMP: u32 = 1043;
 pub const ITEM_ID_LENS: u32 = 1044;
@@ -63,6 +64,7 @@ pub const ITEM_ID_MAGAZINE: u32 = 1047;
 pub const ITEM_ID_MATCHES: u32 = 1048;
 pub const ITEM_ID_MILK: u32 = 1049;
 pub const ITEM_ID_MIRROR: u32 = 1050;
+pub const ITEM_ID_NEEDLES: u32 = 1052;
 pub const ITEM_ID_PENDANT: u32 = 1097;
 pub const ITEM_ID_POTION: u32 = 1059;
 pub const ITEM_ID_RADISHES: u32 = 1060;
@@ -79,6 +81,7 @@ pub const ITEM_ID_WHISTLE: u32 = 1077;
 pub const ITEM_ID_WIRE: u32 = 1078;
 pub const ITEM_ID_WIZARD: u32 = 1079;
 pub const ITEM_ID_WOLF: u32 = 1080;
+pub const ITEM_ID_YARN: u32 = 1081;
 
 // Validation for various collections
 pub const EXPECTED_ITEMS: u32 = 119;

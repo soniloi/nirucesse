@@ -763,6 +763,16 @@ impl Player {
 		terminal::write_full(data.get_response(58));
 	}
 
+	pub fn knit(&mut self, data: &DataCollection) {
+		if !self.inventory.contains_item(constants::ITEM_ID_NEEDLES) || !self.inventory.contains_item(constants::ITEM_ID_YARN) {
+			terminal::write_full(data.get_response(77));
+			return;
+		}
+		self.inventory.remove_item_certain(constants::ITEM_ID_YARN);
+		self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_JUMPER).clone(), true);
+		self.complete_achievement(data.get_puzzle(11));
+	}
+
 	pub fn light(&mut self, data: &DataCollection, item: &ItemRef) {
 		self.switch_item(data, item, true);
 	}
