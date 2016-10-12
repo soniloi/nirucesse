@@ -65,6 +65,10 @@ impl Player {
 		self.inventory.has_gravity() || self.location.borrow().has_gravity()
 	}
 
+	pub fn has_nosnomp(&self) -> bool {
+		self.inventory.has_nosnomp() || self.location.borrow().has_nosnomp()
+	}
+
 	pub fn insert_item(&mut self, item_ptr: ItemRef) {
 		self.inventory.insert_item(item_ptr);
 	}
@@ -672,6 +676,10 @@ impl Player {
 		let death = death_rand % 4 == 0;
 		if !self.has_light() && !next.borrow().has_light() && death {
 			terminal::write_full(data.get_response(91));
+			self.die(data);
+			return false;
+		} else if !self.has_nosnomp() && !next.borrow().has_nosnomp() && death {
+			terminal::write_full(data.get_response(142));
 			self.die(data);
 			return false;
 		} else {

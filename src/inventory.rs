@@ -30,6 +30,10 @@ impl Inventory {
 		self.items.values().any(|x| x.borrow().has_gravity())
 	}
 
+	pub fn has_nosnomp(&self) -> bool {
+		self.items.values().any(|x| x.borrow().has_nosnomp())
+	}
+
 	pub fn contains_item(&self, id: u32) -> bool {
 		self.items.values().any(|x| x.borrow().is_or_contains_item(id))
 	}

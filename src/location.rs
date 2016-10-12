@@ -8,6 +8,7 @@ use inventory::Inventory;
 const CTRL_LOC_HAS_LIGHT: u32 = 0x01; // Whether the location has ambient lighting
 const CTRL_LOC_HAS_AIR: u32 = 0x2; // Whether there is air at the location
 const CTRL_LOC_HAS_GRAVITY: u32 = 0x4; // Whether there is gravity at the location
+const CTRL_LOC_HAS_NOSNOMP: u32 = 0x8; // Whether there is absence of snomps at the location
 const CTRL_LOC_NEEDSNO_LIGHT: u32 = 0x10; // Whether the location requires no portable lighting in order for the player to be able to see clearly
 const CTRL_LOC_NEEDSNO_GRAVITY: u32 = 0x40; // Whether the location requires that there be no gravity
 const CTRL_LOC_HAS_CEILING: u32 = 0x100; // Whether there is a ceiling to this location, or something above it
@@ -114,6 +115,10 @@ impl Location {
 		} else {
 			self.unset_property(CTRL_LOC_HAS_GRAVITY);
 		}
+	}
+
+	pub fn has_nosnomp(&self) -> bool {
+		self.has_property(CTRL_LOC_HAS_NOSNOMP)
 	}
 
 	pub fn needsno_light(&self) -> bool {

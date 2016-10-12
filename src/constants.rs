@@ -84,7 +84,7 @@ pub const ITEM_ID_WOLF: u32 = 1080;
 pub const ITEM_ID_YARN: u32 = 1081;
 
 // Validation for various collections
-pub const EXPECTED_ITEMS: u32 = 119;
+pub const EXPECTED_ITEMS: u32 = 120;
 pub const EXPECTED_LOCATIONS: u32 = 134;
 pub const EXPECTED_STRINGS_RESPONSES: u32 = 173;
 pub const EXPECTED_STRINGS_PUZZLES: u32 = 24;

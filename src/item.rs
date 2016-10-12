@@ -5,6 +5,7 @@ const CTRL_ITEM_SWITCHABLE: u32 = 0x8; // Whether the item can be lit/quenched
 const CTRL_ITEM_GIVES_LIGHT: u32 = 0x10; // Whether the item emits light
 const CTRL_ITEM_GIVES_AIR: u32 = 0x20; // Whether the item enables player to breathe
 const CTRL_ITEM_GIVES_GRAVITY: u32 = 0x40; // Whether the item holds the player down
+const CTRL_ITEM_GIVES_NOSNOMP: u32 = 0x80; // Whether the item protects the player from snomps
 const CTRL_ITEM_CONTAINER_LIQUID: u32 = 0x100; // Whether the container may contain liquids rather than solids
 const CTRL_ITEM_FRAGILE: u32 = 0x200; // Whether the item would survive throwing, dropping from heights, etc
 const CTRL_ITEM_WEARABLE: u32 = 0x400; // Whether the item is to be worn by the player rather than carried
@@ -109,6 +110,10 @@ impl Item {
 
 	pub fn has_gravity(&self) -> bool {
 		self.has_property(CTRL_ITEM_GIVES_GRAVITY)
+	}
+
+	pub fn has_nosnomp(&self) -> bool {
+		self.has_property(CTRL_ITEM_GIVES_NOSNOMP)
 	}
 
 	pub fn is_obstruction(&self) -> bool {
