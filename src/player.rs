@@ -902,6 +902,11 @@ impl Player {
 
 	pub fn say(&mut self, data: &DataCollection, statement: &str) {
 		terminal::write_full(&data.get_response_param(170, statement));
+		if self.location.borrow().contains_item(constants::ITEM_ID_CORSAIR) { // Pirate hears player
+			terminal::write_full(data.get_response(114));
+			self.die(data);
+			return;
+		}
 		if statement == data.get_response(171) {
 			let alien_present = self.location.borrow().contains_item(constants::ITEM_ID_ALIEN);
 			if alien_present {
