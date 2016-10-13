@@ -19,6 +19,7 @@ pub const LOCATION_ID_GARDEN: u32 = 27; // The garden, at the foot of the tree
 pub const LOCATION_ID_GRAVEYARD: u32 = 0; // Where retired items go
 pub const LOCATION_ID_INVENTORY: u32 = 1; // Dummy value
 pub const LOCATION_ID_NURSERY: u32 = 3; // Default location of items before they appear after solving puzzles etc.
+pub const LOCATION_ID_REFLECTION: u32 = 120; // The mirror room
 pub const LOCATION_ID_SLEEP_0: u32 = 91; // Cot room
 pub const LOCATION_ID_SLEEP_1: u32 = 92; // Start of the dream
 pub const LOCATION_ID_SLEEP_2: u32 = 97; // End of the dream

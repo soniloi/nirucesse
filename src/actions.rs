@@ -174,6 +174,11 @@ pub fn do_sleep(data: &DataCollection, arg: String, player: &mut Player, arg_typ
 }
 
 #[allow(unused_variables)]
+pub fn do_stare(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	player.stare(data);
+}
+
+#[allow(unused_variables)]
 pub fn do_tezazzle(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	player.tezazzle(data);
 }

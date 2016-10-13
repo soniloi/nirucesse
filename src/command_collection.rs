@@ -71,6 +71,7 @@ impl CommandCollection {
 		acts.insert("south", actions::do_go);
 		acts.insert("southeast", actions::do_go);
 		acts.insert("southwest", actions::do_go);
+		acts.insert("stare", actions::do_stare);
 		acts.insert("tezazzle", actions::do_tezazzle);
 		acts.insert("take", actions::do_take);
 		acts.insert("throw", actions::do_throw);

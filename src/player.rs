@@ -927,6 +927,22 @@ impl Player {
 		self.teleport(data, data.get_tp_map_sleep(), false, 141, 140);
 	}
 
+	pub fn stare(&mut self, data: &DataCollection) {
+		if !self.has_light() {
+			terminal::write_full(data.get_response(15));
+			return;
+		}
+		if self.location.borrow().is(constants::LOCATION_ID_REFLECTION) || self.inventory.contains_item(constants::ITEM_ID_MIRROR) {
+			if self.strong {
+				terminal::write_full(data.get_response(127));
+			} else {
+				terminal::write_full(data.get_response(125));
+			}
+		} else {
+			terminal::write_full(data.get_response(126));
+		}
+	}
+
 	pub fn tezazzle(&mut self, data: &DataCollection) {
 		self.teleport(data, data.get_tp_map_witch(), true, 86, 165);
 	}
