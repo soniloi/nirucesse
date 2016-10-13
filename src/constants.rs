@@ -8,6 +8,10 @@ pub const PENALTY_HINT: u32 = 10; // The value deducted from player's score for 
 pub const MAX_MOVES_EVENT: u32 = 150; // Random events will all be printed by the time this number of instructions entered
 pub const MIN_MOVES_EVENT: u32 = 15; // Random events will not be printed before this number of instructions entered
 
+// Death stuff
+pub const DEATH_DIVISOR_NORMAL: u32 = 4;
+pub const DEATH_DIVISOR_SMASHED: u32 = 1;
+
 // ID numbers of specific locations
 pub const LOCATION_ID_AIRLOCKE: u32 = 31; // The airlock just off the Recreation Hub
 pub const LOCATION_ID_AIRLOCKEOUT: u32 = 36; // The area immediately outside Airlock East

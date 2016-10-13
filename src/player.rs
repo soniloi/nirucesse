@@ -23,6 +23,7 @@ pub struct Player {
 	hints: u32, // number of hints player has requested
 	instructions: u32, // number of instructions player has entered
 	deaths: u32, // number of times player has died
+	death_divisor: u32, // chance of death under specific circumstances
 	alive: bool,
 	strong: bool,
 	location_id_safe: u32, // where player's important items get dropped on death
@@ -42,6 +43,7 @@ impl Player {
 			hints: 0u32,
 			instructions: 0u32,
 			deaths: 0u32,
+			death_divisor: constants::DEATH_DIVISOR_NORMAL,
 			alive: true,
 			strong: false,
 			location_id_safe: constants::LOCATION_ID_SAFE_INITIAL,
@@ -162,6 +164,10 @@ impl Player {
 			terminal::write_full(data.get_response(42));
 		} else if is_fragile && thrown { // When thrown, fragile items shatter
 			terminal::write_full(data.get_response(136));
+			if item.borrow().is(constants::ITEM_ID_MIRROR) {
+				terminal::write_full(data.get_response(137));
+				self.death_divisor = constants::DEATH_DIVISOR_SMASHED;
+			}
 		} else {
 			self.location.borrow_mut().insert_item(item.clone(), true);
 			terminal::write_full(data.get_response(37));
@@ -674,7 +680,7 @@ impl Player {
 	fn try_move_to(&mut self, data: &DataCollection, next: &LocationRef) -> bool {
 		let mut rng = rand::thread_rng();
 		let death_rand: u32 = rng.gen();
-		let death = death_rand % 4 == 0;
+		let death = death_rand % self.death_divisor == 0;
 		if !self.has_light() && !next.borrow().has_light() && death {
 			terminal::write_full(data.get_response(91));
 			self.die(data);
