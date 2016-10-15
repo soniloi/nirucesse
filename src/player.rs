@@ -989,8 +989,9 @@ impl Player {
 		let wizard_present = self.location.borrow().contains_item(constants::ITEM_ID_WIZARD);
 		let mirror_present = self.inventory.contains_item(constants::ITEM_ID_MIRROR);
 		if wizard_present {
-			// TODO: what if player is invisible?
-			if mirror_present {
+			if self.has_invisibility() {
+				terminal::write_full(data.get_response(167));
+			} else if mirror_present {
 				self.complete_obstruction_achievement(constants::ITEM_ID_WIZARD, data.get_puzzle(23));
 			} else {
 				terminal::write_full(data.get_response(166));
