@@ -71,6 +71,10 @@ impl Player {
 		self.inventory.has_nosnomp() || self.location.borrow().has_nosnomp()
 	}
 
+	pub fn has_invisibility(&self) -> bool {
+		self.inventory.has_invisibility()
+	}
+
 	pub fn insert_item(&mut self, item_ptr: ItemRef) {
 		self.inventory.insert_item(item_ptr);
 	}
@@ -939,7 +943,9 @@ impl Player {
 			return;
 		}
 		if self.location.borrow().is(constants::LOCATION_ID_REFLECTION) || self.inventory.contains_item(constants::ITEM_ID_MIRROR) {
-			if self.strong {
+			if self.has_invisibility() {
+				terminal::write_full(data.get_response(124));
+			} else if self.strong {
 				terminal::write_full(data.get_response(127));
 			} else {
 				terminal::write_full(data.get_response(125));

@@ -12,6 +12,7 @@ const CTRL_ITEM_WEARABLE: u32 = 0x400; // Whether the item is to be worn by the 
 const CTRL_ITEM_LIQUID: u32 = 0x800; // Whether item is a liquid, i.e. needs a special container to carry it
 const CTRL_ITEM_ESSENTIAL: u32 = 0x1000; // Whether the item is essential to basic gameplay
 const CTRL_ITEM_EDIBLE: u32 = 0x2000; // Whether the item is any sort of food or drink
+const CTRL_ITEM_GIVES_INVISIBILITY: u32 = 0x4000; // Whether wearing or carrying the item makes the player invisible
 const CTRL_ITEM_TREASURE: u32 = 0x8000; // Whether the item is a treasure
 const CTRL_ITEM_SILENT: u32 = 0x20000; // Whether the item should be shown in location descriptions
 const CTRL_ITEM_RECIPIENT: u32 = 0x80000; // Whether the item may be a recipient (i.e. of gifts or food)
@@ -114,6 +115,10 @@ impl Item {
 
 	pub fn has_nosnomp(&self) -> bool {
 		self.has_property(CTRL_ITEM_GIVES_NOSNOMP)
+	}
+
+	pub fn has_invisibility(&self) -> bool {
+		self.has_property(CTRL_ITEM_GIVES_INVISIBILITY)
 	}
 
 	pub fn is_obstruction(&self) -> bool {
