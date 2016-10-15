@@ -71,7 +71,7 @@ impl Player {
 		self.inventory.has_nosnomp() || self.location.borrow().has_nosnomp()
 	}
 
-	pub fn has_invisibility(&self) -> bool {
+	fn has_invisibility(&self) -> bool {
 		self.inventory.has_invisibility()
 	}
 
@@ -852,24 +852,37 @@ impl Player {
 	}
 
 	pub fn play(&mut self, data: &DataCollection, item: &ItemRef) {
-		if item.borrow().is(constants::ITEM_ID_WHISTLE) {
-			let tune_words = terminal::read_question(data.get_response(163));
-			let tune = &tune_words[0];
-			terminal::write_full(&data.get_response_param(121, tune));
+		let item_id = item.borrow().get_id();
+		match item_id {
+			constants::ITEM_ID_WHISTLE => {
+				let tune_words = terminal::read_question(data.get_response(163));
+				let tune = &tune_words[0];
+				terminal::write_full(&data.get_response_param(121, tune));
 
-			if tune == data.get_response(13) {
-				let lion_present = self.location.borrow().contains_item(constants::ITEM_ID_LION);
-				if lion_present {
-					let lion = data.get_item_by_id_certain(constants::ITEM_ID_LION);
-					let lion_obstruction = lion.borrow().is_obstruction();
-					if lion_obstruction {
-						lion.borrow_mut().set_obstruction(false);
-						self.complete_achievement(data.get_puzzle(12));
+				if tune == data.get_response(13) {
+					let lion_present = self.location.borrow().contains_item(constants::ITEM_ID_LION);
+					if lion_present {
+						let lion = data.get_item_by_id_certain(constants::ITEM_ID_LION);
+						let lion_obstruction = lion.borrow().is_obstruction();
+						if lion_obstruction {
+							lion.borrow_mut().set_obstruction(false);
+							self.complete_achievement(data.get_puzzle(12));
+						}
 					}
 				}
-			}
-		} else {
-			terminal::write_full(data.get_response(94));
+			},
+			constants::ITEM_ID_PLAYER => {
+				if item.borrow().contains_item(constants::ITEM_ID_CD) {
+					terminal::write_full(data.get_response(96));
+				} else if item.borrow().contains_item(constants::ITEM_ID_CASSETTE) {
+					terminal::write_full(data.get_response(97));
+				} else{
+					terminal::write_full(data.get_response(95));
+				}
+			},
+			_ => {
+				terminal::write_full(data.get_response(94));
+			},
 		}
 	}
 
