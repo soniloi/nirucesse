@@ -19,7 +19,7 @@ impl InfoStringCollection {
 		}
 	}
 
-	pub fn init(&mut self, buffer: &mut FileBuffer, expected_max: u32, validate: bool) {
+	pub fn init(&mut self, buffer: &mut FileBuffer, expected_count: u32, validate: bool) {
 
 		let mut line = buffer.get_line();
 	    while !buffer.eof() {
@@ -38,7 +38,7 @@ impl InfoStringCollection {
 		}
 
 		if validate {
-			self.validate(expected_max);
+			self.validate(expected_count);
 		}
 	}
 
@@ -49,8 +49,11 @@ impl InfoStringCollection {
 	}
 
 	// Ensure that all the necessary ids will be available
-	fn validate(&self, expected_max: u32) {
-		for id in 0..expected_max {
+	fn validate(&self, expected_count: u32) {
+		if self.strings.len() as u32 != expected_count {
+			panic!("Error in string collection. Expected [{}] tags, found [{}]", expected_count, self.strings.len());
+		}
+		for id in 0..expected_count {
 			if !self.strings.contains_key(&id) {
 				panic!("Error in string collection. ID [{}] not found", id);
 			}

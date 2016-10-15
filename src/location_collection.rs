@@ -56,7 +56,7 @@ impl LocationCollection {
 		self.direction_map.insert("back", Direction::Back);
 	}
 
-	pub fn init(&mut self, buffer: &mut FileBuffer, expected_max: u32) {
+	pub fn init(&mut self, buffer: &mut FileBuffer, expected_count: u32) {
 
 		self.init_direction_map();
 
@@ -87,7 +87,7 @@ impl LocationCollection {
 		// Use noted links to connect all adjacent locations to each other
 		self.cross_reference(&all_links);
 
-		self.validate(expected_max);
+		self.validate(expected_count);
 	}
 
 	fn parse_location(words: &Vec<&str>) -> (LocationRef, u32) {
@@ -129,8 +129,11 @@ impl LocationCollection {
 	}
 
 	// Ensure that all the necessary ids will be available
-	fn validate(&self, expected_max: u32) {
-		for id in 0..expected_max {
+	fn validate(&self, expected_count: u32) {
+		if self.locations.len() as u32 != expected_count {
+			panic!("Error in location collection. Expected [{}] tags, found [{}]", expected_count, self.locations.len());
+		}
+		for id in 0..expected_count {
 			if !self.locations.contains_key(&id) {
 				panic!("Error in location collection. ID [{}] not found", id);
 			}
