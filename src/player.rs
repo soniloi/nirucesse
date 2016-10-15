@@ -184,7 +184,7 @@ impl Player {
 
 	fn switch_item(&mut self, data: &DataCollection, item: &ItemRef, on_next: bool) {
 		if !item.borrow().is_switchable() {
-			terminal::write_full(data.get_response(96));
+			terminal::write_full(data.get_response(94));
 			return;
 		}
 		if (item.borrow().is_on() && on_next) || (!item.borrow().is_on() && !on_next) {

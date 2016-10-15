@@ -1,3 +1,9 @@
+// Validation for various collections
+pub const EXPECTED_ITEMS: u32 = 123;
+pub const EXPECTED_LOCATIONS: u32 = 134;
+pub const EXPECTED_STRINGS_RESPONSES: u32 = 173;
+pub const EXPECTED_STRINGS_PUZZLES: u32 = 24;
+
 // Scoring stuff
 pub const SCORE_PUZZLE: u32 = 20; // The score the player gets for every puzzle solved
 pub const SCORE_TREASURE: u32 = 10; // The score the player gets for each treasure stowed
@@ -87,9 +93,3 @@ pub const ITEM_ID_WIRE: u32 = 1078;
 pub const ITEM_ID_WIZARD: u32 = 1079;
 pub const ITEM_ID_WOLF: u32 = 1080;
 pub const ITEM_ID_YARN: u32 = 1081;
-
-// Validation for various collections
-pub const EXPECTED_ITEMS: u32 = 120;
-pub const EXPECTED_LOCATIONS: u32 = 134;
-pub const EXPECTED_STRINGS_RESPONSES: u32 = 173;
-pub const EXPECTED_STRINGS_PUZZLES: u32 = 24;
