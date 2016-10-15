@@ -198,10 +198,13 @@ impl Player {
 
 		item.borrow_mut().set_on(on_next);
 		terminal::write_full(data.get_response(62));
-		if item.borrow().is(constants::ITEM_ID_BUTTON) { // When the button is off, ambient gravity in the anteroom is on, and vice-versa
+		let item_id = item.borrow().get_id();
+		if item_id == constants::ITEM_ID_BUTTON { // When the button is off, ambient gravity in the anteroom is on, and vice-versa
 			let anteroom = data.get_location_certain(constants::LOCATION_ID_ANTEROOM);
 			anteroom.borrow_mut().set_gravity(!on_next);
 			terminal::write_full(data.get_response(86));
+		} else if item_id == constants::ITEM_ID_PLAYER && on_next {
+			self.play_player(data, item);
 		}
 	}
 
@@ -872,18 +875,23 @@ impl Player {
 				}
 			},
 			constants::ITEM_ID_PLAYER => {
-				if item.borrow().contains_item(constants::ITEM_ID_CD) {
-					terminal::write_full(data.get_response(96));
-				} else if item.borrow().contains_item(constants::ITEM_ID_CASSETTE) {
-					terminal::write_full(data.get_response(97));
-				} else{
-					terminal::write_full(data.get_response(95));
-				}
+				self.play_player(data, item);
 			},
 			_ => {
 				terminal::write_full(data.get_response(94));
 			},
 		}
+	}
+
+	fn play_player(&self, data: &DataCollection, player: &ItemRef) {
+		if player.borrow().contains_item(constants::ITEM_ID_CD) {
+			terminal::write_full(data.get_response(96));
+		} else if player.borrow().contains_item(constants::ITEM_ID_CASSETTE) {
+			terminal::write_full(data.get_response(97));
+		} else{
+			terminal::write_full(data.get_response(95));
+		}
+		player.borrow_mut().set_on(false);
 	}
 
 	pub fn read(&mut self, data: &DataCollection, item: &ItemRef) {
