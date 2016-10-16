@@ -678,6 +678,10 @@ impl Player {
 					terminal::write_full(data.get_response(67));
 					return false;
 				}
+				if dir == Direction::Down && self.has_gravity() && !self_loc.has_floor() {
+					terminal::write_full(data.get_response(68));
+					return false;
+				}
 				return self.try_move_to(data, &next);
 			},
 		}
