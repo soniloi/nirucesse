@@ -591,6 +591,25 @@ impl Player {
 		self.transfer_item(data, direct, indirect);
 	}
 
+	pub fn fish(&mut self, data: &DataCollection) {
+		if !self.inventory.contains_item(constants::ITEM_ID_NET) {
+			terminal::write_full(data.get_response(77));
+			return;
+		}
+		let glint_present = self.location.borrow().contains_item(constants::ITEM_ID_GLINT);
+		if !glint_present {
+			terminal::write_full(data.get_response(80));
+			return;
+		}
+		let nugget = data.get_item_by_id_certain(constants::ITEM_ID_NUGGET);
+		if !self.inventory.can_fit(nugget) {
+			terminal::write_full(data.get_response(172));
+			return;
+		}
+		self.inventory.insert_item(nugget.clone());
+		self.complete_obstruction_achievement(constants::ITEM_ID_GLINT, data.get_puzzle(14));
+	}
+
 	pub fn give(&mut self, data: &DataCollection, item: &ItemRef) {
 		// Find out what player wants to give item to
 		let recipient_str = terminal::read_question(&data.get_response_param(168, item.borrow().get_shortname()));

@@ -45,6 +45,7 @@ impl CommandCollection {
 		acts.insert("empty", actions::do_empty);
 		acts.insert("explain", actions::do_explain);
 		acts.insert("feed", actions::do_feed);
+		acts.insert("fish", actions::do_fish);
 		acts.insert("give", actions::do_give);
 		acts.insert("go", actions::do_go_disambiguate);
 		acts.insert("help", actions::do_help);

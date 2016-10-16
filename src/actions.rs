@@ -57,6 +57,11 @@ pub fn do_explain(data: &DataCollection, arg: String, player: &mut Player, arg_t
 	terminal::write_full(data.get_explanation(&arg));
 }
 
+#[allow(unused_variables)]
+pub fn do_fish(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	player.fish(data);
+}
+
 pub fn do_give(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, arg_type, player, Player::give);
 }
