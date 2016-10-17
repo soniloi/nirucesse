@@ -122,7 +122,7 @@ impl LocationCollection {
 			for (direction_key, direction_val) in (*direction_map).iter() {
 				if *direction_val != KEY_DIRECTION_NONE {
 					let adjacent_loc = self.get_certain(*direction_val);
-					loc.borrow_mut().set_direction(*direction_key, (*adjacent_loc).clone());
+					loc.borrow_mut().set_direction(*direction_key, Some((*adjacent_loc).clone()));
 				}
 			}
 		}

@@ -151,8 +151,11 @@ impl Location {
 		self.directions.get(dir)
 	}
 
-	pub fn set_direction(&mut self, dir: Direction, loc: LocationRef) {
-		self.directions.insert(dir, loc);
+	pub fn set_direction(&mut self, dir: Direction, next: Option<LocationRef>) {
+		match next {
+			None => {self.directions.remove(&dir);},
+			Some(loc) => {self.directions.insert(dir, loc);},
+		}
 	}
 
 	pub fn contains_item(&self, id: u32) -> bool {

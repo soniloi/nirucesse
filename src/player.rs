@@ -298,8 +298,8 @@ impl Player {
 					self.complete_obstruction_achievement(constants::ITEM_ID_BOULDER, data.get_puzzle(5));
 					self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_DUST).clone(), true);
 					let cellar = data.get_location_certain(constants::LOCATION_ID_CELLAR);
-					self.location.borrow_mut().set_direction(Direction::Down, cellar.clone());
-					cellar.borrow_mut().set_direction(Direction::Up, self.location.clone());
+					self.location.borrow_mut().set_direction(Direction::Down, Some(cellar.clone()));
+					cellar.borrow_mut().set_direction(Direction::Up, Some(self.location.clone()));
 					self.strong = false;
 				} else {
 					terminal::write_full(data.get_response(11));
@@ -347,7 +347,7 @@ impl Player {
 				let at_airlocke = self.location.borrow().is(constants::LOCATION_ID_AIRLOCKE);
 				if at_airlocke {
 					let out_loc = data.get_location_certain(constants::LOCATION_ID_AIRLOCKEOUT);
-					self.location.borrow_mut().set_direction(Direction::Southwest, out_loc.clone());
+					self.location.borrow_mut().set_direction(Direction::Southwest, Some(out_loc.clone()));
 					self.location.borrow_mut().set_air(false);
 					self.complete_achievement(data.get_puzzle(21));
 				} else {
@@ -386,8 +386,12 @@ impl Player {
 			let docking = data.get_location_certain(constants::LOCATION_ID_DOCKING);
 			let ship_loc = data.get_location_certain(constants::LOCATION_ID_SHIP);
 			docking.borrow_mut().insert_item(item.clone(), true);
-			docking.borrow_mut().set_direction(Direction::East, ship_loc.clone());
-			docking.borrow_mut().set_direction(Direction::Southeast, ship_loc.clone());
+			docking.borrow_mut().set_direction(Direction::East, Some(ship_loc.clone()));
+			docking.borrow_mut().set_direction(Direction::Southeast, Some(ship_loc.clone()));
+
+			// Unlink the existing shuttle from the southeast of the docking bay
+			let shuttle = data.get_location_certain(constants::LOCATION_ID_SHUTTLE);
+			shuttle.borrow_mut().set_direction(Direction::South, None);
 
 			self.complete_obstruction_achievement(constants::ITEM_ID_CONSOLE_FIXED, data.get_puzzle(7));
 		} else {
