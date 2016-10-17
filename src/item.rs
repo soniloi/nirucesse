@@ -27,7 +27,8 @@ pub struct Item {
 	longname: String,
 	description: String,
 	writing: Option<String>,
-	location: u32,
+	location_stated: u32,
+	location_true: u32,
 	on: bool,
 	within: Option<ItemRef>,
 }
@@ -43,7 +44,8 @@ impl Item {
 			longname: longname,
 			description: description,
 			writing: writing,
-			location: location,
+			location_stated: location,
+			location_true: location,
 			on: false,
 			within: None,
 		}
@@ -71,12 +73,25 @@ impl Item {
 		}
 	}
 
-	pub fn get_location(&self) -> u32 {
-		self.location
+	pub fn get_location_stated(&self) -> u32 {
+		self.location_stated
 	}
 
-	pub fn set_location(&mut self, loc: u32) {
-		self.location = loc;
+	pub fn get_location_true(&self) -> u32 {
+		self.location_true
+	}
+
+	pub fn set_location_stated(&mut self, loc: u32) {
+		self.location_stated = loc;
+	}
+
+	pub fn set_location_true(&mut self, loc: u32) {
+		self.location_true = loc;
+	}
+
+	pub fn set_locations(&mut self, loc: u32) {
+		self.location_stated = loc;
+		self.location_true = loc;
 	}
 
 	fn has_property(&self, property: u32) -> bool {
@@ -378,7 +393,7 @@ impl Item {
 	pub fn set_within(&mut self, within: Option<ItemRef>) {
 		match within.clone() {
 			None => {},
-			Some(with) => with.borrow_mut().set_location(self.id),
+			Some(with) => with.borrow_mut().set_locations(self.id),
 		}
 		self.within = within;
 	}

@@ -43,7 +43,7 @@ impl Inventory {
 	}
 
 	pub fn insert_item(&mut self, item: ItemRef) {
-		item.borrow_mut().set_location(constants::LOCATION_ID_INVENTORY);
+		item.borrow_mut().set_locations(constants::LOCATION_ID_INVENTORY);
 		self.items.insert(item.borrow().get_id(), item.clone());
 	}
 

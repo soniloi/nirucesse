@@ -231,22 +231,22 @@ impl Player {
 		let gift_edible = gift.borrow().is_edible();
 
 		if recipient_id == constants::ITEM_ID_ALIEN {
-			let chart_used = data.get_item_by_id_certain(constants::ITEM_ID_CHART).borrow().get_location() == constants::LOCATION_ID_GRAVEYARD;
-			let transmitter_used = data.get_item_by_id_certain(constants::ITEM_ID_TRANSMITTER).borrow().get_location() == constants::LOCATION_ID_GRAVEYARD;
+			let chart_used = data.get_item_by_id_certain(constants::ITEM_ID_CHART).borrow().get_location_true() == constants::LOCATION_ID_GRAVEYARD;
+			let transmitter_used = data.get_item_by_id_certain(constants::ITEM_ID_TRANSMITTER).borrow().get_location_true() == constants::LOCATION_ID_GRAVEYARD;
 			let transmitter_on = data.get_item_by_id_certain(constants::ITEM_ID_TRANSMITTER).borrow().is_on();
 			if gift_id == constants::ITEM_ID_CHART {
 				self.inventory.remove_item_certain(gift_id);
-				gift.borrow_mut().set_location(constants::LOCATION_ID_GRAVEYARD);
+				gift.borrow_mut().set_locations(constants::LOCATION_ID_GRAVEYARD);
 				self.complete_achievement(data.get_puzzle(2));
 			} else if gift_id == constants::ITEM_ID_TRANSMITTER && chart_used && transmitter_on { // Alien cannot operate our machinery, so needs the transmitter to be on
 				self.inventory.remove_item_certain(gift_id);
-				gift.borrow_mut().set_location(constants::LOCATION_ID_GRAVEYARD);
+				gift.borrow_mut().set_locations(constants::LOCATION_ID_GRAVEYARD);
 				self.complete_achievement(data.get_puzzle(1));
 			} else if gift_id == constants::ITEM_ID_LENS && transmitter_used {
 				let pendant = data.get_item_by_id_certain(constants::ITEM_ID_PENDANT);
 				self.location.borrow_mut().insert_item(pendant.clone(), true);
 				self.inventory.remove_item_certain(gift_id);
-				gift.borrow_mut().set_location(constants::LOCATION_ID_GRAVEYARD);
+				gift.borrow_mut().set_locations(constants::LOCATION_ID_GRAVEYARD);
 				self.complete_obstruction_achievement(constants::ITEM_ID_ALIEN, data.get_puzzle(3));
 			} else {
 				terminal::write_full(data.get_response(1));
@@ -975,8 +975,8 @@ impl Player {
 		if statement == data.get_response(171) {
 			let alien_present = self.location.borrow().contains_item(constants::ITEM_ID_ALIEN);
 			if alien_present {
-				let chart_used = data.get_item_by_id_certain(constants::ITEM_ID_CHART).borrow().get_location() == constants::LOCATION_ID_GRAVEYARD;
-				let transmitter_used = data.get_item_by_id_certain(constants::ITEM_ID_TRANSMITTER).borrow().get_location() == constants::LOCATION_ID_GRAVEYARD;
+				let chart_used = data.get_item_by_id_certain(constants::ITEM_ID_CHART).borrow().get_location_true() == constants::LOCATION_ID_GRAVEYARD;
+				let transmitter_used = data.get_item_by_id_certain(constants::ITEM_ID_TRANSMITTER).borrow().get_location_true() == constants::LOCATION_ID_GRAVEYARD;
 				if transmitter_used {
 					terminal::write_full(data.get_response(53));
 				} else if chart_used {
@@ -1040,7 +1040,7 @@ impl Player {
 		let at_treetop = self.location.borrow().is(constants::LOCATION_ID_TREETOP);
 		if at_treetop {
 			let acorn = data.get_item_by_id_certain(constants::ITEM_ID_ACORN);
-			let acorn_is_new = acorn.borrow().get_location() == constants::LOCATION_ID_NURSERY;
+			let acorn_is_new = acorn.borrow().get_location_true() == constants::LOCATION_ID_NURSERY;
 			if acorn_is_new {
 				let garden = data.get_location_certain(constants::LOCATION_ID_GARDEN);
 				garden.borrow_mut().insert_item(acorn.clone(), true);

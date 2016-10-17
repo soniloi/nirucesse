@@ -163,8 +163,9 @@ impl Location {
 	}
 
 	pub fn insert_item(&mut self, item: ItemRef, permanent: bool) {
+		item.borrow_mut().set_location_true(self.id);
 		if permanent {
-			item.borrow_mut().set_location(self.id);
+			item.borrow_mut().set_location_stated(self.id);
 		}
 		self.items.insert(item.borrow().get_id(), item.clone());
 	}
@@ -173,7 +174,7 @@ impl Location {
 	pub fn release_temporary(&mut self, inventory: &mut Inventory) {
 		let mut to_remove: Vec<ItemRef> = Vec::new();
 		for item in self.items.values() {
-			if item.borrow().get_location() == constants::LOCATION_ID_INVENTORY {
+			if item.borrow().get_location_stated() == constants::LOCATION_ID_INVENTORY {
 				to_remove.push(item.clone());
 			}
 		}
