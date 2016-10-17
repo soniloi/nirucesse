@@ -382,6 +382,13 @@ impl Player {
 			let buccaneer = data.get_item_by_id_certain(constants::ITEM_ID_BUCCANEER);
 			docking_ctrl.borrow_mut().insert_item(buccaneer.clone(), true);
 
+			// Link pirate ship (both item and location) to the docking bay
+			let docking = data.get_location_certain(constants::LOCATION_ID_DOCKING);
+			let ship_loc = data.get_location_certain(constants::LOCATION_ID_SHIP);
+			docking.borrow_mut().insert_item(item.clone(), true);
+			docking.borrow_mut().set_direction(Direction::East, ship_loc.clone());
+			docking.borrow_mut().set_direction(Direction::Southeast, ship_loc.clone());
+
 			self.complete_obstruction_achievement(constants::ITEM_ID_CONSOLE_FIXED, data.get_puzzle(7));
 		} else {
 			terminal::write_full(data.get_response(94));
