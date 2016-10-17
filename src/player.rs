@@ -208,6 +208,20 @@ impl Player {
 		}
 	}
 
+	// Unlink an item from wherever currently contains it
+	// FIXME: find a better solution to this
+	fn unlink_item(&mut self, data: &DataCollection, item: &ItemRef) {
+		let item_id = item.borrow().get_id();
+		let previous_id = item.borrow().get_location_true();
+		if previous_id == constants::LOCATION_ID_INVENTORY { // Item is inventory
+			self.inventory.remove_item_certain(item_id);
+		} else if previous_id < constants::ITEM_INDEX_START { // Item is at some location
+			data.get_location_certain(previous_id).borrow_mut().remove_item_certain(item_id);
+		} else { // Item is in another item
+			data.get_item_by_id_certain(previous_id).borrow_mut().remove_item_certain(item_id);
+		}
+	}
+
 	fn teleport(&mut self, data: &DataCollection, tp_map: &HashMap<u32, u32>, permanent: bool,
 		response_tag_no_teleport: u32, response_tag_teleport: u32) {
 		let loc_id = self.location.borrow().get_id();
@@ -954,14 +968,22 @@ impl Player {
 	}
 
 	pub fn rub(&mut self, data: &DataCollection, item: &ItemRef) {
-		if item.borrow().is(constants::ITEM_ID_LAMP) {
-			terminal::write_full(data.get_response(47));
-		} else if item.borrow().is(constants::ITEM_ID_DRAGON) {
-			let tooth = data.get_item_by_id_certain(constants::ITEM_ID_TOOTH);
-			self.location.borrow_mut().insert_item(tooth.clone(), true);
-			self.complete_obstruction_achievement(constants::ITEM_ID_DRAGON, data.get_puzzle(8));
-		} else {
-			terminal::write_full(data.get_response(89));
+		let item_id = item.borrow().get_id();
+		match item_id {
+			constants::ITEM_ID_LAMP => terminal::write_full(data.get_response(47)),
+			constants::ITEM_ID_DRAGON => {
+				let tooth = data.get_item_by_id_certain(constants::ITEM_ID_TOOTH);
+				self.location.borrow_mut().insert_item(tooth.clone(), true);
+				self.complete_obstruction_achievement(constants::ITEM_ID_DRAGON, data.get_puzzle(8));
+			},
+			constants::ITEM_ID_PENDANT => {
+				let thor = data.get_location_certain(constants::LOCATION_ID_THOR);
+				let rod = data.get_item_by_id_certain(constants::ITEM_ID_ROD);
+				self.unlink_item(data, rod);
+				thor.borrow_mut().insert_item(rod.clone(), true);
+				terminal::write_full(data.get_response(111));
+			},
+			_ => terminal::write_full(data.get_response(89)),
 		}
 	}
 

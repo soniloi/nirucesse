@@ -36,6 +36,7 @@ pub const LOCATION_ID_SHUTTLE: u32 = 23; // Inside the shuttle
 pub const LOCATION_ID_SLEEP_0: u32 = 91; // Cot room
 pub const LOCATION_ID_SLEEP_1: u32 = 92; // Start of the dream
 pub const LOCATION_ID_SLEEP_2: u32 = 97; // End of the dream
+pub const LOCATION_ID_THOR: u32 = 106; // Thor room
 pub const LOCATION_ID_TREASURESTORE: u32 = 23; // Where the player must bring treasure to
 pub const LOCATION_ID_TREETOP: u32 = 28; // The tree in the garden
 pub const LOCATION_ID_WITCH_0: u32 = 107; // Location of teleporter connected to Experiment Area
@@ -45,6 +46,8 @@ pub const LOCATION_ID_SAFE_INITIAL: u32 = 34; // Safe location before pirates ar
 pub const LOCATION_ID_SAFE_PIRATES: u32 = 50; // Safe location after pirates arrive
 pub const LOCATION_ID_WAKE_INITIAL: u32 = 9; // Wake location before pirates arrive
 pub const LOCATION_ID_WAKE_PIRATES: u32 = 79; // Wake location after pirates arrive
+
+pub const ITEM_INDEX_START: u32 = 1000; // ID numbers before this index are used for locations, everything from here on for items
 
 // ID numbers of specific items
 pub const ITEM_ID_ACORN: u32 = 1082;
@@ -89,6 +92,7 @@ pub const ITEM_ID_PLAYER: u32 = 1103;
 pub const ITEM_ID_POTION: u32 = 1059;
 pub const ITEM_ID_RADISHES: u32 = 1060;
 pub const ITEM_ID_ROBOT: u32 = 1061;
+pub const ITEM_ID_ROD: u32 = 1099;
 pub const ITEM_ID_SHIP: u32 = 1062;
 pub const ITEM_ID_SKELETON: u32 = 1065;
 pub const ITEM_ID_STEW: u32 = 1115;

@@ -2,6 +2,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
+use constants;
 use data_collection;
 use data_collection::ItemRef;
 use file_buffer::FileBuffer;
@@ -17,7 +18,6 @@ const FILE_INDEX_ITEM_LONGNAME: usize = 5;
 const FILE_INDEX_ITEM_DESCRIPTION: usize = 6;
 const FILE_INDEX_ITEM_WRITING: usize = 7;
 const FILE_INDEX_ITEM_ALIAS_START: usize = 8;
-const ITEM_INDEX_START: u32 = 1000; // ID numbers before this index are used for locations, everything from here on for items
 const ITEM_WRITING_NONE: &'static str = "0"; // String indicating that there is no writing
 
 const SEP_SECTION: &'static str = "---"; // String separating sections
@@ -69,7 +69,7 @@ impl ItemCollection {
 			}
 		}
 
-		self.validate(ITEM_INDEX_START, expected_count + ITEM_INDEX_START);
+		self.validate(constants::ITEM_INDEX_START, expected_count + constants::ITEM_INDEX_START);
 	}
 
 	fn parse_and_insert_item(&mut self, words: &Vec<&str>) -> (ItemRef, u32) {
@@ -99,7 +99,7 @@ impl ItemCollection {
 
 	fn set_initial(&self, locations: &mut LocationCollection, item: &ItemRef, initial_id: u32) {
 		// FIXME: tidy this up
-		if initial_id <= ITEM_INDEX_START {
+		if initial_id <= constants::ITEM_INDEX_START {
 			let initial_loc = match locations.get(initial_id) {
 				None => panic!("Unable to find location with ID: {}", initial_id),
 				Some(loc) => loc,
