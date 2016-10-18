@@ -967,6 +967,28 @@ impl Player {
 		}
 	}
 
+	pub fn rob(&mut self, data: &DataCollection, item: &ItemRef) {
+		let item_id = item.borrow().get_id();
+		match item_id {
+			constants::ITEM_ID_CORSAIR => {
+				let key = data.get_item_by_id_certain(constants::ITEM_ID_KEY);
+				let key_is_new = key.borrow().get_location_true() == constants::LOCATION_ID_NURSERY;
+				if !key_is_new {
+					terminal::write_full(data.get_response(115)); // Player has already robbed corsair
+				} else if self.inventory.contains_item(constants::ITEM_ID_BOOTS) {
+					terminal::write_full(data.get_response(113)); // Corsair hears player with noisy boots on and kills them
+					self.die(data);
+				} else if !self.inventory.can_fit(key) {
+					terminal::write_full(&data.get_response_param(173, item.borrow().get_shortname()));
+				} else {
+					self.inventory.insert_item(key.clone());
+					self.complete_achievement(data.get_puzzle(15));
+				}
+			},
+			_ => terminal::write_full(data.get_response(94)),
+		}
+	}
+
 	pub fn rub(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
 		match item_id {

@@ -158,6 +158,10 @@ pub fn do_repair(data: &DataCollection, arg: String, player: &mut Player, arg_ty
 	manipulate_item(data, arg, arg_type, player, Player::repair);
 }
 
+pub fn do_rob(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	manipulate_item(data, arg, arg_type, player, Player::rob);
+}
+
 pub fn do_rub(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, arg_type, player, Player::rub);
 }
