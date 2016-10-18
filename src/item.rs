@@ -17,6 +17,7 @@ const CTRL_ITEM_TREASURE: u32 = 0x8000; // Whether the item is a treasure
 const CTRL_ITEM_SILENT: u32 = 0x20000; // Whether the item should be shown in location descriptions
 const CTRL_ITEM_RECIPIENT: u32 = 0x80000; // Whether the item may be a recipient (i.e. of gifts or food)
 
+use constants;
 use data_collection::ItemRef;
 
 pub struct Item {
@@ -53,6 +54,14 @@ impl Item {
 
 	pub fn is(&self, id: u32) -> bool {
 		id == self.id
+	}
+
+	pub fn is_new(&self) -> bool {
+		self.location_true == constants::LOCATION_ID_NURSERY
+	}
+
+	pub fn is_retired(&self) -> bool {
+		self.location_true == constants::LOCATION_ID_GRAVEYARD
 	}
 
 	// FIXME: probably refactor this out

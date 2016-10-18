@@ -245,8 +245,8 @@ impl Player {
 		let gift_edible = gift.borrow().is_edible();
 
 		if recipient_id == constants::ITEM_ID_ALIEN {
-			let chart_used = data.get_item_by_id_certain(constants::ITEM_ID_CHART).borrow().get_location_true() == constants::LOCATION_ID_GRAVEYARD;
-			let transmitter_used = data.get_item_by_id_certain(constants::ITEM_ID_TRANSMITTER).borrow().get_location_true() == constants::LOCATION_ID_GRAVEYARD;
+			let chart_used = data.get_item_by_id_certain(constants::ITEM_ID_CHART).borrow().is_retired();
+			let transmitter_used = data.get_item_by_id_certain(constants::ITEM_ID_TRANSMITTER).borrow().is_retired();
 			let transmitter_on = data.get_item_by_id_certain(constants::ITEM_ID_TRANSMITTER).borrow().is_on();
 			if gift_id == constants::ITEM_ID_CHART {
 				self.inventory.remove_item_certain(gift_id);
@@ -972,7 +972,7 @@ impl Player {
 		match item_id {
 			constants::ITEM_ID_CORSAIR => {
 				let key = data.get_item_by_id_certain(constants::ITEM_ID_KEY);
-				let key_is_new = key.borrow().get_location_true() == constants::LOCATION_ID_NURSERY;
+				let key_is_new = key.borrow().is_new();
 				if !key_is_new {
 					terminal::write_full(data.get_response(115)); // Player has already robbed corsair
 				} else if self.inventory.contains_item(constants::ITEM_ID_BOOTS) {
@@ -1019,8 +1019,8 @@ impl Player {
 		if statement == data.get_response(171) {
 			let alien_present = self.location.borrow().contains_item(constants::ITEM_ID_ALIEN);
 			if alien_present {
-				let chart_used = data.get_item_by_id_certain(constants::ITEM_ID_CHART).borrow().get_location_true() == constants::LOCATION_ID_GRAVEYARD;
-				let transmitter_used = data.get_item_by_id_certain(constants::ITEM_ID_TRANSMITTER).borrow().get_location_true() == constants::LOCATION_ID_GRAVEYARD;
+				let chart_used = data.get_item_by_id_certain(constants::ITEM_ID_CHART).borrow().is_retired();
+				let transmitter_used = data.get_item_by_id_certain(constants::ITEM_ID_TRANSMITTER).borrow().is_retired();
 				if transmitter_used {
 					terminal::write_full(data.get_response(53));
 				} else if chart_used {
@@ -1084,7 +1084,7 @@ impl Player {
 		let at_treetop = self.location.borrow().is(constants::LOCATION_ID_TREETOP);
 		if at_treetop {
 			let acorn = data.get_item_by_id_certain(constants::ITEM_ID_ACORN);
-			let acorn_is_new = acorn.borrow().get_location_true() == constants::LOCATION_ID_NURSERY;
+			let acorn_is_new = acorn.borrow().is_new();
 			if acorn_is_new {
 				let garden = data.get_location_certain(constants::LOCATION_ID_GARDEN);
 				garden.borrow_mut().insert_item(acorn.clone(), true);
