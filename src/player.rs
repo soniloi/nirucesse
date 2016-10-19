@@ -980,6 +980,21 @@ impl Player {
 	pub fn rob(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
 		match item_id {
+			constants::ITEM_ID_BUCCANEER => {
+				let medal = data.get_item_by_id_certain(constants::ITEM_ID_MEDALLION);
+				let medal_is_new = medal.borrow().is_new();
+				if !medal_is_new {
+					terminal::write_full(data.get_response(115)); // Player has already robbed buccaneer
+				} else if !self.has_invisibility() {
+					terminal::write_full(data.get_response(116)); // Buccaneer catches sight of player and kills them
+					self.die(data);
+				} else if !self.inventory.can_fit(medal) {
+					terminal::write_full(&data.get_response_param(173, item.borrow().get_shortname()));
+				} else {
+					self.inventory.insert_item(medal.clone());
+					self.complete_achievement(data.get_puzzle(16));
+				}
+			},
 			constants::ITEM_ID_CORSAIR => {
 				let key = data.get_item_by_id_certain(constants::ITEM_ID_KEY);
 				let key_is_new = key.borrow().is_new();
