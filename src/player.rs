@@ -16,7 +16,6 @@ pub type ItemManipFn = ItemManipFinalFn;
 pub struct Player {
 	inventory: Inventory,
 	location: LocationRef,
-	previous_true: LocationRef,
 	previous: Option<LocationRef>,
 	achievement_count: u32, // number of puzzles player has solved
 	playing: bool, // whether player is currently playing
@@ -36,7 +35,6 @@ impl Player {
 		Player {
 			inventory: Inventory::new(16),
 			location: initial.clone(),
-			previous_true: initial.clone(),
 			previous: None,
 			achievement_count: 0u32,
 			playing: true,
@@ -98,11 +96,14 @@ impl Player {
 	pub fn die(&mut self, data: &DataCollection) {
 		self.set_alive(false);
 		self.increment_deaths();
+		let location_safe = data.get_location_certain(self.location_id_safe);
+		self.drop_on_death(location_safe);
 		self.location = data.get_location_certain(self.location_id_wake).clone();
+		self.previous = None;
 	}
 
-	pub fn drop_on_death(&mut self, data: &DataCollection) {
-		self.inventory.drop_all(&self.previous_true, data.get_location_certain(self.location_id_safe), true, true);
+	pub fn drop_on_death(&mut self, location_safe: &LocationRef) {
+		self.inventory.drop_all(&self.location, location_safe, true, true);
 	}
 
 	fn get_effective_description(&self, haze_description: String, darkness_description: String, default_description: String) -> String {
@@ -673,7 +674,7 @@ impl Player {
 	// Have player travel to an adjacent location
 	pub fn go(&mut self, data: &DataCollection, dir: Direction) {
 
-		self.previous_true = self.location.clone();
+		let location_before = self.location.clone();
 
 		let move_result = match dir {
 			Direction::Back => self.try_move_back(),
@@ -689,8 +690,8 @@ impl Player {
 			None => {},
 			Some (next_location) => {
 				self.location = next_location;
-				if self.location.borrow().can_reach(&self.previous_true) {
-					self.previous = Some(self.previous_true.clone());
+				if self.location.borrow().can_reach(&location_before) {
+					self.previous = Some(location_before);
 				} else {
 					self.previous = None;
 				}
@@ -702,7 +703,6 @@ impl Player {
 		// Process death
 		if death {
 			self.die(data);
-			self.previous = None;
 		}
 
 		// Print any returned responses
