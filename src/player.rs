@@ -675,44 +675,60 @@ impl Player {
 	pub fn go(&mut self, data: &DataCollection, dir: Direction) {
 
 		self.previous_true = self.location.clone();
-		let temp_loc = self.location.clone();
+		//let temp_loc = self.location.clone();
 
-		let move_success = match dir {
-			Direction::Back => self.try_move_back(data),
+		let move_result = match dir {
+			Direction::Back => self.try_move_back(),
 			_ => self.try_move_other(data, dir),
 		};
 
-		if move_success && !self.has_light() {
-			terminal::write_full(data.get_response(59));
+		let next_location_option = move_result.0;
+		let response_code_option = move_result.1;
+
+		// Update location if returned
+		match next_location_option {
+			None => {},
+			Some (next_location) => {
+				self.location = next_location;
+				if self.location.borrow().can_reach(&self.previous_true) {
+					self.previous = Some(self.previous_true.clone());
+				} else {
+					self.previous = None;
+				}
+				terminal::write_full(&self.get_effective_appearance(data, self.location.borrow().mk_arrival_string()));
+				self.location.borrow_mut().set_visited(true);
+			}
 		}
 
-		self.update_previous(move_success, &temp_loc);
-		self.location.borrow_mut().set_visited(true);
+		// Print any returned responses
+		match response_code_option {
+			None => {},
+			Some(response_code) => terminal::write_full(data.get_response(response_code)),
+		}
+
+		if !self.is_alive() {
+			self.previous = None;
+		}
 	}
 
-	// Attempt to move to previous location; return true if move was successful
-	fn try_move_back(&mut self, data: &DataCollection) -> bool {
+	// Attempt to move to previous location
+	// Return a pair representing the next location (if move is successful), and any response message to be printed
+	fn try_move_back(&mut self) -> (Option<LocationRef>, Option<u32>) {
 		match self.previous.clone() {
-			None => {
-				terminal::write_full(data.get_response(71));
-				return false;
-			},
-			Some(prev) => {
-				let prev_loc = prev.clone();
-				return self.try_move_to(data, &prev_loc);
-			},
+			None => (None, Some(71)),
+			Some(prev) => (Some(prev.clone()), None),
 		}
 	}
 
-	// Attempt to move to some location, which may not be reachable from the current location; return true if move was successful
-	fn try_move_other(&mut self, data: &DataCollection, dir: Direction) -> bool {
+	// Attempt to move to some location, which may not be reachable from the current location
+	// Return a pair representing the next location (if move is successful), and any response message to be printed
+	fn try_move_other(&mut self, data: &DataCollection, dir: Direction) -> (Option<LocationRef>, Option<u32>) {
 		let loc_clone = self.location.clone();
 		let self_loc = loc_clone.borrow();
 
 		match self_loc.get_direction(&dir) {
 			None => {
-				terminal::write_full(data.get_response(72));
-				return false;
+				return (None, Some(72));
 			},
 			Some(next) => {
 				if !self.is_previous_loc(&next) {
@@ -720,83 +736,55 @@ impl Player {
 						None => {},
 						Some(obstruction) => {
 							// FIXME: tidy this whole area
+							let mut response_code: u32 = 108; // FIXME: tailor to individual obstructions
 							if obstruction.borrow().is(constants::ITEM_ID_BUCCANEER) {
 								if !self.has_invisibility() {
-									terminal::write_full(data.get_response(120));
+									response_code = 120;
 								} else {
-									terminal::write_full(data.get_response(118));
-									return self.try_move_to(data, &next);
+									return (Some(next.clone()), Some(118));
 								}
 							} else if obstruction.borrow().is(constants::ITEM_ID_CORSAIR) {
 								if self.inventory.contains_item(constants::ITEM_ID_BOOTS) {
-									terminal::write_full(data.get_response(117)); // Corsair hears player with noisy boots on and kills them
 									self.die(data);
+									response_code = 117;
 								} else {
-									terminal::write_full(data.get_response(119));
+									response_code = 119;
 								}
-							} else {
-								let mut response =  String::from(data.get_response(108));
-								if self.has_light() {
-									response = response + data.get_response(150) + obstruction.borrow().get_shortname() + data.get_response(29);
-								} else {
-									response = response + data.get_response(109);
-								}
-								terminal::write_full(&response);
 							}
-							return false;
+							return (None, Some(response_code));
 						}
 					}
 				}
 
 				if !next.borrow().has_air() && !self.inventory.has_air() { // Refuse to proceed if there is no air at the next location
-					terminal::write_full(data.get_response(66));
-					return false;
+					return (None, Some(66));
 				}
 				if dir == Direction::Up && self.has_gravity() && self_loc.needsno_gravity() { // Gravity is preventing the player from going up
-					terminal::write_full(data.get_response(67));
-					return false;
+					return (None, Some(67));
 				}
 				if dir == Direction::Down && self.has_gravity() && !self_loc.has_floor() {
-					terminal::write_full(data.get_response(68));
-					return false;
+					return (None, Some(68));
 				}
+
 				return self.try_move_to(data, &next);
 			},
 		}
 	}
 
-	// Attempt to go to a location known to be adjacent; return true if move successful
-	fn try_move_to(&mut self, data: &DataCollection, next: &LocationRef) -> bool {
+	// Attempt to go to a location known to be adjacent
+	// Return a pair representing the next location (if move is successful), and any response message to be printed
+	fn try_move_to(&mut self, data: &DataCollection, next: &LocationRef) -> (Option<LocationRef>, Option<u32>) {
 		let mut rng = rand::thread_rng();
 		let death_rand: u32 = rng.gen();
 		let death = death_rand % self.death_divisor == 0;
 		if !self.has_light() && !next.borrow().has_light() && death {
-			terminal::write_full(data.get_response(91));
 			self.die(data);
-			return false;
+			return (None, Some(91));
 		} else if !self.has_nosnomp() && !next.borrow().has_nosnomp() && death {
-			terminal::write_full(data.get_response(142));
 			self.die(data);
-			return false;
+			return (None, Some(142));
 		} else {
-			self.location = next.clone();
-			terminal::write_full(&self.get_effective_appearance(data, self.location.borrow().mk_arrival_string()));
-			return true;
-		}
-	}
-
-	// Update player's 'previous' field as appropriate
-	fn update_previous(&mut self, move_success: bool, temp_loc: &LocationRef) {
-		if move_success {
-			if self.location.borrow().can_reach(&temp_loc) {
-				self.previous = Some(temp_loc.clone());
-			} else {
-				self.previous = None;
-			}
-		}
-
-		if !self.is_alive() {
-			self.previous = None;
+			return (Some(next.clone()), None);
 		}
 	}
 
