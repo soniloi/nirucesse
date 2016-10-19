@@ -720,7 +720,14 @@ impl Player {
 						None => {},
 						Some(obstruction) => {
 							// FIXME: tidy this whole area
-							if obstruction.borrow().is(constants::ITEM_ID_CORSAIR) {
+							if obstruction.borrow().is(constants::ITEM_ID_BUCCANEER) {
+								if !self.has_invisibility() {
+									terminal::write_full(data.get_response(120));
+								} else {
+									terminal::write_full(data.get_response(118));
+									return self.try_move_to(data, &next);
+								}
+							} else if obstruction.borrow().is(constants::ITEM_ID_CORSAIR) {
 								if self.inventory.contains_item(constants::ITEM_ID_BOOTS) {
 									terminal::write_full(data.get_response(117)); // Corsair hears player with noisy boots on and kills them
 									self.die(data);
