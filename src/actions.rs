@@ -141,6 +141,10 @@ pub fn do_plugh(data: &DataCollection, arg: String, player: &mut Player, arg_typ
 	terminal::write_full(data.get_response(122));
 }
 
+pub fn do_pour(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	manipulate_item(data, arg, arg_type, player, Player::pour);
+}
+
 pub fn do_quench(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, arg_type, player, Player::quench);
 }

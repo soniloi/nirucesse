@@ -261,6 +261,7 @@ impl Player {
 		let recipient_id = recipient.borrow().get_id();
 		let gift_id = gift.borrow().get_id();
 		let gift_edible = gift.borrow().is_edible();
+		let gift_liquid = gift.borrow().is_liquid();
 
 		if recipient_id == constants::ITEM_ID_ALIEN {
 			let chart_used = data.get_item_by_id_certain(constants::ITEM_ID_CHART).borrow().is_retired();
@@ -310,8 +311,11 @@ impl Player {
 			terminal::write_full(data.get_response(154));
 			self.die(data);
 
-		} else {
-			// Default response: not interested
+		} else if gift_liquid { // Default response for liquids
+			self.inventory.remove_item_certain(gift_id);
+			terminal::write_full(&data.get_response_param(175, recipient.borrow().get_shortname()));
+
+		} else { // Default response for non-liquids
 			let response = String::from(data.get_response(149)) + recipient.borrow().get_shortname() + data.get_response(88) +
 				gift.borrow().get_shortname() + data.get_response(29);
 			terminal::write_full(&response);
@@ -964,6 +968,29 @@ impl Player {
 			terminal::write_full(data.get_response(95));
 		}
 		player.borrow_mut().set_on(false);
+	}
+
+	pub fn pour(&mut self, data: &DataCollection, item: &ItemRef) {
+		if !item.borrow().is_liquid() {
+			terminal::write_full(data.get_response(99));
+			return;
+		}
+
+		// Find out what player wants to pour liquid onto
+		let recipient_str = terminal::read_question(&data.get_response_param(174, item.borrow().get_shortname()));
+
+		// Pour liquid onto recipient
+		match data.get_item_by_name(recipient_str[0].clone()) {
+			None => terminal::write_full(data.get_response(98)),
+			Some(recipient) => {
+				let recipient_id = recipient.borrow().get_id();
+				if self.inventory.contains_item(recipient_id) || self.location.borrow().contains_item(recipient_id) {
+					self.transfer_item(data, item, recipient);
+				} else {
+					terminal::write_full(&data.get_response_param(100, &recipient.borrow().get_shortname()));
+				}
+			},
+		}
 	}
 
 	pub fn read(&mut self, data: &DataCollection, item: &ItemRef) {

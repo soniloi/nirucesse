@@ -61,6 +61,7 @@ impl CommandCollection {
 		acts.insert("northwest", actions::do_go);
 		acts.insert("play", actions::do_play);
 		acts.insert("plugh", actions::do_plugh);
+		acts.insert("pour", actions::do_pour);
 		acts.insert("quench", actions::do_quench);
 		acts.insert("quit", actions::do_quit);
 		acts.insert("read", actions::do_read);
