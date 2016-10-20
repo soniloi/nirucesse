@@ -1,7 +1,7 @@
 // Validation for various collections
 pub const EXPECTED_ITEMS: u32 = 123;
 pub const EXPECTED_LOCATIONS: u32 = 134;
-pub const EXPECTED_STRINGS_RESPONSES: u32 = 176;
+pub const EXPECTED_STRINGS_RESPONSES: u32 = 178;
 pub const EXPECTED_STRINGS_PUZZLES: u32 = 24;
 
 // Scoring stuff
@@ -53,6 +53,7 @@ pub const ITEM_INDEX_START: u32 = 1000; // ID numbers before this index are used
 pub const ITEM_ID_ACORN: u32 = 1082;
 pub const ITEM_ID_ALIEN: u32 = 1000;
 pub const ITEM_ID_AQUA: u32 = 1084;
+pub const ITEM_ID_BEAN: u32 = 1003;
 pub const ITEM_ID_BOOTS: u32 = 1006;
 pub const ITEM_ID_BOULDER: u32 = 1008;
 pub const ITEM_ID_BREAD: u32 = 1010;
@@ -91,6 +92,7 @@ pub const ITEM_ID_NEEDLES: u32 = 1052;
 pub const ITEM_ID_NET: u32 = 1053;
 pub const ITEM_ID_NUGGET: u32 = 1096;
 pub const ITEM_ID_PENDANT: u32 = 1097;
+pub const ITEM_ID_PLANT: u32 = 1058;
 pub const ITEM_ID_PLAYER: u32 = 1103;
 pub const ITEM_ID_POTION: u32 = 1059;
 pub const ITEM_ID_RADISHES: u32 = 1060;

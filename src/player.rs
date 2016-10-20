@@ -160,6 +160,17 @@ impl Player {
 		}
 	}
 
+	fn play_player(&self, data: &DataCollection, player: &ItemRef) {
+		if player.borrow().contains_item(constants::ITEM_ID_CD) {
+			terminal::write_full(data.get_response(96));
+		} else if player.borrow().contains_item(constants::ITEM_ID_CASSETTE) {
+			terminal::write_full(data.get_response(97));
+		} else{
+			terminal::write_full(data.get_response(95));
+		}
+		player.borrow_mut().set_on(false);
+	}
+
 	fn release_item(&mut self, data: &DataCollection, item: &ItemRef, thrown: bool) {
 		self.inventory.remove_item_certain(item.borrow().get_id());
 
@@ -185,6 +196,17 @@ impl Player {
 				self.complete_obstruction_achievement(constants::ITEM_ID_WOLF, data.get_puzzle(13));
 			}
 		}
+	}
+
+	// Remove one item from either location or inventory, and insert another at location in its place
+	fn remove_and_insert_item(&mut self, data: &DataCollection, id_to_remove: u32, id_to_insert: u32, response_code: u32) {
+		if self.inventory.contains_item(id_to_remove) {
+			self.inventory.remove_item_certain(id_to_remove);
+		} else {
+			self.location.borrow_mut().remove_item_certain(id_to_remove);
+		}
+		self.location.borrow_mut().insert_item(data.get_item_by_id_certain(id_to_insert).clone(), true);
+		terminal::write_full(data.get_response(response_code));
 	}
 
 	fn rob_pirate(&mut self, data: &DataCollection, pirate: &ItemRef, reward_code: u32, kill: bool,
@@ -310,6 +332,14 @@ impl Player {
 			self.inventory.remove_item_certain(gift_id);
 			terminal::write_full(data.get_response(154));
 			self.die(data);
+
+		} else if recipient_id == constants::ITEM_ID_BEAN && gift_id == constants::ITEM_ID_POTION {
+			self.inventory.remove_item_certain(gift_id);
+			self.remove_and_insert_item(data, constants::ITEM_ID_BEAN, constants::ITEM_ID_PLANT, 176);
+
+		} else if recipient_id == constants::ITEM_ID_PLANT && gift_id == constants::ITEM_ID_POTION {
+			self.inventory.remove_item_certain(gift_id);
+			self.remove_and_insert_item(data, constants::ITEM_ID_PLANT, constants::ITEM_ID_BEAN, 177);
 
 		} else if gift_liquid { // Default response for liquids
 			self.inventory.remove_item_certain(gift_id);
@@ -957,17 +987,6 @@ impl Player {
 				terminal::write_full(data.get_response(94));
 			},
 		}
-	}
-
-	fn play_player(&self, data: &DataCollection, player: &ItemRef) {
-		if player.borrow().contains_item(constants::ITEM_ID_CD) {
-			terminal::write_full(data.get_response(96));
-		} else if player.borrow().contains_item(constants::ITEM_ID_CASSETTE) {
-			terminal::write_full(data.get_response(97));
-		} else{
-			terminal::write_full(data.get_response(95));
-		}
-		player.borrow_mut().set_on(false);
 	}
 
 	pub fn pour(&mut self, data: &DataCollection, item: &ItemRef) {
