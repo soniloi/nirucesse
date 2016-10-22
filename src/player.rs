@@ -93,6 +93,66 @@ impl Player {
 		self.alive = b;
 	}
 
+	// Return a description of what the player sees when they look
+	pub fn get_look(&self, data: &DataCollection) -> String {
+		self.get_effective_appearance(data, self.mk_location_string())
+	}
+
+	pub fn get_score_str(&self, data: &DataCollection) -> String {
+		let total_score = self.calculate_score(data);
+		String::from(data.get_response(132)) + &total_score.to_string() +
+		data.get_response(133) + &data.get_max_score().to_string() +
+		data.get_response(128) + &self.deaths.to_string() +
+		data.get_response(129) + &self.instructions.to_string() +
+		data.get_response(131) + &self.hints.to_string() + data.get_response(130)
+	}
+
+	fn calculate_score(&self, data: &DataCollection) -> u32 {
+		let treasure_score = data.get_stowed_treasure_count() * constants::SCORE_TREASURE;
+		let achievement_score = self.achievement_count * constants::SCORE_PUZZLE;
+		let death_penalty = (self.deaths * constants::PENALTY_DEATH) as i32 * -1;
+		let hint_penalty = (self.hints * constants::PENALTY_HINT) as i32 * -1;
+		let total_score = treasure_score as i32 + achievement_score as i32 + death_penalty + hint_penalty;
+		if total_score < 0 {0} else {total_score as u32}
+	}
+
+	pub fn increment_hints(&mut self) {
+		self.hints = self.hints + 1;
+	}
+
+	pub fn get_instructions(&self) -> u32 {
+		self.instructions
+	}
+
+	pub fn increment_instructions(&mut self) {
+		self.instructions = self.instructions + 1;
+	}
+
+	pub fn decrement_instructions(&mut self) {
+		self.instructions = self.instructions - 1;
+	}
+
+	pub fn increment_deaths(&mut self) {
+		self.deaths = self.deaths + 1;
+	}
+
+	pub fn mk_inventory_string(&self) -> String {
+		self.inventory.mk_string()
+	}
+
+	pub fn mk_location_string(&self) -> String {
+		self.location.borrow().mk_full_string()
+	}
+
+	// Return whether a location is the last place the player was
+	fn is_previous_loc(&self, next: &LocationRef) -> bool {
+		let previous = self.previous.clone();
+		match previous {
+			None => return false,
+			Some(prev) => prev.borrow().get_id() == next.borrow().get_id(),
+		}
+	}
+
 	pub fn die(&mut self, data: &DataCollection) {
 		self.set_alive(false);
 		self.increment_deaths();
@@ -504,38 +564,6 @@ impl Player {
 		}
 	}
 
-	pub fn take(&mut self, data: &DataCollection, item: &ItemRef) {
-		if self.inventory.contains_item(item.borrow().get_id()) && !item.borrow().is_liquid() {
-			terminal::write_full(data.get_response(145));
-			return;
-		}
-
-		if !item.borrow().is_portable() {
-			terminal::write_full(data.get_response(146));
-			return;
-		}
-
-		if !self.inventory.can_fit(&item) {
-			terminal::write_full(data.get_response(147));
-			return;
-		}
-
-		// Liquids require a container
-		if item.borrow().is_liquid() {
-			self.insert(data, item);
-			return;
-		}
-
-		self.location.borrow_mut().remove_item_certain(item.borrow().get_id());
-		self.insert_item(item.clone());
-
-		if item.borrow().is_wearable() {
-			terminal::write_full(data.get_response(156));
-		} else {
-			terminal::write_full(data.get_response(148));
-		}
-	}
-
 	pub fn cook(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !self.location.borrow().contains_item(constants::ITEM_ID_CAULDRON) {
 			terminal::write_full(data.get_response(76));
@@ -849,15 +877,6 @@ impl Player {
 		}
 	}
 
-	// Return whether a location is the last place the player was
-	fn is_previous_loc(&self, next: &LocationRef) -> bool {
-		let previous = self.previous.clone();
-		match previous {
-			None => return false,
-			Some(prev) => prev.borrow().get_id() == next.borrow().get_id(),
-		}
-	}
-
 	pub fn ignore(&mut self, data: &DataCollection, item: &ItemRef) {
 		if item.borrow().is(constants::ITEM_ID_TROLL) {
 			self.complete_obstruction_achievement(constants::ITEM_ID_TROLL, data.get_puzzle(22));
@@ -930,61 +949,6 @@ impl Player {
 		self.switch_item(data, item, true);
 	}
 
-	// Return a description of what the player sees when they look
-	pub fn get_look(&self, data: &DataCollection) -> String {
-		self.get_effective_appearance(data, self.mk_location_string())
-	}
-
-	pub fn quench(&mut self, data: &DataCollection, item: &ItemRef) {
-		self.switch_item(data, item, false);
-	}
-
-	pub fn get_score_str(&self, data: &DataCollection) -> String {
-		let total_score = self.calculate_score(data);
-		String::from(data.get_response(132)) + &total_score.to_string() +
-		data.get_response(133) + &data.get_max_score().to_string() +
-		data.get_response(128) + &self.deaths.to_string() +
-		data.get_response(129) + &self.instructions.to_string() +
-		data.get_response(131) + &self.hints.to_string() + data.get_response(130)
-	}
-
-	fn calculate_score(&self, data: &DataCollection) -> u32 {
-		let treasure_score = data.get_stowed_treasure_count() * constants::SCORE_TREASURE;
-		let achievement_score = self.achievement_count * constants::SCORE_PUZZLE;
-		let death_penalty = (self.deaths * constants::PENALTY_DEATH) as i32 * -1;
-		let hint_penalty = (self.hints * constants::PENALTY_HINT) as i32 * -1;
-		let total_score = treasure_score as i32 + achievement_score as i32 + death_penalty + hint_penalty;
-		if total_score < 0 {0} else {total_score as u32}
-	}
-
-	pub fn increment_hints(&mut self) {
-		self.hints = self.hints + 1;
-	}
-
-	pub fn get_instructions(&self) -> u32 {
-		self.instructions
-	}
-
-	pub fn increment_instructions(&mut self) {
-		self.instructions = self.instructions + 1;
-	}
-
-	pub fn decrement_instructions(&mut self) {
-		self.instructions = self.instructions - 1;
-	}
-
-	pub fn increment_deaths(&mut self) {
-		self.deaths = self.deaths + 1;
-	}
-
-	pub fn mk_inventory_string(&self) -> String {
-		self.inventory.mk_string()
-	}
-
-	pub fn mk_location_string(&self) -> String {
-		self.location.borrow().mk_full_string()
-	}
-
 	pub fn play(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
 		match item_id {
@@ -1035,6 +999,10 @@ impl Player {
 				}
 			},
 		}
+	}
+
+	pub fn quench(&mut self, data: &DataCollection, item: &ItemRef) {
+		self.switch_item(data, item, false);
 	}
 
 	pub fn read(&mut self, data: &DataCollection, item: &ItemRef) {
@@ -1139,6 +1107,37 @@ impl Player {
 			}
 		} else {
 			terminal::write_full(data.get_response(126));
+		}
+	}
+
+	pub fn take(&mut self, data: &DataCollection, item: &ItemRef) {
+		if self.inventory.contains_item(item.borrow().get_id()) && !item.borrow().is_liquid() {
+			terminal::write_full(data.get_response(145));
+			return;
+		}
+
+		if !item.borrow().is_portable() { // Cannot take fixtures, furniture, very heavy things, etc.
+			terminal::write_full(data.get_response(146));
+			return;
+		}
+
+		if !self.inventory.can_fit(&item) { // Can only carry so much at a time
+			terminal::write_full(data.get_response(147));
+			return;
+		}
+
+		if item.borrow().is_liquid() { // Liquids require a container
+			self.insert(data, item);
+			return;
+		}
+
+		self.location.borrow_mut().remove_item_certain(item.borrow().get_id());
+		self.insert_item(item.clone());
+
+		if item.borrow().is_wearable() {
+			terminal::write_full(data.get_response(156));
+		} else {
+			terminal::write_full(data.get_response(148));
 		}
 	}
 
