@@ -56,6 +56,7 @@ impl CommandCollection {
 		acts.insert("knit", actions::do_knit);
 		acts.insert("light", actions::do_light);
 		acts.insert("look", actions::do_look);
+		acts.insert("node", actions::do_node);
 		acts.insert("north", actions::do_go);
 		acts.insert("northeast", actions::do_go);
 		acts.insert("northwest", actions::do_go);

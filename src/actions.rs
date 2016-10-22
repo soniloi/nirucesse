@@ -132,6 +132,18 @@ pub fn do_look(data: &DataCollection, arg: String, player: &mut Player, arg_type
 	terminal::write_full(&player.get_look(data));
 }
 
+#[cfg(debug_assertions)]
+#[allow(unused_variables)]
+pub fn do_node(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	terminal::write_full(&player.get_node(data));
+}
+
+#[cfg(not(debug_assertions))]
+#[allow(unused_variables)]
+pub fn do_node(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	terminal::write_full(data.get_response(103));
+}
+
 pub fn do_play(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, arg_type, player, Player::play);
 }

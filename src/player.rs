@@ -949,6 +949,11 @@ impl Player {
 		self.switch_item(data, item, true);
 	}
 
+	#[cfg(debug_assertions)]
+	pub fn get_node(&self, data: &DataCollection) -> String {
+		data.get_response_param(178, &self.location.borrow().get_id().to_string())
+	}
+
 	pub fn play(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
 		match item_id {
