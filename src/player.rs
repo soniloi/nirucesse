@@ -299,6 +299,7 @@ impl Player {
 		let gift_id = gift.borrow().get_id();
 		let gift_edible = gift.borrow().is_edible();
 		let gift_liquid = gift.borrow().is_liquid();
+		let location_id = self.location.borrow().get_id();
 
 		if recipient_id == constants::ITEM_ID_ALIEN {
 			let chart_used = data.get_item_by_id_certain(constants::ITEM_ID_CHART).borrow().is_retired();
@@ -351,6 +352,17 @@ impl Player {
 		} else if recipient_id == constants::ITEM_ID_BEAN && gift_id == constants::ITEM_ID_POTION {
 			self.inventory.remove_item_certain(gift_id);
 			self.remove_and_insert_item(data, constants::ITEM_ID_BEAN, constants::ITEM_ID_PLANT, 176);
+
+		} else if recipient_id == constants::ITEM_ID_BEAN && gift_id == constants::ITEM_ID_WATER && location_id == constants::LOCATION_ID_HOT {
+			self.inventory.remove_item_certain(gift_id);
+			if self.inventory.contains_item(recipient_id) {
+				self.inventory.remove_item_certain(recipient_id);
+			} else {
+				self.location.borrow_mut().remove_item_certain(recipient_id);
+			}
+			self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_BEANSTALK).clone(), true);
+			self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_BLOSSOM).clone(), true);
+			self.complete_achievement(data.get_puzzle(4));
 
 		} else if recipient_id == constants::ITEM_ID_PLANT && gift_id == constants::ITEM_ID_POTION {
 			self.inventory.remove_item_certain(gift_id);
