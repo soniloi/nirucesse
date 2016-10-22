@@ -877,6 +877,17 @@ impl Player {
 		}
 	}
 
+	#[cfg(debug_assertions)]
+	pub fn grab(&mut self, data: &DataCollection, item: &ItemRef) {
+		if !item.borrow().is_portable() {
+			terminal::write_full(data.get_response(179));
+			return;
+		}
+		self.unlink_item(data, item);
+		self.inventory.insert_item(item.clone());
+		terminal::write_full(&data.get_response_param(180, item.borrow().get_shortname()));
+	}
+
 	pub fn ignore(&mut self, data: &DataCollection, item: &ItemRef) {
 		if item.borrow().is(constants::ITEM_ID_TROLL) {
 			self.complete_obstruction_achievement(constants::ITEM_ID_TROLL, data.get_puzzle(22));

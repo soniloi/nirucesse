@@ -29,6 +29,8 @@ impl CommandCollection {
 	// TODO: make properly static
 	fn init_actions() -> HashMap<&'static str, ActionFn> {
 		let mut acts: HashMap<&str, ActionFn> = HashMap::new();
+		acts.insert("grab", actions::do_grab);
+		acts.insert("node", actions::do_node);
 		acts.insert("attack", actions::do_attack);
 		acts.insert("avnarand", actions::do_avnarand);
 		acts.insert("back", actions::do_go);
@@ -56,7 +58,6 @@ impl CommandCollection {
 		acts.insert("knit", actions::do_knit);
 		acts.insert("light", actions::do_light);
 		acts.insert("look", actions::do_look);
-		acts.insert("node", actions::do_node);
 		acts.insert("north", actions::do_go);
 		acts.insert("northeast", actions::do_go);
 		acts.insert("northwest", actions::do_go);
