@@ -176,6 +176,7 @@ impl Player {
 
 		let liquid = item.borrow().is_liquid();
 		let is_fragile = item.borrow().is_fragile();
+		let has_floor = self.location.borrow().has_floor();
 		if liquid { // When dropped, liquids drain away
 			terminal::write_full(data.get_response(42));
 		} else if is_fragile && thrown { // When thrown, fragile items shatter
@@ -183,6 +184,20 @@ impl Player {
 			if item.borrow().is(constants::ITEM_ID_MIRROR) {
 				terminal::write_full(data.get_response(137));
 				self.death_divisor = constants::DEATH_DIVISOR_SMASHED;
+			}
+		} else if !has_floor && self.has_gravity() { // Gravity pulls item down to location beneath current
+			let self_loc = self.location.borrow();
+			let below_option = self_loc.get_direction(&Direction::Down);
+			match below_option {
+				None => {}, // Probably an error state (error in datafile) TODO: do something with this case
+				Some(below) => {
+					terminal::write_full(data.get_response(36));
+					if is_fragile {
+						terminal::write_full(data.get_response(135));
+					} else {
+						below.borrow_mut().insert_item(item.clone(), true);
+					}
+				},
 			}
 		} else {
 			self.location.borrow_mut().insert_item(item.clone(), true);
