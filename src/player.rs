@@ -213,15 +213,13 @@ impl Player {
 		}
 	}
 
-	// Remove one item from either location or inventory, and insert another at location in its place
-	fn remove_and_insert_item(&mut self, data: &DataCollection, id_to_remove: u32, id_to_insert: u32, response_code: u32) {
+	// Remove one item from either location or inventory
+	fn remove_item_from_current(&mut self, id_to_remove: u32) {
 		if self.inventory.contains_item(id_to_remove) {
 			self.inventory.remove_item_certain(id_to_remove);
 		} else {
 			self.location.borrow_mut().remove_item_certain(id_to_remove);
 		}
-		self.location.borrow_mut().insert_item(data.get_item_by_id_certain(id_to_insert).clone(), true);
-		terminal::write_full(data.get_response(response_code));
 	}
 
 	fn rob_pirate(&mut self, data: &DataCollection, pirate: &ItemRef, reward_code: u32, kill: bool,
@@ -351,22 +349,22 @@ impl Player {
 
 		} else if recipient_id == constants::ITEM_ID_BEAN && gift_id == constants::ITEM_ID_POTION {
 			self.inventory.remove_item_certain(gift_id);
-			self.remove_and_insert_item(data, constants::ITEM_ID_BEAN, constants::ITEM_ID_PLANT, 176);
+			self.remove_item_from_current(recipient_id);
+			self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_PLANT).clone(), true);
+			terminal::write_full(data.get_response(176));
 
 		} else if recipient_id == constants::ITEM_ID_BEAN && gift_id == constants::ITEM_ID_WATER && location_id == constants::LOCATION_ID_HOT {
 			self.inventory.remove_item_certain(gift_id);
-			if self.inventory.contains_item(recipient_id) {
-				self.inventory.remove_item_certain(recipient_id);
-			} else {
-				self.location.borrow_mut().remove_item_certain(recipient_id);
-			}
+			self.remove_item_from_current(recipient_id);
 			self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_BEANSTALK).clone(), true);
 			self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_BLOSSOM).clone(), true);
 			self.complete_achievement(data.get_puzzle(4));
 
 		} else if recipient_id == constants::ITEM_ID_PLANT && gift_id == constants::ITEM_ID_POTION {
 			self.inventory.remove_item_certain(gift_id);
-			self.remove_and_insert_item(data, constants::ITEM_ID_PLANT, constants::ITEM_ID_BEAN, 177);
+			self.remove_item_from_current(recipient_id);
+			self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_BEAN).clone(), true);
+			terminal::write_full(data.get_response(177));
 
 		} else if gift_liquid { // Default response for liquids
 			self.inventory.remove_item_certain(gift_id);
