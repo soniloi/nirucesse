@@ -69,7 +69,7 @@ impl Command {
 
 		// Command takes no argument, but player gave one anyway
 		if !self.takes_arg() && !actual_arg.is_empty() {
-			terminal::write_full(data.get_response(103));
+			terminal::write_full(data.get_response(182));
 			return;
 		}
 

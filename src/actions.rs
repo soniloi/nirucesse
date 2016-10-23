@@ -51,6 +51,11 @@ pub fn do_chimbu(data: &DataCollection, arg: String, player: &mut Player, arg_ty
 }
 
 #[allow(unused_variables)]
+pub fn do_climb(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	terminal::write_full(data.get_response(181));
+}
+
+#[allow(unused_variables)]
 pub fn do_commands(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	terminal::write_full(&data.get_commands_non_secret());
 }
@@ -80,6 +85,10 @@ pub fn do_explain(data: &DataCollection, arg: String, player: &mut Player, arg_t
 	terminal::write_full(data.get_explanation(&arg));
 }
 
+pub fn do_feed(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	manipulate_item(data, arg, arg_type, player, Player::feed);
+}
+
 #[allow(unused_variables)]
 pub fn do_fish(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	player.fish(data);
@@ -94,10 +103,6 @@ pub fn do_go(data: &DataCollection, arg: String, player: &mut Player, arg_type: 
 	// FIXME: this should be passing the direction tag, not the localized primary name
 	let dir = data.get_direction_enum(&arg);
 	player.go(data, dir);
-}
-
-pub fn do_feed(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
-	manipulate_item(data, arg, arg_type, player, Player::feed);
 }
 
 #[allow(unused_variables)]
@@ -225,6 +230,11 @@ pub fn do_take(data: &DataCollection, arg: String, player: &mut Player, arg_type
 
 pub fn do_throw(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, arg_type, player, Player::throw);
+}
+
+#[allow(unused_variables)]
+pub fn do_water(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	terminal::write_full(data.get_response(183));
 }
 
 #[allow(unused_variables)]

@@ -37,6 +37,7 @@ impl CommandCollection {
 		acts.insert("burn", actions::do_burn);
 		acts.insert("call", actions::do_call);
 		acts.insert("chimbu", actions::do_chimbu);
+		acts.insert("climb", actions::do_climb);
 		acts.insert("commands", actions::do_commands);
 		acts.insert("cook", actions::do_cook);
 		acts.insert("describe", actions::do_describe);
@@ -81,6 +82,7 @@ impl CommandCollection {
 		acts.insert("take", actions::do_take);
 		acts.insert("throw", actions::do_throw);
 		acts.insert("up", actions::do_go);
+		acts.insert("water", actions::do_water);
 		acts.insert("west", actions::do_go);
 		acts.insert("xyro", actions::do_xyro);
 		acts.insert("xyzzy", actions::do_xyzzy);
