@@ -1,10 +1,11 @@
 const CTRL_COMMAND_DEBUG: u32 = 0x01; // Whether the command is a debug command
 const CTRL_COMMAND_INVENTORY: u32 = 0x02; // Whether the argument the command takes must be in the inventory
 const CTRL_COMMAND_PRESENT: u32 = 0x04; // Whether the argument must be somewhere in the player's vicinity
-const CTRL_COMMAND_TAKES_ARG: u32 = 0x08; // Whether the command must take an argument
+const CTRL_COMMAND_ARG_MANDATORY: u32 = 0x08; // Whether the command must take an argument
 const CTRL_COMMAND_SECRET: u32 = 0x10; // Whether the command is secret (not to be listed)
 const CTRL_COMMAND_INVERTIBLE: u32 = 0x20; // Whether the command appears in order contrary to the usual e.g. "off" in "lamp off"
 const CTRL_COMMAND_MOVEMENT: u32 = 0x40; // Whether the command intends movement
+const CTRL_COMMAND_ARG_OPTIONAL: u32 = 0x80; // Whether we should be permissive about accepting args or not
 
 use data_collection::DataCollection;
 use player::Player;
@@ -47,8 +48,12 @@ impl Command {
 		self.has_property(CTRL_COMMAND_MOVEMENT)
 	}
 
-	fn takes_arg(&self) -> bool{
-		self.has_property(CTRL_COMMAND_TAKES_ARG)
+	fn takes_arg_mandatory(&self) -> bool{
+		self.has_property(CTRL_COMMAND_ARG_MANDATORY)
+	}
+
+	fn takes_arg_optional(&self) -> bool{
+		self.has_property(CTRL_COMMAND_ARG_OPTIONAL)
 	}
 
 	pub fn is_secret(&self) -> bool {
@@ -68,13 +73,13 @@ impl Command {
 		let mut actual_arg = arg;
 
 		// Command takes no argument, but player gave one anyway
-		if !self.takes_arg() && !actual_arg.is_empty() {
+		if !self.takes_arg_mandatory() && !self.takes_arg_optional() && !actual_arg.is_empty() {
 			terminal::write_full(data.get_response(182));
 			return;
 		}
 
 		// Command takes an argument, but player didn't give one
-		if self.takes_arg() && actual_arg.is_empty() && !self.is_movement() {
+		if self.takes_arg_mandatory() && actual_arg.is_empty() && !self.is_movement() {
 			let further_args = terminal::read_question(&data.get_response_param(162, &self.name));
 			actual_arg = String::new() + &further_args[0];
 		}
