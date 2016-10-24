@@ -228,6 +228,10 @@ pub fn do_take(data: &DataCollection, arg: String, player: &mut Player, arg_type
 	manipulate_item(data, arg, arg_type, player, Player::take);
 }
 
+pub fn do_tether(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	manipulate_item(data, arg, arg_type, player, Player::tether);
+}
+
 pub fn do_throw(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, arg_type, player, Player::throw);
 }

@@ -1159,6 +1159,34 @@ impl Player {
 		}
 	}
 
+	pub fn tether(&mut self, data: &DataCollection, item: &ItemRef) {
+		if !self.inventory.contains_item(constants::ITEM_ID_CABLE) {
+			terminal::write_full(&data.get_response_param(184, item.borrow().get_shortname()));
+			return;
+		}
+
+		// Find out what player wants to tether it to
+		let anchor_str = terminal::read_question(&data.get_response_param(185, item.borrow().get_shortname()));
+
+		match data.get_item_by_name(anchor_str[0].clone()) {
+			None => terminal::write_full(data.get_response(98)),
+			Some(anchor) => {
+				let anchor_id = anchor.borrow().get_id();
+				if !self.inventory.contains_item(anchor_id) && !self.location.borrow().contains_item(anchor_id) {
+					terminal::write_full(&data.get_response_param(100, anchor.borrow().get_shortname()));
+					return;
+				}
+				let item_id = item.borrow().get_id();
+				if item_id == constants::ITEM_ID_SHUTTLE && anchor_id == constants::ITEM_ID_SHIP {
+					self.inventory.remove_item_certain(constants::ITEM_ID_CABLE);
+					self.complete_achievement(data.get_puzzle(20));
+				} else {
+					terminal::write_full(data.get_response(94));
+				}
+			},
+		}
+	}
+
 	pub fn tezazzle(&mut self, data: &DataCollection) {
 		self.teleport(data, data.get_tp_map_witch(), true, 86, 165);
 	}

@@ -80,6 +80,7 @@ impl CommandCollection {
 		acts.insert("stare", actions::do_stare);
 		acts.insert("tezazzle", actions::do_tezazzle);
 		acts.insert("take", actions::do_take);
+		acts.insert("tether", actions::do_tether);
 		acts.insert("throw", actions::do_throw);
 		acts.insert("up", actions::do_go);
 		acts.insert("water", actions::do_water);

@@ -1,7 +1,7 @@
 // Validation for various collections
 pub const EXPECTED_ITEMS: u32 = 124;
 pub const EXPECTED_LOCATIONS: u32 = 134;
-pub const EXPECTED_STRINGS_RESPONSES: u32 = 184;
+pub const EXPECTED_STRINGS_RESPONSES: u32 = 186;
 pub const EXPECTED_STRINGS_PUZZLES: u32 = 24;
 
 // Scoring stuff
@@ -63,6 +63,7 @@ pub const ITEM_ID_BREAD: u32 = 1010;
 pub const ITEM_ID_BROOCH: u32 = 1087;
 pub const ITEM_ID_BUCCANEER: u32 = 1014;
 pub const ITEM_ID_BUTTON: u32 = 1013;
+pub const ITEM_ID_CABLE: u32 = 1015;
 pub const ITEM_ID_CARTRIDGE: u32 = 1017;
 pub const ITEM_ID_CASSETTE: u32 = 1120;
 pub const ITEM_ID_CAULDRON: u32 = 1018;
@@ -102,6 +103,7 @@ pub const ITEM_ID_RADISHES: u32 = 1060;
 pub const ITEM_ID_ROBOT: u32 = 1061;
 pub const ITEM_ID_ROD: u32 = 1099;
 pub const ITEM_ID_SHIP: u32 = 1062;
+pub const ITEM_ID_SHUTTLE: u32 = 1063;
 pub const ITEM_ID_SKELETON: u32 = 1065;
 pub const ITEM_ID_STEW: u32 = 1115;
 pub const ITEM_ID_TOAST: u32 = 1069;
