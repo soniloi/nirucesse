@@ -271,9 +271,9 @@ fn manipulate_item(data: &DataCollection, arg: String, arg_type: ArgumentType, p
 
 fn problem_with_item_manipulation(player: &Player, item_id: u32, arg_type: ArgumentType) -> Option<u32> {
 	if arg_type == ArgumentType::Inventory && !player.has_item_inventory(item_id) {
-		Some(74);
+		return Some(74);
 	} else if arg_type == ArgumentType::Present && !player.has_item_present(item_id) {
-		Some(100);
+		return Some(100);
 	}
 	None
 }
