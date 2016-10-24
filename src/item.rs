@@ -60,6 +60,10 @@ impl Item {
 		self.location_true == constants::LOCATION_ID_NURSERY
 	}
 
+	pub fn retire(&mut self) {
+		self.location_true = constants::LOCATION_ID_GRAVEYARD;
+	}
+
 	pub fn is_retired(&self) -> bool {
 		self.location_true == constants::LOCATION_ID_GRAVEYARD
 	}

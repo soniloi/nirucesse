@@ -1041,6 +1041,7 @@ impl Player {
 				let panel = data.get_item_by_id_certain(constants::ITEM_ID_CONSOLE_FIXED);
 				self.location.borrow_mut().insert_item(panel.clone(), true);
 				self.inventory.remove_item_certain(constants::ITEM_ID_WIRE);
+				data.get_item_by_id_certain(constants::ITEM_ID_WIRE).borrow_mut().retire();
 				self.complete_obstruction_achievement(constants::ITEM_ID_CONSOLE_BROKEN, data.get_puzzle(6));
 			}
 		} else {
@@ -1179,6 +1180,7 @@ impl Player {
 				let item_id = item.borrow().get_id();
 				if item_id == constants::ITEM_ID_SHUTTLE && anchor_id == constants::ITEM_ID_SHIP {
 					self.inventory.remove_item_certain(constants::ITEM_ID_CABLE);
+					data.get_item_by_id_certain(constants::ITEM_ID_CABLE).borrow_mut().retire();
 					self.complete_achievement(data.get_puzzle(20));
 				} else {
 					terminal::write_full(data.get_response(94));
