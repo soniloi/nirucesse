@@ -883,7 +883,9 @@ impl Player {
 			terminal::write_full(data.get_response(179));
 			return;
 		}
-		self.unlink_item(data, item);
+		if !item.borrow().is_liquid() {
+			self.unlink_item(data, item);
+		}
 		self.inventory.insert_item(item.clone());
 		terminal::write_full(&data.get_response_param(180, item.borrow().get_shortname()));
 	}
