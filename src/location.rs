@@ -27,6 +27,7 @@ pub enum Direction {
 	Up,
 	Down,
 	Back,
+	Out,
 }
 
 pub struct Location {
@@ -151,10 +152,30 @@ impl Location {
 		self.directions.get(dir)
 	}
 
+	// FIXME: tidy the flow here
+	fn determine_out(&self) -> Option<LocationRef> {
+		let mut direction_iter = self.directions.iter();
+		let direction_opt = direction_iter.next();
+		match direction_opt {
+			None => return None,
+			Some (direction) => {
+				match direction_iter.next() {
+					None => return Some(direction.1.clone()),
+					Some(_) => return None,
+				}
+			}
+		}
+	}
+
 	pub fn set_direction(&mut self, dir: Direction, next: Option<LocationRef>) {
 		match next {
 			None => {self.directions.remove(&dir);},
 			Some(loc) => {self.directions.insert(dir, loc);},
+		}
+		let next_out = self.determine_out();
+		match next_out {
+			None => {self.directions.remove(&Direction::Out);},
+			Some(out) => {self.directions.insert(Direction::Out, out);},
 		}
 	}
 

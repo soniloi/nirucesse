@@ -53,6 +53,7 @@ impl LocationCollection {
 		self.direction_map.insert("northwest", Direction::Northwest);
 		self.direction_map.insert("up", Direction::Up);
 		self.direction_map.insert("down", Direction::Down);
+		self.direction_map.insert("out", Direction::Out);
 		self.direction_map.insert("back", Direction::Back);
 	}
 

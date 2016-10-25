@@ -833,6 +833,9 @@ impl Player {
 
 		match self_loc.get_direction(&dir) {
 			None => {
+				if dir == Direction::Out {
+					return (None, false, Some(70));
+				}
 				return (None, false, Some(72));
 			},
 			Some(next) => {
