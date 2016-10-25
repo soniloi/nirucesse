@@ -41,6 +41,8 @@ impl Game {
 				}
 			}
 		}
+
+		terminal::write_full(&self.player.get_score_str(&self.data, 134));
 	}
 
 	// Process commands from player

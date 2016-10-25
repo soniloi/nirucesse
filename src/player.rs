@@ -98,9 +98,9 @@ impl Player {
 		self.get_effective_appearance(data, self.mk_location_string())
 	}
 
-	pub fn get_score_str(&self, data: &DataCollection) -> String {
+	pub fn get_score_str(&self, data: &DataCollection, response_code: u32) -> String {
 		let total_score = self.calculate_score(data);
-		String::from(data.get_response(132)) + &total_score.to_string() +
+		String::from(data.get_response(response_code)) + &total_score.to_string() +
 		data.get_response(133) + &data.get_max_score().to_string() +
 		data.get_response(128) + &self.deaths.to_string() +
 		data.get_response(129) + &self.instructions.to_string() +
@@ -667,7 +667,6 @@ impl Player {
 			if is_treasure {
 				terminal::write_full(&data.get_response_param(186, item.borrow().get_shortname()));
 				terminal::write_full(data.get_response(187));
-				terminal::write_full(&self.get_score_str(data));
 				self.playing = false;
 			} else {
 				terminal::write_full(data.get_response(105));
