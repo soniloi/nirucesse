@@ -201,7 +201,7 @@ impl Item {
 		self.has_property(CTRL_ITEM_RECIPIENT)
 	}
 
-	fn is_treasure(&self) -> bool {
+	pub fn is_treasure(&self) -> bool {
 		self.has_property(CTRL_ITEM_TREASURE)
 	}
 

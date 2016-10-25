@@ -80,6 +80,10 @@ pub fn do_empty(data: &DataCollection, arg: String, player: &mut Player, arg_typ
 	manipulate_item(data, arg, arg_type, player, Player::empty);
 }
 
+pub fn do_exchange(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	manipulate_item(data, arg, arg_type, player, Player::exchange);
+}
+
 #[allow(unused_variables)]
 pub fn do_explain(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	terminal::write_full(data.get_explanation(&arg));

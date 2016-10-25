@@ -1,7 +1,7 @@
 // Validation for various collections
 pub const EXPECTED_ITEMS: u32 = 124;
 pub const EXPECTED_LOCATIONS: u32 = 134;
-pub const EXPECTED_STRINGS_RESPONSES: u32 = 186;
+pub const EXPECTED_STRINGS_RESPONSES: u32 = 188;
 pub const EXPECTED_STRINGS_PUZZLES: u32 = 24;
 
 // Scoring stuff
@@ -62,6 +62,7 @@ pub const ITEM_ID_BOULDER: u32 = 1008;
 pub const ITEM_ID_BREAD: u32 = 1010;
 pub const ITEM_ID_BROOCH: u32 = 1087;
 pub const ITEM_ID_BUCCANEER: u32 = 1014;
+pub const ITEM_ID_BUILDING: u32 = 1012;
 pub const ITEM_ID_BUTTON: u32 = 1013;
 pub const ITEM_ID_CABLE: u32 = 1015;
 pub const ITEM_ID_CARTRIDGE: u32 = 1017;

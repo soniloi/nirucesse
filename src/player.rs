@@ -660,6 +660,24 @@ impl Player {
 		}
 	}
 
+	pub fn exchange(&mut self, data: &DataCollection, item: &ItemRef) {
+		let building_present = self.location.borrow().contains_item(constants::ITEM_ID_BUILDING);
+		let is_treasure = item.borrow().is_treasure();
+		if building_present {
+			if is_treasure {
+				terminal::write_full(&data.get_response_param(186, item.borrow().get_shortname()));
+				terminal::write_full(data.get_response(187));
+				terminal::write_full(&self.get_score_str(data));
+				self.playing = false;
+			} else {
+				terminal::write_full(data.get_response(105));
+			}
+		} else {
+			terminal::write_full(data.get_response(78));
+		}
+	}
+
+
 	pub fn feed(&mut self, data: &DataCollection, item: &ItemRef) {
 		if item.borrow().is_recipient() {
 			self.feed_dative(data, item);
