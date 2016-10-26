@@ -14,6 +14,7 @@ const CTRL_ITEM_ESSENTIAL: u32 = 0x1000; // Whether the item is essential to bas
 const CTRL_ITEM_EDIBLE: u32 = 0x2000; // Whether the item is any sort of food or drink
 const CTRL_ITEM_GIVES_INVISIBILITY: u32 = 0x4000; // Whether wearing or carrying the item makes the player invisible
 const CTRL_ITEM_TREASURE: u32 = 0x8000; // Whether the item is a treasure
+const CTRL_ITEM_FACTORY: u32 = 0x10000; // Whether the item can be made by the machine
 const CTRL_ITEM_SILENT: u32 = 0x20000; // Whether the item should be shown in location descriptions
 const CTRL_ITEM_RECIPIENT: u32 = 0x80000; // Whether the item may be a recipient (i.e. of gifts or food)
 
@@ -219,6 +220,10 @@ impl Item {
 
 	pub fn is_liquid(&self) -> bool {
 		self.has_property(CTRL_ITEM_LIQUID)
+	}
+
+	pub fn is_factory(&self) -> bool {
+		self.has_property(CTRL_ITEM_FACTORY)
 	}
 
 	pub fn get_treasure_value(&self) -> u32 {

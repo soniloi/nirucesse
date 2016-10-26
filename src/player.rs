@@ -220,6 +220,20 @@ impl Player {
 		}
 	}
 
+	fn operate_machine(&mut self, data: &DataCollection, request: &ItemRef) {
+		if !request.borrow().is_factory() {
+			terminal::write_full(data.get_response(188));
+			return;
+		}
+		if !request.borrow().is_new() {
+			terminal::write_full(data.get_response(189));
+			return;
+		}
+		self.inventory.remove_item_certain(constants::ITEM_ID_CARTRIDGE);
+		self.location.borrow_mut().insert_item(request.clone(), true);
+		terminal::write_full(&data.get_response_param(190, &request.borrow().get_shortname()));
+	}
+
 	fn play_player(&self, data: &DataCollection, player: &ItemRef) {
 		if player.borrow().contains_item(constants::ITEM_ID_CD) {
 			terminal::write_full(data.get_response(96));
@@ -662,8 +676,9 @@ impl Player {
 
 	pub fn exchange(&mut self, data: &DataCollection, item: &ItemRef) {
 		let building_present = self.location.borrow().contains_item(constants::ITEM_ID_BUILDING);
-		let is_treasure = item.borrow().is_treasure();
+		let machine_present = self.location.borrow().contains_item(constants::ITEM_ID_MACHINE);
 		if building_present {
+			let is_treasure = item.borrow().is_treasure();
 			if is_treasure {
 				terminal::write_full(&data.get_response_param(186, item.borrow().get_shortname()));
 				terminal::write_full(data.get_response(187));
@@ -671,11 +686,22 @@ impl Player {
 			} else {
 				terminal::write_full(data.get_response(105));
 			}
+		} else if machine_present {
+			if !item.borrow().is(constants::ITEM_ID_CARTRIDGE) {
+				terminal::write_full(data.get_response(63));
+				return;
+			}
+			let request_str = terminal::read_question(data.get_response(64));
+			match data.get_item_by_name(request_str[0].clone()) {
+				None => terminal::write_full(data.get_response(65)),
+				Some(request) => {
+					self.operate_machine(data, request);
+				},
+			}
 		} else {
 			terminal::write_full(data.get_response(78));
 		}
 	}
-
 
 	pub fn feed(&mut self, data: &DataCollection, item: &ItemRef) {
 		if item.borrow().is_recipient() {

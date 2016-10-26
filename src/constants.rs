@@ -1,7 +1,7 @@
 // Validation for various collections
 pub const EXPECTED_ITEMS: u32 = 124;
 pub const EXPECTED_LOCATIONS: u32 = 134;
-pub const EXPECTED_STRINGS_RESPONSES: u32 = 188;
+pub const EXPECTED_STRINGS_RESPONSES: u32 = 191;
 pub const EXPECTED_STRINGS_PUZZLES: u32 = 24;
 
 // Scoring stuff
@@ -88,6 +88,7 @@ pub const ITEM_ID_KOHLRABI: u32 = 1042;
 pub const ITEM_ID_LAMP: u32 = 1043;
 pub const ITEM_ID_LENS: u32 = 1044;
 pub const ITEM_ID_LION: u32 = 1045;
+pub const ITEM_ID_MACHINE: u32 = 1046;
 pub const ITEM_ID_MAGAZINE: u32 = 1047;
 pub const ITEM_ID_MATCHES: u32 = 1048;
 pub const ITEM_ID_MEDALLION: u32 = 1094;
