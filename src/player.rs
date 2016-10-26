@@ -711,7 +711,8 @@ impl Player {
 	}
 
 	pub fn feed(&mut self, data: &DataCollection, item: &ItemRef) {
-		if item.borrow().is_recipient() {
+		let is_recipient = item.borrow().is_recipient();
+		if is_recipient {
 			self.feed_dative(data, item);
 		} else {
 			if !self.inventory.contains_item(item.borrow().get_id()) {
