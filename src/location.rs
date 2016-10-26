@@ -214,6 +214,7 @@ impl Location {
 				if item.borrow().is_liquid() {
 					return;
 				}
+				item.borrow_mut().retire();
 			}
 		}
 		for item in self.items.values() {

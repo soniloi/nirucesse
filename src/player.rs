@@ -252,7 +252,8 @@ impl Player {
 	}
 
 	fn release_item(&mut self, data: &DataCollection, item: &ItemRef, thrown: bool) {
-		self.inventory.remove_item_certain(item.borrow().get_id());
+		let item_id = item.borrow().get_id();
+		self.inventory.remove_item_certain(item_id);
 
 		let liquid = item.borrow().is_liquid();
 		let is_fragile = item.borrow().is_fragile();
@@ -943,10 +944,10 @@ impl Player {
 	}
 
 	pub fn ignore(&mut self, data: &DataCollection, item: &ItemRef) {
-		if item.borrow().is(constants::ITEM_ID_TROLL) {
-			self.complete_obstruction_achievement(constants::ITEM_ID_TROLL, data.get_puzzle(22));
-		} else {
-			 terminal::write_full(data.get_response(55));
+		let item_id = item.borrow().get_id();
+		match item_id {
+			constants::ITEM_ID_TROLL => self.complete_obstruction_achievement(constants::ITEM_ID_TROLL, data.get_puzzle(22)),
+			_ => terminal::write_full(data.get_response(55)),
 		}
 	}
 
@@ -1084,20 +1085,20 @@ impl Player {
 	}
 
 	pub fn repair(&mut self, data: &DataCollection, item: &ItemRef) {
-		if item.borrow().is(constants::ITEM_ID_CONSOLE_FIXED) {
-			terminal::write_full(data.get_response(157));
-		} else if item.borrow().is(constants::ITEM_ID_CONSOLE_BROKEN) {
-			if !self.inventory.contains_item(constants::ITEM_ID_WIRE) {
-				terminal::write_full(data.get_response(158));
-			} else {
-				let panel = data.get_item_by_id_certain(constants::ITEM_ID_CONSOLE_FIXED);
-				self.location.borrow_mut().insert_item(panel.clone(), true);
-				self.inventory.remove_item_certain(constants::ITEM_ID_WIRE);
-				data.get_item_by_id_certain(constants::ITEM_ID_WIRE).borrow_mut().retire();
-				self.complete_obstruction_achievement(constants::ITEM_ID_CONSOLE_BROKEN, data.get_puzzle(6));
-			}
-		} else {
-			terminal::write_full(data.get_response(94));
+		let item_id = item.borrow().get_id();
+		match item_id {
+			constants::ITEM_ID_CONSOLE_FIXED => terminal::write_full(data.get_response(157)),
+			constants::ITEM_ID_CONSOLE_BROKEN => {
+				if !self.inventory.contains_item(constants::ITEM_ID_WIRE) {
+					terminal::write_full(data.get_response(158));
+				} else {
+					let panel = data.get_item_by_id_certain(constants::ITEM_ID_CONSOLE_FIXED);
+					self.location.borrow_mut().insert_item(panel.clone(), true);
+					self.inventory.remove_item_certain(constants::ITEM_ID_WIRE);
+					self.complete_obstruction_achievement(constants::ITEM_ID_CONSOLE_BROKEN, data.get_puzzle(6));
+				}
+			},
+			_ => terminal::write_full(data.get_response(94)),
 		}
 	}
 
@@ -1182,7 +1183,8 @@ impl Player {
 	}
 
 	pub fn take(&mut self, data: &DataCollection, item: &ItemRef) {
-		if self.inventory.contains_item(item.borrow().get_id()) && !item.borrow().is_liquid() {
+		let item_id = item.borrow().get_id();
+		if self.inventory.contains_item(item_id) && !item.borrow().is_liquid() {
 			terminal::write_full(data.get_response(145));
 			return;
 		}
@@ -1202,7 +1204,7 @@ impl Player {
 			return;
 		}
 
-		self.location.borrow_mut().remove_item_certain(item.borrow().get_id());
+		self.location.borrow_mut().remove_item_certain(item_id);
 		self.insert_item(item.clone());
 
 		if item.borrow().is_wearable() {
@@ -1232,7 +1234,6 @@ impl Player {
 				let item_id = item.borrow().get_id();
 				if item_id == constants::ITEM_ID_SHUTTLE && anchor_id == constants::ITEM_ID_SHIP {
 					self.inventory.remove_item_certain(constants::ITEM_ID_CABLE);
-					data.get_item_by_id_certain(constants::ITEM_ID_CABLE).borrow_mut().retire();
 					self.complete_achievement(data.get_puzzle(20));
 				} else {
 					terminal::write_full(data.get_response(94));

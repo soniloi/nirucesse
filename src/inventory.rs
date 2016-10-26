@@ -49,7 +49,16 @@ impl Inventory {
 
 	pub fn remove_item_certain(&mut self, id: u32) {
 		if self.items.contains_key(&id) {
-			self.items.remove(&id);
+			let found_option = self.items.remove(&id);
+			match found_option {
+				None => {},
+				Some(found) => {
+					let is_liquid = found.borrow().is_liquid();
+					if !is_liquid {
+						found.borrow_mut().retire();
+					}
+				}
+			}
 			return;
 		}
 		for item in self.items.values() {

@@ -392,7 +392,11 @@ impl Item {
 			None => panic!("Data corruption seeking item [{}], fail.", id),
 			Some(within) => {
 				let is_item = within.borrow().is(id);
+				let is_liquid = within.borrow().is_liquid();
 				if is_item {
+					if !is_liquid {
+						within.borrow_mut().retire();
+					}
 					self.within = None;
 				} else {
 					within.borrow_mut().remove_item_certain(id);
