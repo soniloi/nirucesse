@@ -220,7 +220,7 @@ impl Player {
 		}
 	}
 
-	fn operate_machine(&mut self, data: &DataCollection, request: &ItemRef) {
+	fn operate_machine(&mut self, data: &DataCollection, cartridge: &ItemRef, request: &ItemRef) {
 		if !request.borrow().is_factory() {
 			terminal::write_full(data.get_response(188));
 			return;
@@ -230,6 +230,12 @@ impl Player {
 			return;
 		}
 		self.inventory.remove_item_certain(constants::ITEM_ID_CARTRIDGE);
+		match request.borrow().get_id() {
+			constants::ITEM_ID_LENS => data.get_location_certain(constants::LOCATION_ID_OBSERVATORY).borrow_mut().insert_item(cartridge.clone(), true),
+			constants::ITEM_ID_WIRE => data.get_location_certain(constants::LOCATION_ID_SENSOR).borrow_mut().insert_item(cartridge.clone(), true),
+			_ => {},
+		}
+
 		self.location.borrow_mut().insert_item(request.clone(), true);
 		terminal::write_full(&data.get_response_param(190, &request.borrow().get_shortname()));
 	}
@@ -695,7 +701,7 @@ impl Player {
 			match data.get_item_by_name(request_str[0].clone()) {
 				None => terminal::write_full(data.get_response(65)),
 				Some(request) => {
-					self.operate_machine(data, request);
+					self.operate_machine(data, item, request);
 				},
 			}
 		} else {
