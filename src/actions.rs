@@ -161,7 +161,11 @@ pub fn do_light(data: &DataCollection, arg: String, player: &mut Player, arg_typ
 
 #[allow(unused_variables)]
 pub fn do_look(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
-	terminal::write_full(&player.get_look(data));
+	if !arg.is_empty() {
+		terminal::write_full(data.get_response(191));
+	} else {
+		terminal::write_full(&player.get_look(data));
+	}
 }
 
 pub fn do_play(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
