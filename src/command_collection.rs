@@ -32,11 +32,11 @@ impl CommandCollection {
 		acts.insert("grab", actions::do_grab);
 		acts.insert("node", actions::do_node);
 		acts.insert("attack", actions::do_attack);
-		acts.insert("avnarand", actions::do_avnarand);
+		acts.insert("avnarand", actions::do_robot);
 		acts.insert("back", actions::do_go);
 		acts.insert("burn", actions::do_burn);
 		acts.insert("call", actions::do_call);
-		acts.insert("chimbu", actions::do_chimbu);
+		acts.insert("chimbu", actions::do_fairy);
 		acts.insert("climb", actions::do_climb);
 		acts.insert("commands", actions::do_commands);
 		acts.insert("cook", actions::do_cook);
@@ -87,9 +87,9 @@ impl CommandCollection {
 		acts.insert("up", actions::do_go);
 		acts.insert("water", actions::do_water);
 		acts.insert("west", actions::do_go);
-		acts.insert("xyro", actions::do_xyro);
+		acts.insert("xyro", actions::do_wizard);
 		acts.insert("xyzzy", actions::do_xyzzy);
-		acts.insert("ziqua", actions::do_ziqua);
+		acts.insert("ziqua", actions::do_acorn);
 		acts
 	}
 

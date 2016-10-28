@@ -28,13 +28,13 @@ pub fn do_node(data: &DataCollection, arg: String, player: &mut Player, arg_type
 	terminal::write_full(data.get_response(103));
 }
 
-pub fn do_attack(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
-	manipulate_item(data, arg, arg_type, player, Player::attack);
+#[allow(unused_variables)]
+pub fn do_acorn(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	player.acorn(data);
 }
 
-#[allow(unused_variables)]
-pub fn do_avnarand(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
-	player.avnarand(data);
+pub fn do_attack(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	manipulate_item(data, arg, arg_type, player, Player::attack);
 }
 
 pub fn do_burn(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
@@ -43,11 +43,6 @@ pub fn do_burn(data: &DataCollection, arg: String, player: &mut Player, arg_type
 
 pub fn do_call(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, arg_type, player, Player::call);
-}
-
-#[allow(unused_variables)]
-pub fn do_chimbu(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
-	player.chimbu(data);
 }
 
 #[allow(unused_variables)]
@@ -87,6 +82,11 @@ pub fn do_exchange(data: &DataCollection, arg: String, player: &mut Player, arg_
 #[allow(unused_variables)]
 pub fn do_explain(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	terminal::write_full(data.get_explanation(&arg));
+}
+
+#[allow(unused_variables)]
+pub fn do_fairy(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	player.fairy(data);
 }
 
 pub fn do_feed(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
@@ -202,6 +202,11 @@ pub fn do_rob(data: &DataCollection, arg: String, player: &mut Player, arg_type:
 	manipulate_item(data, arg, arg_type, player, Player::rob);
 }
 
+#[allow(unused_variables)]
+pub fn do_robot(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	player.robot(data);
+}
+
 pub fn do_rub(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, arg_type, player, Player::rub);
 }
@@ -250,18 +255,13 @@ pub fn do_water(data: &DataCollection, arg: String, player: &mut Player, arg_typ
 }
 
 #[allow(unused_variables)]
-pub fn do_xyro(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
-	player.xyro(data);
+pub fn do_wizard(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	player.wizard(data);
 }
 
 #[allow(unused_variables)]
 pub fn do_xyzzy(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	terminal::write_full(data.get_response(110));
-}
-
-#[allow(unused_variables)]
-pub fn do_ziqua(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
-	player.ziqua(data);
 }
 
 fn manipulate_item(data: &DataCollection, arg: String, arg_type: ArgumentType, player: &mut Player, act: ItemManipFn) {

@@ -458,6 +458,21 @@ impl Player {
 		}
 	}
 
+	pub fn acorn(&mut self, data: &DataCollection) {
+		let at_treetop = self.location.borrow().is(constants::LOCATION_ID_TREETOP);
+		if at_treetop {
+			let acorn = data.get_item_by_id_certain(constants::ITEM_ID_ACORN);
+			let acorn_is_new = acorn.borrow().is_new();
+			if acorn_is_new {
+				let garden = data.get_location_certain(constants::LOCATION_ID_GARDEN);
+				garden.borrow_mut().insert_item(acorn.clone(), true);
+				self.complete_achievement(data.get_puzzle(0));
+				return;
+			}
+		}
+		terminal::write_full(data.get_response(86));
+	}
+
 	pub fn attack(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
 		match item_id {
@@ -480,15 +495,6 @@ impl Player {
 			_ => {
 				terminal::write_full(data.get_response(94));
 			},
-		}
-	}
-
-	pub fn avnarand(&mut self, data: &DataCollection) {
-		let robot_present = self.location.borrow().contains_item(constants::ITEM_ID_ROBOT);
-		if robot_present {
-			self.complete_obstruction_achievement(constants::ITEM_ID_ROBOT, data.get_puzzle(18));
-		} else {
-			terminal::write_full(data.get_response(86));
 		}
 	}
 
@@ -568,20 +574,6 @@ impl Player {
 			self.complete_obstruction_achievement(constants::ITEM_ID_CONSOLE_FIXED, data.get_puzzle(7));
 		} else {
 			terminal::write_full(data.get_response(94));
-		}
-	}
-
-	pub fn chimbu(&mut self, data: &DataCollection) {
-		let fairy_present = self.location.borrow().contains_item(constants::ITEM_ID_FAIRY);
-		let envelope = data.get_item_by_id_certain(constants::ITEM_ID_ENVELOPE);
-		let tooth_within = envelope.borrow().contains_item(constants::ITEM_ID_TOOTH);
-		if fairy_present && tooth_within {
-			let coin = data.get_item_by_id_certain(constants::ITEM_ID_COIN);
-			envelope.borrow_mut().remove_item_certain(constants::ITEM_ID_TOOTH);
-			envelope.borrow_mut().set_within(Some(coin.clone()));
-			self.complete_obstruction_achievement(constants::ITEM_ID_FAIRY, data.get_puzzle(9));
-		} else {
-			terminal::write_full(data.get_response(86));
 		}
 	}
 
@@ -707,6 +699,20 @@ impl Player {
 			}
 		} else {
 			terminal::write_full(data.get_response(78));
+		}
+	}
+
+	pub fn fairy(&mut self, data: &DataCollection) {
+		let fairy_present = self.location.borrow().contains_item(constants::ITEM_ID_FAIRY);
+		let envelope = data.get_item_by_id_certain(constants::ITEM_ID_ENVELOPE);
+		let tooth_within = envelope.borrow().contains_item(constants::ITEM_ID_TOOTH);
+		if fairy_present && tooth_within {
+			let coin = data.get_item_by_id_certain(constants::ITEM_ID_COIN);
+			envelope.borrow_mut().remove_item_certain(constants::ITEM_ID_TOOTH);
+			envelope.borrow_mut().set_within(Some(coin.clone()));
+			self.complete_obstruction_achievement(constants::ITEM_ID_FAIRY, data.get_puzzle(9));
+		} else {
+			terminal::write_full(data.get_response(86));
 		}
 	}
 
@@ -1118,6 +1124,15 @@ impl Player {
 		}
 	}
 
+	pub fn robot(&mut self, data: &DataCollection) {
+		let robot_present = self.location.borrow().contains_item(constants::ITEM_ID_ROBOT);
+		if robot_present {
+			self.complete_obstruction_achievement(constants::ITEM_ID_ROBOT, data.get_puzzle(18));
+		} else {
+			terminal::write_full(data.get_response(86));
+		}
+	}
+
 	pub fn rub(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
 		match item_id {
@@ -1252,7 +1267,7 @@ impl Player {
 		self.release_item(data, item, true);
 	}
 
-	pub fn xyro(&mut self, data: &DataCollection) {
+	pub fn wizard(&mut self, data: &DataCollection) {
 		let wizard_present = self.location.borrow().contains_item(constants::ITEM_ID_WIZARD);
 		let mirror_present = self.inventory.contains_item(constants::ITEM_ID_MIRROR);
 		if wizard_present {
@@ -1267,20 +1282,5 @@ impl Player {
 		} else {
 			terminal::write_full(data.get_response(139));
 		}
-	}
-
-	pub fn ziqua(&mut self, data: &DataCollection) {
-		let at_treetop = self.location.borrow().is(constants::LOCATION_ID_TREETOP);
-		if at_treetop {
-			let acorn = data.get_item_by_id_certain(constants::ITEM_ID_ACORN);
-			let acorn_is_new = acorn.borrow().is_new();
-			if acorn_is_new {
-				let garden = data.get_location_certain(constants::LOCATION_ID_GARDEN);
-				garden.borrow_mut().insert_item(acorn.clone(), true);
-				self.complete_achievement(data.get_puzzle(0));
-				return;
-			}
-		}
-		terminal::write_full(data.get_response(86));
 	}
 }
