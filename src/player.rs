@@ -505,6 +505,7 @@ impl Player {
 		}
 		let item_id = item.borrow().get_id();
 		match item_id {
+			constants::ITEM_ID_BOOK => terminal::write_full(data.get_response(112)),
 			constants::ITEM_ID_BREAD => {
 				if self.inventory.contains_item(item_id) {
 					self.inventory.remove_item_certain(item_id);
@@ -1115,6 +1116,7 @@ impl Player {
 	pub fn rob(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
 		match item_id {
+			constants::ITEM_ID_BODIES => terminal::write_full(data.get_response(192)),
 			constants::ITEM_ID_BUCCANEER => {
 				let kill_condition = !self.has_invisibility();
 				self.rob_pirate(data, item, constants::ITEM_ID_MEDALLION, kill_condition, 116, 16);
