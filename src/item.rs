@@ -16,6 +16,7 @@ const CTRL_ITEM_GIVES_INVISIBILITY: u32 = 0x4000; // Whether wearing or carrying
 const CTRL_ITEM_TREASURE: u32 = 0x8000; // Whether the item is a treasure
 const CTRL_ITEM_FACTORY: u32 = 0x10000; // Whether the item can be made by the machine
 const CTRL_ITEM_SILENT: u32 = 0x20000; // Whether the item should be shown in location descriptions
+const CTRL_ITEM_GIVES_LAND: u32 = 0x40000; // Whether the item acts as 'land' i.e. a boat or whatever
 const CTRL_ITEM_RECIPIENT: u32 = 0x80000; // Whether the item may be a recipient (i.e. of gifts or food)
 
 use constants;
@@ -148,6 +149,10 @@ impl Item {
 
 	pub fn has_invisibility(&self) -> bool {
 		self.has_property(CTRL_ITEM_GIVES_INVISIBILITY)
+	}
+
+	pub fn has_land(&self) -> bool {
+		self.has_property(CTRL_ITEM_GIVES_LAND)
 	}
 
 	pub fn is_obstruction(&self) -> bool {

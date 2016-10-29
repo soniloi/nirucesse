@@ -13,6 +13,7 @@ const CTRL_LOC_NEEDSNO_LIGHT: u32 = 0x10; // Whether the location requires no po
 const CTRL_LOC_NEEDSNO_GRAVITY: u32 = 0x40; // Whether the location requires that there be no gravity
 const CTRL_LOC_HAS_CEILING: u32 = 0x100; // Whether there is a ceiling to this location, or something above it
 const CTRL_LOC_HAS_FLOOR: u32 = 0x200; // Whether there is a floor at this location
+const CTRL_LOC_HAS_LAND: u32 = 0x400; // Whether the location has land, as opposed to open water
 
 #[derive(PartialEq, Eq, Hash, Clone, Copy)]
 pub enum Direction {
@@ -137,6 +138,10 @@ impl Location {
 
 	pub fn has_floor(&self) -> bool {
 		self.has_property(CTRL_LOC_HAS_FLOOR)
+	}
+
+	pub fn has_land(&self) -> bool {
+		self.has_property(CTRL_LOC_HAS_LAND)
 	}
 
 	pub fn get_obstruction(&self) -> Option<ItemRef> {

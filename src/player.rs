@@ -916,6 +916,9 @@ impl Player {
 				if dir == Direction::Down && self.has_gravity() && !self_loc.has_floor() {
 					return (None, false, Some(68));
 				}
+				if !next.borrow().has_land() && !self.inventory.has_land() {
+					return (None, false, Some(69));
+				}
 
 				return self.try_move_to(&next);
 			},
