@@ -1,3 +1,4 @@
+use constants;
 use data_collection::DataCollection;
 use player::Player;
 use terminal;
@@ -18,13 +19,13 @@ impl Game {
 
 	pub fn play(&mut self) {
 
-		terminal::write_full(self.data.get_response(57));
+		terminal::write_full(self.data.get_response(constants::STR_ID_AWAKEN_INITIAL));
 
 		while self.player.is_playing() {
 			self.process_input();
 
 			if !self.player.has_air() {
-				terminal::write_full(self.data.get_response(73));
+				terminal::write_full(self.data.get_response(constants::STR_ID_SUFFOCATE));
 				self.player.die(&self.data);
 			}
 
@@ -42,7 +43,7 @@ impl Game {
 			}
 		}
 
-		terminal::write_full(&self.player.get_score_str(&self.data, 134));
+		terminal::write_full(&self.player.get_score_str(&self.data, constants::STR_ID_SCORE_FINAL));
 	}
 
 	// Process commands from player
@@ -80,20 +81,20 @@ impl Game {
 			}
 		}
 
-		terminal::write_full(self.data.get_response(103));
+		terminal::write_full(self.data.get_response(constants::STR_ID_NO_UNDERSTAND_INSTRUCTION));
 	}
 
 	// Reincarnate the player, if requested
 	fn process_reincarnation(&mut self) {
-		terminal::write_full(self.data.get_response(27));
-		let reincarnate: bool = terminal::get_yes_no(self.data.get_response(8), self.data.get_response(103));
+		terminal::write_full(self.data.get_response(constants::STR_ID_DEAD));
+		let reincarnate: bool = terminal::get_yes_no(self.data.get_response(constants::STR_ID_REINCARNATE_ASK), self.data.get_response(constants::STR_ID_NO_UNDERSTAND_SELECTION));
 		match reincarnate {
 			true => {
-				terminal::write_full(self.data.get_response(28));
+				terminal::write_full(self.data.get_response(constants::STR_ID_REINCARNATE_DO));
 				self.player.set_alive(true);
 			},
 			false => {
-				terminal::write_full(self.data.get_response(110));
+				terminal::write_full(self.data.get_response(constants::STR_ID_OK));
 				self.player.set_playing(false);
 			},
 		}

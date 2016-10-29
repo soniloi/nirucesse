@@ -7,6 +7,7 @@ const CTRL_COMMAND_INVERTIBLE: u32 = 0x20; // Whether the command appears in ord
 const CTRL_COMMAND_MOVEMENT: u32 = 0x40; // Whether the command intends movement
 const CTRL_COMMAND_ARG_OPTIONAL: u32 = 0x80; // Whether we should be permissive about accepting args or not
 
+use constants;
 use data_collection::DataCollection;
 use player::Player;
 use terminal;
@@ -74,13 +75,13 @@ impl Command {
 
 		// Command takes no argument, but player gave one anyway
 		if !self.takes_arg_mandatory() && !self.takes_arg_optional() && !actual_arg.is_empty() {
-			terminal::write_full(data.get_response(182));
+			terminal::write_full(data.get_response(constants::STR_ID_ARG_EXTRA));
 			return;
 		}
 
 		// Command takes an argument, but player didn't give one
 		if self.takes_arg_mandatory() && actual_arg.is_empty() && !self.is_movement() {
-			let further_args = terminal::read_question(&data.get_response_param(162, &self.name));
+			let further_args = terminal::read_question(&data.get_response_param(constants::STR_ID_ARG_GET, &self.name));
 			actual_arg = String::new() + &further_args[0];
 		}
 

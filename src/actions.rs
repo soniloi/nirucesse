@@ -1,4 +1,5 @@
 use command::ArgumentType;
+use constants;
 use data_collection::DataCollection;
 use player::ItemManipFn;
 use player::Player;
@@ -13,7 +14,7 @@ pub fn do_grab(data: &DataCollection, arg: String, player: &mut Player, arg_type
 #[cfg(not(debug_assertions))]
 #[allow(unused_variables)]
 pub fn do_grab(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
-	terminal::write_full(data.get_response(103));
+	terminal::write_full(data.get_response(constants::STR_ID_NO_UNDERSTAND_INSTRUCTION));
 }
 
 #[cfg(debug_assertions)]
@@ -25,7 +26,7 @@ pub fn do_node(data: &DataCollection, arg: String, player: &mut Player, arg_type
 #[cfg(not(debug_assertions))]
 #[allow(unused_variables)]
 pub fn do_node(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
-	terminal::write_full(data.get_response(103));
+	terminal::write_full(data.get_response(constants::STR_ID_NO_UNDERSTAND_INSTRUCTION));
 }
 
 #[allow(unused_variables)]
@@ -47,7 +48,7 @@ pub fn do_call(data: &DataCollection, arg: String, player: &mut Player, arg_type
 
 #[allow(unused_variables)]
 pub fn do_climb(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
-	terminal::write_full(data.get_response(181));
+	terminal::write_full(data.get_response(constants::STR_ID_DISAMBIGUATE_CLIMB));
 }
 
 #[allow(unused_variables)]
@@ -111,13 +112,13 @@ pub fn do_go(data: &DataCollection, arg: String, player: &mut Player, arg_type: 
 
 #[allow(unused_variables)]
 pub fn do_go_disambiguate(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
-	terminal::write_full(data.get_response(49));
+	terminal::write_full(data.get_response(constants::STR_ID_DISAMBIGUATE_GO));
 }
 
 #[allow(unused_variables)]
 pub fn do_help(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	player.decrement_instructions(); // Requesting help does not count as an instruction
-	terminal::write_full(data.get_response(50));
+	terminal::write_full(data.get_response(constants::STR_ID_WELCOME));
 }
 
 #[allow(unused_variables)]
@@ -125,13 +126,13 @@ pub fn do_hint(data: &DataCollection, arg: String, player: &mut Player, arg_type
 	match data.get_hint(&arg) {
 		None => terminal::write_full(data.get_hint_certain("default")),
 		Some(hint) => {
-			terminal::write_full(data.get_response(54));
-			let confirm = terminal::get_yes_no(data.get_response(9), data.get_response(104));
+			terminal::write_full(data.get_response(constants::STR_ID_HINT_FOUND));
+			let confirm = terminal::get_yes_no(data.get_response(constants::STR_ID_SURE_ASK), data.get_response(constants::STR_ID_NO_UNDERSTAND_SELECTION));
 			if confirm {
 				terminal::write_full(hint);
 				player.increment_hints();
 			} else {
-				terminal::write_full(data.get_response(110));
+				terminal::write_full(data.get_response(constants::STR_ID_OK));
 			}
 		},
 	}
@@ -162,7 +163,7 @@ pub fn do_light(data: &DataCollection, arg: String, player: &mut Player, arg_typ
 #[allow(unused_variables)]
 pub fn do_look(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	if !arg.is_empty() {
-		terminal::write_full(data.get_response(191));
+		terminal::write_full(data.get_response(constants::STR_ID_DISAMBIGUATE_LOOK));
 	} else {
 		terminal::write_full(&player.get_look(data));
 	}
@@ -174,7 +175,7 @@ pub fn do_play(data: &DataCollection, arg: String, player: &mut Player, arg_type
 
 #[allow(unused_variables)]
 pub fn do_plugh(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
-	terminal::write_full(data.get_response(122));
+	terminal::write_full(data.get_response(constants::STR_ID_HOLLOW));
 }
 
 pub fn do_pour(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
@@ -219,7 +220,7 @@ pub fn do_say(data: &DataCollection, arg: String, player: &mut Player, arg_type:
 #[allow(unused_variables)]
 pub fn do_score(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	player.decrement_instructions(); // Requesting score does not count as an instruction
-	terminal::write_full(&player.get_score_str(data, 132));
+	terminal::write_full(&player.get_score_str(data, constants::STR_ID_SCORE_CURRENT));
 }
 
 #[allow(unused_variables)]
@@ -251,7 +252,7 @@ pub fn do_throw(data: &DataCollection, arg: String, player: &mut Player, arg_typ
 
 #[allow(unused_variables)]
 pub fn do_water(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
-	terminal::write_full(data.get_response(183));
+	terminal::write_full(data.get_response(constants::STR_ID_DISAMBIGUATE_WATER));
 }
 
 #[allow(unused_variables)]
@@ -261,12 +262,12 @@ pub fn do_wizard(data: &DataCollection, arg: String, player: &mut Player, arg_ty
 
 #[allow(unused_variables)]
 pub fn do_xyzzy(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
-	terminal::write_full(data.get_response(110));
+	terminal::write_full(data.get_response(constants::STR_ID_OK));
 }
 
 fn manipulate_item(data: &DataCollection, arg: String, arg_type: ArgumentType, player: &mut Player, act: ItemManipFn) {
 	match data.get_item_by_name(arg) {
-		None => terminal::write_full(data.get_response(98)),
+		None => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_WHO_WHAT)),
 		Some(i) => {
 			let item_id = i.borrow().get_id();
 			match problem_with_item_manipulation(player, item_id, arg_type) {
@@ -279,9 +280,9 @@ fn manipulate_item(data: &DataCollection, arg: String, arg_type: ArgumentType, p
 
 fn problem_with_item_manipulation(player: &Player, item_id: u32, arg_type: ArgumentType) -> Option<u32> {
 	if arg_type == ArgumentType::Inventory && !player.has_item_inventory(item_id) {
-		return Some(74);
+		return Some(constants::STR_ID_NO_HAVE_INVENTORY);
 	} else if arg_type == ArgumentType::Present && !player.has_item_present(item_id) {
-		return Some(100);
+		return Some(constants::STR_ID_NO_SEE_HERE);
 	}
 	None
 }
