@@ -101,10 +101,10 @@ impl Player {
 	pub fn get_score_str(&self, data: &DataCollection, response_code: u32) -> String {
 		let total_score = self.calculate_score(data);
 		String::from(data.get_response(response_code)) + &total_score.to_string() +
-		data.get_response(133) + &data.get_max_score().to_string() +
-		data.get_response(128) + &self.deaths.to_string() +
-		data.get_response(129) + &self.instructions.to_string() +
-		data.get_response(131) + &self.hints.to_string() + data.get_response(130)
+		data.get_response(constants::STR_ID_SCORE_POINTS) + &data.get_max_score().to_string() +
+		data.get_response(constants::STR_ID_SCORE_DIED) + &self.deaths.to_string() +
+		data.get_response(constants::STR_ID_SCORE_DEATHS) + &self.instructions.to_string() +
+		data.get_response(constants::STR_ID_SCORE_INSTRUCTIONS) + &self.hints.to_string() + data.get_response(constants::STR_ID_SCORE_HINTS)
 	}
 
 	fn calculate_score(&self, data: &DataCollection) -> u32 {
@@ -177,7 +177,7 @@ impl Player {
 	}
 
 	fn get_effective_appearance(&self, data: &DataCollection, default_description: String) -> String {
-		self.get_effective_description(String::from(data.get_response(16)), String::from(data.get_response(15)), default_description)
+		self.get_effective_description(String::from(data.get_response(constants::STR_ID_NO_SEE_HAZE)), String::from(data.get_response(constants::STR_ID_NO_SEE_DARKNESS)), default_description)
 	}
 
 	pub fn get_location_stubname(&self) -> String {
@@ -186,7 +186,7 @@ impl Player {
 
 	fn observe_item(&mut self, data: &DataCollection, item: &ItemRef, act: ItemManipFinalFn) {
 		if !self.has_light() {
-			terminal::write_full(data.get_response(15));
+			terminal::write_full(data.get_response(constants::STR_ID_NO_SEE_DARKNESS));
 			return;
 		}
 		act(self, data, item);
@@ -213,20 +213,20 @@ impl Player {
 	pub fn float(&mut self, data: &DataCollection) {
 		let has_ceiling = self.location.borrow().has_ceiling();
 		if has_ceiling { // There is a ceiling; player is safe
-			terminal::write_full(data.get_response(153));
+			terminal::write_full(data.get_response(constants::STR_ID_NO_GRAVITY));
 		} else { // There is nothing above, so player floats away and dies
-			terminal::write_full(data.get_response(85));
+			terminal::write_full(data.get_response(constants::STR_ID_DEATH_NO_GRAVITY));
 			self.die(data);
 		}
 	}
 
 	fn operate_machine(&mut self, data: &DataCollection, cartridge: &ItemRef, request: &ItemRef) {
 		if !request.borrow().is_factory() {
-			terminal::write_full(data.get_response(188));
+			terminal::write_full(data.get_response(constants::STR_ID_MACHINE_NO_KNOW_CREATE));
 			return;
 		}
 		if !request.borrow().is_new() {
-			terminal::write_full(data.get_response(189));
+			terminal::write_full(data.get_response(constants::STR_ID_MACHINE_ALREADY_CREATE));
 			return;
 		}
 		self.inventory.remove_item_certain(constants::ITEM_ID_CARTRIDGE);
@@ -237,16 +237,16 @@ impl Player {
 		}
 
 		self.location.borrow_mut().insert_item(request.clone(), true);
-		terminal::write_full(&data.get_response_param(190, &request.borrow().get_shortname()));
+		terminal::write_full(&data.get_response_param(constants::STR_ID_MACHINE_DISPENSE, &request.borrow().get_shortname()));
 	}
 
 	fn play_player(&self, data: &DataCollection, player: &ItemRef) {
 		if player.borrow().contains_item(constants::ITEM_ID_CD) {
-			terminal::write_full(data.get_response(96));
+			terminal::write_full(data.get_response(constants::STR_ID_PLAY_CD));
 		} else if player.borrow().contains_item(constants::ITEM_ID_CASSETTE) {
-			terminal::write_full(data.get_response(97));
+			terminal::write_full(data.get_response(constants::STR_ID_PLAY_CASSETTE));
 		} else{
-			terminal::write_full(data.get_response(95));
+			terminal::write_full(data.get_response(constants::STR_ID_NO_MUSIC));
 		}
 		player.borrow_mut().set_on(false);
 	}
@@ -259,11 +259,11 @@ impl Player {
 		let is_fragile = item.borrow().is_fragile();
 		let has_floor = self.location.borrow().has_floor();
 		if liquid { // When dropped, liquids drain away
-			terminal::write_full(data.get_response(42));
+			terminal::write_full(data.get_response(constants::STR_ID_EMPTY_LIQUID));
 		} else if is_fragile && thrown { // When thrown, fragile items shatter
-			terminal::write_full(data.get_response(136));
+			terminal::write_full(data.get_response(constants::STR_ID_BREAK_NEAR));
 			if item.borrow().is(constants::ITEM_ID_MIRROR) {
-				terminal::write_full(data.get_response(137));
+				terminal::write_full(data.get_response(constants::STR_ID_BAD_LUCK));
 				self.death_divisor = constants::DEATH_DIVISOR_SMASHED;
 			}
 		} else if !has_floor && self.has_gravity() { // Gravity pulls item down to location beneath current
@@ -272,9 +272,9 @@ impl Player {
 			match below_option {
 				None => {}, // Probably an error state (error in datafile) TODO: do something with this case
 				Some(below) => {
-					terminal::write_full(data.get_response(36));
+					terminal::write_full(data.get_response(constants::STR_ID_DROP_NO_FLOOR));
 					if is_fragile {
-						terminal::write_full(data.get_response(135));
+						terminal::write_full(data.get_response(constants::STR_ID_BREAK_FAR));
 					} else {
 						below.borrow_mut().insert_item(item.clone(), true);
 					}
@@ -282,7 +282,7 @@ impl Player {
 			}
 		} else {
 			self.location.borrow_mut().insert_item(item.clone(), true);
-			terminal::write_full(data.get_response(37));
+			terminal::write_full(data.get_response(constants::STR_ID_DROP_GOOD));
 		}
 
 		// Specific item drops
@@ -308,12 +308,12 @@ impl Player {
 		let reward = data.get_item_by_id_certain(reward_code);
 		let reward_is_new = reward.borrow().is_new();
 		if !reward_is_new {
-			terminal::write_full(data.get_response(115)); // Player has already robbed the pirate
+			terminal::write_full(data.get_response(constants::STR_ID_PIRATE_EMPTY)); // Player has already robbed the pirate
 		} else if kill {
 			terminal::write_full(data.get_response(response_code_kill));
 			self.die(data);
 		} else if !self.inventory.can_fit(reward) {
-			terminal::write_full(&data.get_response_param(173, pirate.borrow().get_shortname()));
+			terminal::write_full(&data.get_response_param(constants::STR_ID_PIRATE_HEAVY, pirate.borrow().get_shortname()));
 		} else {
 			self.inventory.insert_item(reward.clone());
 			self.complete_achievement(data.get_puzzle(response_code_success));
@@ -322,21 +322,21 @@ impl Player {
 
 	fn switch_item(&mut self, data: &DataCollection, item: &ItemRef, on_next: bool) {
 		if !item.borrow().is_switchable() {
-			terminal::write_full(data.get_response(94));
+			terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW));
 			return;
 		}
 		if (item.borrow().is_on() && on_next) || (!item.borrow().is_on() && !on_next) {
-			terminal::write_full(data.get_response(2));
+			terminal::write_full(data.get_response(constants::STR_ID_ALREADY_DONE));
 			return;
 		}
 
 		item.borrow_mut().set_on(on_next);
-		terminal::write_full(data.get_response(62));
+		terminal::write_full(data.get_response(constants::STR_ID_DONE));
 		let item_id = item.borrow().get_id();
 		if item_id == constants::ITEM_ID_BUTTON { // When the button is off, ambient gravity in the anteroom is on, and vice-versa
 			let anteroom = data.get_location_certain(constants::LOCATION_ID_ANTEROOM);
 			anteroom.borrow_mut().set_gravity(!on_next);
-			terminal::write_full(data.get_response(86));
+			terminal::write_full(data.get_response(constants::STR_ID_NOTHING_HAPPENS));
 		} else if item_id == constants::ITEM_ID_PLAYER && on_next {
 			self.play_player(data, item);
 		}
@@ -399,7 +399,7 @@ impl Player {
 				gift.borrow_mut().set_locations(constants::LOCATION_ID_GRAVEYARD);
 				self.complete_obstruction_achievement(constants::ITEM_ID_ALIEN, data.get_puzzle(3));
 			} else {
-				terminal::write_full(data.get_response(1));
+				terminal::write_full(data.get_response(constants::STR_ID_ALIEN_NO_USE));
 			}
 
 		} else if recipient_id == constants::ITEM_ID_GUNSLINGER && gift_id == constants::ITEM_ID_MAGAZINE {
@@ -411,10 +411,10 @@ impl Player {
 		} else if recipient_id == constants::ITEM_ID_LION && gift_edible {
 			self.inventory.remove_item_certain(gift_id);
 			if gift_id == constants::ITEM_ID_KOHLRABI {
-				terminal::write_full(data.get_response(60));
+				terminal::write_full(data.get_response(constants::STR_ID_LION_CABBAGE));
 				self.die(data);
 			} else {
-				terminal::write_full(data.get_response(61));
+				terminal::write_full(data.get_response(constants::STR_ID_LION_WHET));
 			}
 
 		} else if recipient_id == constants::ITEM_ID_SKELETON && gift_id == constants::ITEM_ID_MILK {
@@ -425,14 +425,14 @@ impl Player {
 
 		} else if recipient_id == constants::ITEM_ID_TROLL && gift_edible {
 			self.inventory.remove_item_certain(gift_id);
-			terminal::write_full(data.get_response(154));
+			terminal::write_full(data.get_response(constants::STR_ID_TROLL_FED));
 			self.die(data);
 
 		} else if recipient_id == constants::ITEM_ID_BEAN && gift_id == constants::ITEM_ID_POTION {
 			self.inventory.remove_item_certain(gift_id);
 			self.remove_item_from_current(recipient_id);
 			self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_PLANT).clone(), true);
-			terminal::write_full(data.get_response(176));
+			terminal::write_full(data.get_response(constants::STR_ID_POUR_POTION_BEAN));
 
 		} else if recipient_id == constants::ITEM_ID_BEAN && gift_id == constants::ITEM_ID_WATER && location_id == constants::LOCATION_ID_HOT {
 			self.inventory.remove_item_certain(gift_id);
@@ -445,15 +445,15 @@ impl Player {
 			self.inventory.remove_item_certain(gift_id);
 			self.remove_item_from_current(recipient_id);
 			self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_BEAN).clone(), true);
-			terminal::write_full(data.get_response(177));
+			terminal::write_full(data.get_response(constants::STR_ID_POUR_POTION_PLANT));
 
 		} else if gift_liquid { // Default response for liquids
 			self.inventory.remove_item_certain(gift_id);
-			terminal::write_full(&data.get_response_param(175, recipient.borrow().get_shortname()));
+			terminal::write_full(&data.get_response_param(constants::STR_ID_POUR_LIQUID_DEFAULT, recipient.borrow().get_shortname()));
 
 		} else { // Default response for non-liquids
-			let response = String::from(data.get_response(149)) + recipient.borrow().get_shortname() + data.get_response(88) +
-				gift.borrow().get_shortname() + data.get_response(29);
+			let response = String::from(data.get_response(constants::STR_ID_THE_START)) + recipient.borrow().get_shortname() + data.get_response(constants::STR_ID_NOT_INTERESTED) +
+				gift.borrow().get_shortname() + data.get_response(constants::STR_ID_DOT);
 			terminal::write_full(&response);
 		}
 	}
@@ -470,7 +470,7 @@ impl Player {
 				return;
 			}
 		}
-		terminal::write_full(data.get_response(86));
+		terminal::write_full(data.get_response(constants::STR_ID_NOTHING_HAPPENS));
 	}
 
 	pub fn attack(&mut self, data: &DataCollection, item: &ItemRef) {
@@ -478,7 +478,7 @@ impl Player {
 		match item_id {
 			constants::ITEM_ID_BUCCANEER | constants::ITEM_ID_CORSAIR | constants::ITEM_ID_DOGS | constants::ITEM_ID_DRAGON |
 				constants::ITEM_ID_GUNSLINGER | constants::ITEM_ID_LION | constants::ITEM_ID_WOLF => {
-				terminal::write_full(data.get_response(106))
+				terminal::write_full(data.get_response(constants::STR_ID_UNWISE))
 			},
 			constants::ITEM_ID_BOULDER => {
 				if self.strong {
@@ -489,18 +489,18 @@ impl Player {
 					cellar.borrow_mut().set_direction(Direction::Up, Some(self.location.clone()));
 					self.strong = false;
 				} else {
-					terminal::write_full(data.get_response(11));
+					terminal::write_full(data.get_response(constants::STR_ID_BOULDER_HIT_WEAK));
 				}
 			}
 			_ => {
-				terminal::write_full(data.get_response(94));
+				terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW));
 			},
 		}
 	}
 
 	pub fn burn(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !self.inventory.contains_item(constants::ITEM_ID_MATCHES) {
-			terminal::write_full(data.get_response(92));
+			terminal::write_full(data.get_response(constants::STR_ID_NO_CARRY_BURN));
 			return;
 		}
 		let item_id = item.borrow().get_id();
@@ -514,7 +514,7 @@ impl Player {
 				}
 				let toast = data.get_item_by_id_certain(constants::ITEM_ID_TOAST);
 				self.location.borrow_mut().insert_item(toast.clone(), true);
-				terminal::write_full(data.get_response(12));
+				terminal::write_full(data.get_response(constants::STR_ID_BURN_BREAD));
 			},
 			constants::ITEM_ID_TOAST => {
 				if self.inventory.contains_item(item_id) {
@@ -522,7 +522,7 @@ impl Player {
 				} else {
 					self.location.borrow_mut().remove_item_certain(item_id);
 				}
-				terminal::write_full(data.get_response(152));
+				terminal::write_full(data.get_response(constants::STR_ID_BURN_TOAST));
 				let at_airlocke = self.location.borrow().is(constants::LOCATION_ID_AIRLOCKE);
 				if at_airlocke {
 					let out_loc = data.get_location_certain(constants::LOCATION_ID_AIRLOCKEOUT);
@@ -530,17 +530,17 @@ impl Player {
 					self.location.borrow_mut().set_air(false);
 					self.complete_achievement(data.get_puzzle(21));
 				} else {
-					terminal::write_full(data.get_response(6));
+					terminal::write_full(data.get_response(constants::STR_ID_ROBOT_MOUSE));
 				}
 			},
-			_ => terminal::write_full(data.get_response(94)),
+			_ => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW)),
 		}
 	}
 
 	pub fn call(&mut self, data: &DataCollection, item: &ItemRef) {
 		let panel_present = self.location.borrow().contains_item(constants::ITEM_ID_CONSOLE_FIXED);
 		if !panel_present {
-			terminal::write_full(data.get_response(101));
+			terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_APPLY));
 			return;
 		}
 
@@ -574,19 +574,19 @@ impl Player {
 
 			self.complete_obstruction_achievement(constants::ITEM_ID_CONSOLE_FIXED, data.get_puzzle(7));
 		} else {
-			terminal::write_full(data.get_response(94));
+			terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW));
 		}
 	}
 
 	pub fn cook(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !self.location.borrow().contains_item(constants::ITEM_ID_CAULDRON) {
-			terminal::write_full(data.get_response(76));
+			terminal::write_full(data.get_response(constants::STR_ID_NO_HERE_COOK));
 			return;
 		}
 
 		let cauldron = data.get_item_by_id_certain(constants::ITEM_ID_CAULDRON);
 		if !cauldron.borrow().is_empty() {
-		        terminal::write_full(data.get_response(17));
+		        terminal::write_full(data.get_response(constants::STR_ID_CAULDRON_FULL));
 		        return;
 		}
 
@@ -596,7 +596,7 @@ impl Player {
 			    self.inventory.remove_item_certain(constants::ITEM_ID_KOHLRABI);
 			    let stew = data.get_item_by_id_certain(constants::ITEM_ID_STEW);
 			    cauldron.borrow_mut().set_within(Some(stew.clone()));
-			    terminal::write_full(data.get_response(14));
+			    terminal::write_full(data.get_response(constants::STR_ID_COOK_CABBAGE));
 			},
 			constants::ITEM_ID_RADISHES => {
 				self.inventory.remove_item_certain(constants::ITEM_ID_RADISHES);
@@ -604,7 +604,7 @@ impl Player {
 				cauldron.borrow_mut().set_within(Some(elixir.clone()));
 				self.complete_achievement(data.get_puzzle(17));
 			},
-			_ => terminal::write_full(data.get_response(94)),
+			_ => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW)),
 		}
 	}
 
@@ -614,32 +614,32 @@ impl Player {
 	}
 
 	fn describe_final(&mut self, data: &DataCollection, item: &ItemRef) {
-		terminal::write_full(&item.borrow().mk_full_string(data.get_response(26)));
+		terminal::write_full(&item.borrow().mk_full_string(data.get_response(constants::STR_ID_IT_IS)));
 	}
 
 	pub fn drink(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !item.borrow().is_liquid() {
-			terminal::write_full(data.get_response(93));
+			terminal::write_full(data.get_response(constants::STR_ID_DRINK_NON_LIQUID));
 			return;
 		}
 
 		let item_id = item.borrow().get_id();
 		self.inventory.remove_item_certain(item_id);
-		terminal::write_full(data.get_response(30));
+		terminal::write_full(data.get_response(constants::STR_ID_DRINK_LIQUID));
 
 		match item_id {
-			constants::ITEM_ID_AQUA => terminal::write_full(data.get_response(31)),
-			constants::ITEM_ID_WATER => terminal::write_full(data.get_response(35)),
-			constants::ITEM_ID_STEW => terminal::write_full(data.get_response(34)),
+			constants::ITEM_ID_AQUA => terminal::write_full(data.get_response(constants::STR_ID_DRINK_AQUA)),
+			constants::ITEM_ID_WATER => terminal::write_full(data.get_response(constants::STR_ID_DRINK_WATER)),
+			constants::ITEM_ID_STEW => terminal::write_full(data.get_response(constants::STR_ID_DRINK_STEW)),
 			constants::ITEM_ID_ELIXIR => {
 				self.strong = true;
-				terminal::write_full(data.get_response(32));
+				terminal::write_full(data.get_response(constants::STR_ID_DRINK_ELIXIR));
 			}
 			constants::ITEM_ID_POTION => {
-				terminal::write_full(data.get_response(33));
+				terminal::write_full(data.get_response(constants::STR_ID_DRINK_POTION));
 				self.die(data);
 			},
-			_ => terminal::write_full(data.get_response(86)),
+			_ => terminal::write_full(data.get_response(constants::STR_ID_NOTHING_HAPPENS)),
 		}
 	}
 
@@ -649,25 +649,25 @@ impl Player {
 
 	pub fn empty(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !item.borrow().is_container() {
-			terminal::write_full(&data.get_response_param(24, &item.borrow().get_shortname()));
+			terminal::write_full(&data.get_response_param(constants::STR_ID_CONTAINER_INTO_SELF, &item.borrow().get_shortname()));
 			return;
 		}
 
 		let within_ref = item.borrow_mut().remove_within();
 		match within_ref {
-			None => terminal::write_full(data.get_response(40)),
+			None => terminal::write_full(data.get_response(constants::STR_ID_ALREADY_EMPTY)),
 			Some(within) => {
 				let is_liquid = within.borrow().is_liquid();
 				if is_liquid {
-					terminal::write_full(data.get_response(42));
+					terminal::write_full(data.get_response(constants::STR_ID_EMPTY_LIQUID));
 				} else {
 					let item_id = item.borrow().get_id();
 					if self.inventory.contains_item(item_id) {
 						self.inventory.insert_item(within.clone());
-						terminal::write_full(&data.get_response_param(41, &within.borrow().get_shortname()));
+						terminal::write_full(&data.get_response_param(constants::STR_ID_EMPTY_CARRY, &within.borrow().get_shortname()));
 					} else {
 						self.location.borrow_mut().insert_item(within.clone(), true);
-						terminal::write_full(&data.get_response_param(43, &within.borrow().get_shortname()));
+						terminal::write_full(&data.get_response_param(constants::STR_ID_EMPTY_SET, &within.borrow().get_shortname()));
 					}
 				}
 			},
@@ -680,26 +680,26 @@ impl Player {
 		if building_present {
 			let is_treasure = item.borrow().is_treasure();
 			if is_treasure {
-				terminal::write_full(&data.get_response_param(186, item.borrow().get_shortname()));
-				terminal::write_full(data.get_response(187));
+				terminal::write_full(&data.get_response_param(constants::STR_ID_EXCHANGE_GOOD, item.borrow().get_shortname()));
+				terminal::write_full(data.get_response(constants::STR_ID_BUY_FARM));
 				self.playing = false;
 			} else {
-				terminal::write_full(data.get_response(105));
+				terminal::write_full(data.get_response(constants::STR_ID_NOT_VALUABLE));
 			}
 		} else if machine_present {
 			if !item.borrow().is(constants::ITEM_ID_CARTRIDGE) {
-				terminal::write_full(data.get_response(63));
+				terminal::write_full(data.get_response(constants::STR_ID_MACHINE_REJECT));
 				return;
 			}
-			let request_str = terminal::read_question(data.get_response(64));
+			let request_str = terminal::read_question(data.get_response(constants::STR_ID_MACHINE_ASK));
 			match data.get_item_by_name(request_str[0].clone()) {
-				None => terminal::write_full(data.get_response(65)),
+				None => terminal::write_full(data.get_response(constants::STR_ID_MACHINE_NO_KNOW_WHAT)),
 				Some(request) => {
 					self.operate_machine(data, item, request);
 				},
 			}
 		} else {
-			terminal::write_full(data.get_response(78));
+			terminal::write_full(data.get_response(constants::STR_ID_NOWHERE_EXCHANGE));
 		}
 	}
 
@@ -713,7 +713,7 @@ impl Player {
 			envelope.borrow_mut().set_within(Some(coin.clone()));
 			self.complete_obstruction_achievement(constants::ITEM_ID_FAIRY, data.get_puzzle(9));
 		} else {
-			terminal::write_full(data.get_response(86));
+			terminal::write_full(data.get_response(constants::STR_ID_NOTHING_HAPPENS));
 		}
 	}
 
@@ -723,7 +723,7 @@ impl Player {
 			self.feed_dative(data, item);
 		} else {
 			if !self.inventory.contains_item(item.borrow().get_id()) {
-				terminal::write_full(&data.get_response_param(74, &item.borrow().get_shortname()));
+				terminal::write_full(&data.get_response_param(constants::STR_ID_NO_HAVE_INVENTORY, &item.borrow().get_shortname()));
 				return;
 			}
 			self.feed_accusative(data, item);
@@ -734,17 +734,17 @@ impl Player {
 	fn feed_accusative(&mut self, data: &DataCollection, direct: &ItemRef) {
 
 		// Find out what player wants to feed it to
-		let indirect_str = terminal::read_question(&data.get_response_param(159, direct.borrow().get_shortname()));
+		let indirect_str = terminal::read_question(&data.get_response_param(constants::STR_ID_WHAT_FEED_ACC, direct.borrow().get_shortname()));
 
 		// Feed food to recipient, if it exists and player is carrying it
 		match data.get_item_by_name(indirect_str[0].clone()) {
-			None => terminal::write_full(data.get_response(98)),
+			None => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_WHO_WHAT)),
 			Some(indirect) => {
 				let indirect_id = indirect.borrow().get_id();
 				if self.inventory.contains_item(indirect_id) || self.location.borrow().contains_item(indirect_id) {
 					self.feed_item_unknown(data, direct, indirect);
 				} else {
-					terminal::write_full(&data.get_response_param(100, &indirect.borrow().get_shortname()));
+					terminal::write_full(&data.get_response_param(constants::STR_ID_NO_SEE_HERE, &indirect.borrow().get_shortname()));
 				}
 			},
 		}
@@ -754,17 +754,17 @@ impl Player {
 	fn feed_dative(&mut self, data: &DataCollection, indirect: &ItemRef) {
 
 		// Find out what player wants to feed to it
-		let direct_str = terminal::read_question(&data.get_response_param(160, indirect.borrow().get_shortname()));
+		let direct_str = terminal::read_question(&data.get_response_param(constants::STR_ID_WHAT_FEED_DAT, indirect.borrow().get_shortname()));
 
 		// Feed food to recipient, if it exists and player is carrying it
 		match data.get_item_by_name(direct_str[0].clone()) {
-			None => terminal::write_full(data.get_response(98)),
+			None => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_WHO_WHAT)),
 			Some(direct) => {
 				let direct_id = direct.borrow().get_id();
 				if self.inventory.contains_item(direct_id) {
 					self.feed_item_unknown(data, direct, indirect);
 				} else {
-					terminal::write_full(&data.get_response_param(74, &direct.borrow().get_shortname()));
+					terminal::write_full(&data.get_response_param(constants::STR_ID_NO_HAVE_INVENTORY, &direct.borrow().get_shortname()));
 				}
 			},
 		}
@@ -773,7 +773,7 @@ impl Player {
 	// Attempt to feed item, when we are not sure if the recipient can accept or not
 	fn feed_item_unknown(&mut self, data: &DataCollection, direct: &ItemRef, indirect: &ItemRef) {
 		if !indirect.borrow().is_recipient() {
-			terminal::write_full(&data.get_response_param(79, indirect.borrow().get_shortname()));
+			terminal::write_full(&data.get_response_param(constants::STR_ID_NOT_FEEDABLE, indirect.borrow().get_shortname()));
 			return;
 		}
 		self.transfer_item(data, direct, indirect);
@@ -781,17 +781,17 @@ impl Player {
 
 	pub fn fish(&mut self, data: &DataCollection) {
 		if !self.inventory.contains_item(constants::ITEM_ID_NET) {
-			terminal::write_full(data.get_response(77));
+			terminal::write_full(data.get_response(constants::STR_ID_NO_EQUIPMENT));
 			return;
 		}
 		let glint_present = self.location.borrow().contains_item(constants::ITEM_ID_GLINT);
 		if !glint_present {
-			terminal::write_full(data.get_response(80));
+			terminal::write_full(data.get_response(constants::STR_ID_NO_FISH));
 			return;
 		}
 		let nugget = data.get_item_by_id_certain(constants::ITEM_ID_NUGGET);
 		if !self.inventory.can_fit(nugget) {
-			terminal::write_full(data.get_response(172));
+			terminal::write_full(data.get_response(constants::STR_ID_GLINT_HEAVY));
 			return;
 		}
 		self.inventory.insert_item(nugget.clone());
@@ -800,17 +800,17 @@ impl Player {
 
 	pub fn give(&mut self, data: &DataCollection, item: &ItemRef) {
 		// Find out what player wants to give item to
-		let recipient_str = terminal::read_question(&data.get_response_param(168, item.borrow().get_shortname()));
+		let recipient_str = terminal::read_question(&data.get_response_param(constants::STR_ID_WHAT_GIVE, item.borrow().get_shortname()));
 
 		// Give item to recipient, if it exists and player is carrying it
 		match data.get_item_by_name(recipient_str[0].clone()) {
-			None => terminal::write_full(data.get_response(98)),
+			None => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_WHO_WHAT)),
 			Some(recipient) => {
 				let recipient_id = recipient.borrow().get_id();
 				if self.inventory.contains_item(recipient_id) || self.location.borrow().contains_item(recipient_id) {
 					self.transfer_item(data, item, recipient);
 				} else {
-					terminal::write_full(&data.get_response_param(100, &recipient.borrow().get_shortname()));
+					terminal::write_full(&data.get_response_param(constants::STR_ID_NO_SEE_HERE, &recipient.borrow().get_shortname()));
 				}
 			},
 		}
@@ -861,7 +861,7 @@ impl Player {
 	// Return a tuple representing the next location (if move is successful), whether the player died, and any response message to be printed
 	fn try_move_back(&mut self) -> (Option<LocationRef>, bool, Option<u32>) {
 		match self.previous.clone() {
-			None => (None, false, Some(71)),
+			None => (None, false, Some(constants::STR_ID_NO_REMEMBER)),
 			Some(prev) => (Some(prev.clone()), false, None),
 		}
 	}
@@ -875,9 +875,9 @@ impl Player {
 		match self_loc.get_direction(&dir) {
 			None => {
 				if dir == Direction::Out {
-					return (None, false, Some(70));
+					return (None, false, Some(constants::STR_ID_NO_IN_OUT));
 				}
-				return (None, false, Some(72));
+				return (None, false, Some(constants::STR_ID_CANNOT_GO));
 			},
 			Some(next) => {
 				if !self.is_previous_loc(&next) {
@@ -887,20 +887,20 @@ impl Player {
 							// FIXME: tidy this whole area
 							let mut next_loc_option: Option<LocationRef> = None;
 							let mut death = false;
-							let mut response_code: u32 = 108; // FIXME: tailor to individual obstructions
+							let mut response_code: u32 = constants::STR_ID_BLOCKED; // FIXME: tailor to individual obstructions
 							if obstruction.borrow().is(constants::ITEM_ID_BUCCANEER) {
 								if !self.has_invisibility() {
-									response_code = 120;
+									response_code = constants::STR_ID_BUCCANEER_WATCHING;
 								} else {
 									next_loc_option = Some(next.clone());
-									response_code = 118;
+									response_code = constants::STR_ID_BUCCANEER_SNEAK_PAST;
 								}
 							} else if obstruction.borrow().is(constants::ITEM_ID_CORSAIR) {
 								if self.inventory.contains_item(constants::ITEM_ID_BOOTS) {
 									death = true;
-									response_code = 117;
+									response_code = constants::STR_ID_CORSAIR_SNEAK_PAST;
 								} else {
-									response_code = 119;
+									response_code = constants::STR_ID_CORSAIR_LISTENING;
 								}
 							}
 							return (next_loc_option, death, Some(response_code));
@@ -909,16 +909,16 @@ impl Player {
 				}
 
 				if !next.borrow().has_air() && !self.inventory.has_air() { // Refuse to proceed if there is no air at the next location
-					return (None, false, Some(66));
+					return (None, false, Some(constants::STR_ID_NO_AIR));
 				}
 				if dir == Direction::Up && self.has_gravity() && self_loc.needsno_gravity() { // Gravity is preventing the player from going up
-					return (None, false, Some(67));
+					return (None, false, Some(constants::STR_ID_NO_REACH_CEILING));
 				}
 				if dir == Direction::Down && self.has_gravity() && !self_loc.has_floor() {
-					return (None, false, Some(68));
+					return (None, false, Some(constants::STR_ID_DOWN_KILL));
 				}
 				if !next.borrow().has_land() && !self.inventory.has_land() {
-					return (None, false, Some(69));
+					return (None, false, Some(constants::STR_ID_OPEN_WATER));
 				}
 
 				return self.try_move_to(&next);
@@ -933,9 +933,9 @@ impl Player {
 		let death_rand: u32 = rng.gen();
 		let death = death_rand % self.death_divisor == 0;
 		if !self.has_light() && !next.borrow().has_light() && death {
-			return (None, true, Some(91));
+			return (None, true, Some(constants::STR_ID_BREAK_NECK));
 		} else if !self.has_nosnomp() && !next.borrow().has_nosnomp() && death {
-			return (None, true, Some(142));
+			return (None, true, Some(constants::STR_ID_SNOMP_KILL));
 		} else {
 			return (Some(next.clone()), false, None);
 		}
@@ -944,21 +944,21 @@ impl Player {
 	#[cfg(debug_assertions)]
 	pub fn grab(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !item.borrow().is_portable() {
-			terminal::write_full(data.get_response(179));
+			terminal::write_full(data.get_response(constants::STR_ID_NO_WANT_TAKE));
 			return;
 		}
 		if !item.borrow().is_liquid() {
 			self.unlink_item(data, item);
 		}
 		self.inventory.insert_item(item.clone());
-		terminal::write_full(&data.get_response_param(180, item.borrow().get_shortname()));
+		terminal::write_full(&data.get_response_param(constants::STR_ID_GRABBED, item.borrow().get_shortname()));
 	}
 
 	pub fn ignore(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
 		match item_id {
 			constants::ITEM_ID_TROLL => self.complete_obstruction_achievement(constants::ITEM_ID_TROLL, data.get_puzzle(22)),
-			_ => terminal::write_full(data.get_response(55)),
+			_ => terminal::write_full(data.get_response(constants::STR_ID_IGNORED)),
 		}
 	}
 
@@ -972,17 +972,17 @@ impl Player {
 		}
 
 		// Find out what player wants to insert it into
-		let container_str = terminal::read_question(&data.get_response_param(161, item.borrow().get_shortname()));
+		let container_str = terminal::read_question(&data.get_response_param(constants::STR_ID_WHAT_INSERT, item.borrow().get_shortname()));
 
 		// Insert item into container, if container exists and is present
 		match data.get_item_by_name(container_str[0].clone()) {
-			None => terminal::write_full(data.get_response(98)),
+			None => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_WHO_WHAT)),
 			Some(container) => {
 				let container_id = container.borrow().get_id();
 				if self.inventory.contains_item(container_id) || self.location.borrow().contains_item(container_id) {
 					self.insert_final(data, item, container)
 				} else {
-					terminal::write_full(&data.get_response_param(100, container.borrow().get_shortname()));
+					terminal::write_full(&data.get_response_param(constants::STR_ID_NO_SEE_HERE, container.borrow().get_shortname()));
 				}
 			},
 		}
@@ -1001,7 +1001,7 @@ impl Player {
 		let mut self_loc = self.location.borrow_mut();
 		if self_loc.contains_item(item_id) {
 			if !self.inventory.can_fit(&item) {
-				terminal::write_full(data.get_response(147));
+				terminal::write_full(data.get_response(constants::STR_ID_ITEM_HEAVY));
 				return;
 			}
 			self_loc.remove_item_certain(item_id);
@@ -1009,12 +1009,12 @@ impl Player {
 			self.inventory.remove_item_certain(item_id);
 		}
 		container.borrow_mut().set_within(Some(item.clone()));
-		terminal::write_full(data.get_response(58));
+		terminal::write_full(data.get_response(constants::STR_ID_INSERTED));
 	}
 
 	pub fn knit(&mut self, data: &DataCollection) {
 		if !self.inventory.contains_item(constants::ITEM_ID_NEEDLES) || !self.inventory.contains_item(constants::ITEM_ID_YARN) {
-			terminal::write_full(data.get_response(77));
+			terminal::write_full(data.get_response(constants::STR_ID_NO_EQUIPMENT));
 			return;
 		}
 		self.inventory.remove_item_certain(constants::ITEM_ID_YARN);
@@ -1028,18 +1028,18 @@ impl Player {
 
 	#[cfg(debug_assertions)]
 	pub fn get_node(&self, data: &DataCollection) -> String {
-		data.get_response_param(178, &self.location.borrow().get_id().to_string())
+		data.get_response_param(constants::STR_ID_NODE, &self.location.borrow().get_id().to_string())
 	}
 
 	pub fn play(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
 		match item_id {
 			constants::ITEM_ID_WHISTLE => {
-				let tune_words = terminal::read_question(data.get_response(163));
+				let tune_words = terminal::read_question(data.get_response(constants::STR_ID_WHAT_PLAY));
 				let tune = &tune_words[0];
-				terminal::write_full(&data.get_response_param(121, tune));
+				terminal::write_full(&data.get_response_param(constants::STR_ID_PLAY_WHISTLE, tune));
 
-				if tune == data.get_response(13) {
+				if tune == data.get_response(constants::STR_ID_CABBAGE) {
 					let lion_present = self.location.borrow().contains_item(constants::ITEM_ID_LION);
 					if lion_present {
 						let lion = data.get_item_by_id_certain(constants::ITEM_ID_LION);
@@ -1055,29 +1055,29 @@ impl Player {
 				self.play_player(data, item);
 			},
 			_ => {
-				terminal::write_full(data.get_response(94));
+				terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW));
 			},
 		}
 	}
 
 	pub fn pour(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !item.borrow().is_liquid() {
-			terminal::write_full(data.get_response(99));
+			terminal::write_full(data.get_response(constants::STR_ID_POUR_NONLIQUID));
 			return;
 		}
 
 		// Find out what player wants to pour liquid onto
-		let recipient_str = terminal::read_question(&data.get_response_param(174, item.borrow().get_shortname()));
+		let recipient_str = terminal::read_question(&data.get_response_param(constants::STR_ID_WHAT_POUR, item.borrow().get_shortname()));
 
 		// Pour liquid onto recipient
 		match data.get_item_by_name(recipient_str[0].clone()) {
-			None => terminal::write_full(data.get_response(98)),
+			None => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_WHO_WHAT)),
 			Some(recipient) => {
 				let recipient_id = recipient.borrow().get_id();
 				if self.inventory.contains_item(recipient_id) || self.location.borrow().contains_item(recipient_id) {
 					self.transfer_item(data, item, recipient);
 				} else {
-					terminal::write_full(&data.get_response_param(100, &recipient.borrow().get_shortname()));
+					terminal::write_full(&data.get_response_param(constants::STR_ID_NO_SEE_HERE, &recipient.borrow().get_shortname()));
 				}
 			},
 		}
@@ -1092,16 +1092,16 @@ impl Player {
 	}
 
 	fn read_final(&mut self, data: &DataCollection, item: &ItemRef) {
-		terminal::write_full(&item.borrow().mk_writing_string(data.get_response(107), data.get_response(169)));
+		terminal::write_full(&item.borrow().mk_writing_string(data.get_response(constants::STR_ID_NO_WRITING), data.get_response(constants::STR_ID_READS)));
 	}
 
 	pub fn repair(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
 		match item_id {
-			constants::ITEM_ID_CONSOLE_FIXED => terminal::write_full(data.get_response(157)),
+			constants::ITEM_ID_CONSOLE_FIXED => terminal::write_full(data.get_response(constants::STR_ID_ALREADY_REPAIRED)),
 			constants::ITEM_ID_CONSOLE_BROKEN => {
 				if !self.inventory.contains_item(constants::ITEM_ID_WIRE) {
-					terminal::write_full(data.get_response(158));
+					terminal::write_full(data.get_response(constants::STR_ID_NO_COMPONENT));
 				} else {
 					let panel = data.get_item_by_id_certain(constants::ITEM_ID_CONSOLE_FIXED);
 					self.location.borrow_mut().insert_item(panel.clone(), true);
@@ -1109,23 +1109,23 @@ impl Player {
 					self.complete_obstruction_achievement(constants::ITEM_ID_CONSOLE_BROKEN, data.get_puzzle(6));
 				}
 			},
-			_ => terminal::write_full(data.get_response(94)),
+			_ => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW)),
 		}
 	}
 
 	pub fn rob(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
 		match item_id {
-			constants::ITEM_ID_BODIES => terminal::write_full(data.get_response(192)),
+			constants::ITEM_ID_BODIES => terminal::write_full(data.get_response(constants::STR_ID_NO)),
 			constants::ITEM_ID_BUCCANEER => {
 				let kill_condition = !self.has_invisibility();
-				self.rob_pirate(data, item, constants::ITEM_ID_MEDALLION, kill_condition, 116, 16);
+				self.rob_pirate(data, item, constants::ITEM_ID_MEDALLION, kill_condition, constants::STR_ID_BUCCANEER_SNEAK_ROB, 16);
 			},
 			constants::ITEM_ID_CORSAIR => {
 				let kill_condition = self.inventory.contains_item(constants::ITEM_ID_BOOTS);
-				self.rob_pirate(data, item, constants::ITEM_ID_KEY, kill_condition, 113, 15);
+				self.rob_pirate(data, item, constants::ITEM_ID_KEY, kill_condition, constants::STR_ID_CORSAIR_SNEAK_ROB, 15);
 			},
-			_ => terminal::write_full(data.get_response(94)),
+			_ => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW)),
 		}
 	}
 
@@ -1134,14 +1134,14 @@ impl Player {
 		if robot_present {
 			self.complete_obstruction_achievement(constants::ITEM_ID_ROBOT, data.get_puzzle(18));
 		} else {
-			terminal::write_full(data.get_response(86));
+			terminal::write_full(data.get_response(constants::STR_ID_NOTHING_HAPPENS));
 		}
 	}
 
 	pub fn rub(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
 		match item_id {
-			constants::ITEM_ID_LAMP => terminal::write_full(data.get_response(47)),
+			constants::ITEM_ID_LAMP => terminal::write_full(data.get_response(constants::STR_ID_RUB_LAMP)),
 			constants::ITEM_ID_DRAGON => {
 				let tooth = data.get_item_by_id_certain(constants::ITEM_ID_TOOTH);
 				self.location.borrow_mut().insert_item(tooth.clone(), true);
@@ -1152,71 +1152,71 @@ impl Player {
 				let rod = data.get_item_by_id_certain(constants::ITEM_ID_ROD);
 				self.unlink_item(data, rod);
 				thor.borrow_mut().insert_item(rod.clone(), true);
-				terminal::write_full(data.get_response(111));
+				terminal::write_full(data.get_response(constants::STR_ID_RUB_PENDANT));
 			},
-			_ => terminal::write_full(data.get_response(89)),
+			_ => terminal::write_full(data.get_response(constants::STR_ID_NOTHING_INTERESTING)),
 		}
 	}
 
 	pub fn say(&mut self, data: &DataCollection, statement: &str) {
-		terminal::write_full(&data.get_response_param(170, statement));
+		terminal::write_full(&data.get_response_param(constants::STR_ID_SAY, statement));
 		if self.location.borrow().contains_item(constants::ITEM_ID_CORSAIR) { // Pirate hears player
-			terminal::write_full(data.get_response(114));
+			terminal::write_full(data.get_response(constants::STR_ID_CORSAIR_SPEAK));
 			self.die(data);
 			return;
 		}
-		if statement == data.get_response(171) {
+		if statement == data.get_response(constants::STR_ID_HELLO) {
 			let alien_present = self.location.borrow().contains_item(constants::ITEM_ID_ALIEN);
 			if alien_present {
 				let chart_used = data.get_item_by_id_certain(constants::ITEM_ID_CHART).borrow().is_retired();
 				let transmitter_used = data.get_item_by_id_certain(constants::ITEM_ID_TRANSMITTER).borrow().is_retired();
 				if transmitter_used {
-					terminal::write_full(data.get_response(53));
+					terminal::write_full(data.get_response(constants::STR_ID_HELLO_LENS));
 				} else if chart_used {
-					terminal::write_full(data.get_response(51));
+					terminal::write_full(data.get_response(constants::STR_ID_HELLO_BEACON));
 				} else {
-					terminal::write_full(data.get_response(52));
+					terminal::write_full(data.get_response(constants::STR_ID_HELLO_CHART));
 				}
 			}
 		}
 	}
 
 	pub fn sleep(&mut self, data: &DataCollection) {
-		self.teleport(data, data.get_tp_map_sleep(), false, 141, 140);
+		self.teleport(data, data.get_tp_map_sleep(), false, constants::STR_ID_NO_SLEEP, constants::STR_ID_SLEEP);
 	}
 
 	pub fn stare(&mut self, data: &DataCollection) {
 		if !self.has_light() {
-			terminal::write_full(data.get_response(15));
+			terminal::write_full(data.get_response(constants::STR_ID_NO_SEE_DARKNESS));
 			return;
 		}
 		if self.location.borrow().is(constants::LOCATION_ID_REFLECTION) || self.inventory.contains_item(constants::ITEM_ID_MIRROR) {
 			if self.has_invisibility() {
-				terminal::write_full(data.get_response(124));
+				terminal::write_full(data.get_response(constants::STR_ID_SEE_INVISIBLE));
 			} else if self.strong {
-				terminal::write_full(data.get_response(127));
+				terminal::write_full(data.get_response(constants::STR_ID_SEE_STRONG));
 			} else {
-				terminal::write_full(data.get_response(125));
+				terminal::write_full(data.get_response(constants::STR_ID_SEE_NORMAL));
 			}
 		} else {
-			terminal::write_full(data.get_response(126));
+			terminal::write_full(data.get_response(constants::STR_ID_SEE_NOTHING));
 		}
 	}
 
 	pub fn take(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
 		if self.inventory.contains_item(item_id) && !item.borrow().is_liquid() {
-			terminal::write_full(data.get_response(145));
+			terminal::write_full(data.get_response(constants::STR_ID_ALREADY_HAVE));
 			return;
 		}
 
 		if !item.borrow().is_portable() { // Cannot take fixtures, furniture, very heavy things, etc.
-			terminal::write_full(data.get_response(146));
+			terminal::write_full(data.get_response(constants::STR_ID_CANNOT_TAKE));
 			return;
 		}
 
 		if !self.inventory.can_fit(&item) { // Can only carry so much at a time
-			terminal::write_full(data.get_response(147));
+			terminal::write_full(data.get_response(constants::STR_ID_ITEM_HEAVY));
 			return;
 		}
 
@@ -1229,27 +1229,27 @@ impl Player {
 		self.insert_item(item.clone());
 
 		if item.borrow().is_wearable() {
-			terminal::write_full(data.get_response(156));
+			terminal::write_full(data.get_response(constants::STR_ID_WORN));
 		} else {
-			terminal::write_full(data.get_response(148));
+			terminal::write_full(data.get_response(constants::STR_ID_TAKEN));
 		}
 	}
 
 	pub fn tether(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !self.inventory.contains_item(constants::ITEM_ID_CABLE) {
-			terminal::write_full(&data.get_response_param(184, item.borrow().get_shortname()));
+			terminal::write_full(&data.get_response_param(constants::STR_ID_NO_TETHER, item.borrow().get_shortname()));
 			return;
 		}
 
 		// Find out what player wants to tether it to
-		let anchor_str = terminal::read_question(&data.get_response_param(185, item.borrow().get_shortname()));
+		let anchor_str = terminal::read_question(&data.get_response_param(constants::STR_ID_WHAT_TETHER, item.borrow().get_shortname()));
 
 		match data.get_item_by_name(anchor_str[0].clone()) {
-			None => terminal::write_full(data.get_response(98)),
+			None => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_WHO_WHAT)),
 			Some(anchor) => {
 				let anchor_id = anchor.borrow().get_id();
 				if !self.inventory.contains_item(anchor_id) && !self.location.borrow().contains_item(anchor_id) {
-					terminal::write_full(&data.get_response_param(100, anchor.borrow().get_shortname()));
+					terminal::write_full(&data.get_response_param(constants::STR_ID_NO_SEE_HERE, anchor.borrow().get_shortname()));
 					return;
 				}
 				let item_id = item.borrow().get_id();
@@ -1257,18 +1257,18 @@ impl Player {
 					self.inventory.remove_item_certain(constants::ITEM_ID_CABLE);
 					self.complete_achievement(data.get_puzzle(20));
 				} else {
-					terminal::write_full(data.get_response(94));
+					terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW));
 				}
 			},
 		}
 	}
 
 	pub fn tezazzle(&mut self, data: &DataCollection) {
-		self.teleport(data, data.get_tp_map_witch(), true, 86, 165);
+		self.teleport(data, data.get_tp_map_witch(), true, constants::STR_ID_NOTHING_HAPPENS, constants::STR_ID_WITCHED);
 	}
 
 	pub fn throw(&mut self, data: &DataCollection, item: &ItemRef) {
-		terminal::write_full(data.get_response(151));
+		terminal::write_full(data.get_response(constants::STR_ID_THROW));
 		self.release_item(data, item, true);
 	}
 
@@ -1277,15 +1277,15 @@ impl Player {
 		let mirror_present = self.inventory.contains_item(constants::ITEM_ID_MIRROR);
 		if wizard_present {
 			if self.has_invisibility() {
-				terminal::write_full(data.get_response(167));
+				terminal::write_full(data.get_response(constants::STR_ID_WIZARDED));
 			} else if mirror_present {
 				self.complete_obstruction_achievement(constants::ITEM_ID_WIZARD, data.get_puzzle(23));
 			} else {
-				terminal::write_full(data.get_response(166));
+				terminal::write_full(data.get_response(constants::STR_ID_WIZARD_INVISIBLE));
 				self.die(data);
 			}
 		} else {
-			terminal::write_full(data.get_response(139));
+			terminal::write_full(data.get_response(constants::STR_ID_SH_MAGIC));
 		}
 	}
 }
