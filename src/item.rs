@@ -257,30 +257,30 @@ impl Item {
 	pub fn has_problem_accepting(&self, item: &ItemRef) -> Option<u32> {
 		// Check attributes of container
 		if !self.is_container() {
-			return Some(24);
+			return Some(constants::STR_ID_NOT_CONTAINER);
 		}
 		if self.is(item.borrow().get_id()) {
-			return Some(25);
+			return Some(constants::STR_ID_CONTAINER_INTO_SELF);
 		}
 		if self.is_container_liquid() && !item.borrow().is_liquid() {
-			return Some(23);
+			return Some(constants::STR_ID_NOT_SOLID_CONTAINER);
 		}
 		if !self.is_container_liquid() && item.borrow().is_liquid() {
-			return Some(22);
+			return Some(constants::STR_ID_NOT_LIQUID_CONTAINER);
 		}
 
 		// Make sure there is nothing already in the container
 		match self.within.clone() {
 			Some(within) => {
 				if within.borrow().is(item.borrow().get_id()) {
-					return Some(21);
+					return Some(constants::STR_ID_ALREADY_CONTAINED);
 				} else {
-					return Some(20);
+					return Some(constants::STR_ID_CONTAINER_FULL);
 				}
 			},
 			None => {
 				if !self.can_fit(&item) {
-					return Some(81);
+					return Some(constants::STR_ID_NO_FIT);
 				}
 			},
 		}
@@ -291,7 +291,7 @@ impl Item {
 	// If there is a problem, return the string tag of the reason, otherwise return None
 	pub fn has_problem_inserting(&self) -> Option<u32> {
 		if !self.is_portable() || self.is_wearable() { // Items cannot be inserted if they are immobile or would be worn
-			return Some(146);
+			return Some(constants::STR_ID_CANNOT_TAKE);
 		}
 		None
 	}

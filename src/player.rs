@@ -357,16 +357,16 @@ impl Player {
 	}
 
 	fn teleport(&mut self, data: &DataCollection, tp_map: &HashMap<u32, u32>, permanent: bool,
-		response_tag_no_teleport: u32, response_tag_teleport: u32) {
+		response_code_no_teleport: u32, response_code_teleport: u32) {
 		let loc_id = self.location.borrow().get_id();
 		match tp_map.get(&loc_id) {
-			None => terminal::write_full(data.get_response(response_tag_no_teleport)),
+			None => terminal::write_full(data.get_response(response_code_no_teleport)),
 			Some(next_id) => {
 				self.inventory.drop_all(&self.location, data.get_location_certain(self.location_id_safe), false, permanent);
 				self.location = data.get_location_certain(*next_id).clone();
 				self.previous = None;
 				self.location.borrow_mut().release_temporary(&mut self.inventory);
-				terminal::write_full(data.get_response(response_tag_teleport));
+				terminal::write_full(data.get_response(response_code_teleport));
 			},
 		}
 	}
@@ -649,7 +649,7 @@ impl Player {
 
 	pub fn empty(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !item.borrow().is_container() {
-			terminal::write_full(&data.get_response_param(constants::STR_ID_CONTAINER_INTO_SELF, &item.borrow().get_shortname()));
+			terminal::write_full(&data.get_response_param(constants::STR_ID_NOT_CONTAINER, &item.borrow().get_shortname()));
 			return;
 		}
 
