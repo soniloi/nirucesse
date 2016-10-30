@@ -18,6 +18,9 @@ pub const MIN_MOVES_EVENT: u32 = 15; // Random events will not be printed before
 pub const DEATH_DIVISOR_NORMAL: u32 = 4;
 pub const DEATH_DIVISOR_SMASHED: u32 = 1;
 
+// Capacity
+pub const INVENTORY_CAPACITY: u32 = 16;
+
 // ID numbers of specific locations
 pub const LOCATION_ID_AIRLOCKE: u32 = 31; // The airlock just off the Recreation Hub
 pub const LOCATION_ID_AIRLOCKEOUT: u32 = 36; // The area immediately outside Airlock East
@@ -211,6 +214,7 @@ pub const STR_ID_NO_WRITING: u32 = 107;
 pub const STR_ID_BLOCKED: u32 = 108;
 pub const STR_ID_OK: u32 = 110;
 pub const STR_ID_RUB_PENDANT: u32 = 111;
+pub const STR_ID_PHILISTINE: u32 = 112;
 pub const STR_ID_CORSAIR_SNEAK_ROB: u32 = 113;
 pub const STR_ID_CORSAIR_SPEAK: u32 = 114;
 pub const STR_ID_PIRATE_EMPTY: u32 = 115;
@@ -227,8 +231,8 @@ pub const STR_ID_SEE_NOTHING: u32 = 126;
 pub const STR_ID_SEE_STRONG: u32 = 127;
 pub const STR_ID_SCORE_DIED: u32 = 128;
 pub const STR_ID_SCORE_DEATHS: u32 = 129;
-pub const STR_ID_SCORE_INSTRUCTIONS: u32 = 130;
-pub const STR_ID_SCORE_HINTS: u32 = 131;
+pub const STR_ID_SCORE_HINTS: u32 = 130;
+pub const STR_ID_SCORE_INSTRUCTIONS: u32 = 131;
 pub const STR_ID_SCORE_CURRENT: u32 = 132;
 pub const STR_ID_SCORE_POINTS: u32 = 133;
 pub const STR_ID_SCORE_FINAL: u32 = 134;
@@ -284,3 +288,28 @@ pub const STR_ID_MACHINE_ALREADY_CREATE: u32 = 189;
 pub const STR_ID_MACHINE_DISPENSE: u32 = 190;
 pub const STR_ID_DISAMBIGUATE_LOOK: u32 = 191;
 pub const STR_ID_NO: u32 = 192;
+
+pub const PUZZLE_ID_ACORN: u32 = 0;
+pub const PUZZLE_ID_TRANSMITTER: u32 = 1;
+pub const PUZZLE_ID_CHART: u32 = 2;
+pub const PUZZLE_ID_LENS: u32 = 3;
+pub const PUZZLE_ID_BEANSTALK: u32 = 4;
+pub const PUZZLE_ID_BOULDER: u32 = 5;
+pub const PUZZLE_ID_CONSOLE: u32 = 6;
+pub const PUZZLE_ID_DISTRESS: u32 = 7;
+pub const PUZZLE_ID_DRAGON: u32 = 8;
+pub const PUZZLE_ID_FAIRY: u32 = 9;
+pub const PUZZLE_ID_GUNSLINGER: u32 = 10;
+pub const PUZZLE_ID_JUMPER: u32 = 11;
+pub const PUZZLE_ID_LION: u32 = 12;
+pub const PUZZLE_ID_WOLF: u32 = 13;
+pub const PUZZLE_ID_GLINT: u32 = 14;
+pub const PUZZLE_ID_CORSAIR: u32 = 15;
+pub const PUZZLE_ID_BUCCANEER: u32 = 16;
+pub const PUZZLE_ID_ELIXIR: u32 = 17;
+pub const PUZZLE_ID_ROBOT: u32 = 18;
+pub const PUZZLE_ID_SKELETON: u32 = 19;
+pub const PUZZLE_ID_TETHER: u32 = 20;
+pub const PUZZLE_ID_AIRLOCK: u32 = 21;
+pub const PUZZLE_ID_TROLL: u32 = 22;
+pub const PUZZLE_ID_WIZARD: u32 = 23;
