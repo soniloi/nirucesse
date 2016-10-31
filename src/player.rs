@@ -58,23 +58,23 @@ impl Player {
 	}
 
 	pub fn has_air(&self) -> bool {
-		self.inventory.has_air() || self.location.borrow().has_air()
+		self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_AIR) || self.location.borrow().has_air()
 	}
 
 	pub fn has_gravity(&self) -> bool {
-		self.inventory.has_gravity() || self.location.borrow().has_gravity()
+		self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_GRAVITY) || self.location.borrow().has_gravity()
 	}
 
 	pub fn has_nosnomp(&self) -> bool {
-		self.inventory.has_nosnomp() || self.location.borrow().has_nosnomp()
+		self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_NOSNOMP) || self.location.borrow().has_nosnomp()
 	}
 
 	fn has_invisibility(&self) -> bool {
-		self.inventory.has_invisibility()
+		self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_INVISIBILITY)
 	}
 
-	pub fn insert_item(&mut self, item_ptr: ItemRef) {
-		self.inventory.insert_item(item_ptr);
+	pub fn insert_item(&mut self, item: ItemRef) {
+		self.inventory.insert_item(item);
 	}
 
 	pub fn is_playing(&self) -> bool {
@@ -908,7 +908,7 @@ impl Player {
 					}
 				}
 
-				if !next.borrow().has_air() && !self.inventory.has_air() { // Refuse to proceed if there is no air at the next location
+				if !next.borrow().has_air() && !self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_AIR) { // Refuse to proceed if there is no air at the next location
 					return (None, false, Some(constants::STR_ID_NO_AIR));
 				}
 				if dir == Direction::Up && self.has_gravity() && self_loc.needsno_gravity() { // Gravity is preventing the player from going up
@@ -917,7 +917,7 @@ impl Player {
 				if dir == Direction::Down && self.has_gravity() && !self_loc.has_floor() {
 					return (None, false, Some(constants::STR_ID_DOWN_KILL));
 				}
-				if !next.borrow().has_land() && !self.inventory.has_land() {
+				if !next.borrow().has_land() && !self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_LAND) {
 					return (None, false, Some(constants::STR_ID_OPEN_WATER));
 				}
 
@@ -1045,7 +1045,7 @@ impl Player {
 						let lion = data.get_item_by_id_certain(constants::ITEM_ID_LION);
 						let lion_obstruction = lion.borrow().has_property(constants::CTRL_ITEM_OBSTRUCTION);
 						if lion_obstruction {
-							lion.borrow_mut().unset_property(constants::CTRL_ITEM_OBSTRUCTION);
+							lion.borrow_mut().set_property(constants::CTRL_ITEM_OBSTRUCTION, false);
 							self.complete_achievement(data.get_puzzle(constants::PUZZLE_ID_LION));
 						}
 					}

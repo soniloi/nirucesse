@@ -92,12 +92,12 @@ impl Item {
 		self.properties & property != 0
 	}
 
-	pub fn set_property(&mut self, property: u32) {
-		self.properties |= property;
-	}
-
-	pub fn unset_property(&mut self, property: u32) {
-		self.properties &= !property;
+	pub fn set_property(&mut self, property_code: u32, next: bool) {
+		if next {
+			self.properties |= property_code;
+		} else {
+			self.properties &= !property_code;
+		}
 	}
 
 	pub fn has_light(&self) -> bool {

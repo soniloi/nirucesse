@@ -22,24 +22,8 @@ impl Inventory {
 		self.items.values().any(|x| x.borrow().has_light())
 	}
 
-	pub fn has_air(&self) -> bool {
-		self.items.values().any(|x| x.borrow().has_property(constants::CTRL_ITEM_GIVES_AIR))
-	}
-
-	pub fn has_gravity(&self) -> bool {
-		self.items.values().any(|x| x.borrow().has_property(constants::CTRL_ITEM_GIVES_GRAVITY))
-	}
-
-	pub fn has_nosnomp(&self) -> bool {
-		self.items.values().any(|x| x.borrow().has_property(constants::CTRL_ITEM_GIVES_NOSNOMP))
-	}
-
-	pub fn has_invisibility(&self) -> bool {
-		self.items.values().any(|x| x.borrow().has_property(constants::CTRL_ITEM_GIVES_INVISIBILITY))
-	}
-
-	pub fn has_land(&self) -> bool {
-		self.items.values().any(|x| x.borrow().has_property(constants::CTRL_ITEM_GIVES_LAND))
+	pub fn contains_with_property(&self, property_code: u32) -> bool {
+		self.items.values().any(|x| x.borrow().has_property(property_code))
 	}
 
 	pub fn contains_item(&self, id: u32) -> bool {
