@@ -88,13 +88,19 @@ impl Location {
 		self.contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT)
 	}
 
-	// Return whether any item resting at this location emits light
+	pub fn contains_with_property(&self, property_code: u32) -> bool {
+		self.items.values().any(|x| x.borrow().has_or_contains_with_property(property_code))
+	}
+
 	pub fn contains_with_switchable_property(&self, property_code: u32) -> bool {
 		self.items.values().any(|x| x.borrow().has_or_contains_with_switchable_property(property_code))
 	}
 
 	pub fn has_air(&self) -> bool {
-		self.has_property(CTRL_LOC_HAS_AIR)
+		if self.has_property(CTRL_LOC_HAS_AIR) {
+			return true;
+		}
+		self.contains_with_property(constants::CTRL_ITEM_GIVES_AIR)
 	}
 
 	pub fn set_air(&mut self, on: bool) {
@@ -118,7 +124,10 @@ impl Location {
 	}
 
 	pub fn has_nosnomp(&self) -> bool {
-		self.has_property(CTRL_LOC_HAS_NOSNOMP)
+		if self.has_property(CTRL_LOC_HAS_NOSNOMP) {
+			return true;
+		}
+		self.contains_with_property(constants::CTRL_ITEM_GIVES_NOSNOMP)
 	}
 
 	pub fn needsno_light(&self) -> bool {
