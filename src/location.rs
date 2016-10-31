@@ -146,7 +146,7 @@ impl Location {
 
 	pub fn get_obstruction(&self) -> Option<ItemRef> {
 		for item in self.items.values() {
-			if item.borrow().is_obstruction() {
+			if item.borrow().has_property(constants::CTRL_ITEM_OBSTRUCTION) {
 				return Some(item.clone());
 			}
 		}
@@ -216,7 +216,7 @@ impl Location {
 			None => {},
 			Some(item) => {
 				// Liquids don't get removed ONLY if they were at a location and not within a container
-				if item.borrow().is_liquid() {
+				if item.borrow().has_property(constants::CTRL_ITEM_LIQUID) {
 					return;
 				}
 				item.borrow_mut().retire();

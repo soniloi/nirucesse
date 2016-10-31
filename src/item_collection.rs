@@ -110,11 +110,11 @@ impl ItemCollection {
 				None => panic!("Unable to find container with ID: {}", initial_id),
 				Some(container) => container,
 			};
-			if !initial_container.borrow().is_container() {
+			if !initial_container.borrow().has_property(constants::CTRL_ITEM_CONTAINER) {
 				panic!("Item with ID: {} is not a container", initial_id);
 			}
-			if initial_container.borrow().is_container_liquid() && !item.borrow().is_liquid() ||
-				!initial_container.borrow().is_container_liquid() && item.borrow().is_liquid() {
+			if initial_container.borrow().has_property(constants::CTRL_ITEM_CONTAINER_LIQUID) && !item.borrow().has_property(constants::CTRL_ITEM_LIQUID) ||
+				!initial_container.borrow().has_property(constants::CTRL_ITEM_CONTAINER_LIQUID) && item.borrow().has_property(constants::CTRL_ITEM_LIQUID) {
 				panic!("Container with ID: {} is not the right kind of container for item: {}", initial_id, item.borrow().get_shortname());
 			}
 			initial_container.borrow_mut().set_within(Some(item.clone()));

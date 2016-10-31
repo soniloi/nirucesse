@@ -23,23 +23,23 @@ impl Inventory {
 	}
 
 	pub fn has_air(&self) -> bool {
-		self.items.values().any(|x| x.borrow().has_air())
+		self.items.values().any(|x| x.borrow().has_property(constants::CTRL_ITEM_GIVES_AIR))
 	}
 
 	pub fn has_gravity(&self) -> bool {
-		self.items.values().any(|x| x.borrow().has_gravity())
+		self.items.values().any(|x| x.borrow().has_property(constants::CTRL_ITEM_GIVES_GRAVITY))
 	}
 
 	pub fn has_nosnomp(&self) -> bool {
-		self.items.values().any(|x| x.borrow().has_nosnomp())
+		self.items.values().any(|x| x.borrow().has_property(constants::CTRL_ITEM_GIVES_NOSNOMP))
 	}
 
 	pub fn has_invisibility(&self) -> bool {
-		self.items.values().any(|x| x.borrow().has_invisibility())
+		self.items.values().any(|x| x.borrow().has_property(constants::CTRL_ITEM_GIVES_INVISIBILITY))
 	}
 
 	pub fn has_land(&self) -> bool {
-		self.items.values().any(|x| x.borrow().has_land())
+		self.items.values().any(|x| x.borrow().has_property(constants::CTRL_ITEM_GIVES_LAND))
 	}
 
 	pub fn contains_item(&self, id: u32) -> bool {
@@ -57,7 +57,7 @@ impl Inventory {
 			match found_option {
 				None => {},
 				Some(found) => {
-					let is_liquid = found.borrow().is_liquid();
+					let is_liquid = found.borrow().has_property(constants::CTRL_ITEM_LIQUID);
 					if !is_liquid {
 						found.borrow_mut().retire();
 					}
@@ -87,7 +87,7 @@ impl Inventory {
 	pub fn drop_all(&mut self, current_loc: &LocationRef, safe_loc: &LocationRef, death: bool, permanent: bool) {
 		let removed = self.items.drain();
 		for (_, item) in removed {
-			if death && item.borrow().is_essential() {
+			if death && item.borrow().has_property(constants::CTRL_ITEM_ESSENTIAL) {
 				safe_loc.borrow_mut().insert_item(item.clone(), permanent);
 			} else {
 				current_loc.borrow_mut().insert_item(item.clone(), permanent);

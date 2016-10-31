@@ -221,7 +221,7 @@ impl Player {
 	}
 
 	fn operate_machine(&mut self, data: &DataCollection, cartridge: &ItemRef, request: &ItemRef) {
-		if !request.borrow().is_factory() {
+		if !request.borrow().has_property(constants::CTRL_ITEM_FACTORY) {
 			terminal::write_full(data.get_response(constants::STR_ID_MACHINE_NO_KNOW_CREATE));
 			return;
 		}
@@ -255,8 +255,8 @@ impl Player {
 		let item_id = item.borrow().get_id();
 		self.inventory.remove_item_certain(item_id);
 
-		let liquid = item.borrow().is_liquid();
-		let is_fragile = item.borrow().is_fragile();
+		let liquid = item.borrow().has_property(constants::CTRL_ITEM_LIQUID);
+		let is_fragile = item.borrow().has_property(constants::CTRL_ITEM_FRAGILE);
 		let has_floor = self.location.borrow().has_floor();
 		if liquid { // When dropped, liquids drain away
 			terminal::write_full(data.get_response(constants::STR_ID_EMPTY_LIQUID));
@@ -321,7 +321,7 @@ impl Player {
 	}
 
 	fn switch_item(&mut self, data: &DataCollection, item: &ItemRef, on_next: bool) {
-		if !item.borrow().is_switchable() {
+		if !item.borrow().has_property(constants::CTRL_ITEM_SWITCHABLE) {
 			terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW));
 			return;
 		}
@@ -376,8 +376,8 @@ impl Player {
 
 		let recipient_id = recipient.borrow().get_id();
 		let gift_id = gift.borrow().get_id();
-		let gift_edible = gift.borrow().is_edible();
-		let gift_liquid = gift.borrow().is_liquid();
+		let gift_edible = gift.borrow().has_property(constants::CTRL_ITEM_EDIBLE);
+		let gift_liquid = gift.borrow().has_property(constants::CTRL_ITEM_LIQUID);
 		let location_id = self.location.borrow().get_id();
 
 		if recipient_id == constants::ITEM_ID_ALIEN {
@@ -618,7 +618,7 @@ impl Player {
 	}
 
 	pub fn drink(&mut self, data: &DataCollection, item: &ItemRef) {
-		if !item.borrow().is_liquid() {
+		if !item.borrow().has_property(constants::CTRL_ITEM_LIQUID) {
 			terminal::write_full(data.get_response(constants::STR_ID_DRINK_NON_LIQUID));
 			return;
 		}
@@ -648,7 +648,7 @@ impl Player {
 	}
 
 	pub fn empty(&mut self, data: &DataCollection, item: &ItemRef) {
-		if !item.borrow().is_container() {
+		if !item.borrow().has_property(constants::CTRL_ITEM_CONTAINER) {
 			terminal::write_full(&data.get_response_param(constants::STR_ID_NOT_CONTAINER, &item.borrow().get_shortname()));
 			return;
 		}
@@ -657,7 +657,7 @@ impl Player {
 		match within_ref {
 			None => terminal::write_full(data.get_response(constants::STR_ID_ALREADY_EMPTY)),
 			Some(within) => {
-				let is_liquid = within.borrow().is_liquid();
+				let is_liquid = within.borrow().has_property(constants::CTRL_ITEM_LIQUID);
 				if is_liquid {
 					terminal::write_full(data.get_response(constants::STR_ID_EMPTY_LIQUID));
 				} else {
@@ -678,7 +678,7 @@ impl Player {
 		let building_present = self.location.borrow().contains_item(constants::ITEM_ID_BUILDING);
 		let machine_present = self.location.borrow().contains_item(constants::ITEM_ID_MACHINE);
 		if building_present {
-			let is_treasure = item.borrow().is_treasure();
+			let is_treasure = item.borrow().has_property(constants::CTRL_ITEM_TREASURE);
 			if is_treasure {
 				terminal::write_full(&data.get_response_param(constants::STR_ID_EXCHANGE_GOOD, item.borrow().get_shortname()));
 				terminal::write_full(data.get_response(constants::STR_ID_BUY_FARM));
@@ -718,7 +718,7 @@ impl Player {
 	}
 
 	pub fn feed(&mut self, data: &DataCollection, item: &ItemRef) {
-		let is_recipient = item.borrow().is_recipient();
+		let is_recipient = item.borrow().has_property(constants::CTRL_ITEM_RECIPIENT);
 		if is_recipient {
 			self.feed_dative(data, item);
 		} else {
@@ -772,7 +772,7 @@ impl Player {
 
 	// Attempt to feed item, when we are not sure if the recipient can accept or not
 	fn feed_item_unknown(&mut self, data: &DataCollection, direct: &ItemRef, indirect: &ItemRef) {
-		if !indirect.borrow().is_recipient() {
+		if !indirect.borrow().has_property(constants::CTRL_ITEM_RECIPIENT) {
 			terminal::write_full(&data.get_response_param(constants::STR_ID_NOT_FEEDABLE, indirect.borrow().get_shortname()));
 			return;
 		}
@@ -947,7 +947,7 @@ impl Player {
 			terminal::write_full(data.get_response(constants::STR_ID_NO_WANT_TAKE));
 			return;
 		}
-		if !item.borrow().is_liquid() {
+		if !item.borrow().has_property(constants::CTRL_ITEM_LIQUID) {
 			self.unlink_item(data, item);
 		}
 		self.inventory.insert_item(item.clone());
@@ -1043,9 +1043,9 @@ impl Player {
 					let lion_present = self.location.borrow().contains_item(constants::ITEM_ID_LION);
 					if lion_present {
 						let lion = data.get_item_by_id_certain(constants::ITEM_ID_LION);
-						let lion_obstruction = lion.borrow().is_obstruction();
+						let lion_obstruction = lion.borrow().has_property(constants::CTRL_ITEM_OBSTRUCTION);
 						if lion_obstruction {
-							lion.borrow_mut().set_obstruction(false);
+							lion.borrow_mut().unset_property(constants::CTRL_ITEM_OBSTRUCTION);
 							self.complete_achievement(data.get_puzzle(constants::PUZZLE_ID_LION));
 						}
 					}
@@ -1061,7 +1061,7 @@ impl Player {
 	}
 
 	pub fn pour(&mut self, data: &DataCollection, item: &ItemRef) {
-		if !item.borrow().is_liquid() {
+		if !item.borrow().has_property(constants::CTRL_ITEM_LIQUID) {
 			terminal::write_full(data.get_response(constants::STR_ID_POUR_NONLIQUID));
 			return;
 		}
@@ -1205,7 +1205,7 @@ impl Player {
 
 	pub fn take(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
-		if self.inventory.contains_item(item_id) && !item.borrow().is_liquid() {
+		if self.inventory.contains_item(item_id) && !item.borrow().has_property(constants::CTRL_ITEM_LIQUID) {
 			terminal::write_full(data.get_response(constants::STR_ID_ALREADY_HAVE));
 			return;
 		}
@@ -1220,7 +1220,7 @@ impl Player {
 			return;
 		}
 
-		if item.borrow().is_liquid() { // Liquids require a container
+		if item.borrow().has_property(constants::CTRL_ITEM_LIQUID) { // Liquids require a container
 			self.insert(data, item);
 			return;
 		}
@@ -1228,7 +1228,7 @@ impl Player {
 		self.location.borrow_mut().remove_item_certain(item_id);
 		self.insert_item(item.clone());
 
-		if item.borrow().is_wearable() {
+		if item.borrow().has_property(constants::CTRL_ITEM_WEARABLE) {
 			terminal::write_full(data.get_response(constants::STR_ID_WORN));
 		} else {
 			terminal::write_full(data.get_response(constants::STR_ID_TAKEN));
