@@ -88,8 +88,28 @@ impl Item {
 		self.location_true = loc;
 	}
 
-	pub fn has_property(&self, property: u32) -> bool {
-		self.properties & property != 0
+	pub fn has_property(&self, property_code: u32) -> bool {
+		self.properties & property_code != 0
+	}
+
+	fn has_or_contains_with_property_generic(&self, property_code: u32, on_optional: bool) -> bool {
+		if (on_optional || self.on) && self.has_property(property_code) {
+			return true;
+		}
+		match self.within.clone() {
+			None => return false,
+			Some (within) => return within.borrow().has_or_contains_with_property_generic(property_code, on_optional),
+		}
+	}
+
+	// Whether the item has some property
+	pub fn has_or_contains_with_property(&self, property_code: u32) -> bool {
+		self.has_or_contains_with_property_generic(property_code, true)
+	}
+
+	// Whether the item has some property, but must be switched on in order for that property to be active
+	pub fn has_or_contains_with_switchable_property(&self, property_code: u32) -> bool {
+		self.has_or_contains_with_property_generic(property_code, false)
 	}
 
 	pub fn set_property(&mut self, property_code: u32, next: bool) {
@@ -97,16 +117,6 @@ impl Item {
 			self.properties |= property_code;
 		} else {
 			self.properties &= !property_code;
-		}
-	}
-
-	pub fn has_light(&self) -> bool {
-		if self.has_property(constants::CTRL_ITEM_GIVES_LIGHT) && self.on {
-			return true;
-		}
-		match self.within.clone() {
-			None => return false,
-			Some (within) => return within.borrow().has_light(),
 		}
 	}
 

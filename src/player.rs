@@ -50,11 +50,11 @@ impl Player {
 	}
 
 	pub fn has_light(&self) -> bool {
-		self.inventory.has_light() || self.location.borrow().has_light()
+		self.inventory.contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT) || self.location.borrow().has_light()
 	}
 
 	fn has_light_and_needsno_light(&self) -> bool {
-		(self.inventory.has_light() || self.location.borrow().has_light_item()) && self.location.borrow().needsno_light()
+		(self.inventory.contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT) || self.location.borrow().contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT)) && self.location.borrow().needsno_light()
 	}
 
 	pub fn has_air(&self) -> bool {

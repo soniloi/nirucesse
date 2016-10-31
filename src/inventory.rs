@@ -18,12 +18,12 @@ impl Inventory {
 		}
 	}
 
-	pub fn has_light(&self) -> bool {
-		self.items.values().any(|x| x.borrow().has_light())
+	pub fn contains_with_property(&self, property_code: u32) -> bool {
+		self.items.values().any(|x| x.borrow().has_or_contains_with_property(property_code))
 	}
 
-	pub fn contains_with_property(&self, property_code: u32) -> bool {
-		self.items.values().any(|x| x.borrow().has_property(property_code))
+	pub fn contains_with_switchable_property(&self, property_code: u32) -> bool {
+		self.items.values().any(|x| x.borrow().has_or_contains_with_switchable_property(property_code))
 	}
 
 	pub fn contains_item(&self, id: u32) -> bool {

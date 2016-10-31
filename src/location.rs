@@ -82,18 +82,15 @@ impl Location {
 	}
 
 	pub fn has_light(&self) -> bool {
-		// First check whether the location has ambient light
 		if self.has_property(CTRL_LOC_HAS_LIGHT) {
-			return true
+			return true;
 		}
-
-		// Next check whether any items at location emit light
-		self.has_light_item()
+		self.contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT)
 	}
 
 	// Return whether any item resting at this location emits light
-	pub fn has_light_item(&self) -> bool {
-		self.items.values().any(|x| x.borrow().has_light())
+	pub fn contains_with_switchable_property(&self, property_code: u32) -> bool {
+		self.items.values().any(|x| x.borrow().has_or_contains_with_switchable_property(property_code))
 	}
 
 	pub fn has_air(&self) -> bool {
