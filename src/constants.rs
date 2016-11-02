@@ -191,6 +191,7 @@ pub const STR_ID_NOWHERE_EXCHANGE: u32 = 78;
 pub const STR_ID_NOT_FEEDABLE: u32 = 79;
 pub const STR_ID_NO_FISH: u32 = 80;
 pub const STR_ID_NO_FIT: u32 = 81;
+pub const STR_ID_CANNOT_INSERT_WEARABLE: u32 = 82;
 pub const STR_ID_DEATH_NO_GRAVITY: u32 = 85;
 pub const STR_ID_NOTHING_HAPPENS: u32 = 86;
 pub const STR_ID_NOT_INTERESTED: u32 = 88;

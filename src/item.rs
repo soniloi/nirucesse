@@ -195,7 +195,10 @@ impl Item {
 	// Check that an item can be inserted
 	// If there is a problem, return the string tag of the reason, otherwise return None
 	pub fn has_problem_inserting(&self) -> Option<u32> {
-		if !self.has_property(constants::CTRL_ITEM_MOBILE) || self.has_property(constants::CTRL_ITEM_WEARABLE) { // Items cannot be inserted if they are immobile or would be worn
+		if self.has_property(constants::CTRL_ITEM_WEARABLE) {
+			return Some(constants::STR_ID_CANNOT_INSERT_WEARABLE);
+		}
+		if !self.has_property(constants::CTRL_ITEM_MOBILE) {
 			return Some(constants::STR_ID_CANNOT_TAKE);
 		}
 		None
