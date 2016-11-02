@@ -54,7 +54,8 @@ impl Player {
 	}
 
 	fn has_light_and_needsno_light(&self) -> bool {
-		(self.inventory.contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT) || self.location.borrow().contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT)) && self.location.borrow().needsno_light()
+		(self.inventory.contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT) ||
+			self.location.borrow().contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT)) && self.location.borrow().has_property(constants::CTRL_LOC_NEEDSNO_LIGHT)
 	}
 
 	pub fn has_air(&self) -> bool {
@@ -62,7 +63,7 @@ impl Player {
 	}
 
 	pub fn has_gravity(&self) -> bool {
-		self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_GRAVITY) || self.location.borrow().has_gravity()
+		self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_GRAVITY) || self.location.borrow().has_property(constants::CTRL_LOC_HAS_GRAVITY)
 	}
 
 	pub fn has_nosnomp(&self) -> bool {
@@ -211,7 +212,7 @@ impl Player {
 	}
 
 	pub fn float(&mut self, data: &DataCollection) {
-		let has_ceiling = self.location.borrow().has_ceiling();
+		let has_ceiling = self.location.borrow().has_property(constants::CTRL_LOC_HAS_CEILING);
 		if has_ceiling { // There is a ceiling; player is safe
 			terminal::write_full(data.get_response(constants::STR_ID_NO_GRAVITY));
 		} else { // There is nothing above, so player floats away and dies
@@ -257,7 +258,7 @@ impl Player {
 
 		let liquid = item.borrow().has_property(constants::CTRL_ITEM_LIQUID);
 		let is_fragile = item.borrow().has_property(constants::CTRL_ITEM_FRAGILE);
-		let has_floor = self.location.borrow().has_floor();
+		let has_floor = self.location.borrow().has_property(constants::CTRL_LOC_HAS_FLOOR);
 		if liquid { // When dropped, liquids drain away
 			terminal::write_full(data.get_response(constants::STR_ID_EMPTY_LIQUID));
 		} else if is_fragile && thrown { // When thrown, fragile items shatter
@@ -911,13 +912,13 @@ impl Player {
 				if !next.borrow().has_air() && !self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_AIR) { // Refuse to proceed if there is no air at the next location
 					return (None, false, Some(constants::STR_ID_NO_AIR));
 				}
-				if dir == Direction::Up && self.has_gravity() && self_loc.needsno_gravity() { // Gravity is preventing the player from going up
+				if dir == Direction::Up && self.has_gravity() && self_loc.has_property(constants::CTRL_LOC_NEEDSNO_GRAVITY) { // Gravity is preventing the player from going up
 					return (None, false, Some(constants::STR_ID_NO_REACH_CEILING));
 				}
-				if dir == Direction::Down && self.has_gravity() && !self_loc.has_floor() {
+				if dir == Direction::Down && self.has_gravity() && !self_loc.has_property(constants::CTRL_LOC_HAS_FLOOR) {
 					return (None, false, Some(constants::STR_ID_DOWN_KILL));
 				}
-				if !next.borrow().has_land() && !self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_LAND) {
+				if !next.borrow().has_property(constants::CTRL_LOC_HAS_LAND) && !self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_LAND) {
 					return (None, false, Some(constants::STR_ID_OPEN_WATER));
 				}
 

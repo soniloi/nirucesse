@@ -314,6 +314,7 @@ pub const PUZZLE_ID_AIRLOCK: u32 = 21;
 pub const PUZZLE_ID_TROLL: u32 = 22;
 pub const PUZZLE_ID_WIZARD: u32 = 23;
 
+// Attribute codes for items
 pub const CTRL_ITEM_CONTAINER: u32 = 0x1;  // Whether an item may contain other items
 pub const CTRL_ITEM_MOBILE: u32 = 0x2; // Whether an item is fixed or mobile (carryable)
 pub const CTRL_ITEM_OBSTRUCTION: u32 = 0x4; // Whether an item is an obstruction
@@ -334,3 +335,14 @@ pub const CTRL_ITEM_FACTORY: u32 = 0x10000; // Whether an item can be made by th
 pub const CTRL_ITEM_SILENT: u32 = 0x20000; // Whether an item should be shown in location descriptions
 pub const CTRL_ITEM_GIVES_LAND: u32 = 0x40000; // Whether an item acts as 'land' i.e. a boat or whatever
 pub const CTRL_ITEM_RECIPIENT: u32 = 0x80000; // Whether an item may be a recipient (i.e. of gifts or food)
+
+// Attribute codes for locations
+pub const CTRL_LOC_HAS_LIGHT: u32 = 0x01; // Whether the location has ambient lighting
+pub const CTRL_LOC_HAS_AIR: u32 = 0x2; // Whether there is air at the location
+pub const CTRL_LOC_HAS_GRAVITY: u32 = 0x4; // Whether there is gravity at the location
+pub const CTRL_LOC_HAS_NOSNOMP: u32 = 0x8; // Whether there is absence of snomps at the location
+pub const CTRL_LOC_NEEDSNO_LIGHT: u32 = 0x10; // Whether the location requires no portable lighting in order for the player to be able to see clearly
+pub const CTRL_LOC_NEEDSNO_GRAVITY: u32 = 0x40; // Whether the location requires that there be no gravity
+pub const CTRL_LOC_HAS_CEILING: u32 = 0x100; // Whether there is a ceiling to this location, or something above it
+pub const CTRL_LOC_HAS_FLOOR: u32 = 0x200; // Whether there is a floor at this location
+pub const CTRL_LOC_HAS_LAND: u32 = 0x400; // Whether the location has land, as opposed to open water

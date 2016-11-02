@@ -5,16 +5,6 @@ use data_collection::ItemRef;
 use data_collection::LocationRef;
 use inventory::Inventory;
 
-const CTRL_LOC_HAS_LIGHT: u32 = 0x01; // Whether the location has ambient lighting
-const CTRL_LOC_HAS_AIR: u32 = 0x2; // Whether there is air at the location
-const CTRL_LOC_HAS_GRAVITY: u32 = 0x4; // Whether there is gravity at the location
-const CTRL_LOC_HAS_NOSNOMP: u32 = 0x8; // Whether there is absence of snomps at the location
-const CTRL_LOC_NEEDSNO_LIGHT: u32 = 0x10; // Whether the location requires no portable lighting in order for the player to be able to see clearly
-const CTRL_LOC_NEEDSNO_GRAVITY: u32 = 0x40; // Whether the location requires that there be no gravity
-const CTRL_LOC_HAS_CEILING: u32 = 0x100; // Whether there is a ceiling to this location, or something above it
-const CTRL_LOC_HAS_FLOOR: u32 = 0x200; // Whether there is a floor at this location
-const CTRL_LOC_HAS_LAND: u32 = 0x400; // Whether the location has land, as opposed to open water
-
 #[derive(PartialEq, Eq, Hash, Clone, Copy)]
 pub enum Direction {
 	North,
@@ -69,7 +59,7 @@ impl Location {
 		self.visited = vis;
 	}
 
-	fn has_property(&self, property: u32) -> bool {
+	pub fn has_property(&self, property: u32) -> bool {
 		self.properties & property != 0
 	}
 
@@ -82,7 +72,7 @@ impl Location {
 	}
 
 	pub fn has_light(&self) -> bool {
-		if self.has_property(CTRL_LOC_HAS_LIGHT) {
+		if self.has_property(constants::CTRL_LOC_HAS_LIGHT) {
 			return true;
 		}
 		self.contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT)
@@ -97,7 +87,7 @@ impl Location {
 	}
 
 	pub fn has_air(&self) -> bool {
-		if self.has_property(CTRL_LOC_HAS_AIR) {
+		if self.has_property(constants::CTRL_LOC_HAS_AIR) {
 			return true;
 		}
 		self.contains_with_property(constants::CTRL_ITEM_GIVES_AIR)
@@ -105,49 +95,25 @@ impl Location {
 
 	pub fn set_air(&mut self, on: bool) {
 		if on {
-			self.set_property(CTRL_LOC_HAS_AIR);
+			self.set_property(constants::CTRL_LOC_HAS_AIR);
 		} else {
-			self.unset_property(CTRL_LOC_HAS_AIR);
+			self.unset_property(constants::CTRL_LOC_HAS_AIR);
 		}
-	}
-
-	pub fn has_gravity(&self) -> bool {
-		self.has_property(CTRL_LOC_HAS_GRAVITY)
 	}
 
 	pub fn set_gravity(&mut self, on: bool) {
 		if on {
-			self.set_property(CTRL_LOC_HAS_GRAVITY);
+			self.set_property(constants::CTRL_LOC_HAS_GRAVITY);
 		} else {
-			self.unset_property(CTRL_LOC_HAS_GRAVITY);
+			self.unset_property(constants::CTRL_LOC_HAS_GRAVITY);
 		}
 	}
 
 	pub fn has_nosnomp(&self) -> bool {
-		if self.has_property(CTRL_LOC_HAS_NOSNOMP) {
+		if self.has_property(constants::CTRL_LOC_HAS_NOSNOMP) {
 			return true;
 		}
 		self.contains_with_property(constants::CTRL_ITEM_GIVES_NOSNOMP)
-	}
-
-	pub fn needsno_light(&self) -> bool {
-		self.has_property(CTRL_LOC_NEEDSNO_LIGHT)
-	}
-
-	pub fn needsno_gravity(&self) -> bool {
-		self.has_property(CTRL_LOC_NEEDSNO_GRAVITY)
-	}
-
-	pub fn has_ceiling(&self) -> bool {
-		self.has_property(CTRL_LOC_HAS_CEILING)
-	}
-
-	pub fn has_floor(&self) -> bool {
-		self.has_property(CTRL_LOC_HAS_FLOOR)
-	}
-
-	pub fn has_land(&self) -> bool {
-		self.has_property(CTRL_LOC_HAS_LAND)
 	}
 
 	pub fn get_obstruction(&self) -> Option<ItemRef> {
