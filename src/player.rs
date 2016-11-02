@@ -339,7 +339,7 @@ impl Player {
 		let item_id = item.borrow().get_id();
 		if item_id == constants::ITEM_ID_BUTTON { // When the button is off, ambient gravity in the anteroom is on, and vice-versa
 			let anteroom = data.get_location_certain(constants::LOCATION_ID_ANTEROOM);
-			anteroom.borrow_mut().set_gravity(!on_next);
+			anteroom.borrow_mut().set_property(constants::CTRL_LOC_HAS_GRAVITY, !on_next);
 			terminal::write_full(data.get_response(constants::STR_ID_NOTHING_HAPPENS));
 		} else if item_id == constants::ITEM_ID_PLAYER && on_next {
 			self.play_player(data, item);
@@ -531,7 +531,7 @@ impl Player {
 				if at_airlocke {
 					let out_loc = data.get_location_certain(constants::LOCATION_ID_AIRLOCKEOUT);
 					self.location.borrow_mut().set_direction(Direction::Southwest, Some(out_loc.clone()));
-					self.location.borrow_mut().set_air(false);
+					self.location.borrow_mut().set_property(constants::CTRL_LOC_HAS_AIR, false);
 					self.complete_achievement(data.get_puzzle(constants::PUZZLE_ID_AIRLOCK));
 				} else {
 					terminal::write_full(data.get_response(constants::STR_ID_ROBOT_MOUSE));

@@ -80,14 +80,6 @@ impl Location {
 		self.has_or_contains_with_property_generic(property_code_loc, property_code_item, Location::contains_with_switchable_property)
 	}
 
-	fn set_property(&mut self, property: u32) {
-		self.properties |= property;
-	}
-
-	fn unset_property(&mut self, property: u32) {
-		self.properties &= !property;
-	}
-
 	pub fn contains_with_property(&self, property_code: u32) -> bool {
 		self.items.values().any(|x| x.borrow().has_or_contains_with_property(property_code))
 	}
@@ -96,19 +88,11 @@ impl Location {
 		self.items.values().any(|x| x.borrow().has_or_contains_with_switchable_property(property_code))
 	}
 
-	pub fn set_air(&mut self, on: bool) {
-		if on {
-			self.set_property(constants::CTRL_LOC_HAS_AIR);
+	pub fn set_property(&mut self, property_code: u32, next: bool) {
+		if next {
+			self.properties |= property_code;
 		} else {
-			self.unset_property(constants::CTRL_LOC_HAS_AIR);
-		}
-	}
-
-	pub fn set_gravity(&mut self, on: bool) {
-		if on {
-			self.set_property(constants::CTRL_LOC_HAS_GRAVITY);
-		} else {
-			self.unset_property(constants::CTRL_LOC_HAS_GRAVITY);
+			self.properties &= !property_code;
 		}
 	}
 
