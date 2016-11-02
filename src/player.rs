@@ -50,7 +50,8 @@ impl Player {
 	}
 
 	pub fn has_light(&self) -> bool {
-		self.inventory.contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT) || self.location.borrow().has_light()
+		self.inventory.contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT) ||
+			self.location.borrow().has_or_contains_with_switchable_property(constants::CTRL_LOC_HAS_LIGHT, constants::CTRL_ITEM_GIVES_LIGHT)
 	}
 
 	fn has_light_and_needsno_light(&self) -> bool {
@@ -59,7 +60,8 @@ impl Player {
 	}
 
 	pub fn has_air(&self) -> bool {
-		self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_AIR) || self.location.borrow().has_air()
+		self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_AIR) ||
+			self.location.borrow().has_or_contains_with_property(constants::CTRL_LOC_HAS_AIR, constants::CTRL_ITEM_GIVES_AIR)
 	}
 
 	pub fn has_gravity(&self) -> bool {
@@ -67,7 +69,8 @@ impl Player {
 	}
 
 	pub fn has_nosnomp(&self) -> bool {
-		self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_NOSNOMP) || self.location.borrow().has_nosnomp()
+		self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_NOSNOMP) ||
+			self.location.borrow().has_or_contains_with_property(constants::CTRL_LOC_HAS_NOSNOMP, constants::CTRL_ITEM_GIVES_NOSNOMP)
 	}
 
 	fn has_invisibility(&self) -> bool {
@@ -909,7 +912,7 @@ impl Player {
 					}
 				}
 
-				if !next.borrow().has_air() && !self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_AIR) { // Refuse to proceed if there is no air at the next location
+				if !next.borrow().has_or_contains_with_property(constants::CTRL_LOC_HAS_AIR, constants::CTRL_ITEM_GIVES_AIR) && !self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_AIR) { // Refuse to proceed if there is no air at the next location
 					return (None, false, Some(constants::STR_ID_NO_AIR));
 				}
 				if dir == Direction::Up && self.has_gravity() && self_loc.has_property(constants::CTRL_LOC_NEEDSNO_GRAVITY) { // Gravity is preventing the player from going up
@@ -933,9 +936,9 @@ impl Player {
 		let mut rng = rand::thread_rng();
 		let death_rand: u32 = rng.gen();
 		let death = death_rand % self.death_divisor == 0;
-		if !self.has_light() && !next.borrow().has_light() && death {
+		if !self.has_light() && !next.borrow().has_or_contains_with_switchable_property(constants::CTRL_LOC_HAS_LIGHT, constants::CTRL_ITEM_GIVES_LIGHT) && death {
 			return (None, true, Some(constants::STR_ID_BREAK_NECK));
-		} else if !self.has_nosnomp() && !next.borrow().has_nosnomp() && death {
+		} else if !self.has_nosnomp() && !next.borrow().has_or_contains_with_property(constants::CTRL_LOC_HAS_NOSNOMP, constants::CTRL_ITEM_GIVES_NOSNOMP) && death {
 			return (None, true, Some(constants::STR_ID_SNOMP_KILL));
 		} else {
 			return (Some(next.clone()), false, None);

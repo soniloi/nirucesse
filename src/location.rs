@@ -32,6 +32,8 @@ pub struct Location {
 	items: HashMap<u32, ItemRef>,
 }
 
+pub type PropertyWithinFn = fn(location: &Location, property_code: u32) -> bool;
+
 impl Location {
 
 	pub fn new(id: u32, properties: u32, shortname: String, longname: String, description: String) -> Location {
@@ -59,8 +61,23 @@ impl Location {
 		self.visited = vis;
 	}
 
-	pub fn has_property(&self, property: u32) -> bool {
-		self.properties & property != 0
+	pub fn has_property(&self, property_code: u32) -> bool {
+		self.properties & property_code != 0
+	}
+
+	fn has_or_contains_with_property_generic(&self, property_code_loc: u32, property_code_item: u32, next: PropertyWithinFn) -> bool {
+		if self.has_property(property_code_loc) {
+			return true;
+		}
+		next(self, property_code_item)
+	}
+
+	pub fn has_or_contains_with_property(&self, property_code_loc: u32, property_code_item: u32) -> bool {
+		self.has_or_contains_with_property_generic(property_code_loc, property_code_item, Location::contains_with_property)
+	}
+
+	pub fn has_or_contains_with_switchable_property(&self, property_code_loc: u32, property_code_item: u32) -> bool {
+		self.has_or_contains_with_property_generic(property_code_loc, property_code_item, Location::contains_with_switchable_property)
 	}
 
 	fn set_property(&mut self, property: u32) {
@@ -71,26 +88,12 @@ impl Location {
 		self.properties &= !property;
 	}
 
-	pub fn has_light(&self) -> bool {
-		if self.has_property(constants::CTRL_LOC_HAS_LIGHT) {
-			return true;
-		}
-		self.contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT)
-	}
-
 	pub fn contains_with_property(&self, property_code: u32) -> bool {
 		self.items.values().any(|x| x.borrow().has_or_contains_with_property(property_code))
 	}
 
 	pub fn contains_with_switchable_property(&self, property_code: u32) -> bool {
 		self.items.values().any(|x| x.borrow().has_or_contains_with_switchable_property(property_code))
-	}
-
-	pub fn has_air(&self) -> bool {
-		if self.has_property(constants::CTRL_LOC_HAS_AIR) {
-			return true;
-		}
-		self.contains_with_property(constants::CTRL_ITEM_GIVES_AIR)
 	}
 
 	pub fn set_air(&mut self, on: bool) {
@@ -107,13 +110,6 @@ impl Location {
 		} else {
 			self.unset_property(constants::CTRL_LOC_HAS_GRAVITY);
 		}
-	}
-
-	pub fn has_nosnomp(&self) -> bool {
-		if self.has_property(constants::CTRL_LOC_HAS_NOSNOMP) {
-			return true;
-		}
-		self.contains_with_property(constants::CTRL_ITEM_GIVES_NOSNOMP)
 	}
 
 	pub fn get_obstruction(&self) -> Option<ItemRef> {
