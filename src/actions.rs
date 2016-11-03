@@ -148,7 +148,7 @@ pub fn do_insert(data: &DataCollection, arg: String, player: &mut Player, arg_ty
 
 #[allow(unused_variables)]
 pub fn do_inventory(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
-	terminal::write_full(&player.mk_inventory_string());
+	terminal::write_full(&player.mk_inventory_string(data));
 }
 
 #[allow(unused_variables)]

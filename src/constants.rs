@@ -128,6 +128,8 @@ pub const ITEM_ID_YARN: u32 = 1081;
 
 pub const STR_ID_ALIEN_NO_USE: u32 = 1;
 pub const STR_ID_ALREADY_DONE: u32 = 2;
+pub const STR_ID_INVENTORY_EMPTY: u32 = 4;
+pub const STR_ID_INVENTORY_INTRO: u32 = 5;
 pub const STR_ID_ROBOT_MOUSE: u32 = 6;
 pub const STR_ID_REINCARNATE_ASK: u32 = 8;
 pub const STR_ID_SURE_ASK: u32 = 9;

@@ -140,8 +140,8 @@ impl Player {
 		self.deaths = self.deaths + 1;
 	}
 
-	pub fn mk_inventory_string(&self) -> String {
-		self.inventory.mk_string()
+	pub fn mk_inventory_string(&self, data: &DataCollection) -> String {
+		self.inventory.mk_string(data.get_response(constants::STR_ID_INVENTORY_EMPTY), data.get_response(constants::STR_ID_INVENTORY_INTRO))
 	}
 
 	pub fn mk_location_string(&self) -> String {

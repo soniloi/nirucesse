@@ -79,12 +79,12 @@ impl Inventory {
 		}
 	}
 
-	pub fn mk_string(&self) -> String {
+	pub fn mk_string(&self, inventory_empty: &str, inventory_intro: &str) -> String {
 		let mut result = String::new();
 		if self.items.is_empty() {
-			result = result + "You are not carrying anything.";
+			result = result + inventory_empty;
 		} else {
-			result = result + "You currently have the following:";
+			result = result + inventory_intro;
 			for item in self.items.values() {
 				result = result + "\n\t" + &item.borrow().get_inventoryname();
 			}
