@@ -286,16 +286,19 @@ impl Player {
 			}
 		} else {
 			self.location.borrow_mut().insert_item(item.clone(), true);
-			terminal::write_full(data.get_response(constants::STR_ID_DROP_GOOD));
 		}
 
+		let mut response_code = constants::STR_ID_DROP_GOOD;
 		// Specific item drops
 		if item.borrow().is(constants::ITEM_ID_LION) {
+			response_code = constants::STR_ID_LION_SITS;
 			let wolf_present = self.location.borrow().contains_item(constants::ITEM_ID_WOLF);
 			if wolf_present {
 				self.complete_obstruction_achievement(constants::ITEM_ID_WOLF, data.get_puzzle(constants::PUZZLE_ID_WOLF));
 			}
 		}
+
+		terminal::write_full(data.get_response(response_code));
 	}
 
 	// Remove one item from either location or inventory
