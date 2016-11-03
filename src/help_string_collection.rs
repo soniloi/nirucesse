@@ -1,10 +1,10 @@
 use std::collections::HashMap;
 
+use constants;
 use file_buffer::FileBuffer;
 
 const FILE_INDEX_STRING_TAG: usize = 0;
 const FILE_INDEX_STRING_CONTENT: usize = 1;
-const SEP_SECTION: &'static str = "---"; // String separating sections
 
 pub struct HelpStringCollection {
 	strings: HashMap<String, String>,
@@ -23,7 +23,7 @@ impl HelpStringCollection {
 		let mut line = buffer.get_line();
 	    while !buffer.eof() {
 			match line.as_ref() {
-				SEP_SECTION => break,
+				constants::FILE_SECTION_SEPARATOR => break,
 				x => {
 
 					let words_split = x.split("\t");
@@ -46,8 +46,8 @@ impl HelpStringCollection {
 	}
 
 	fn validate(&self) {
-		if !self.strings.contains_key("default") {
-			panic!("Error in help string collection. Key [default] not found.");
+		if !self.strings.contains_key(constants::STR_DEFAULT) {
+			panic!("Error in help string collection. Key [{}] not found.", constants::STR_DEFAULT);
 		}
 	}
 

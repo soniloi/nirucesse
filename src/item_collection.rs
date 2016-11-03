@@ -20,8 +20,6 @@ const FILE_INDEX_ITEM_WRITING: usize = 7;
 const FILE_INDEX_ITEM_ALIAS_START: usize = 8;
 const ITEM_WRITING_NONE: &'static str = "0"; // String indicating that there is no writing
 
-const SEP_SECTION: &'static str = "---"; // String separating sections
-
 pub struct ItemCollection {
 	items_by_id: HashMap<u32, ItemRef>,
 	items_by_name: HashMap<String, ItemRef>,
@@ -42,7 +40,7 @@ impl ItemCollection {
 		let mut line = buffer.get_line();
 		while !buffer.eof() {
 			match line.as_ref() {
-				SEP_SECTION => break,
+				constants::FILE_SECTION_SEPARATOR => break,
 				x => {
 
 					let words_split = x.split("\t");

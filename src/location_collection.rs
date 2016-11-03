@@ -2,6 +2,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
+use constants;
 use data_collection;
 use data_collection::LocationRef;
 use location::Direction;
@@ -24,8 +25,6 @@ const FILE_INDEX_LOCATION_SHORTNAME: usize = 12;
 const FILE_INDEX_LOCATION_LONGNAME: usize = 13;
 const FILE_INDEX_LOCATION_DESCRIPTION: usize = 14;
 const KEY_DIRECTION_NONE: u32 = 0;
-
-const SEP_SECTION: &'static str = "---"; // String separating sections
 
 pub struct LocationCollection {
 	locations: HashMap<u32, LocationRef>,
@@ -65,7 +64,7 @@ impl LocationCollection {
 		let mut line = buffer.get_line();
 		while !buffer.eof() {
 			match line.as_ref() {
-				SEP_SECTION => break,
+				constants::FILE_SECTION_SEPARATOR => break,
 				x => {
 
 					let words_split = x.split("\t");

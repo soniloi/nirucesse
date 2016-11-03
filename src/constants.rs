@@ -348,3 +348,8 @@ pub const CTRL_LOC_NEEDSNO_GRAVITY: u32 = 0x40; // Whether the location requires
 pub const CTRL_LOC_HAS_CEILING: u32 = 0x100; // Whether there is a ceiling to this location, or something above it
 pub const CTRL_LOC_HAS_FLOOR: u32 = 0x200; // Whether there is a floor at this location
 pub const CTRL_LOC_HAS_LAND: u32 = 0x400; // Whether the location has land, as opposed to open water
+
+// Constant non-response strings
+pub const FILE_SECTION_SEPARATOR: &'static str = "---"; // String separating sections of data file
+pub const STR_DEFAULT: &'static str = "default";
+pub const STR_LOCATION_UNKNOWN: &'static str = "???";

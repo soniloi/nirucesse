@@ -185,7 +185,8 @@ impl Player {
 	}
 
 	pub fn get_location_stubname(&self) -> String {
-		self.get_effective_description(String::from("???"), String::from("???"), self.location.borrow().get_shortname())
+		let unknown_description = String::from(constants::STR_LOCATION_UNKNOWN);
+		self.get_effective_description(unknown_description.clone(), unknown_description, self.location.borrow().get_shortname())
 	}
 
 	fn observe_item(&mut self, data: &DataCollection, item: &ItemRef, act: ItemManipFinalFn) {

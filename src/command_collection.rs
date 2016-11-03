@@ -4,6 +4,7 @@ use std::rc::Rc;
 use actions;
 use command::ActionFn;
 use command::Command;
+use constants;
 use data_collection;
 use data_collection::CommandRef;
 use file_buffer::FileBuffer;
@@ -12,7 +13,6 @@ const FILE_INDEX_COMMAND_TAG: usize = 0;
 const FILE_INDEX_COMMAND_STATUS: usize = 1;
 const FILE_INDEX_COMMAND_PRIMARY: usize = 2;
 const FILE_INDEX_COMMAND_ALIAS_START: usize = 3;
-const SEP_SECTION: &'static str = "---"; // String separating sections
 
 pub struct CommandCollection {
 	commands: HashMap<String, CommandRef>,
@@ -100,7 +100,7 @@ impl CommandCollection {
 		let mut line = buffer.get_line();
 	    while !buffer.eof() {
 			match line.as_ref() {
-				SEP_SECTION => return,
+				constants::FILE_SECTION_SEPARATOR => return,
 				x => {
 					let words_split = x.split("\t");
 					let words: Vec<&str> = words_split.collect();

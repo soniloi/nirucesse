@@ -4,10 +4,10 @@ use rand;
 use rand::distributions::{IndependentSample, Range};
 use std::rc::Rc;
 
-use constants;
-use file_buffer::FileBuffer;
 use command::Command;
 use command_collection::CommandCollection;
+use constants;
+use file_buffer::FileBuffer;
 use help_string_collection::HelpStringCollection;
 use info_string_collection::InfoStringCollection;
 use item::Item;
@@ -133,7 +133,7 @@ impl DataCollection {
 
 	fn get_value_or_default<'a>(collection: &'a HelpStringCollection, key: &str) -> &'a str {
 		match collection.get_uncertain(key) {
-			None => collection.get_certain("default"),
+			None => collection.get_certain(constants::STR_DEFAULT),
 			Some(value) => value
 		}
 	}

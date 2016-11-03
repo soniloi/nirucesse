@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 
+use constants;
 use data_collection;
 use file_buffer::FileBuffer;
 
 const FILE_INDEX_STRING_TAG: usize = 0;
 const FILE_INDEX_STRING_CONTENT: usize = 1;
-const SEP_SECTION: &'static str = "---"; // String separating sections
 
 pub struct InfoStringCollection {
 	strings: HashMap<u32, String>,
@@ -24,7 +24,7 @@ impl InfoStringCollection {
 		let mut line = buffer.get_line();
 	    while !buffer.eof() {
 			match line.as_ref() {
-				SEP_SECTION => break,
+				constants::FILE_SECTION_SEPARATOR => break,
 				x => {
 
 					let words_split = x.split("\t");

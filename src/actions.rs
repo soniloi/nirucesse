@@ -124,7 +124,7 @@ pub fn do_help(data: &DataCollection, arg: String, player: &mut Player, arg_type
 #[allow(unused_variables)]
 pub fn do_hint(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	match data.get_hint(&arg) {
-		None => terminal::write_full(data.get_hint_certain("default")),
+		None => terminal::write_full(data.get_hint_certain(constants::STR_DEFAULT)),
 		Some(hint) => {
 			terminal::write_full(data.get_response(constants::STR_ID_HINT_FOUND));
 			let confirm = terminal::get_yes_no(data.get_response(constants::STR_ID_SURE_ASK), data.get_response(constants::STR_ID_NO_UNDERSTAND_SELECTION));
