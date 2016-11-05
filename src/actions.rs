@@ -99,6 +99,10 @@ pub fn do_fish(data: &DataCollection, arg: String, player: &mut Player, arg_type
 	player.fish(data);
 }
 
+pub fn do_fly(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	manipulate_item(data, arg, arg_type, player, Player::fly);
+}
+
 pub fn do_give(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, arg_type, player, Player::give);
 }

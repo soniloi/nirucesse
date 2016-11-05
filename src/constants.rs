@@ -2,7 +2,7 @@
 pub const EXPECTED_ITEMS: u32 = 124;
 pub const EXPECTED_LOCATIONS: u32 = 134;
 pub const EXPECTED_STRINGS_RESPONSES: u32 = 193;
-pub const EXPECTED_STRINGS_PUZZLES: u32 = 24;
+pub const EXPECTED_STRINGS_PUZZLES: u32 = 25;
 
 // Scoring stuff
 pub const SCORE_PUZZLE: u32 = 20; // The score the player gets for every puzzle solved
@@ -199,6 +199,7 @@ pub const STR_ID_DEATH_NO_GRAVITY: u32 = 85;
 pub const STR_ID_NOTHING_HAPPENS: u32 = 86;
 pub const STR_ID_NOT_INTERESTED: u32 = 88;
 pub const STR_ID_NOTHING_INTERESTING: u32 = 89;
+pub const STR_ID_NO_KEY: u32 = 90;
 pub const STR_ID_BREAK_NECK: u32 = 91;
 pub const STR_ID_NO_CARRY_BURN: u32 = 92;
 pub const STR_ID_DRINK_NON_LIQUID: u32 = 93;
@@ -317,6 +318,7 @@ pub const PUZZLE_ID_TETHER: u32 = 20;
 pub const PUZZLE_ID_AIRLOCK: u32 = 21;
 pub const PUZZLE_ID_TROLL: u32 = 22;
 pub const PUZZLE_ID_WIZARD: u32 = 23;
+pub const PUZZLE_ID_ESCAPE: u32 = 24;
 
 // Attribute codes for items
 pub const CTRL_ITEM_CONTAINER: u32 = 0x1;  // Whether an item may contain other items

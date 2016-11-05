@@ -806,6 +806,24 @@ impl Player {
 		self.complete_obstruction_achievement(constants::ITEM_ID_GLINT, data.get_puzzle(constants::PUZZLE_ID_GLINT));
 	}
 
+	pub fn fly(&mut self, data: &DataCollection, item: &ItemRef) {
+		let item_id = item.borrow().get_id();
+		let loc_id = self.location.borrow().get_id();
+		match item_id {
+			constants::ITEM_ID_SHIP => {
+				if loc_id != constants::LOCATION_ID_SHIP {
+					terminal::write_full(&data.get_response_param(constants::STR_ID_NO_SEE_HERE, item.borrow().get_shortname()));
+				} else if !self.inventory.contains_item(constants::ITEM_ID_KEY) {
+					terminal::write_full(data.get_response(constants::STR_ID_NO_KEY));
+				} else {
+					self.complete_achievement(data.get_puzzle(constants::PUZZLE_ID_ESCAPE));
+					self.playing = false;
+				}
+			}
+			_ => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW)),
+		}
+	}
+
 	pub fn give(&mut self, data: &DataCollection, item: &ItemRef) {
 		// Find out what player wants to give item to
 		let recipient_str = terminal::read_question(&data.get_response_param(constants::STR_ID_WHAT_GIVE, item.borrow().get_shortname()));
