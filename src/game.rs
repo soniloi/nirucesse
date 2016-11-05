@@ -72,7 +72,7 @@ impl Game {
 			match self.data.get_command(cmd_name_tentative.clone()) {
 				None => {},
 				Some(cmd) => {
-					if cmd.is_invertible() {
+					if cmd.has_property(constants::CTRL_COMMAND_INVERTIBLE) {
 						let arg: String = inputs[0].clone();
 						(**cmd).execute(&self.data, arg, &mut self.player);
 						return;

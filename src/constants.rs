@@ -321,6 +321,16 @@ pub const PUZZLE_ID_TROLL: u32 = 22;
 pub const PUZZLE_ID_WIZARD: u32 = 23;
 pub const PUZZLE_ID_ESCAPE: u32 = 24;
 
+// Attribute codes for commands
+pub const CTRL_COMMAND_DEBUG: u32 = 0x01; // Whether the command is a debug command
+pub const CTRL_COMMAND_INVENTORY: u32 = 0x02; // Whether the argument the command takes must be in the inventory
+pub const CTRL_COMMAND_PRESENT: u32 = 0x04; // Whether the argument must be somewhere in the player's vicinity
+pub const CTRL_COMMAND_ARG_MANDATORY: u32 = 0x08; // Whether the command must take an argument
+pub const CTRL_COMMAND_SECRET: u32 = 0x10; // Whether the command is secret (not to be listed)
+pub const CTRL_COMMAND_INVERTIBLE: u32 = 0x20; // Whether the command appears in order contrary to the usual e.g. "off" in "lamp off"
+pub const CTRL_COMMAND_MOVEMENT: u32 = 0x40; // Whether the command intends movement
+pub const CTRL_COMMAND_ARG_OPTIONAL: u32 = 0x80; // Whether we should be permissive about accepting args or not
+
 // Attribute codes for items
 pub const CTRL_ITEM_CONTAINER: u32 = 0x1;  // Whether an item may contain other items
 pub const CTRL_ITEM_MOBILE: u32 = 0x2; // Whether an item is fixed or mobile (carryable)

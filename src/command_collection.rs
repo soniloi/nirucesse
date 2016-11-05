@@ -139,7 +139,7 @@ impl CommandCollection {
 	pub fn mk_non_secret_string(&self, intro: &str) -> String {
 		let mut comms = Vec::new();
 		for (tag, command) in self.commands.iter() {
-			if !command.is_secret() {
+			if !command.has_property(constants::CTRL_COMMAND_SECRET) {
 				comms.push(String::from("[") + tag + "] ");
 			}
 		}
