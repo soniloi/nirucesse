@@ -170,6 +170,7 @@ pub const STR_ID_HELLO_CHART: u32 = 52;
 pub const STR_ID_HELLO_LENS: u32 = 53;
 pub const STR_ID_HINT_FOUND: u32 = 54;
 pub const STR_ID_IGNORED: u32 = 55;
+pub const STR_ID_NOT_IN_SHIP: u32 = 56;
 pub const STR_ID_AWAKEN_INITIAL: u32 = 57;
 pub const STR_ID_INSERTED: u32 = 58;
 pub const STR_ID_LION_CABBAGE: u32 = 60;

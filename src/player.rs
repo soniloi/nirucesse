@@ -811,7 +811,10 @@ impl Player {
 		let loc_id = self.location.borrow().get_id();
 		match item_id {
 			constants::ITEM_ID_SHIP => {
-				if loc_id != constants::LOCATION_ID_SHIP {
+				let ship_present = self.location.borrow().contains_item(constants::ITEM_ID_SHIP);
+				if ship_present {
+					terminal::write_full(data.get_response(constants::STR_ID_NOT_IN_SHIP));
+				} else if loc_id != constants::LOCATION_ID_SHIP {
 					terminal::write_full(&data.get_response_param(constants::STR_ID_NO_SEE_HERE, item.borrow().get_shortname()));
 				} else if !self.inventory.contains_item(constants::ITEM_ID_KEY) {
 					terminal::write_full(data.get_response(constants::STR_ID_NO_KEY));
