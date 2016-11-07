@@ -263,14 +263,12 @@ impl Player {
 		let liquid = item.borrow().has_property(constants::CTRL_ITEM_LIQUID);
 		let is_fragile = item.borrow().has_property(constants::CTRL_ITEM_FRAGILE);
 		let has_floor = self.location.borrow().has_property(constants::CTRL_LOC_HAS_FLOOR);
+		let mut shattered = false;
+		let mut shattered_code = constants::STR_ID_BREAK_NEAR;
 		if liquid { // When dropped, liquids drain away
 			terminal::write_full(data.get_response(constants::STR_ID_EMPTY_LIQUID));
 		} else if is_fragile && thrown { // When thrown, fragile items shatter
-			terminal::write_full(data.get_response(constants::STR_ID_BREAK_NEAR));
-			if item.borrow().is(constants::ITEM_ID_MIRROR) {
-				terminal::write_full(data.get_response(constants::STR_ID_BAD_LUCK));
-				self.death_divisor = constants::DEATH_DIVISOR_SMASHED;
-			}
+			shattered = true;
 		} else if !has_floor && self.has_gravity() { // Gravity pulls item down to location beneath current
 			let self_loc = self.location.borrow();
 			let below_option = self_loc.get_direction(&Direction::Down);
@@ -279,7 +277,8 @@ impl Player {
 				Some(below) => {
 					terminal::write_full(data.get_response(constants::STR_ID_DROP_NO_FLOOR));
 					if is_fragile {
-						terminal::write_full(data.get_response(constants::STR_ID_BREAK_FAR));
+						shattered = true;
+						shattered_code = constants::STR_ID_BREAK_FAR;
 					} else {
 						below.borrow_mut().insert_item(item.clone(), true);
 					}
@@ -287,6 +286,14 @@ impl Player {
 			}
 		} else {
 			self.location.borrow_mut().insert_item(item.clone(), true);
+		}
+
+		if shattered {
+			terminal::write_full(data.get_response(shattered_code));
+			if item_id == constants::ITEM_ID_MIRROR {
+				terminal::write_full(data.get_response(constants::STR_ID_BAD_LUCK));
+				self.death_divisor = constants::DEATH_DIVISOR_SMASHED;
+			}
 		}
 
 		let mut response_code = constants::STR_ID_DROP_GOOD;
