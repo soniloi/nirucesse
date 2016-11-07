@@ -264,21 +264,22 @@ impl Player {
 		let is_fragile = item.borrow().has_property(constants::CTRL_ITEM_FRAGILE);
 		let has_floor = self.location.borrow().has_property(constants::CTRL_LOC_HAS_FLOOR);
 		let mut shattered = false;
-		let mut shattered_code = constants::STR_ID_BREAK_NEAR;
+		let mut response_code = constants::STR_ID_DROP_GOOD;
 		if liquid { // When dropped, liquids drain away
-			terminal::write_full(data.get_response(constants::STR_ID_EMPTY_LIQUID));
+			response_code = constants::STR_ID_EMPTY_LIQUID
 		} else if is_fragile && thrown { // When thrown, fragile items shatter
 			shattered = true;
+			response_code = constants::STR_ID_BREAK_NEAR;
 		} else if !has_floor && self.has_gravity() { // Gravity pulls item down to location beneath current
 			let self_loc = self.location.borrow();
 			let below_option = self_loc.get_direction(&Direction::Down);
 			match below_option {
 				None => {}, // Probably an error state (error in datafile) TODO: do something with this case
 				Some(below) => {
-					terminal::write_full(data.get_response(constants::STR_ID_DROP_NO_FLOOR));
+					response_code = constants::STR_ID_DROP_NO_FLOOR;
 					if is_fragile {
 						shattered = true;
-						shattered_code = constants::STR_ID_BREAK_FAR;
+						response_code = constants::STR_ID_BREAK_FAR;
 					} else {
 						below.borrow_mut().insert_item(item.clone(), true);
 					}
@@ -288,15 +289,6 @@ impl Player {
 			self.location.borrow_mut().insert_item(item.clone(), true);
 		}
 
-		if shattered {
-			terminal::write_full(data.get_response(shattered_code));
-			if item_id == constants::ITEM_ID_MIRROR {
-				terminal::write_full(data.get_response(constants::STR_ID_BAD_LUCK));
-				self.death_divisor = constants::DEATH_DIVISOR_SMASHED;
-			}
-		}
-
-		let mut response_code = constants::STR_ID_DROP_GOOD;
 		// Specific item drops
 		if item.borrow().is(constants::ITEM_ID_LION) {
 			response_code = constants::STR_ID_LION_SITS;
@@ -307,6 +299,13 @@ impl Player {
 		}
 
 		terminal::write_full(data.get_response(response_code));
+
+		if shattered {
+			if item_id == constants::ITEM_ID_MIRROR {
+				terminal::write_full(data.get_response(constants::STR_ID_BAD_LUCK));
+				self.death_divisor = constants::DEATH_DIVISOR_SMASHED;
+			}
+		}
 	}
 
 	// Remove one item from either location or inventory
