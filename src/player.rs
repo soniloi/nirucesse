@@ -865,6 +865,12 @@ impl Player {
 		let death = move_result.1;
 		let response_code_option = move_result.2;
 
+		// Print any returned responses
+		match response_code_option {
+			None => {},
+			Some(response_code) => terminal::write_full(data.get_response(response_code)),
+		}
+
 		// Update location if returned
 		match next_location_option {
 			None => {},
@@ -883,12 +889,6 @@ impl Player {
 		// Process death
 		if death {
 			self.die(data);
-		}
-
-		// Print any returned responses
-		match response_code_option {
-			None => {},
-			Some(response_code) => terminal::write_full(data.get_response(response_code)),
 		}
 	}
 
