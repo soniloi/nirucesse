@@ -1,7 +1,7 @@
 // Validation for various collections
 pub const EXPECTED_ITEMS: u32 = 126;
 pub const EXPECTED_LOCATIONS: u32 = 134;
-pub const EXPECTED_STRINGS_RESPONSES: u32 = 193;
+pub const EXPECTED_STRINGS_RESPONSES: u32 = 200;
 pub const EXPECTED_STRINGS_PUZZLES: u32 = 26;
 
 // Scoring stuff
@@ -297,6 +297,13 @@ pub const STR_ID_MACHINE_ALREADY_CREATE: u32 = 189;
 pub const STR_ID_MACHINE_DISPENSE: u32 = 190;
 pub const STR_ID_DISAMBIGUATE_LOOK: u32 = 191;
 pub const STR_ID_NO: u32 = 192;
+pub const STR_ID_EAT_ALIEN: u32 = 193;
+pub const STR_ID_EAT_CAULDRON: u32 = 194;
+pub const STR_ID_EAT_PUPPY: u32 = 195;
+pub const STR_ID_EAT_LION: u32 = 196;
+pub const STR_ID_EAT_CABBAGE: u32 = 197;
+pub const STR_ID_EAT_LIQUID: u32 = 198;
+pub const STR_ID_EAT_RADISHES: u32 = 199;
 
 pub const PUZZLE_ID_ACORN: u32 = 0;
 pub const PUZZLE_ID_TRANSMITTER: u32 = 1;

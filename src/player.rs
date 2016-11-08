@@ -671,6 +671,30 @@ impl Player {
 		self.release_item(data, item, false);
 	}
 
+	pub fn eat(&mut self, data: &DataCollection, item: &ItemRef) {
+		if item.borrow().has_property(constants::CTRL_ITEM_LIQUID) {
+			terminal::write_full(&data.get_response_param(constants::STR_ID_EAT_LIQUID, item.borrow().get_shortname()));
+			return;
+		}
+
+		let item_id = item.borrow().get_id();
+		let mut response_code = constants::STR_ID_NO_KNOW_HOW;
+		match item_id {
+			constants::ITEM_ID_ALIEN => response_code = constants::STR_ID_EAT_ALIEN,
+			constants::ITEM_ID_CAULDRON => response_code = constants::STR_ID_EAT_CAULDRON,
+			constants::ITEM_ID_DOGS => response_code = constants::STR_ID_NO,
+			constants::ITEM_ID_PUPPY => response_code = constants::STR_ID_EAT_PUPPY,
+			constants::ITEM_ID_LION => response_code = constants::STR_ID_EAT_LION,
+			constants::ITEM_ID_KOHLRABI => response_code = constants::STR_ID_EAT_CABBAGE,
+			constants::ITEM_ID_RADISHES => {
+				self.remove_item_from_current(constants::ITEM_ID_RADISHES);
+				response_code = constants::STR_ID_EAT_RADISHES;
+			},
+			_ => {},
+		}
+		terminal::write_full(data.get_response(response_code));
+	}
+
 	pub fn empty(&mut self, data: &DataCollection, item: &ItemRef) {
 		if !item.borrow().has_property(constants::CTRL_ITEM_CONTAINER) {
 			terminal::write_full(&data.get_response_param(constants::STR_ID_NOT_CONTAINER, &item.borrow().get_shortname()));

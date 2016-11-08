@@ -72,6 +72,10 @@ pub fn do_drop(data: &DataCollection, arg: String, player: &mut Player, arg_type
 	manipulate_item(data, arg, arg_type, player, Player::drop);
 }
 
+pub fn do_eat(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	manipulate_item(data, arg, arg_type, player, Player::eat);
+}
+
 pub fn do_empty(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, arg_type, player, Player::empty);
 }
