@@ -1,8 +1,8 @@
 // Validation for various collections
-pub const EXPECTED_ITEMS: u32 = 124;
+pub const EXPECTED_ITEMS: u32 = 126;
 pub const EXPECTED_LOCATIONS: u32 = 134;
 pub const EXPECTED_STRINGS_RESPONSES: u32 = 193;
-pub const EXPECTED_STRINGS_PUZZLES: u32 = 25;
+pub const EXPECTED_STRINGS_PUZZLES: u32 = 26;
 
 // Scoring stuff
 pub const SCORE_PUZZLE: u32 = 20; // The score the player gets for every puzzle solved
@@ -61,6 +61,7 @@ pub const ITEM_ID_ALIEN: u32 = 1000;
 pub const ITEM_ID_AQUA: u32 = 1084;
 pub const ITEM_ID_BEAN: u32 = 1003;
 pub const ITEM_ID_BEANSTALK: u32 = 1004;
+pub const ITEM_ID_BELL: u32 = 1125;
 pub const ITEM_ID_BLOSSOM: u32 = 1085;
 pub const ITEM_ID_BODIES: u32 = 1117;
 pub const ITEM_ID_BOOK: u32 = 1105;
@@ -108,6 +109,7 @@ pub const ITEM_ID_PENDANT: u32 = 1097;
 pub const ITEM_ID_PLANT: u32 = 1058;
 pub const ITEM_ID_PLAYER: u32 = 1103;
 pub const ITEM_ID_POTION: u32 = 1059;
+pub const ITEM_ID_PUPPY: u32 = 1124;
 pub const ITEM_ID_RADISHES: u32 = 1060;
 pub const ITEM_ID_ROBOT: u32 = 1061;
 pub const ITEM_ID_ROD: u32 = 1099;
@@ -245,6 +247,7 @@ pub const STR_ID_SCORE_FINAL: u32 = 134;
 pub const STR_ID_BREAK_FAR: u32 = 135;
 pub const STR_ID_BREAK_NEAR: u32 = 136;
 pub const STR_ID_BAD_LUCK: u32 = 137;
+pub const STR_ID_BELL_FEET: u32 = 138;
 pub const STR_ID_SH_MAGIC: u32 = 139;
 pub const STR_ID_SLEEP: u32 = 140;
 pub const STR_ID_NO_SLEEP: u32 = 141;
@@ -320,6 +323,7 @@ pub const PUZZLE_ID_AIRLOCK: u32 = 21;
 pub const PUZZLE_ID_TROLL: u32 = 22;
 pub const PUZZLE_ID_WIZARD: u32 = 23;
 pub const PUZZLE_ID_ESCAPE: u32 = 24;
+pub const PUZZLE_ID_DOGS: u32 = 25;
 
 // Attribute codes for commands
 pub const CTRL_COMMAND_DEBUG: u32 = 0x01; // Whether the command is a debug command

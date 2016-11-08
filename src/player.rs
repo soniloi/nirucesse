@@ -290,11 +290,21 @@ impl Player {
 		}
 
 		// Specific item drops
-		if item.borrow().is(constants::ITEM_ID_LION) {
+		if item_id == constants::ITEM_ID_LION {
 			response_code = constants::STR_ID_LION_SITS;
 			let wolf_present = self.location.borrow().contains_item(constants::ITEM_ID_WOLF);
 			if wolf_present {
 				self.complete_obstruction_achievement(constants::ITEM_ID_WOLF, data.get_puzzle(constants::PUZZLE_ID_WOLF));
+			}
+		}
+
+		if item_id == constants::ITEM_ID_PUPPY {
+			let dogs_present = self.location.borrow().contains_item(constants::ITEM_ID_DOGS);
+			if dogs_present {
+				self.location.borrow_mut().remove_item_certain(constants::ITEM_ID_PUPPY);
+				self.complete_obstruction_achievement(constants::ITEM_ID_DOGS, data.get_puzzle(constants::PUZZLE_ID_DOGS));
+				self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_BELL).clone(), true);
+				response_code = constants::STR_ID_BELL_FEET;
 			}
 		}
 
