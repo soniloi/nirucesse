@@ -192,6 +192,15 @@ impl Item {
 		None
 	}
 
+	// Check that an item can be emptied
+	// If there is a problem, return the string tag of the reason, otherwise return None
+	pub fn has_problem_emptying(&self) -> Option<u32> {
+		if !self.has_property(constants::CTRL_ITEM_CONTAINER) {
+			return Some(constants::STR_ID_NOT_CONTAINER);
+		}
+		None
+	}
+
 	// Check that an item can be inserted
 	// If there is a problem, return the string tag of the reason, otherwise return None
 	pub fn has_problem_inserting(&self) -> Option<u32> {

@@ -704,9 +704,12 @@ impl Player {
 	}
 
 	pub fn empty(&mut self, data: &DataCollection, item: &ItemRef) {
-		if !item.borrow().has_property(constants::CTRL_ITEM_CONTAINER) {
-			terminal::write_full(&data.get_response_param(constants::STR_ID_NOT_CONTAINER, &item.borrow().get_shortname()));
-			return;
+		match item.borrow().has_problem_emptying() {
+			None => {},
+			Some(reason) => {
+					terminal::write_full(&data.get_response_param(reason, item.borrow().get_shortname()));
+					return;
+			},
 		}
 
 		let within_ref = item.borrow_mut().remove_within();
