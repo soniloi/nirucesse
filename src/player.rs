@@ -99,6 +99,7 @@ impl Player {
 
 	// Return a description of what the player sees when they look
 	pub fn get_look(&self, data: &DataCollection) -> String {
+		self.location.borrow_mut().set_visited(true);
 		self.get_effective_appearance(data, self.mk_location_string(data))
 	}
 
