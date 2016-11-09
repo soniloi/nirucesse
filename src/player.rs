@@ -99,7 +99,7 @@ impl Player {
 
 	// Return a description of what the player sees when they look
 	pub fn get_look(&self, data: &DataCollection) -> String {
-		self.get_effective_appearance(data, self.mk_location_string())
+		self.get_effective_appearance(data, self.mk_location_string(data))
 	}
 
 	pub fn get_score_str(&self, data: &DataCollection, response_code: u32) -> String {
@@ -144,8 +144,8 @@ impl Player {
 		self.inventory.mk_string(data.get_response(constants::STR_ID_INVENTORY_EMPTY), data.get_response(constants::STR_ID_INVENTORY_INTRO))
 	}
 
-	pub fn mk_location_string(&self) -> String {
-		self.location.borrow().mk_full_string()
+	fn mk_location_string(&self, data: &DataCollection) -> String {
+		self.location.borrow().mk_full_string(data.get_response(constants::STR_ID_YOU_ARE))
 	}
 
 	// Return whether a location is the last place the player was
@@ -922,7 +922,8 @@ impl Player {
 				} else {
 					self.previous = None;
 				}
-				terminal::write_full(&self.get_effective_appearance(data, self.location.borrow().mk_arrival_string()));
+				let arrival_description = self.location.borrow().mk_arrival_string(data.get_response(constants::STR_ID_YOU_ARE));
+				terminal::write_full(&self.get_effective_appearance(data, arrival_description));
 				self.location.borrow_mut().set_visited(true);
 			}
 		}

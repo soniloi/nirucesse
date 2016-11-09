@@ -139,6 +139,7 @@ pub const STR_ID_INVENTORY_INTRO: u32 = 5;
 pub const STR_ID_ROBOT_MOUSE: u32 = 6;
 pub const STR_ID_REINCARNATE_ASK: u32 = 8;
 pub const STR_ID_SURE_ASK: u32 = 9;
+pub const STR_ID_YOU_ARE: u32 = 10;
 pub const STR_ID_BOULDER_HIT_WEAK: u32 = 11;
 pub const STR_ID_BURN_BREAD: u32 = 12;
 pub const STR_ID_CABBAGE: u32 = 13;

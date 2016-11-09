@@ -198,22 +198,22 @@ impl Location {
 		self.items.values().fold(0, |acc, x| acc + x.borrow().get_treasure_value())
 	}
 
-	fn mk_basic_string(&self) -> String {
-		String::from("You are ") + &self.longname
+	fn mk_basic_string(&self, desc_start: &str) -> String {
+		String::from(desc_start) + &self.longname
 	}
 
 	fn mk_contents_string(&self) -> String {
 		self.items.values().fold(String::new(), |acc, x| acc + &x.borrow().get_locationname())
 	}
 
-	pub fn mk_arrival_string(&self) -> String {
+	pub fn mk_arrival_string(&self, desc_start: &str) -> String {
 		if self.visited {
-			return self.mk_basic_string() + "." + &self.mk_contents_string();
+			return self.mk_basic_string(desc_start) + "." + &self.mk_contents_string();
 		}
-		self.mk_full_string()
+		self.mk_full_string(desc_start)
 	}
 
-	pub fn mk_full_string(&self) -> String {
-		self.mk_basic_string() + &self.description + &self.mk_contents_string()
+	pub fn mk_full_string(&self, desc_start: &str) -> String {
+		self.mk_basic_string(desc_start) + &self.description + &self.mk_contents_string()
 	}
 }
