@@ -471,6 +471,13 @@ impl Player {
 			self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_BEAN).clone(), true);
 			terminal::write_full(data.get_response(constants::STR_ID_POUR_POTION_PLANT));
 
+		} else if recipient_id == constants::ITEM_ID_MUSHROOM && gift_id == constants::ITEM_ID_WATER && location_id == constants::LOCATION_ID_SMALL {
+			self.inventory.remove_item_certain(gift_id);
+			self.remove_item_from_current(recipient_id);
+			self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_TOADSTOOL).clone(), true);
+			self.location.borrow_mut().set_direction(Direction::North, Some(data.get_location_certain(constants::LOCATION_ID_TOADSTOOL).clone()));
+			self.complete_achievement(data.get_puzzle(constants::PUZZLE_ID_MUSHROOM));
+
 		} else if gift_liquid { // Default response for liquids
 			self.inventory.remove_item_certain(gift_id);
 			terminal::write_full(&data.get_response_param(constants::STR_ID_POUR_LIQUID_DEFAULT, recipient.borrow().get_shortname()));

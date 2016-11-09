@@ -1,8 +1,8 @@
 // Validation for various collections
-pub const EXPECTED_ITEMS: u32 = 126;
+pub const EXPECTED_ITEMS: u32 = 127;
 pub const EXPECTED_LOCATIONS: u32 = 134;
 pub const EXPECTED_STRINGS_RESPONSES: u32 = 200;
-pub const EXPECTED_STRINGS_PUZZLES: u32 = 26;
+pub const EXPECTED_STRINGS_PUZZLES: u32 = 27;
 
 // Scoring stuff
 pub const SCORE_PUZZLE: u32 = 20; // The score the player gets for every puzzle solved
@@ -42,7 +42,9 @@ pub const LOCATION_ID_SHUTTLE: u32 = 23; // Inside the shuttle
 pub const LOCATION_ID_SLEEP_0: u32 = 91; // Cot room
 pub const LOCATION_ID_SLEEP_1: u32 = 92; // Start of the dream
 pub const LOCATION_ID_SLEEP_2: u32 = 97; // End of the dream
+pub const LOCATION_ID_SMALL: u32 = 83; // Outside the toadstool room
 pub const LOCATION_ID_THOR: u32 = 106; // Thor room
+pub const LOCATION_ID_TOADSTOOL: u32 = 42; // Inside the toadstool room
 pub const LOCATION_ID_TREASURESTORE: u32 = 23; // Where the player must bring treasure to
 pub const LOCATION_ID_TREETOP: u32 = 28; // The tree in the garden
 pub const LOCATION_ID_WITCH_0: u32 = 107; // Location of teleporter connected to Experiment Area
@@ -102,6 +104,7 @@ pub const ITEM_ID_MATCHES: u32 = 1048;
 pub const ITEM_ID_MEDALLION: u32 = 1094;
 pub const ITEM_ID_MILK: u32 = 1049;
 pub const ITEM_ID_MIRROR: u32 = 1050;
+pub const ITEM_ID_MUSHROOM: u32 = 1051;
 pub const ITEM_ID_NEEDLES: u32 = 1052;
 pub const ITEM_ID_NET: u32 = 1053;
 pub const ITEM_ID_NUGGET: u32 = 1096;
@@ -117,6 +120,7 @@ pub const ITEM_ID_SHIP: u32 = 1062;
 pub const ITEM_ID_SHUTTLE: u32 = 1063;
 pub const ITEM_ID_SKELETON: u32 = 1065;
 pub const ITEM_ID_STEW: u32 = 1115;
+pub const ITEM_ID_TOADSTOOL: u32 = 1031;
 pub const ITEM_ID_TOAST: u32 = 1069;
 pub const ITEM_ID_TOOTH: u32 = 1070;
 pub const ITEM_ID_TRANSMITTER: u32 = 1071;
@@ -331,6 +335,7 @@ pub const PUZZLE_ID_TROLL: u32 = 22;
 pub const PUZZLE_ID_WIZARD: u32 = 23;
 pub const PUZZLE_ID_ESCAPE: u32 = 24;
 pub const PUZZLE_ID_DOGS: u32 = 25;
+pub const PUZZLE_ID_MUSHROOM: u32 = 26;
 
 // Attribute codes for commands
 pub const CTRL_COMMAND_DEBUG: u32 = 0x01; // Whether the command is a debug command
