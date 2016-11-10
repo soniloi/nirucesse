@@ -37,7 +37,8 @@ impl Command {
 		let mut actual_arg = arg;
 
 		// Command takes no argument, but player gave one anyway
-		if !self.has_property(constants::CTRL_COMMAND_ARG_MANDATORY) && !self.has_property(constants::CTRL_COMMAND_ARG_OPTIONAL) && !actual_arg.is_empty() {
+		if !self.has_property(constants::CTRL_COMMAND_DEBUG) && !self.has_property(constants::CTRL_COMMAND_ARG_MANDATORY)
+				&& !self.has_property(constants::CTRL_COMMAND_ARG_OPTIONAL) && !actual_arg.is_empty() {
 			terminal::write_full(data.get_response(constants::STR_ID_ARG_EXTRA));
 			return;
 		}
