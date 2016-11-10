@@ -548,6 +548,8 @@ impl Player {
 				self.location.borrow_mut().insert_item(toast.clone(), true);
 				terminal::write_full(data.get_response(constants::STR_ID_BURN_BREAD));
 			},
+			constants::ITEM_ID_LAMP => terminal::write_full(data.get_response(constants::STR_ID_NO_BURN_LAMP)),
+			constants::ITEM_ID_MATCHES => terminal::write_full(data.get_response(constants::STR_ID_NO_BURN_MATCHES)),
 			constants::ITEM_ID_TOAST => {
 				if self.inventory.contains_item(item_id) {
 					self.inventory.remove_item_certain(item_id);

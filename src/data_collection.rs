@@ -160,7 +160,7 @@ impl DataCollection {
 	}
 
 	pub fn get_commands_non_secret(&self) -> String {
-		self.commands.mk_non_secret_string(self.get_response(19))
+		self.commands.mk_non_secret_string(self.get_response(constants::STR_ID_COMMANDS_INTRO))
 	}
 
 	pub fn get_direction_enum(&self, dir_str: &str) -> Direction {
