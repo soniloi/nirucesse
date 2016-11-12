@@ -81,10 +81,6 @@ impl Player {
 		self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_INVISIBILITY)
 	}
 
-	pub fn insert_item(&mut self, item: ItemRef) {
-		self.inventory.insert_item(item);
-	}
-
 	pub fn is_playing(&self) -> bool {
 		self.playing
 	}
@@ -1339,7 +1335,7 @@ impl Player {
 		}
 
 		self.location.borrow_mut().remove_item_certain(item_id);
-		self.insert_item(item.clone());
+		self.inventory.insert_item(item.clone());
 
 		if !self.has_light() {
 			terminal::write_full(&data.get_response_param(constants::STR_ID_TAKE_NO_LIGHT, item.borrow().get_shortname()));
