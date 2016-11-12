@@ -50,27 +50,27 @@ impl Player {
 	}
 
 	pub fn has_light(&self) -> bool {
-		self.inventory.contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT) ||
-			self.location.borrow().has_or_contains_with_switchable_property(constants::CTRL_LOC_HAS_LIGHT, constants::CTRL_ITEM_GIVES_LIGHT)
+		self.location.borrow().has_or_contains_with_switchable_property(constants::CTRL_LOC_HAS_LIGHT, constants::CTRL_ITEM_GIVES_LIGHT) ||
+			self.inventory.contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT)
 	}
 
 	fn has_light_and_needsno_light(&self) -> bool {
-		(self.inventory.contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT) ||
-			self.location.borrow().contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT)) && self.location.borrow().has_property(constants::CTRL_LOC_NEEDSNO_LIGHT)
+		self.location.borrow().has_property(constants::CTRL_LOC_NEEDSNO_LIGHT) &&
+			(self.inventory.contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT) || self.location.borrow().contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT))
 	}
 
 	pub fn has_air(&self) -> bool {
-		self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_AIR) ||
-			self.location.borrow().has_or_contains_with_property(constants::CTRL_LOC_HAS_AIR, constants::CTRL_ITEM_GIVES_AIR)
+		self.location.borrow().has_or_contains_with_property(constants::CTRL_LOC_HAS_AIR, constants::CTRL_ITEM_GIVES_AIR) ||
+			self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_AIR)
 	}
 
 	pub fn has_gravity(&self) -> bool {
-		self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_GRAVITY) || self.location.borrow().has_property(constants::CTRL_LOC_HAS_GRAVITY)
+		self.location.borrow().has_property(constants::CTRL_LOC_HAS_GRAVITY) || self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_GRAVITY)
 	}
 
 	pub fn has_nosnomp(&self) -> bool {
-		self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_NOSNOMP) ||
-			self.location.borrow().has_or_contains_with_property(constants::CTRL_LOC_HAS_NOSNOMP, constants::CTRL_ITEM_GIVES_NOSNOMP)
+		self.location.borrow().has_or_contains_with_property(constants::CTRL_LOC_HAS_NOSNOMP, constants::CTRL_ITEM_GIVES_NOSNOMP) ||
+			self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_NOSNOMP)
 	}
 
 	fn has_invisibility(&self) -> bool {
