@@ -73,6 +73,10 @@ impl Player {
 			self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_NOSNOMP)
 	}
 
+	pub fn has_land(&self) -> bool {
+	        self.location.borrow().has_property(constants::CTRL_LOC_HAS_LAND) || self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_LAND)
+	}
+
 	fn has_invisibility(&self) -> bool {
 		self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_INVISIBILITY)
 	}

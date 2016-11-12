@@ -29,6 +29,11 @@ impl Game {
 				self.player.die(&self.data);
 			}
 
+			if !self.player.has_land() {
+				terminal::write_full(self.data.get_response(constants::STR_ID_DROWN));
+				self.player.die(&self.data);
+			}
+
 			if !self.player.has_gravity() {
 				self.player.float(&self.data);
 			}
