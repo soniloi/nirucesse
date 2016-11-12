@@ -264,6 +264,7 @@ impl Player {
 		let liquid = item.borrow().has_property(constants::CTRL_ITEM_LIQUID);
 		let is_fragile = item.borrow().has_property(constants::CTRL_ITEM_FRAGILE);
 		let has_floor = self.location.borrow().has_property(constants::CTRL_LOC_HAS_FLOOR);
+		let has_land = self.location.borrow().has_property(constants::CTRL_LOC_HAS_LAND);
 		let mut shattered = false;
 		let mut response_code = constants::STR_ID_DROP_GOOD;
 		if liquid { // When dropped, liquids drain away
@@ -286,6 +287,9 @@ impl Player {
 					}
 				},
 			}
+		} else if !has_land { // When dropped near open water, lost forever
+			item.borrow_mut().retire();
+			response_code = constants::STR_ID_DROP_WATER;
 		} else {
 			self.location.borrow_mut().insert_item(item.clone(), true);
 		}
