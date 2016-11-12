@@ -1341,6 +1341,9 @@ impl Player {
 		self.location.borrow_mut().remove_item_certain(item_id);
 		self.insert_item(item.clone());
 
+		if !self.has_light() {
+			terminal::write_full(&data.get_response_param(constants::STR_ID_TAKE_NO_LIGHT, item.borrow().get_shortname()));
+		}
 		if item.borrow().has_property(constants::CTRL_ITEM_WEARABLE) {
 			terminal::write_full(data.get_response(constants::STR_ID_WORN));
 		} else {
