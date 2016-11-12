@@ -1221,6 +1221,28 @@ impl Player {
 		}
 	}
 
+	pub fn roll(&mut self, data: &DataCollection, item: &ItemRef) {
+		let item_id = item.borrow().get_id();
+		match item_id {
+			constants::ITEM_ID_MARBLE => {
+				let loc_id = self.location.borrow().get_id();
+				let corsair_present = self.location.borrow().contains_item(constants::ITEM_ID_CORSAIR);
+				self.inventory.remove_item_certain(item_id);
+				terminal::write_full(data.get_response(constants::STR_ID_ROLL_MARBLE));
+				if loc_id == constants::LOCATION_ID_CHECKPOINT && corsair_present {
+					let under = data.get_location_certain(constants::LOCATION_ID_UNDER);
+					self.complete_obstruction_achievement(constants::ITEM_ID_CORSAIR, data.get_puzzle(constants::PUZZLE_ID_MARBLE));
+					under.borrow_mut().insert_item(item.clone(), true);
+					under.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_CORSAIR).clone(), true);
+				} else {
+					self.location.borrow_mut().insert_item(item.clone(), true);
+					terminal::write_full(data.get_response(constants::STR_ID_NOTHING_HAPPENS));
+				}
+			}
+			_ => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW)),
+		}
+	}
+
 	pub fn rub(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
 		match item_id {

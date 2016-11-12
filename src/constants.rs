@@ -2,7 +2,7 @@
 pub const EXPECTED_ITEMS: u32 = 127;
 pub const EXPECTED_LOCATIONS: u32 = 134;
 pub const EXPECTED_STRINGS_RESPONSES: u32 = 200;
-pub const EXPECTED_STRINGS_PUZZLES: u32 = 27;
+pub const EXPECTED_STRINGS_PUZZLES: u32 = 28;
 
 // Scoring stuff
 pub const SCORE_PUZZLE: u32 = 20; // The score the player gets for every puzzle solved
@@ -47,6 +47,7 @@ pub const LOCATION_ID_THOR: u32 = 106; // Thor room
 pub const LOCATION_ID_TOADSTOOL: u32 = 42; // Inside the toadstool room
 pub const LOCATION_ID_TREASURESTORE: u32 = 23; // Where the player must bring treasure to
 pub const LOCATION_ID_TREETOP: u32 = 28; // The tree in the garden
+pub const LOCATION_ID_UNDER: u32 = 43; // Below the checkpoint
 pub const LOCATION_ID_WITCH_0: u32 = 107; // Location of teleporter connected to Experiment Area
 pub const LOCATION_ID_WITCH_1: u32 = 128; // Location of teleporter connected to Chasm
 
@@ -100,6 +101,7 @@ pub const ITEM_ID_LENS: u32 = 1044;
 pub const ITEM_ID_LION: u32 = 1045;
 pub const ITEM_ID_MACHINE: u32 = 1046;
 pub const ITEM_ID_MAGAZINE: u32 = 1047;
+pub const ITEM_ID_MARBLE: u32 = 1126;
 pub const ITEM_ID_MATCHES: u32 = 1048;
 pub const ITEM_ID_MEDALLION: u32 = 1094;
 pub const ITEM_ID_MILK: u32 = 1049;
@@ -172,6 +174,7 @@ pub const STR_ID_EMPTY_LIQUID: u32 = 42;
 pub const STR_ID_EMPTY_SET: u32 = 43;
 pub const STR_ID_NO_BURN_MATCHES: u32 = 44;
 pub const STR_ID_NO_BURN_LAMP: u32 = 45;
+pub const STR_ID_ROLL_MARBLE: u32 = 46;
 pub const STR_ID_RUB_LAMP: u32 = 47;
 pub const STR_ID_DISAMBIGUATE_GO: u32 = 49;
 pub const STR_ID_WELCOME: u32 = 50;
@@ -340,6 +343,7 @@ pub const PUZZLE_ID_WIZARD: u32 = 23;
 pub const PUZZLE_ID_ESCAPE: u32 = 24;
 pub const PUZZLE_ID_DOGS: u32 = 25;
 pub const PUZZLE_ID_MUSHROOM: u32 = 26;
+pub const PUZZLE_ID_MARBLE: u32 = 27;
 
 // Attribute codes for commands
 pub const CTRL_COMMAND_DEBUG: u32 = 0x01; // Whether the command is a debug command

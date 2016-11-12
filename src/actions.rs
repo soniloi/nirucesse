@@ -216,6 +216,10 @@ pub fn do_robot(data: &DataCollection, arg: String, player: &mut Player, arg_typ
 	player.robot(data);
 }
 
+pub fn do_roll(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	manipulate_item(data, arg, arg_type, player, Player::roll);
+}
+
 pub fn do_rub(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, arg_type, player, Player::rub);
 }

@@ -74,6 +74,7 @@ impl CommandCollection {
 		acts.insert("read", actions::do_read);
 		acts.insert("repair", actions::do_repair);
 		acts.insert("rob", actions::do_rob);
+		acts.insert("roll", actions::do_roll);
 		acts.insert("rub", actions::do_rub);
 		acts.insert("say", actions::do_say);
 		acts.insert("score", actions::do_score);
