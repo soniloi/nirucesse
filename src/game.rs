@@ -19,6 +19,7 @@ impl Game {
 
 	pub fn play(&mut self) {
 
+		terminal::write_full(self.data.get_response(constants::STR_ID_START));
 		terminal::write_full(self.data.get_response(constants::STR_ID_AWAKEN_INITIAL));
 
 		while self.player.is_playing() {

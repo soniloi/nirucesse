@@ -134,6 +134,7 @@ pub const ITEM_ID_WIZARD: u32 = 1079;
 pub const ITEM_ID_WOLF: u32 = 1080;
 pub const ITEM_ID_YARN: u32 = 1081;
 
+pub const STR_ID_START: u32 = 0;
 pub const STR_ID_ALIEN_NO_USE: u32 = 1;
 pub const STR_ID_ALREADY_DONE: u32 = 2;
 pub const STR_ID_INVENTORY_EMPTY: u32 = 4;

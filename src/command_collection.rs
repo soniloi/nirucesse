@@ -121,7 +121,7 @@ impl CommandCollection {
 		let tag = words[FILE_INDEX_COMMAND_TAG];
 
 		match acts.get(tag) {
-			None => println!("\x1b[31m[Warning: no action function found for tag [{}]; skipping]\x1b[0m", tag),
+			None => {},
 			Some(act) => {
 				let cmd: CommandRef = Rc::new(Box::new(Command::new(primary, properties, *act)));
 				self.commands.insert(key, cmd.clone());
