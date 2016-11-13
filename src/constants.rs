@@ -18,8 +18,9 @@ pub const MIN_MOVES_EVENT: u32 = 15; // Random events will not be printed before
 pub const DEATH_DIVISOR_NORMAL: u32 = 4;
 pub const DEATH_DIVISOR_SMASHED: u32 = 1;
 
-// Capacity
-pub const INVENTORY_CAPACITY: u32 = 16;
+// Inventory stuff
+pub const INVENTORY_CAPACITY_NORMAL: u32 = 16;
+pub const INVENTORY_ID_MAIN: u32 = 0;
 
 // ID numbers of specific locations
 pub const LOCATION_ID_AIRLOCKE: u32 = 31; // The airlock just off the Recreation Hub

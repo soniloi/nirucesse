@@ -20,9 +20,9 @@ use location_collection::LocationCollection;
 pub type GenericRcBox<T> = Rc<Box<T>>;
 pub type GenericRcRefCellBox<T> = Rc<RefCell<Box<T>>>;
 pub type CommandRef = GenericRcBox<Command>;
+pub type InventoryRef = GenericRcRefCellBox<Inventory>;
 pub type ItemRef = GenericRcRefCellBox<Item>;
 pub type LocationRef = GenericRcRefCellBox<Location>;
-pub type InventoryRef = GenericRcRefCellBox<Inventory>;
 
 pub struct DataCollection {
 	commands: CommandCollection,
@@ -33,6 +33,7 @@ pub struct DataCollection {
 	responses: InfoStringCollection,
 	puzzles: InfoStringCollection,
 	events: InfoStringCollection,
+	inventories: HashMap<u32, InventoryRef>,
 	event_turns: HashMap<u32, u32>,
 	tp_map_sleep: HashMap<u32, u32>,
 	tp_map_witch: HashMap<u32, u32>,
@@ -51,6 +52,7 @@ impl DataCollection {
 			responses: InfoStringCollection::new(),
 			puzzles: InfoStringCollection::new(),
 			events: InfoStringCollection::new(),
+			inventories: HashMap::new(),
 			event_turns: HashMap::new(),
 			tp_map_sleep: HashMap::new(),
 			tp_map_witch: HashMap::new(),
@@ -69,10 +71,20 @@ impl DataCollection {
 		self.puzzles.init(&mut buffer, constants::EXPECTED_STRINGS_PUZZLES, true);
 		self.events.init(&mut buffer, 0, false);
 
+		self.init_inventories();
 		self.init_event_turns();
 		self.init_tp_maps();
 		let achievement_count: u32 = self.puzzles.count_strings();
 		self.max_score = treasure_count * constants::SCORE_TREASURE + achievement_count * constants::SCORE_PUZZLE;
+	}
+
+	fn init_inventory(&mut self, inventory_id: u32, inventory_capacity: u32) {
+		let inventory = Rc::new(RefCell::new(Box::new(Inventory::new(inventory_capacity))));
+		self.inventories.insert(inventory_id, inventory);
+	}
+
+	fn init_inventories(&mut self) {
+		self.init_inventory(constants::INVENTORY_ID_MAIN, constants::INVENTORY_CAPACITY_NORMAL);
 	}
 
 	// Assign a turn for an event to be printed on
@@ -101,6 +113,13 @@ impl DataCollection {
 
 	pub fn get_command(&self, key: String) -> Option<&Rc<Box<Command>>> {
 		self.commands.get(key)
+	}
+
+	pub fn get_inventory(&self, key: u32) -> &InventoryRef {
+		match self.inventories.get(&key) {
+			None => panic!("Error: Data collection corrupt when searching for inventory [{}].", key),
+			Some(inventory) => return inventory,
+		}
 	}
 
 	pub fn get_item_by_name(&self, key: String) -> Option<&ItemRef> {
