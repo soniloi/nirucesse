@@ -10,6 +10,7 @@ use constants;
 use file_buffer::FileBuffer;
 use help_string_collection::HelpStringCollection;
 use info_string_collection::InfoStringCollection;
+use inventory::Inventory;
 use item::Item;
 use item_collection::ItemCollection;
 use location::Direction;
@@ -21,6 +22,7 @@ pub type GenericRcRefCellBox<T> = Rc<RefCell<Box<T>>>;
 pub type CommandRef = GenericRcBox<Command>;
 pub type ItemRef = GenericRcRefCellBox<Item>;
 pub type LocationRef = GenericRcRefCellBox<Location>;
+pub type InventoryRef = GenericRcRefCellBox<Inventory>;
 
 pub struct DataCollection {
 	commands: CommandCollection,

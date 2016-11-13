@@ -6,7 +6,7 @@ use constants;
 use data_collection::DataCollection;
 use data_collection::ItemRef;
 use data_collection::LocationRef;
-use inventory::Inventory;
+use data_collection::InventoryRef;
 use location::Direction;
 use terminal;
 
@@ -14,7 +14,7 @@ pub type ItemManipFinalFn = fn(player: &mut Player, data: &DataCollection, item:
 pub type ItemManipFn = ItemManipFinalFn;
 
 pub struct Player {
-	inventory: Inventory,
+	inventory: InventoryRef,
 	location: LocationRef,
 	previous: Option<LocationRef>,
 	achievement_count: u32, // number of puzzles player has solved
@@ -31,9 +31,9 @@ pub struct Player {
 
 impl Player {
 
-	pub fn new(initial: LocationRef) -> Player {
+	pub fn new(initial: LocationRef, inventory: InventoryRef) -> Player {
 		Player {
-			inventory: Inventory::new(constants::INVENTORY_CAPACITY),
+			inventory: inventory,
 			location: initial.clone(),
 			previous: None,
 			achievement_count: 0u32,
@@ -51,34 +51,34 @@ impl Player {
 
 	pub fn has_light(&self) -> bool {
 		self.location.borrow().has_or_contains_with_switchable_property(constants::CTRL_LOC_HAS_LIGHT, constants::CTRL_ITEM_GIVES_LIGHT) ||
-			self.inventory.contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT)
+			self.inventory.borrow().contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT)
 	}
 
 	fn has_light_and_needsno_light(&self) -> bool {
 		self.location.borrow().has_property(constants::CTRL_LOC_NEEDSNO_LIGHT) &&
-			(self.inventory.contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT) || self.location.borrow().contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT))
+			(self.inventory.borrow().contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT) || self.location.borrow().contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT))
 	}
 
 	pub fn has_air(&self) -> bool {
 		self.location.borrow().has_or_contains_with_property(constants::CTRL_LOC_HAS_AIR, constants::CTRL_ITEM_GIVES_AIR) ||
-			self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_AIR)
+			self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_AIR)
 	}
 
 	pub fn has_gravity(&self) -> bool {
-		self.location.borrow().has_property(constants::CTRL_LOC_HAS_GRAVITY) || self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_GRAVITY)
+		self.location.borrow().has_property(constants::CTRL_LOC_HAS_GRAVITY) || self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_GRAVITY)
 	}
 
 	pub fn has_nosnomp(&self) -> bool {
 		self.location.borrow().has_or_contains_with_property(constants::CTRL_LOC_HAS_NOSNOMP, constants::CTRL_ITEM_GIVES_NOSNOMP) ||
-			self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_NOSNOMP)
+			self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_NOSNOMP)
 	}
 
 	pub fn has_land(&self) -> bool {
-	        self.location.borrow().has_property(constants::CTRL_LOC_HAS_LAND) || self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_LAND)
+	        self.location.borrow().has_property(constants::CTRL_LOC_HAS_LAND) || self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_LAND)
 	}
 
 	fn has_invisibility(&self) -> bool {
-		self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_INVISIBILITY)
+		self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_INVISIBILITY)
 	}
 
 	pub fn is_playing(&self) -> bool {
@@ -142,7 +142,7 @@ impl Player {
 	}
 
 	pub fn mk_inventory_string(&self, data: &DataCollection) -> String {
-		self.inventory.mk_string(data.get_response(constants::STR_ID_INVENTORY_EMPTY), data.get_response(constants::STR_ID_INVENTORY_INTRO))
+		self.inventory.borrow().mk_string(data.get_response(constants::STR_ID_INVENTORY_EMPTY), data.get_response(constants::STR_ID_INVENTORY_INTRO))
 	}
 
 	fn mk_location_string(&self, data: &DataCollection) -> String {
@@ -168,7 +168,7 @@ impl Player {
 	}
 
 	pub fn drop_on_death(&mut self, location_safe: &LocationRef) {
-		self.inventory.drop_all(&self.location, location_safe, true, true);
+		self.inventory.borrow_mut().drop_all(&self.location, location_safe, true, true);
 	}
 
 	fn get_effective_description(&self, haze_description: String, darkness_description: String, default_description: String) -> String {
@@ -199,11 +199,11 @@ impl Player {
 	}
 
 	pub fn has_item_inventory(&self, item_id: u32) -> bool {
-		self.inventory.contains_item(item_id)
+		self.inventory.borrow().contains_item(item_id)
 	}
 
 	pub fn has_item_present(&self, item_id: u32) -> bool {
-	        self.inventory.contains_item(item_id) || self.location.borrow().contains_item(item_id)
+	        self.inventory.borrow().contains_item(item_id) || self.location.borrow().contains_item(item_id)
 	}
 
 	fn complete_obstruction_achievement(&mut self, obstruction_id: u32, response: &str) {
@@ -235,7 +235,7 @@ impl Player {
 			terminal::write_full(data.get_response(constants::STR_ID_MACHINE_ALREADY_CREATE));
 			return;
 		}
-		self.inventory.remove_item_certain(constants::ITEM_ID_CARTRIDGE);
+		self.inventory.borrow_mut().remove_item_certain(constants::ITEM_ID_CARTRIDGE);
 		match request.borrow().get_id() {
 			constants::ITEM_ID_LENS => data.get_location_certain(constants::LOCATION_ID_OBSERVATORY).borrow_mut().insert_item(cartridge.clone(), true),
 			constants::ITEM_ID_WIRE => data.get_location_certain(constants::LOCATION_ID_SENSOR).borrow_mut().insert_item(cartridge.clone(), true),
@@ -259,7 +259,7 @@ impl Player {
 
 	fn release_item(&mut self, data: &DataCollection, item: &ItemRef, thrown: bool) {
 		let item_id = item.borrow().get_id();
-		self.inventory.remove_item_certain(item_id);
+		self.inventory.borrow_mut().remove_item_certain(item_id);
 
 		let liquid = item.borrow().has_property(constants::CTRL_ITEM_LIQUID);
 		let is_fragile = item.borrow().has_property(constants::CTRL_ITEM_FRAGILE);
@@ -325,8 +325,9 @@ impl Player {
 
 	// Remove one item from either location or inventory
 	fn remove_item_from_current(&mut self, id_to_remove: u32) {
-		if self.inventory.contains_item(id_to_remove) {
-			self.inventory.remove_item_certain(id_to_remove);
+		let in_inventory = self.inventory.borrow().contains_item(id_to_remove);
+		if in_inventory {
+			self.inventory.borrow_mut().remove_item_certain(id_to_remove);
 		} else {
 			self.location.borrow_mut().remove_item_certain(id_to_remove);
 		}
@@ -336,15 +337,16 @@ impl Player {
 			response_code_kill: u32, response_code_success: u32) {
 		let reward = data.get_item_by_id_certain(reward_code);
 		let reward_is_new = reward.borrow().is_new();
+		let inventory_fits = self.inventory.borrow().can_fit(reward);
 		if !reward_is_new {
 			terminal::write_full(data.get_response(constants::STR_ID_PIRATE_EMPTY)); // Player has already robbed the pirate
 		} else if kill {
 			terminal::write_full(data.get_response(response_code_kill));
 			self.die(data);
-		} else if !self.inventory.can_fit(reward) {
+		} else if !inventory_fits {
 			terminal::write_full(&data.get_response_param(constants::STR_ID_PIRATE_HEAVY, pirate.borrow().get_shortname()));
 		} else {
-			self.inventory.insert_item(reward.clone());
+			self.inventory.borrow_mut().insert_item(reward.clone());
 			self.complete_achievement(data.get_puzzle(response_code_success));
 		}
 	}
@@ -377,7 +379,7 @@ impl Player {
 		let item_id = item.borrow().get_id();
 		let previous_id = item.borrow().get_location_true();
 		if previous_id == constants::LOCATION_ID_INVENTORY { // Item is inventory
-			self.inventory.remove_item_certain(item_id);
+			self.inventory.borrow_mut().remove_item_certain(item_id);
 		} else if previous_id < constants::ITEM_INDEX_START { // Item is at some location
 			data.get_location_certain(previous_id).borrow_mut().remove_item_certain(item_id);
 		} else { // Item is in another item
@@ -391,10 +393,10 @@ impl Player {
 		match tp_map.get(&loc_id) {
 			None => terminal::write_full(data.get_response(response_code_no_teleport)),
 			Some(next_id) => {
-				self.inventory.drop_all(&self.location, data.get_location_certain(self.location_id_safe), false, permanent);
+				self.inventory.borrow_mut().drop_all(&self.location, data.get_location_certain(self.location_id_safe), false, permanent);
 				self.location = data.get_location_certain(*next_id).clone();
 				self.previous = None;
-				self.location.borrow_mut().release_temporary(&mut self.inventory);
+				self.location.borrow_mut().release_temporary(self.inventory.clone());
 				terminal::write_full(data.get_response(response_code_teleport));
 			},
 		}
@@ -414,17 +416,17 @@ impl Player {
 			let transmitter_used = data.get_item_by_id_certain(constants::ITEM_ID_TRANSMITTER).borrow().is_retired();
 			let transmitter_on = data.get_item_by_id_certain(constants::ITEM_ID_TRANSMITTER).borrow().is_on();
 			if gift_id == constants::ITEM_ID_CHART {
-				self.inventory.remove_item_certain(gift_id);
+				self.inventory.borrow_mut().remove_item_certain(gift_id);
 				gift.borrow_mut().set_locations(constants::LOCATION_ID_GRAVEYARD);
 				self.complete_achievement(data.get_puzzle(constants::PUZZLE_ID_CHART));
 			} else if gift_id == constants::ITEM_ID_TRANSMITTER && chart_used && transmitter_on { // Alien cannot operate our machinery, so needs the transmitter to be on
-				self.inventory.remove_item_certain(gift_id);
+				self.inventory.borrow_mut().remove_item_certain(gift_id);
 				gift.borrow_mut().set_locations(constants::LOCATION_ID_GRAVEYARD);
 				self.complete_achievement(data.get_puzzle(constants::PUZZLE_ID_TRANSMITTER));
 			} else if gift_id == constants::ITEM_ID_LENS && transmitter_used {
 				let pendant = data.get_item_by_id_certain(constants::ITEM_ID_PENDANT);
 				self.location.borrow_mut().insert_item(pendant.clone(), true);
-				self.inventory.remove_item_certain(gift_id);
+				self.inventory.borrow_mut().remove_item_certain(gift_id);
 				gift.borrow_mut().set_locations(constants::LOCATION_ID_GRAVEYARD);
 				self.complete_obstruction_achievement(constants::ITEM_ID_ALIEN, data.get_puzzle(constants::PUZZLE_ID_LENS));
 			} else {
@@ -434,11 +436,11 @@ impl Player {
 		} else if recipient_id == constants::ITEM_ID_GUNSLINGER && gift_id == constants::ITEM_ID_MAGAZINE {
 			let cartridge = data.get_item_by_id_certain(constants::ITEM_ID_CARTRIDGE);
 			self.location.borrow_mut().insert_item(cartridge.clone(), true);
-			self.inventory.remove_item_certain(gift_id);
+			self.inventory.borrow_mut().remove_item_certain(gift_id);
 			self.complete_obstruction_achievement(constants::ITEM_ID_GUNSLINGER, data.get_puzzle(constants::PUZZLE_ID_GUNSLINGER));
 
 		} else if recipient_id == constants::ITEM_ID_LION && gift_edible {
-			self.inventory.remove_item_certain(gift_id);
+			self.inventory.borrow_mut().remove_item_certain(gift_id);
 			if gift_id == constants::ITEM_ID_KOHLRABI {
 				terminal::write_full(data.get_response(constants::STR_ID_LION_CABBAGE));
 				self.die(data);
@@ -449,42 +451,42 @@ impl Player {
 		} else if recipient_id == constants::ITEM_ID_SKELETON && gift_id == constants::ITEM_ID_MILK {
 			let brooch = data.get_item_by_id_certain(constants::ITEM_ID_BROOCH);
 			self.location.borrow_mut().insert_item(brooch.clone(), true);
-			self.inventory.remove_item_certain(gift_id);
+			self.inventory.borrow_mut().remove_item_certain(gift_id);
 			self.complete_obstruction_achievement(constants::ITEM_ID_SKELETON, data.get_puzzle(constants::PUZZLE_ID_SKELETON));
 
 		} else if recipient_id == constants::ITEM_ID_TROLL && gift_edible {
-			self.inventory.remove_item_certain(gift_id);
+			self.inventory.borrow_mut().remove_item_certain(gift_id);
 			terminal::write_full(data.get_response(constants::STR_ID_TROLL_FED));
 			self.die(data);
 
 		} else if recipient_id == constants::ITEM_ID_BEAN && gift_id == constants::ITEM_ID_POTION {
-			self.inventory.remove_item_certain(gift_id);
+			self.inventory.borrow_mut().remove_item_certain(gift_id);
 			self.remove_item_from_current(recipient_id);
 			self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_PLANT).clone(), true);
 			terminal::write_full(data.get_response(constants::STR_ID_POUR_POTION_BEAN));
 
 		} else if recipient_id == constants::ITEM_ID_BEAN && gift_id == constants::ITEM_ID_WATER && location_id == constants::LOCATION_ID_HOT {
-			self.inventory.remove_item_certain(gift_id);
+			self.inventory.borrow_mut().remove_item_certain(gift_id);
 			self.remove_item_from_current(recipient_id);
 			self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_BEANSTALK).clone(), true);
 			self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_BLOSSOM).clone(), true);
 			self.complete_achievement(data.get_puzzle(constants::PUZZLE_ID_BEANSTALK));
 
 		} else if recipient_id == constants::ITEM_ID_PLANT && gift_id == constants::ITEM_ID_POTION {
-			self.inventory.remove_item_certain(gift_id);
+			self.inventory.borrow_mut().remove_item_certain(gift_id);
 			self.remove_item_from_current(recipient_id);
 			self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_BEAN).clone(), true);
 			terminal::write_full(data.get_response(constants::STR_ID_POUR_POTION_PLANT));
 
 		} else if recipient_id == constants::ITEM_ID_MUSHROOM && gift_id == constants::ITEM_ID_WATER && location_id == constants::LOCATION_ID_SMALL {
-			self.inventory.remove_item_certain(gift_id);
+			self.inventory.borrow_mut().remove_item_certain(gift_id);
 			self.remove_item_from_current(recipient_id);
 			self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_TOADSTOOL).clone(), true);
 			self.location.borrow_mut().set_direction(Direction::North, Some(data.get_location_certain(constants::LOCATION_ID_TOADSTOOL).clone()));
 			self.complete_achievement(data.get_puzzle(constants::PUZZLE_ID_MUSHROOM));
 
 		} else if gift_liquid { // Default response for liquids
-			self.inventory.remove_item_certain(gift_id);
+			self.inventory.borrow_mut().remove_item_certain(gift_id);
 			terminal::write_full(&data.get_response_param(constants::STR_ID_POUR_LIQUID_DEFAULT, recipient.borrow().get_shortname()));
 
 		} else { // Default response for non-liquids
@@ -535,16 +537,17 @@ impl Player {
 	}
 
 	pub fn burn(&mut self, data: &DataCollection, item: &ItemRef) {
-		if !self.inventory.contains_item(constants::ITEM_ID_MATCHES) {
+		if !self.inventory.borrow().contains_item(constants::ITEM_ID_MATCHES) {
 			terminal::write_full(data.get_response(constants::STR_ID_NO_CARRY_BURN));
 			return;
 		}
 		let item_id = item.borrow().get_id();
+		let in_inventory = self.inventory.borrow().contains_item(item_id);
 		match item_id {
 			constants::ITEM_ID_BOOK => terminal::write_full(data.get_response(constants::STR_ID_PHILISTINE)),
 			constants::ITEM_ID_BREAD => {
-				if self.inventory.contains_item(item_id) {
-					self.inventory.remove_item_certain(item_id);
+				if in_inventory {
+					self.inventory.borrow_mut().remove_item_certain(item_id);
 				} else {
 					self.location.borrow_mut().remove_item_certain(item_id);
 				}
@@ -555,8 +558,8 @@ impl Player {
 			constants::ITEM_ID_LAMP => terminal::write_full(data.get_response(constants::STR_ID_NO_BURN_LAMP)),
 			constants::ITEM_ID_MATCHES => terminal::write_full(data.get_response(constants::STR_ID_NO_BURN_MATCHES)),
 			constants::ITEM_ID_TOAST => {
-				if self.inventory.contains_item(item_id) {
-					self.inventory.remove_item_certain(item_id);
+				if in_inventory {
+					self.inventory.borrow_mut().remove_item_certain(item_id);
 				} else {
 					self.location.borrow_mut().remove_item_certain(item_id);
 				}
@@ -631,13 +634,13 @@ impl Player {
 		let item_id = item.borrow().get_id();
 		match item_id {
 			constants::ITEM_ID_KOHLRABI => {
-			    self.inventory.remove_item_certain(constants::ITEM_ID_KOHLRABI);
+			    self.inventory.borrow_mut().remove_item_certain(constants::ITEM_ID_KOHLRABI);
 			    let stew = data.get_item_by_id_certain(constants::ITEM_ID_STEW);
 			    cauldron.borrow_mut().set_within(Some(stew.clone()));
 			    terminal::write_full(data.get_response(constants::STR_ID_COOK_CABBAGE));
 			},
 			constants::ITEM_ID_RADISHES => {
-				self.inventory.remove_item_certain(constants::ITEM_ID_RADISHES);
+				self.inventory.borrow_mut().remove_item_certain(constants::ITEM_ID_RADISHES);
 				let elixir = data.get_item_by_id_certain(constants::ITEM_ID_ELIXIR);
 				cauldron.borrow_mut().set_within(Some(elixir.clone()));
 				self.complete_achievement(data.get_puzzle(constants::PUZZLE_ID_ELIXIR));
@@ -662,7 +665,7 @@ impl Player {
 		}
 
 		let item_id = item.borrow().get_id();
-		self.inventory.remove_item_certain(item_id);
+		self.inventory.borrow_mut().remove_item_certain(item_id);
 		terminal::write_full(data.get_response(constants::STR_ID_DRINK_LIQUID));
 
 		match item_id {
@@ -727,8 +730,9 @@ impl Player {
 					terminal::write_full(data.get_response(constants::STR_ID_EMPTY_LIQUID));
 				} else {
 					let item_id = item.borrow().get_id();
-					if self.inventory.contains_item(item_id) {
-						self.inventory.insert_item(within.clone());
+					let in_inventory = self.inventory.borrow().contains_item(item_id);
+					if in_inventory {
+						self.inventory.borrow_mut().insert_item(within.clone());
 						terminal::write_full(&data.get_response_param(constants::STR_ID_EMPTY_CARRY, &within.borrow().get_shortname()));
 					} else {
 						self.location.borrow_mut().insert_item(within.clone(), true);
@@ -787,7 +791,7 @@ impl Player {
 		if is_recipient {
 			self.feed_dative(data, item);
 		} else {
-			if !self.inventory.contains_item(item.borrow().get_id()) {
+			if !self.inventory.borrow().contains_item(item.borrow().get_id()) {
 				terminal::write_full(&data.get_response_param(constants::STR_ID_NO_HAVE_INVENTORY, &item.borrow().get_shortname()));
 				return;
 			}
@@ -806,7 +810,8 @@ impl Player {
 			None => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_WHO_WHAT)),
 			Some(indirect) => {
 				let indirect_id = indirect.borrow().get_id();
-				if self.inventory.contains_item(indirect_id) || self.location.borrow().contains_item(indirect_id) {
+				let in_inventory = self.inventory.borrow().contains_item(indirect_id);
+				if in_inventory || self.location.borrow().contains_item(indirect_id) {
 					self.feed_item_unknown(data, direct, indirect);
 				} else {
 					terminal::write_full(&data.get_response_param(constants::STR_ID_NO_SEE_HERE, &indirect.borrow().get_shortname()));
@@ -826,7 +831,8 @@ impl Player {
 			None => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_WHO_WHAT)),
 			Some(direct) => {
 				let direct_id = direct.borrow().get_id();
-				if self.inventory.contains_item(direct_id) {
+				let in_inventory = self.inventory.borrow().contains_item(direct_id);
+				if in_inventory {
 					self.feed_item_unknown(data, direct, indirect);
 				} else {
 					terminal::write_full(&data.get_response_param(constants::STR_ID_NO_HAVE_INVENTORY, &direct.borrow().get_shortname()));
@@ -845,7 +851,7 @@ impl Player {
 	}
 
 	pub fn fish(&mut self, data: &DataCollection) {
-		if !self.inventory.contains_item(constants::ITEM_ID_NET) {
+		if !self.inventory.borrow().contains_item(constants::ITEM_ID_NET) {
 			terminal::write_full(data.get_response(constants::STR_ID_NO_EQUIPMENT));
 			return;
 		}
@@ -855,11 +861,11 @@ impl Player {
 			return;
 		}
 		let nugget = data.get_item_by_id_certain(constants::ITEM_ID_NUGGET);
-		if !self.inventory.can_fit(nugget) {
+		if !self.inventory.borrow().can_fit(nugget) {
 			terminal::write_full(data.get_response(constants::STR_ID_GLINT_HEAVY));
 			return;
 		}
-		self.inventory.insert_item(nugget.clone());
+		self.inventory.borrow_mut().insert_item(nugget.clone());
 		self.complete_obstruction_achievement(constants::ITEM_ID_GLINT, data.get_puzzle(constants::PUZZLE_ID_GLINT));
 	}
 
@@ -869,11 +875,12 @@ impl Player {
 		match item_id {
 			constants::ITEM_ID_SHIP => {
 				let ship_present = self.location.borrow().contains_item(constants::ITEM_ID_SHIP);
+				let key_present = self.inventory.borrow().contains_item(constants::ITEM_ID_KEY);
 				if ship_present {
 					terminal::write_full(data.get_response(constants::STR_ID_NOT_IN_SHIP));
 				} else if loc_id != constants::LOCATION_ID_SHIP {
 					terminal::write_full(&data.get_response_param(constants::STR_ID_NO_SEE_HERE, item.borrow().get_shortname()));
-				} else if !self.inventory.contains_item(constants::ITEM_ID_KEY) {
+				} else if !key_present {
 					terminal::write_full(data.get_response(constants::STR_ID_NO_KEY));
 				} else {
 					self.complete_achievement(data.get_puzzle(constants::PUZZLE_ID_ESCAPE));
@@ -893,7 +900,8 @@ impl Player {
 			None => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_WHO_WHAT)),
 			Some(recipient) => {
 				let recipient_id = recipient.borrow().get_id();
-				if self.inventory.contains_item(recipient_id) || self.location.borrow().contains_item(recipient_id) {
+				let in_inventory = self.inventory.borrow().contains_item(recipient_id);
+				if in_inventory || self.location.borrow().contains_item(recipient_id) {
 					self.transfer_item(data, item, recipient);
 				} else {
 					terminal::write_full(&data.get_response_param(constants::STR_ID_NO_SEE_HERE, &recipient.borrow().get_shortname()));
@@ -983,7 +991,7 @@ impl Player {
 									response_code = constants::STR_ID_BUCCANEER_SNEAK_PAST;
 								}
 							} else if obstruction.borrow().is(constants::ITEM_ID_CORSAIR) {
-								if self.inventory.contains_item(constants::ITEM_ID_BOOTS) {
+								if self.inventory.borrow().contains_item(constants::ITEM_ID_BOOTS) {
 									death = true;
 									response_code = constants::STR_ID_CORSAIR_SNEAK_PAST;
 								} else {
@@ -995,7 +1003,7 @@ impl Player {
 					}
 				}
 
-				if !next.borrow().has_or_contains_with_property(constants::CTRL_LOC_HAS_AIR, constants::CTRL_ITEM_GIVES_AIR) && !self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_AIR) { // Refuse to proceed if there is no air at the next location
+				if !next.borrow().has_or_contains_with_property(constants::CTRL_LOC_HAS_AIR, constants::CTRL_ITEM_GIVES_AIR) && !self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_AIR) { // Refuse to proceed if there is no air at the next location
 					return (None, false, Some(constants::STR_ID_NO_AIR));
 				}
 				if dir == Direction::Up && self.has_gravity() && self_loc.has_property(constants::CTRL_LOC_NEEDSNO_GRAVITY) { // Gravity is preventing the player from going up
@@ -1004,7 +1012,7 @@ impl Player {
 				if dir == Direction::Down && self.has_gravity() && !self_loc.has_property(constants::CTRL_LOC_HAS_FLOOR) {
 					return (None, false, Some(constants::STR_ID_DOWN_KILL));
 				}
-				if !next.borrow().has_property(constants::CTRL_LOC_HAS_LAND) && !self.inventory.contains_with_property(constants::CTRL_ITEM_GIVES_LAND) {
+				if !next.borrow().has_property(constants::CTRL_LOC_HAS_LAND) && !self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_LAND) {
 					return (None, false, Some(constants::STR_ID_OPEN_WATER));
 				}
 
@@ -1037,7 +1045,7 @@ impl Player {
 		if !item.borrow().has_property(constants::CTRL_ITEM_LIQUID) {
 			self.unlink_item(data, item);
 		}
-		self.inventory.insert_item(item.clone());
+		self.inventory.borrow_mut().insert_item(item.clone());
 		terminal::write_full(&data.get_response_param(constants::STR_ID_GRABBED, item.borrow().get_shortname()));
 	}
 
@@ -1066,7 +1074,8 @@ impl Player {
 			None => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_WHO_WHAT)),
 			Some(container) => {
 				let container_id = container.borrow().get_id();
-				if self.inventory.contains_item(container_id) || self.location.borrow().contains_item(container_id) {
+				let in_inventory = self.inventory.borrow().contains_item(container_id);
+				if in_inventory || self.location.borrow().contains_item(container_id) {
 					self.insert_final(data, item, container)
 				} else {
 					terminal::write_full(&data.get_response_param(constants::STR_ID_NO_SEE_HERE, container.borrow().get_shortname()));
@@ -1086,25 +1095,26 @@ impl Player {
 
 		let item_id = item.borrow().get_id();
 		let mut self_loc = self.location.borrow_mut();
+		let in_inventory = self.inventory.borrow().contains_item(item_id);
 		if self_loc.contains_item(item_id) {
-			if !self.inventory.can_fit(&item) {
+			if !self.inventory.borrow().can_fit(&item) {
 				terminal::write_full(data.get_response(constants::STR_ID_ITEM_HEAVY));
 				return;
 			}
 			self_loc.remove_item_certain(item_id);
-		} else if self.inventory.contains_item(item_id) {
-			self.inventory.remove_item_certain(item_id);
+		} else if in_inventory {
+			self.inventory.borrow_mut().remove_item_certain(item_id);
 		}
 		container.borrow_mut().set_within(Some(item.clone()));
 		terminal::write_full(data.get_response(constants::STR_ID_INSERTED));
 	}
 
 	pub fn knit(&mut self, data: &DataCollection) {
-		if !self.inventory.contains_item(constants::ITEM_ID_NEEDLES) || !self.inventory.contains_item(constants::ITEM_ID_YARN) {
+		if !self.inventory.borrow().contains_item(constants::ITEM_ID_NEEDLES) || !self.inventory.borrow().contains_item(constants::ITEM_ID_YARN) {
 			terminal::write_full(data.get_response(constants::STR_ID_NO_EQUIPMENT));
 			return;
 		}
-		self.inventory.remove_item_certain(constants::ITEM_ID_YARN);
+		self.inventory.borrow_mut().remove_item_certain(constants::ITEM_ID_YARN);
 		self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_JUMPER).clone(), true);
 		self.complete_achievement(data.get_puzzle(constants::PUZZLE_ID_JUMPER));
 	}
@@ -1161,7 +1171,8 @@ impl Player {
 			None => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_WHO_WHAT)),
 			Some(recipient) => {
 				let recipient_id = recipient.borrow().get_id();
-				if self.inventory.contains_item(recipient_id) || self.location.borrow().contains_item(recipient_id) {
+				let in_inventory = self.inventory.borrow().contains_item(recipient_id);
+				if in_inventory || self.location.borrow().contains_item(recipient_id) {
 					self.transfer_item(data, item, recipient);
 				} else {
 					terminal::write_full(&data.get_response_param(constants::STR_ID_NO_SEE_HERE, &recipient.borrow().get_shortname()));
@@ -1198,12 +1209,13 @@ impl Player {
 		match item_id {
 			constants::ITEM_ID_CONSOLE_FIXED => terminal::write_full(data.get_response(constants::STR_ID_ALREADY_REPAIRED)),
 			constants::ITEM_ID_CONSOLE_BROKEN => {
-				if !self.inventory.contains_item(constants::ITEM_ID_WIRE) {
+				let wire_present = self.inventory.borrow().contains_item(constants::ITEM_ID_WIRE);
+				if !wire_present {
 					terminal::write_full(data.get_response(constants::STR_ID_NO_COMPONENT));
 				} else {
 					let panel = data.get_item_by_id_certain(constants::ITEM_ID_CONSOLE_FIXED);
 					self.location.borrow_mut().insert_item(panel.clone(), true);
-					self.inventory.remove_item_certain(constants::ITEM_ID_WIRE);
+					self.inventory.borrow_mut().remove_item_certain(constants::ITEM_ID_WIRE);
 					self.complete_obstruction_achievement(constants::ITEM_ID_CONSOLE_BROKEN, data.get_puzzle(constants::PUZZLE_ID_CONSOLE));
 				}
 			},
@@ -1220,7 +1232,7 @@ impl Player {
 				self.rob_pirate(data, item, constants::ITEM_ID_MEDALLION, kill_condition, constants::STR_ID_BUCCANEER_SNEAK_ROB, constants::PUZZLE_ID_BUCCANEER);
 			},
 			constants::ITEM_ID_CORSAIR => {
-				let kill_condition = self.inventory.contains_item(constants::ITEM_ID_BOOTS);
+				let kill_condition = self.inventory.borrow().contains_item(constants::ITEM_ID_BOOTS);
 				self.rob_pirate(data, item, constants::ITEM_ID_KEY, kill_condition, constants::STR_ID_CORSAIR_SNEAK_ROB, constants::PUZZLE_ID_CORSAIR);
 			},
 			_ => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW)),
@@ -1242,7 +1254,7 @@ impl Player {
 			constants::ITEM_ID_MARBLE => {
 				let loc_id = self.location.borrow().get_id();
 				let corsair_present = self.location.borrow().contains_item(constants::ITEM_ID_CORSAIR);
-				self.inventory.remove_item_certain(item_id);
+				self.inventory.borrow_mut().remove_item_certain(item_id);
 				terminal::write_full(data.get_response(constants::STR_ID_ROLL_MARBLE));
 				if loc_id == constants::LOCATION_ID_CHECKPOINT && corsair_present {
 					let under = data.get_location_certain(constants::LOCATION_ID_UNDER);
@@ -1310,7 +1322,7 @@ impl Player {
 			terminal::write_full(data.get_response(constants::STR_ID_NO_SEE_DARKNESS));
 			return;
 		}
-		if self.location.borrow().is(constants::LOCATION_ID_REFLECTION) || self.inventory.contains_item(constants::ITEM_ID_MIRROR) {
+		if self.location.borrow().is(constants::LOCATION_ID_REFLECTION) || self.inventory.borrow().contains_item(constants::ITEM_ID_MIRROR) {
 			if self.has_invisibility() {
 				terminal::write_full(data.get_response(constants::STR_ID_SEE_INVISIBLE));
 			} else if self.strong {
@@ -1325,7 +1337,7 @@ impl Player {
 
 	pub fn take(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
-		if self.inventory.contains_item(item_id) && !item.borrow().has_property(constants::CTRL_ITEM_LIQUID) {
+		if self.inventory.borrow().contains_item(item_id) && !item.borrow().has_property(constants::CTRL_ITEM_LIQUID) {
 			terminal::write_full(data.get_response(constants::STR_ID_ALREADY_HAVE));
 			return;
 		}
@@ -1335,7 +1347,7 @@ impl Player {
 			return;
 		}
 
-		if !self.inventory.can_fit(&item) { // Can only carry so much at a time
+		if !self.inventory.borrow().can_fit(&item) { // Can only carry so much at a time
 			terminal::write_full(data.get_response(constants::STR_ID_ITEM_HEAVY));
 			return;
 		}
@@ -1346,7 +1358,7 @@ impl Player {
 		}
 
 		self.location.borrow_mut().remove_item_certain(item_id);
-		self.inventory.insert_item(item.clone());
+		self.inventory.borrow_mut().insert_item(item.clone());
 
 		if !self.has_light() {
 			terminal::write_full(&data.get_response_param(constants::STR_ID_TAKE_NO_LIGHT, item.borrow().get_shortname()));
@@ -1359,7 +1371,7 @@ impl Player {
 	}
 
 	pub fn tether(&mut self, data: &DataCollection, item: &ItemRef) {
-		if !self.inventory.contains_item(constants::ITEM_ID_CABLE) {
+		if !self.inventory.borrow().contains_item(constants::ITEM_ID_CABLE) {
 			terminal::write_full(&data.get_response_param(constants::STR_ID_NO_TETHER, item.borrow().get_shortname()));
 			return;
 		}
@@ -1371,13 +1383,13 @@ impl Player {
 			None => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_WHO_WHAT)),
 			Some(anchor) => {
 				let anchor_id = anchor.borrow().get_id();
-				if !self.inventory.contains_item(anchor_id) && !self.location.borrow().contains_item(anchor_id) {
+				if !self.inventory.borrow().contains_item(anchor_id) && !self.location.borrow().contains_item(anchor_id) {
 					terminal::write_full(&data.get_response_param(constants::STR_ID_NO_SEE_HERE, anchor.borrow().get_shortname()));
 					return;
 				}
 				let item_id = item.borrow().get_id();
 				if item_id == constants::ITEM_ID_SHUTTLE && anchor_id == constants::ITEM_ID_SHIP {
-					self.inventory.remove_item_certain(constants::ITEM_ID_CABLE);
+					self.inventory.borrow_mut().remove_item_certain(constants::ITEM_ID_CABLE);
 					self.complete_achievement(data.get_puzzle(constants::PUZZLE_ID_TETHER));
 				} else {
 					terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW));
@@ -1397,7 +1409,7 @@ impl Player {
 
 	pub fn wizard(&mut self, data: &DataCollection) {
 		let wizard_present = self.location.borrow().contains_item(constants::ITEM_ID_WIZARD);
-		let mirror_present = self.inventory.contains_item(constants::ITEM_ID_MIRROR);
+		let mirror_present = self.inventory.borrow().contains_item(constants::ITEM_ID_MIRROR);
 		if wizard_present {
 			if self.has_invisibility() {
 				terminal::write_full(data.get_response(constants::STR_ID_WIZARDED));

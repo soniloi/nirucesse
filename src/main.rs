@@ -18,12 +18,15 @@ mod location_collection;
 mod player;
 mod terminal;
 
+use std::cell::RefCell;
 use std::env;
 use std::process;
+use std::rc::Rc;
 
 use data_collection::DataCollection;
 use file_buffer::FileBuffer;
 use game::Game;
+use inventory::Inventory;
 use player::Player;
 
 fn main() {
@@ -56,6 +59,7 @@ fn init_data(filename: &String) -> DataCollection {
 }
 
 fn init_player(data: &DataCollection) -> Player {
-	let start_loc = data.get_location_certain(constants::LOCATION_ID_WAKE_INITIAL);
-	Player::new(start_loc.clone())
+    let start_loc = data.get_location_certain(constants::LOCATION_ID_WAKE_INITIAL);
+    let inventory = Rc::new(RefCell::new(Box::new(Inventory::new(constants::INVENTORY_CAPACITY))));
+	Player::new(start_loc.clone(), inventory)
 }

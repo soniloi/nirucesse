@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 
 use constants;
+use data_collection::InventoryRef;
 use data_collection::ItemRef;
 use data_collection::LocationRef;
-use inventory::Inventory;
 
 #[derive(PartialEq, Eq, Hash, Clone, Copy)]
 pub enum Direction {
@@ -149,7 +149,7 @@ impl Location {
 	}
 
 	// Release items that are marked as still in inventory, i.e. only at this location temporarily
-	pub fn release_temporary(&mut self, inventory: &mut Inventory) {
+	pub fn release_temporary(&mut self, inventory: InventoryRef) {
 		let mut to_remove: Vec<ItemRef> = Vec::new();
 		for item in self.items.values() {
 			if item.borrow().get_location_stated() == constants::LOCATION_ID_INVENTORY {
@@ -158,7 +158,7 @@ impl Location {
 		}
 		for item in to_remove {
 			self.items.remove(&item.borrow().get_id());
-			inventory.insert_item(item);
+			inventory.borrow_mut().insert_item(item);
 		}
 	}
 
