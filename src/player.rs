@@ -378,7 +378,7 @@ impl Player {
 	fn unlink_item(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
 		let previous_id = item.borrow().get_location_true();
-		if previous_id == constants::LOCATION_ID_INVENTORY { // Item is inventory
+		if previous_id == constants::LOCATION_ID_INVENTORY_MAIN { // Item is inventory
 			self.inventory.borrow_mut().remove_item_certain(item_id);
 		} else if previous_id < constants::ITEM_INDEX_START { // Item is at some location
 			data.get_location_certain(previous_id).borrow_mut().remove_item_certain(item_id);

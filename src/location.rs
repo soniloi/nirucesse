@@ -152,7 +152,7 @@ impl Location {
 	pub fn release_temporary(&mut self, inventory: InventoryRef) {
 		let mut to_remove: Vec<ItemRef> = Vec::new();
 		for item in self.items.values() {
-			if item.borrow().get_location_stated() == constants::LOCATION_ID_INVENTORY {
+			if item.borrow().get_location_stated() == constants::LOCATION_ID_INVENTORY_MAIN {
 				to_remove.push(item.clone());
 			}
 		}
