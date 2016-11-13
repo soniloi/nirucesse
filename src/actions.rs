@@ -190,6 +190,10 @@ pub fn do_pour(data: &DataCollection, arg: String, player: &mut Player, arg_type
 	manipulate_item(data, arg, arg_type, player, Player::pour);
 }
 
+pub fn do_push(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	manipulate_item(data, arg, arg_type, player, Player::push);
+}
+
 pub fn do_quench(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, arg_type, player, Player::quench);
 }

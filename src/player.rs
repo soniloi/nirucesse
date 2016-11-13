@@ -1170,6 +1170,17 @@ impl Player {
 		}
 	}
 
+	pub fn push(&mut self, data: &DataCollection, item: &ItemRef) {
+		let item_id = item.borrow().get_id();
+		match item_id {
+			constants::ITEM_ID_BUTTON => {
+				let button_on = item.borrow().is_on();
+				self.switch_item(data, item, !button_on);
+			},
+			_ => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW)),
+		}
+	}
+
 	pub fn quench(&mut self, data: &DataCollection, item: &ItemRef) {
 		self.switch_item(data, item, false);
 	}
