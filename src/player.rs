@@ -388,15 +388,14 @@ impl Player {
 	}
 
 	fn teleport(&mut self, data: &DataCollection, tp_map: &HashMap<u32, u32>, permanent: bool,
-		response_code_no_teleport: u32, response_code_teleport: u32) {
+		response_code_no_teleport: u32, response_code_teleport: u32, inventory_id_next: u32) {
 		let loc_id = self.location.borrow().get_id();
 		match tp_map.get(&loc_id) {
 			None => terminal::write_full(data.get_response(response_code_no_teleport)),
 			Some(next_id) => {
-				self.inventory.borrow_mut().drop_all(&self.location, data.get_location_certain(self.location_id_safe), false, permanent);
+				self.inventory = data.get_inventory(inventory_id_next).clone();
 				self.location = data.get_location_certain(*next_id).clone();
 				self.previous = None;
-				self.location.borrow_mut().release_temporary(self.inventory.clone());
 				terminal::write_full(data.get_response(response_code_teleport));
 			},
 		}
@@ -1314,7 +1313,8 @@ impl Player {
 	}
 
 	pub fn sleep(&mut self, data: &DataCollection) {
-		self.teleport(data, data.get_tp_map_sleep(), false, constants::STR_ID_NO_SLEEP, constants::STR_ID_SLEEP);
+		let inventory_id_next = if self.location.borrow().is(constants::LOCATION_ID_SLEEP_2) {constants::INVENTORY_ID_MAIN} else {constants::INVENTORY_ID_DREAM};
+		self.teleport(data, data.get_tp_map_sleep(), false, constants::STR_ID_NO_SLEEP, constants::STR_ID_SLEEP, inventory_id_next);
 	}
 
 	pub fn stare(&mut self, data: &DataCollection) {
@@ -1399,7 +1399,8 @@ impl Player {
 	}
 
 	pub fn tezazzle(&mut self, data: &DataCollection) {
-		self.teleport(data, data.get_tp_map_witch(), true, constants::STR_ID_NOTHING_HAPPENS, constants::STR_ID_WITCHED);
+		let inventory_id_next = if self.location.borrow().is(constants::LOCATION_ID_WITCH_1) {constants::INVENTORY_ID_MAIN} else {constants::INVENTORY_ID_CHASM};
+		self.teleport(data, data.get_tp_map_witch(), true, constants::STR_ID_NOTHING_HAPPENS, constants::STR_ID_WITCHED, inventory_id_next);
 	}
 
 	pub fn throw(&mut self, data: &DataCollection, item: &ItemRef) {

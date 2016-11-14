@@ -20,7 +20,10 @@ pub const DEATH_DIVISOR_SMASHED: u32 = 1;
 
 // Inventory stuff
 pub const INVENTORY_CAPACITY_NORMAL: u32 = 16;
+pub const INVENTORY_CAPACITY_DREAM: u32 = 0;
 pub const INVENTORY_ID_MAIN: u32 = 0;
+pub const INVENTORY_ID_CHASM: u32 = 1;
+pub const INVENTORY_ID_DREAM: u32 = 2;
 
 // ID numbers of specific locations
 pub const LOCATION_ID_AIRLOCKE: u32 = 31; // The airlock just off the Recreation Hub

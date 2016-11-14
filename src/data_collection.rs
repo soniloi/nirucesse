@@ -85,6 +85,8 @@ impl DataCollection {
 
 	fn init_inventories(&mut self) {
 		self.init_inventory(constants::INVENTORY_ID_MAIN, constants::INVENTORY_CAPACITY_NORMAL);
+		self.init_inventory(constants::INVENTORY_ID_CHASM, constants::INVENTORY_CAPACITY_NORMAL);
+		self.init_inventory(constants::INVENTORY_ID_DREAM, constants::INVENTORY_CAPACITY_DREAM);
 	}
 
 	// Assign a turn for an event to be printed on
