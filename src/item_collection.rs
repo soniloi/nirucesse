@@ -102,7 +102,7 @@ impl ItemCollection {
 				None => panic!("Unable to find location with ID: {}", initial_id),
 				Some(loc) => loc,
 			};
-			initial_loc.borrow_mut().insert_item(item.clone(), true);
+			initial_loc.borrow_mut().insert_item(item.clone());
 		} else {
 			let initial_container = match self.get_by_id(initial_id) {
 				None => panic!("Unable to find container with ID: {}", initial_id),
