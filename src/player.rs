@@ -377,7 +377,7 @@ impl Player {
 	// FIXME: find a better solution to this
 	fn unlink_item(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
-		let previous_id = item.borrow().get_location_true();
+		let previous_id = item.borrow().get_location();
 		if previous_id == constants::LOCATION_ID_INVENTORY_MAIN { // Item is inventory
 			self.inventory.borrow_mut().remove_item_certain(item_id);
 		} else if previous_id < constants::ITEM_INDEX_START { // Item is at some location
@@ -387,7 +387,7 @@ impl Player {
 		}
 	}
 
-	fn teleport(&mut self, data: &DataCollection, tp_map: &HashMap<u32, u32>, permanent: bool,
+	fn teleport(&mut self, data: &DataCollection, tp_map: &HashMap<u32, u32>,
 		response_code_no_teleport: u32, response_code_teleport: u32, inventory_id_next: u32) {
 		let loc_id = self.location.borrow().get_id();
 		match tp_map.get(&loc_id) {
@@ -416,17 +416,17 @@ impl Player {
 			let transmitter_on = data.get_item_by_id_certain(constants::ITEM_ID_TRANSMITTER).borrow().is_on();
 			if gift_id == constants::ITEM_ID_CHART {
 				self.inventory.borrow_mut().remove_item_certain(gift_id);
-				gift.borrow_mut().set_locations(constants::LOCATION_ID_GRAVEYARD);
+				gift.borrow_mut().set_location(constants::LOCATION_ID_GRAVEYARD);
 				self.complete_achievement(data.get_puzzle(constants::PUZZLE_ID_CHART));
 			} else if gift_id == constants::ITEM_ID_TRANSMITTER && chart_used && transmitter_on { // Alien cannot operate our machinery, so needs the transmitter to be on
 				self.inventory.borrow_mut().remove_item_certain(gift_id);
-				gift.borrow_mut().set_locations(constants::LOCATION_ID_GRAVEYARD);
+				gift.borrow_mut().set_location(constants::LOCATION_ID_GRAVEYARD);
 				self.complete_achievement(data.get_puzzle(constants::PUZZLE_ID_TRANSMITTER));
 			} else if gift_id == constants::ITEM_ID_LENS && transmitter_used {
 				let pendant = data.get_item_by_id_certain(constants::ITEM_ID_PENDANT);
 				self.location.borrow_mut().insert_item(pendant.clone(), true);
 				self.inventory.borrow_mut().remove_item_certain(gift_id);
-				gift.borrow_mut().set_locations(constants::LOCATION_ID_GRAVEYARD);
+				gift.borrow_mut().set_location(constants::LOCATION_ID_GRAVEYARD);
 				self.complete_obstruction_achievement(constants::ITEM_ID_ALIEN, data.get_puzzle(constants::PUZZLE_ID_LENS));
 			} else {
 				terminal::write_full(data.get_response(constants::STR_ID_ALIEN_NO_USE));
@@ -1314,7 +1314,7 @@ impl Player {
 
 	pub fn sleep(&mut self, data: &DataCollection) {
 		let inventory_id_next = if self.location.borrow().is(constants::LOCATION_ID_SLEEP_2) {constants::INVENTORY_ID_MAIN} else {constants::INVENTORY_ID_DREAM};
-		self.teleport(data, data.get_tp_map_sleep(), false, constants::STR_ID_NO_SLEEP, constants::STR_ID_SLEEP, inventory_id_next);
+		self.teleport(data, data.get_tp_map_sleep(), constants::STR_ID_NO_SLEEP, constants::STR_ID_SLEEP, inventory_id_next);
 	}
 
 	pub fn stare(&mut self, data: &DataCollection) {
@@ -1400,7 +1400,7 @@ impl Player {
 
 	pub fn tezazzle(&mut self, data: &DataCollection) {
 		let inventory_id_next = if self.location.borrow().is(constants::LOCATION_ID_WITCH_1) {constants::INVENTORY_ID_MAIN} else {constants::INVENTORY_ID_CHASM};
-		self.teleport(data, data.get_tp_map_witch(), true, constants::STR_ID_NOTHING_HAPPENS, constants::STR_ID_WITCHED, inventory_id_next);
+		self.teleport(data, data.get_tp_map_witch(), constants::STR_ID_NOTHING_HAPPENS, constants::STR_ID_WITCHED, inventory_id_next);
 	}
 
 	pub fn throw(&mut self, data: &DataCollection, item: &ItemRef) {

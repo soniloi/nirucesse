@@ -9,8 +9,7 @@ pub struct Item {
 	longname: String,
 	description: String,
 	writing: Option<String>,
-	location_stated: u32,
-	location_true: u32,
+	location: u32,
 	on: bool,
 	within: Option<ItemRef>,
 }
@@ -26,8 +25,7 @@ impl Item {
 			longname: longname,
 			description: description,
 			writing: writing,
-			location_stated: location,
-			location_true: location,
+			location: location,
 			on: false,
 			within: None,
 		}
@@ -38,15 +36,15 @@ impl Item {
 	}
 
 	pub fn is_new(&self) -> bool {
-		self.location_true == constants::LOCATION_ID_NURSERY
+		self.location == constants::LOCATION_ID_NURSERY
 	}
 
 	pub fn retire(&mut self) {
-		self.location_true = constants::LOCATION_ID_GRAVEYARD;
+		self.location = constants::LOCATION_ID_GRAVEYARD;
 	}
 
 	pub fn is_retired(&self) -> bool {
-		self.location_true == constants::LOCATION_ID_GRAVEYARD
+		self.location == constants::LOCATION_ID_GRAVEYARD
 	}
 
 	// FIXME: probably refactor this out
@@ -67,25 +65,12 @@ impl Item {
 		}
 	}
 
-	pub fn get_location_stated(&self) -> u32 {
-		self.location_stated
+	pub fn get_location(&self) -> u32 {
+		self.location
 	}
 
-	pub fn get_location_true(&self) -> u32 {
-		self.location_true
-	}
-
-	pub fn set_location_stated(&mut self, loc: u32) {
-		self.location_stated = loc;
-	}
-
-	pub fn set_location_true(&mut self, loc: u32) {
-		self.location_true = loc;
-	}
-
-	pub fn set_locations(&mut self, loc: u32) {
-		self.location_stated = loc;
-		self.location_true = loc;
+	pub fn set_location(&mut self, loc: u32) {
+		self.location = loc;
 	}
 
 	pub fn has_property(&self, property_code: u32) -> bool {
@@ -337,7 +322,7 @@ impl Item {
 	pub fn set_within(&mut self, within: Option<ItemRef>) {
 		match within.clone() {
 			None => {},
-			Some(with) => with.borrow_mut().set_locations(self.id),
+			Some(with) => with.borrow_mut().set_location(self.id),
 		}
 		self.within = within;
 	}
