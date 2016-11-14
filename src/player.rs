@@ -168,7 +168,7 @@ impl Player {
 	}
 
 	pub fn drop_on_death(&mut self, location_safe: &LocationRef) {
-		self.inventory.borrow_mut().drop_all(&self.location, location_safe, true);
+		self.inventory.borrow_mut().drop_on_death(&self.location, location_safe);
 	}
 
 	fn get_effective_description(&self, haze_description: String, darkness_description: String, default_description: String) -> String {
