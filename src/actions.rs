@@ -200,6 +200,7 @@ pub fn do_quench(data: &DataCollection, arg: String, player: &mut Player, arg_ty
 
 #[allow(unused_variables)]
 pub fn do_quit(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	player.decrement_instructions(); // Quitting does not count as an instruction
 	player.set_playing(false);
 }
 
