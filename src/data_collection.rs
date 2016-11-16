@@ -79,7 +79,7 @@ impl DataCollection {
 	}
 
 	fn init_inventory(&mut self, inventory_id: u32, inventory_capacity: u32) {
-		let inventory = Rc::new(RefCell::new(Box::new(Inventory::new(inventory_capacity))));
+		let inventory = Rc::new(RefCell::new(Box::new(Inventory::new(inventory_id, inventory_capacity))));
 		self.inventories.insert(inventory_id, inventory);
 	}
 

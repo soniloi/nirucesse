@@ -5,14 +5,16 @@ use data_collection::ItemRef;
 use data_collection::LocationRef;
 
 pub struct Inventory {
+	id: u32,
 	capacity: u32,
 	items: HashMap<u32, ItemRef>,
 }
 
 impl Inventory {
 
-	pub fn new(capacity: u32) -> Inventory {
+	pub fn new(id: u32, capacity: u32) -> Inventory {
 		Inventory {
+			id: id,
 			capacity: capacity,
 			items: HashMap::new(),
 		}
@@ -31,7 +33,7 @@ impl Inventory {
 	}
 
 	pub fn insert_item(&mut self, item: ItemRef) {
-		item.borrow_mut().set_location(constants::LOCATION_ID_INVENTORY_MAIN);
+		item.borrow_mut().set_location(self.id);
 		self.items.insert(item.borrow().get_id(), item.clone());
 	}
 
