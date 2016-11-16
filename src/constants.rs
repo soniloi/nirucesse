@@ -36,7 +36,6 @@ pub const LOCATION_ID_DOCKINGCONTROL: u32 = 19; // The docking control area
 pub const LOCATION_ID_GARDEN: u32 = 27; // The garden, at the foot of the tree
 pub const LOCATION_ID_GRAVEYARD: u32 = 44; // Where retired items go
 pub const LOCATION_ID_HOT: u32 = 87; // Hot room
-pub const LOCATION_ID_INVENTORY_MAIN: u32 = 0; // Main inventory
 pub const LOCATION_ID_NURSERY: u32 = 3; // Default location of items before they appear after solving puzzles etc.
 pub const LOCATION_ID_OBSERVATORY: u32 = 126; // Where the alien hangs out
 pub const LOCATION_ID_REFLECTION: u32 = 120; // The mirror room
@@ -60,7 +59,11 @@ pub const LOCATION_ID_SAFE_PIRATES: u32 = 50; // Safe location after pirates arr
 pub const LOCATION_ID_WAKE_INITIAL: u32 = 9; // Wake location before pirates arrive
 pub const LOCATION_ID_WAKE_PIRATES: u32 = 79; // Wake location after pirates arrive
 
-pub const ITEM_INDEX_START: u32 = 1000; // ID numbers before this index are used for locations, everything from here on for items
+pub const INDEX_START_INVENTORY: u32 = 0; // Location ids between this and INDEX_START_LOCATION are used for inventories
+pub const INDEX_START_LOCATION: u32 = 3; // Location ids between this and INDEX_START_ITEM are used for locations
+pub const INDEX_START_ITEM: u32 = 1000; // Location ids from this up is for items
+pub const INDEX_STOP_INVENTORY: u32 = INDEX_START_LOCATION - 1;
+pub const INDEX_STOP_LOCATION: u32 = INDEX_START_ITEM - 1;
 
 // ID numbers of specific items
 pub const ITEM_ID_ACORN: u32 = 1082;

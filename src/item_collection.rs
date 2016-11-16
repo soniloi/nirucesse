@@ -67,7 +67,7 @@ impl ItemCollection {
 			}
 		}
 
-		self.validate(constants::ITEM_INDEX_START, expected_count + constants::ITEM_INDEX_START);
+		self.validate(constants::INDEX_START_ITEM, expected_count + constants::INDEX_START_ITEM);
 	}
 
 	fn parse_and_insert_item(&mut self, words: &Vec<&str>) -> (ItemRef, u32) {
@@ -97,7 +97,7 @@ impl ItemCollection {
 
 	fn set_initial(&self, locations: &mut LocationCollection, item: &ItemRef, initial_id: u32) {
 		// FIXME: tidy this up
-		if initial_id <= constants::ITEM_INDEX_START {
+		if initial_id <= constants::INDEX_START_ITEM {
 			let initial_loc = match locations.get(initial_id) {
 				None => panic!("Unable to find location with ID: {}", initial_id),
 				Some(loc) => loc,
