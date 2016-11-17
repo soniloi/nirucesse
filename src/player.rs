@@ -1,12 +1,12 @@
 use rand;
 use rand::Rng;
-use std::collections::HashMap;
 
 use constants;
 use data_collection::DataCollection;
 use data_collection::ItemRef;
 use data_collection::LocationRef;
 use data_collection::InventoryRef;
+use data_collection::TpMap;
 use location::Direction;
 use terminal;
 
@@ -385,14 +385,14 @@ impl Player {
 		}
 	}
 
-	fn teleport(&mut self, data: &DataCollection, tp_map: &HashMap<u32, u32>,
+	fn teleport(&mut self, data: &DataCollection, tp_map: &TpMap,
 		response_code_no_teleport: u32, response_code_teleport: u32, inventory_id_next: u32) {
 		let loc_id = self.location.borrow().get_id();
 		match tp_map.get(&loc_id) {
 			None => terminal::write_full(data.get_response(response_code_no_teleport)),
-			Some(next_id) => {
+			Some(nexts) => {
 				self.inventory = data.get_inventory(inventory_id_next).clone();
-				self.location = data.get_location_certain(*next_id).clone();
+				self.location = data.get_location_certain(nexts.0).clone();
 				self.previous = None;
 				terminal::write_full(data.get_response(response_code_teleport));
 			},

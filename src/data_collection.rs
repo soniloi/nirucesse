@@ -23,6 +23,7 @@ pub type CommandRef = GenericRcBox<Command>;
 pub type InventoryRef = GenericRcRefCellBox<Inventory>;
 pub type ItemRef = GenericRcRefCellBox<Item>;
 pub type LocationRef = GenericRcRefCellBox<Location>;
+pub type TpMap = HashMap<u32, (u32, u32)>;
 
 pub struct DataCollection {
 	commands: CommandCollection,
@@ -35,8 +36,8 @@ pub struct DataCollection {
 	events: InfoStringCollection,
 	inventories: HashMap<u32, InventoryRef>,
 	event_turns: HashMap<u32, u32>,
-	tp_map_sleep: HashMap<u32, u32>,
-	tp_map_witch: HashMap<u32, u32>,
+	tp_map_sleep: TpMap,
+	tp_map_witch: TpMap,
 	max_score: u32,
 }
 
@@ -107,10 +108,10 @@ impl DataCollection {
 
 	// Initialize teleport maps for sleep and witch rooms
 	fn init_tp_maps(&mut self) {
-		self.tp_map_sleep.insert(constants::LOCATION_ID_SLEEP_0, constants::LOCATION_ID_SLEEP_1);
-		self.tp_map_sleep.insert(constants::LOCATION_ID_SLEEP_2, constants::LOCATION_ID_SLEEP_0);
-		self.tp_map_witch.insert(constants::LOCATION_ID_WITCH_0, constants::LOCATION_ID_WITCH_1);
-		self.tp_map_witch.insert(constants::LOCATION_ID_WITCH_1, constants::LOCATION_ID_WITCH_0);
+		self.tp_map_sleep.insert(constants::LOCATION_ID_SLEEP_0, (constants::LOCATION_ID_SLEEP_1, constants::INVENTORY_ID_DREAM));
+		self.tp_map_sleep.insert(constants::LOCATION_ID_SLEEP_2, (constants::LOCATION_ID_SLEEP_0, constants::INVENTORY_ID_MAIN));
+		self.tp_map_witch.insert(constants::LOCATION_ID_WITCH_0, (constants::LOCATION_ID_WITCH_1, constants::INVENTORY_ID_CHASM));
+		self.tp_map_witch.insert(constants::LOCATION_ID_WITCH_1, (constants::LOCATION_ID_WITCH_0, constants::INVENTORY_ID_MAIN));
 	}
 
 	pub fn get_command(&self, key: String) -> Option<&Rc<Box<Command>>> {
@@ -190,11 +191,11 @@ impl DataCollection {
 		*self.locations.get_direction_enum(dir_str)
 	}
 
-	pub fn get_tp_map_sleep(&self) -> &HashMap<u32, u32> {
+	pub fn get_tp_map_sleep(&self) -> &TpMap {
 		&self.tp_map_sleep
 	}
 
-	pub fn get_tp_map_witch(&self) -> &HashMap<u32, u32> {
+	pub fn get_tp_map_witch(&self) -> &TpMap {
 		&self.tp_map_witch
 	}
 
