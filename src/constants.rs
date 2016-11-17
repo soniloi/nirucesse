@@ -273,6 +273,7 @@ pub const STR_ID_SH_MAGIC: u32 = 139;
 pub const STR_ID_SLEEP: u32 = 140;
 pub const STR_ID_NO_SLEEP: u32 = 141;
 pub const STR_ID_SNOMP_KILL: u32 = 142;
+pub const STR_ID_POISONOUS: u32 = 143;
 pub const STR_ID_TAKE_NO_LIGHT: u32 = 144;
 pub const STR_ID_ALREADY_HAVE: u32 = 145;
 pub const STR_ID_CANNOT_TAKE: u32 = 146;

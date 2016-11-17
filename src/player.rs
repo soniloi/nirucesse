@@ -577,43 +577,51 @@ impl Player {
 	}
 
 	pub fn call(&mut self, data: &DataCollection, item: &ItemRef) {
-		let panel_present = self.location.borrow().contains_item(constants::ITEM_ID_CONSOLE_FIXED);
-		if !panel_present {
-			terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_APPLY));
-			return;
-		}
-
 		let callee_id = item.borrow().get_id();
-		if callee_id == constants::ITEM_ID_SHIP {
-			let console = data.get_item_by_id_certain(constants::ITEM_ID_CONSOLE_BROKEN);
-			self.location.borrow_mut().insert_item(console.clone());
+		match callee_id {
+			constants::ITEM_ID_BUCCANEER | constants::ITEM_ID_CORSAIR => {
+				if item.borrow().is_new() {
+					terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_APPLY));
+				} else {
+					terminal::write_full(data.get_response(constants::STR_ID_UNWISE));
+				}
+			},
+			constants::ITEM_ID_SHIP => {
+				let panel_present = self.location.borrow().contains_item(constants::ITEM_ID_CONSOLE_FIXED);
+				if !panel_present {
+					terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_APPLY));
+					return;
+				}
 
-			// Player's safe and wake locations must now be west of the checkpoint, rather than east
-			self.location_id_safe = constants::LOCATION_ID_SAFE_PIRATES;
-			self.location_id_wake = constants::LOCATION_ID_WAKE_PIRATES;
+				let console = data.get_item_by_id_certain(constants::ITEM_ID_CONSOLE_BROKEN);
+				self.location.borrow_mut().insert_item(console.clone());
 
-			// Pirates arrive on the Asterbase
-			let checkpoint = data.get_location_certain(constants::LOCATION_ID_CHECKPOINT);
-			let corsair = data.get_item_by_id_certain(constants::ITEM_ID_CORSAIR);
-			checkpoint.borrow_mut().insert_item(corsair.clone());
-			let docking_ctrl = data.get_location_certain(constants::LOCATION_ID_DOCKINGCONTROL);
-			let buccaneer = data.get_item_by_id_certain(constants::ITEM_ID_BUCCANEER);
-			docking_ctrl.borrow_mut().insert_item(buccaneer.clone());
+				// Player's safe and wake locations must now be west of the checkpoint, rather than east
+				self.location_id_safe = constants::LOCATION_ID_SAFE_PIRATES;
+				self.location_id_wake = constants::LOCATION_ID_WAKE_PIRATES;
 
-			// Link pirate ship (both item and location) to the docking bay
-			let docking = data.get_location_certain(constants::LOCATION_ID_DOCKING);
-			let ship_loc = data.get_location_certain(constants::LOCATION_ID_SHIP);
-			docking.borrow_mut().insert_item(item.clone());
-			docking.borrow_mut().set_direction(Direction::East, Some(ship_loc.clone()));
-			docking.borrow_mut().set_direction(Direction::Southeast, Some(ship_loc.clone()));
+				// Pirates arrive on the Asterbase
+				let checkpoint = data.get_location_certain(constants::LOCATION_ID_CHECKPOINT);
+				let corsair = data.get_item_by_id_certain(constants::ITEM_ID_CORSAIR);
+				checkpoint.borrow_mut().insert_item(corsair.clone());
+				let docking_ctrl = data.get_location_certain(constants::LOCATION_ID_DOCKINGCONTROL);
+				let buccaneer = data.get_item_by_id_certain(constants::ITEM_ID_BUCCANEER);
+				docking_ctrl.borrow_mut().insert_item(buccaneer.clone());
 
-			// Unlink the existing shuttle from the southeast of the docking bay
-			let shuttle = data.get_location_certain(constants::LOCATION_ID_SHUTTLE);
-			shuttle.borrow_mut().set_direction(Direction::South, None);
+				// Link pirate ship (both item and location) to the docking bay
+				let docking = data.get_location_certain(constants::LOCATION_ID_DOCKING);
+				let ship_loc = data.get_location_certain(constants::LOCATION_ID_SHIP);
+				docking.borrow_mut().insert_item(item.clone());
+				docking.borrow_mut().set_direction(Direction::East, Some(ship_loc.clone()));
+				docking.borrow_mut().set_direction(Direction::Southeast, Some(ship_loc.clone()));
 
-			self.complete_obstruction_achievement(constants::ITEM_ID_CONSOLE_FIXED, data.get_puzzle(constants::PUZZLE_ID_DISTRESS));
-		} else {
-			terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW));
+				// Unlink the existing shuttle from the southeast of the docking bay
+				let shuttle = data.get_location_certain(constants::LOCATION_ID_SHUTTLE);
+				shuttle.borrow_mut().set_direction(Direction::South, None);
+
+				self.complete_obstruction_achievement(constants::ITEM_ID_CONSOLE_FIXED, data.get_puzzle(constants::PUZZLE_ID_DISTRESS));
+			},
+			_ => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW)),
 		}
 	}
 
@@ -631,6 +639,7 @@ impl Player {
 
 		let item_id = item.borrow().get_id();
 		match item_id {
+			constants::ITEM_ID_MUSHROOM => terminal::write_full(data.get_response(constants::STR_ID_POISONOUS)),
 			constants::ITEM_ID_KOHLRABI => {
 			    self.inventory.borrow_mut().remove_item_certain(constants::ITEM_ID_KOHLRABI);
 			    let stew = data.get_item_by_id_certain(constants::ITEM_ID_STEW);
@@ -701,6 +710,7 @@ impl Player {
 			constants::ITEM_ID_PUPPY => response_code = constants::STR_ID_EAT_PUPPY,
 			constants::ITEM_ID_LION => response_code = constants::STR_ID_EAT_LION,
 			constants::ITEM_ID_KOHLRABI => response_code = constants::STR_ID_EAT_CABBAGE,
+			constants::ITEM_ID_MUSHROOM => response_code = constants::STR_ID_POISONOUS,
 			constants::ITEM_ID_RADISHES => {
 				self.remove_item_from_current(constants::ITEM_ID_RADISHES);
 				response_code = constants::STR_ID_EAT_RADISHES;
@@ -1059,8 +1069,8 @@ impl Player {
 		match item.borrow().has_problem_inserting() {
 			None => {},
 			Some(reason) => {
-					terminal::write_full(&data.get_response_param(reason, item.borrow().get_shortname()));
-					return;
+				terminal::write_full(&data.get_response_param(reason, item.borrow().get_shortname()));
+				return;
 			},
 		}
 
