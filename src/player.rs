@@ -7,6 +7,8 @@ use data_collection::ItemRef;
 use data_collection::LocationRef;
 use data_collection::InventoryRef;
 use data_collection::TpMap;
+use item::Item;
+use item::ItemCheckFn;
 use location::Direction;
 use terminal;
 
@@ -255,6 +257,17 @@ impl Player {
 			terminal::write_full(data.get_response(constants::STR_ID_NO_MUSIC));
 		}
 		player.borrow_mut().set_on(false);
+	}
+
+	// Determine whether there would be a problem executing a particular command on a particular item FIXME: clean this up
+	fn has_problem_executing(data: &DataCollection, primary: &ItemRef, other: &ItemRef, check: ItemCheckFn) -> bool {
+		match check(&**primary.borrow(), other) {
+			None => return false,
+			Some(reason) => {
+				terminal::write_full(&data.get_response_param(reason, primary.borrow().get_shortname()));
+				return true;
+			},
+		}
 	}
 
 	fn release_item(&mut self, data: &DataCollection, item: &ItemRef, thrown: bool) {
@@ -721,12 +734,8 @@ impl Player {
 	}
 
 	pub fn empty(&mut self, data: &DataCollection, item: &ItemRef) {
-		match item.borrow().has_problem_emptying() {
-			None => {},
-			Some(reason) => {
-					terminal::write_full(&data.get_response_param(reason, item.borrow().get_shortname()));
-					return;
-			},
+		if Player::has_problem_executing(data, item, item, Item::has_problem_emptying) {
+			return;
 		}
 
 		let within_ref = item.borrow_mut().remove_within();
@@ -1066,12 +1075,8 @@ impl Player {
 	}
 
 	pub fn insert(&mut self, data: &DataCollection, item: &ItemRef) {
-		match item.borrow().has_problem_inserting() {
-			None => {},
-			Some(reason) => {
-				terminal::write_full(&data.get_response_param(reason, item.borrow().get_shortname()));
-				return;
-			},
+		if Player::has_problem_executing(data, item, item, Item::has_problem_inserting) {
+			return;
 		}
 
 		// Find out what player wants to insert it into
@@ -1093,12 +1098,8 @@ impl Player {
 	}
 
 	fn insert_final(&mut self, data: &DataCollection, item: &ItemRef, container: &ItemRef) {
-		match container.borrow().has_problem_accepting(item) {
-			None => {},
-			Some(reason) => {
-					terminal::write_full(&data.get_response_param(reason, container.borrow().get_shortname()));
-					return;
-			},
+		if Player::has_problem_executing(data, container, item, Item::has_problem_accepting) {
+			return;
 		}
 
 		let item_id = item.borrow().get_id();
