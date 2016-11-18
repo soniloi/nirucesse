@@ -910,8 +910,7 @@ impl Player {
 		match data.get_item_by_name(recipient_str[0].clone()) {
 			None => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_WHO_WHAT)),
 			Some(recipient) => {
-				let id = recipient.borrow().get_id();
-				let present = self.item_present(id);
+				let present = self.item_present(recipient.borrow().get_id());
 				if present {
 					self.transfer_item(data, item, recipient);
 				} else {
