@@ -553,15 +553,10 @@ impl Player {
 			return;
 		}
 		let item_id = item.borrow().get_id();
-		let in_inventory = self.inventory.borrow().contains_item(item_id);
 		match item_id {
 			constants::ITEM_ID_BOOK => terminal::write_full(data.get_response(constants::STR_ID_PHILISTINE)),
 			constants::ITEM_ID_BREAD => {
-				if in_inventory {
-					self.inventory.borrow_mut().remove_item_certain(item_id);
-				} else {
-					self.location.borrow_mut().remove_item_certain(item_id);
-				}
+				self.remove_item_from_current(item_id);
 				let toast = data.get_item_by_id_certain(constants::ITEM_ID_TOAST);
 				self.location.borrow_mut().insert_item(toast.clone());
 				terminal::write_full(data.get_response(constants::STR_ID_BURN_BREAD));
@@ -569,11 +564,7 @@ impl Player {
 			constants::ITEM_ID_LAMP => terminal::write_full(data.get_response(constants::STR_ID_NO_BURN_LAMP)),
 			constants::ITEM_ID_MATCHES => terminal::write_full(data.get_response(constants::STR_ID_NO_BURN_MATCHES)),
 			constants::ITEM_ID_TOAST => {
-				if in_inventory {
-					self.inventory.borrow_mut().remove_item_certain(item_id);
-				} else {
-					self.location.borrow_mut().remove_item_certain(item_id);
-				}
+				self.remove_item_from_current(item_id);
 				terminal::write_full(data.get_response(constants::STR_ID_BURN_TOAST));
 				let at_airlocke = self.location.borrow().is(constants::LOCATION_ID_AIRLOCKE);
 				if at_airlocke {
