@@ -73,7 +73,8 @@ impl Inventory {
 	pub fn drop_on_death(&mut self, current_loc: &LocationRef, safe_loc: &LocationRef) {
 		let removed = self.items.drain();
 		for (_, item) in removed {
-			if item.borrow().has_property(constants::CTRL_ITEM_ESSENTIAL) {
+			let essential = item.borrow().has_property(constants::CTRL_ITEM_ESSENTIAL);
+			if essential {
 				safe_loc.borrow_mut().insert_item(item.clone());
 			} else {
 				current_loc.borrow_mut().insert_item(item.clone());
