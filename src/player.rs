@@ -228,6 +228,10 @@ impl Player {
 		}
 	}
 
+	fn item_present(&self, item_id: u32) -> bool {
+		self.inventory.borrow().contains_item(item_id) || self.location.borrow().contains_item(item_id)
+	}
+
 	fn operate_machine(&mut self, data: &DataCollection, cartridge: &ItemRef, request: &ItemRef) {
 		if !request.borrow().has_property(constants::CTRL_ITEM_FACTORY) {
 			terminal::write_full(data.get_response(constants::STR_ID_MACHINE_NO_KNOW_CREATE));
@@ -817,9 +821,8 @@ impl Player {
 		match data.get_item_by_name(indirect_str[0].clone()) {
 			None => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_WHO_WHAT)),
 			Some(indirect) => {
-				let indirect_id = indirect.borrow().get_id();
-				let in_inventory = self.inventory.borrow().contains_item(indirect_id);
-				if in_inventory || self.location.borrow().contains_item(indirect_id) {
+				let present = self.item_present(indirect.borrow().get_id());
+				if present {
 					self.feed_item_unknown(data, direct, indirect);
 				} else {
 					terminal::write_full(&data.get_response_param(constants::STR_ID_NO_SEE_HERE, &indirect.borrow().get_shortname()));
@@ -907,9 +910,9 @@ impl Player {
 		match data.get_item_by_name(recipient_str[0].clone()) {
 			None => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_WHO_WHAT)),
 			Some(recipient) => {
-				let recipient_id = recipient.borrow().get_id();
-				let in_inventory = self.inventory.borrow().contains_item(recipient_id);
-				if in_inventory || self.location.borrow().contains_item(recipient_id) {
+				let id = recipient.borrow().get_id();
+				let present = self.item_present(id);
+				if present {
 					self.transfer_item(data, item, recipient);
 				} else {
 					terminal::write_full(&data.get_response_param(constants::STR_ID_NO_SEE_HERE, &recipient.borrow().get_shortname()));
@@ -1077,9 +1080,8 @@ impl Player {
 		match data.get_item_by_name(container_str[0].clone()) {
 			None => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_WHO_WHAT)),
 			Some(container) => {
-				let container_id = container.borrow().get_id();
-				let in_inventory = self.inventory.borrow().contains_item(container_id);
-				if in_inventory || self.location.borrow().contains_item(container_id) {
+				let present = self.item_present(container.borrow().get_id());
+				if present {
 					self.insert_final(data, item, container)
 				} else {
 					terminal::write_full(&data.get_response_param(constants::STR_ID_NO_SEE_HERE, container.borrow().get_shortname()));
@@ -1170,9 +1172,8 @@ impl Player {
 		match data.get_item_by_name(recipient_str[0].clone()) {
 			None => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_WHO_WHAT)),
 			Some(recipient) => {
-				let recipient_id = recipient.borrow().get_id();
-				let in_inventory = self.inventory.borrow().contains_item(recipient_id);
-				if in_inventory || self.location.borrow().contains_item(recipient_id) {
+				let present = self.item_present(recipient.borrow().get_id());
+				if present {
 					self.transfer_item(data, item, recipient);
 				} else {
 					terminal::write_full(&data.get_response_param(constants::STR_ID_NO_SEE_HERE, &recipient.borrow().get_shortname()));
