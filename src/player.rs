@@ -2,7 +2,7 @@ use rand;
 use rand::Rng;
 
 use constants;
-use data_collection::{DataCollection, Id, InventoryRef, ItemRef, LocationRef, TpMap};
+use data_collection::{DataCollection, InventoryRef, ItemId, ItemRef, LocationId, LocationRef, StringId, TpMap};
 use item::Item;
 use item::ItemCheckFn;
 use location::Direction;
@@ -23,8 +23,8 @@ pub struct Player {
 	death_divisor: u32, // chance of death under specific circumstances
 	alive: bool,
 	strong: bool,
-	location_id_safe: Id, // where player's important items get dropped on death
-	location_id_wake: Id, // where player wakes after being reincarnated
+	location_id_safe: LocationId, // where player's important items get dropped on death
+	location_id_wake: LocationId, // where player wakes after being reincarnated
 }
 
 impl Player {
@@ -101,9 +101,9 @@ impl Player {
 		self.get_effective_appearance(data, self.mk_location_string(data))
 	}
 
-	pub fn get_score_str(&self, data: &DataCollection, response_code: Id) -> String {
+	pub fn get_score_str(&self, data: &DataCollection, response_code_start: StringId) -> String {
 		let total_score = self.calculate_score(data);
-		String::from(data.get_response(response_code)) + &total_score.to_string() +
+		String::from(data.get_response(response_code_start)) + &total_score.to_string() +
 		data.get_response(constants::STR_ID_SCORE_POINTS) + &data.get_max_score().to_string() +
 		data.get_response(constants::STR_ID_SCORE_DIED) + &self.deaths.to_string() +
 		data.get_response(constants::STR_ID_SCORE_DEATHS) + &self.instructions.to_string() +
@@ -196,15 +196,15 @@ impl Player {
 		act(self, data, item);
 	}
 
-	pub fn has_item_inventory(&self, item_id: Id) -> bool {
+	pub fn has_item_inventory(&self, item_id: ItemId) -> bool {
 		self.inventory.borrow().contains_item(item_id)
 	}
 
-	pub fn has_item_present(&self, item_id: Id) -> bool {
+	pub fn has_item_present(&self, item_id: ItemId) -> bool {
 	        self.inventory.borrow().contains_item(item_id) || self.location.borrow().contains_item(item_id)
 	}
 
-	fn complete_obstruction_achievement(&mut self, obstruction_id: Id, response: &str) {
+	fn complete_obstruction_achievement(&mut self, obstruction_id: ItemId, response: &str) {
 		self.location.borrow_mut().remove_item_certain(obstruction_id);
 		self.complete_achievement(response);
 	}
@@ -224,7 +224,7 @@ impl Player {
 		}
 	}
 
-	fn item_present(&self, item_id: Id) -> bool {
+	fn item_present(&self, item_id: ItemId) -> bool {
 		self.inventory.borrow().contains_item(item_id) || self.location.borrow().contains_item(item_id)
 	}
 
@@ -337,7 +337,7 @@ impl Player {
 	}
 
 	// Remove one item from either location or inventory
-	fn remove_item_from_current(&mut self, id_to_remove: Id) {
+	fn remove_item_from_current(&mut self, id_to_remove: ItemId) {
 		let in_inventory = self.inventory.borrow().contains_item(id_to_remove);
 		if in_inventory {
 			self.inventory.borrow_mut().remove_item_certain(id_to_remove);
@@ -346,8 +346,8 @@ impl Player {
 		}
 	}
 
-	fn rob_pirate(&mut self, data: &DataCollection, pirate: &ItemRef, reward_code: Id, kill: bool,
-			response_code_kill: Id, response_code_success: Id) {
+	fn rob_pirate(&mut self, data: &DataCollection, pirate: &ItemRef, reward_code: ItemId, kill: bool,
+			response_code_kill: StringId, response_code_success: StringId) {
 		let reward = data.get_item_by_id_certain(reward_code);
 		let reward_is_new = reward.borrow().is_new();
 		let inventory_fits = self.inventory.borrow().can_fit(reward);
@@ -398,8 +398,7 @@ impl Player {
 		}
 	}
 
-	fn teleport(&mut self, data: &DataCollection, tp_map: &TpMap,
-		response_code_no_teleport: Id, response_code_teleport: Id) {
+	fn teleport(&mut self, data: &DataCollection, tp_map: &TpMap, response_code_no_teleport: StringId, response_code_teleport: StringId) {
 		let loc_id = self.location.borrow().get_id();
 		match tp_map.get(&loc_id) {
 			None => terminal::write_full(data.get_response(response_code_no_teleport)),
@@ -960,7 +959,7 @@ impl Player {
 
 	// Attempt to move to previous location
 	// Return a tuple representing the next location (if move is successful), whether the player died, and any response message to be printed
-	fn try_move_back(&mut self) -> (Option<LocationRef>, bool, Option<Id>) {
+	fn try_move_back(&mut self) -> (Option<LocationRef>, bool, Option<StringId>) {
 		match self.previous.clone() {
 			None => (None, false, Some(constants::STR_ID_NO_REMEMBER)),
 			Some(prev) => (Some(prev.clone()), false, None),
@@ -969,7 +968,7 @@ impl Player {
 
 	// Attempt to move to some location, which may not be reachable from the current location
 	// Return a tuple representing the next location (if move is successful), whether the player died, and any response message to be printed
-	fn try_move_other(&mut self, dir: Direction) -> (Option<LocationRef>, bool, Option<Id>) {
+	fn try_move_other(&mut self, dir: Direction) -> (Option<LocationRef>, bool, Option<StringId>) {
 		let loc_clone = self.location.clone();
 		let self_loc = loc_clone.borrow();
 
@@ -988,7 +987,7 @@ impl Player {
 							// FIXME: tidy this whole area
 							let mut next_loc_option: Option<LocationRef> = None;
 							let mut death = false;
-							let mut response_code: Id = constants::STR_ID_BLOCKED; // FIXME: tailor to individual obstructions
+							let mut response_code = constants::STR_ID_BLOCKED; // FIXME: tailor to individual obstructions
 							if obstruction.borrow().is(constants::ITEM_ID_BUCCANEER) {
 								if !self.has_invisibility() {
 									response_code = constants::STR_ID_BUCCANEER_WATCHING;
@@ -1029,7 +1028,7 @@ impl Player {
 
 	// Attempt to go to a location known to be adjacent
 	// Return a tuple representing the next location (if move is successful), whether the player died, and any response message to be printed
-	fn try_move_to(&mut self, next: &LocationRef) -> (Option<LocationRef>, bool, Option<Id>) {
+	fn try_move_to(&mut self, next: &LocationRef) -> (Option<LocationRef>, bool, Option<StringId>) {
 		let mut rng = rand::thread_rng();
 		let death_rand: u32 = rng.gen();
 		let death = death_rand % self.death_divisor == 0;

@@ -1,24 +1,24 @@
 use constants;
-use data_collection::{Id, ItemRef, Properties};
+use data_collection::{Id, ItemId, ItemRef, Properties, StringId};
 
-pub type ItemCheckFn = fn(primary: &Item, other: &ItemRef) -> Option<Id>;
+pub type ItemCheckFn = fn(primary: &Item, other: &ItemRef) -> Option<StringId>;
 
 pub struct Item {
-	id: Id,
+	id: ItemId,
 	properties: Properties,
 	size: u32,
 	shortname: String,
 	longname: String,
 	description: String,
 	writing: Option<String>,
-	location: Id,
+	location: Id, // This may be a LocationId, an InventoryId, or an ItemId
 	on: bool,
 	within: Option<ItemRef>,
 }
 
 impl Item {
 
-	pub fn new(id: Id, properties: Properties, size: u32, shortname: String, longname: String, description: String, writing: Option<String>, location: Id) -> Item {
+	pub fn new(id: ItemId, properties: Properties, size: u32, shortname: String, longname: String, description: String, writing: Option<String>, location: Id) -> Item {
 		Item {
 			id: id,
 			properties: properties,
@@ -33,7 +33,7 @@ impl Item {
 		}
 	}
 
-	pub fn is(&self, id: Id) -> bool {
+	pub fn is(&self, id: ItemId) -> bool {
 		id == self.id
 	}
 
@@ -50,14 +50,14 @@ impl Item {
 	}
 
 	// FIXME: probably refactor this out
-	pub fn contains_item(&self, id: Id) -> bool {
+	pub fn contains_item(&self, id: ItemId) -> bool {
 		match self.within.clone() {
 			None => false,
 			Some(within) => within.borrow().is_or_contains_item(id),
 		}
 	}
 
-	pub fn is_or_contains_item(&self, id: Id) -> bool {
+	pub fn is_or_contains_item(&self, id: ItemId) -> bool {
 		if self.id == id {
 			return true;
 		}
@@ -107,7 +107,7 @@ impl Item {
 		}
 	}
 
-	pub fn get_id(&self) -> Id {
+	pub fn get_id(&self) -> ItemId {
 		self.id
 	}
 
@@ -146,7 +146,7 @@ impl Item {
 	// Check that a potential container is a container, that we are not inserting an item into itself, that it is the right kind of container,
 	// 	that it is empty, and that it is large enough to hold the item
 	// If there is a problem, return the string tag of the reason, otherwise return None
-	pub fn has_problem_accepting(&self, item: &ItemRef) -> Option<Id> {
+	pub fn has_problem_accepting(&self, item: &ItemRef) -> Option<StringId> {
 		// Check attributes of container
 		if !self.has_property(constants::CTRL_ITEM_CONTAINER) {
 			return Some(constants::STR_ID_NOT_CONTAINER);
@@ -182,7 +182,7 @@ impl Item {
 	// Check that an item can be emptied
 	// If there is a problem, return the string tag of the reason, otherwise return None
 	#[allow(unused_variables)]
-	pub fn has_problem_emptying(&self, other: &ItemRef) -> Option<Id> {
+	pub fn has_problem_emptying(&self, other: &ItemRef) -> Option<StringId> {
 		if !self.has_property(constants::CTRL_ITEM_CONTAINER) {
 			return Some(constants::STR_ID_NOT_CONTAINER);
 		}
@@ -192,7 +192,7 @@ impl Item {
 	// Check that an item can be inserted
 	// If there is a problem, return the string tag of the reason, otherwise return None
 	#[allow(unused_variables)]
-	pub fn has_problem_inserting(&self, other: &ItemRef) -> Option<Id> {
+	pub fn has_problem_inserting(&self, other: &ItemRef) -> Option<StringId> {
 		if self.has_property(constants::CTRL_ITEM_WEARABLE) {
 			return Some(constants::STR_ID_CANNOT_INSERT_WEARABLE);
 		}
@@ -298,7 +298,7 @@ impl Item {
 		self.on = next;
 	}
 
-	pub fn remove_item_certain(&mut self, id: Id) {
+	pub fn remove_item_certain(&mut self, id: ItemId) {
 		match self.within.clone() {
 			None => panic!("Data corruption seeking item [{}], fail.", id),
 			Some(within) => {

@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use constants;
-use data_collection::{Id, ItemRef, LocationRef, Properties};
+use data_collection::{ItemId, ItemRef, LocationId, LocationRef, Properties};
 
 #[derive(PartialEq, Eq, Hash, Clone, Copy)]
 pub enum Direction {
@@ -20,21 +20,21 @@ pub enum Direction {
 }
 
 pub struct Location {
-	id: Id,
+	id: LocationId,
 	properties: Properties,
 	shortname: String,
 	longname: String,
 	description: String,
 	visited: bool,
 	directions: HashMap<Direction, LocationRef>,
-	items: HashMap<Id, ItemRef>,
+	items: HashMap<ItemId, ItemRef>,
 }
 
 pub type PropertyWithinFn = fn(location: &Location, property_code: Properties) -> bool;
 
 impl Location {
 
-	pub fn new(id: Id, properties: Properties, shortname: String, longname: String, description: String) -> Location {
+	pub fn new(id: LocationId, properties: Properties, shortname: String, longname: String, description: String) -> Location {
 		Location {
 			id: id,
 			properties: properties,
@@ -47,11 +47,11 @@ impl Location {
 		}
 	}
 
-	pub fn get_id(&self) -> Id {
+	pub fn get_id(&self) -> LocationId {
 		self.id
 	}
 
-	pub fn is(&self, id: Id) -> bool {
+	pub fn is(&self, id: LocationId) -> bool {
 		id == self.id
 	}
 
@@ -134,7 +134,7 @@ impl Location {
 		}
 	}
 
-	pub fn contains_item(&self, id: Id) -> bool {
+	pub fn contains_item(&self, id: ItemId) -> bool {
 		self.items.values().any(|x| x.borrow().is_or_contains_item(id))
 	}
 
@@ -144,7 +144,7 @@ impl Location {
 	}
 
 	// FIXME: clean up the flow here
-	pub fn remove_item_certain(&mut self, id: Id) {
+	pub fn remove_item_certain(&mut self, id: ItemId) {
 		match self.items.get(&id) {
 			None => {},
 			Some(item) => {

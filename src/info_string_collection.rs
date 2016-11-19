@@ -1,14 +1,14 @@
 use std::collections::HashMap;
 
 use constants;
-use data_collection::{self, Id};
+use data_collection::{self, StringId};
 use file_buffer::FileBuffer;
 
 const FILE_INDEX_STRING_TAG: usize = 0;
 const FILE_INDEX_STRING_CONTENT: usize = 1;
 
 pub struct InfoStringCollection {
-	strings: HashMap<Id, String>,
+	strings: HashMap<StringId, String>,
 }
 
 impl InfoStringCollection {
@@ -42,7 +42,7 @@ impl InfoStringCollection {
 		}
 	}
 
-	fn parse_string(words: &Vec<&str>) -> (Id, String) {
+	fn parse_string(words: &Vec<&str>) -> (StringId, String) {
 		let tag = data_collection::str_to_u32(words[FILE_INDEX_STRING_TAG], 10);
 		let content = words[FILE_INDEX_STRING_CONTENT];
 		return (tag, String::from(content))
@@ -64,8 +64,8 @@ impl InfoStringCollection {
 		self.strings.len() as u32
 	}
 
-	pub fn get_keys(&self) -> Vec<Id> {
-		let mut result: Vec<Id> = Vec::new();
+	pub fn get_keys(&self) -> Vec<StringId> {
+		let mut result: Vec<StringId> = Vec::new();
 		for key in self.strings.keys() {
 			result.push(*key);
 		}
@@ -73,7 +73,7 @@ impl InfoStringCollection {
 	}
 
 	// Return a String we are certain is in the collection
-	pub fn get_certain(&self, key: Id) -> &str {
+	pub fn get_certain(&self, key: StringId) -> &str {
 		match self.strings.get(&key) {
 			None => panic!("Error: Data collection corrupt, or key [{}] malformed.", key),
 			Some(st) => return st,

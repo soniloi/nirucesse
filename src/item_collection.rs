@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use constants;
-use data_collection::{self, Id, ItemRef};
+use data_collection::{self, Id, ItemId, ItemRef};
 use file_buffer::FileBuffer;
 use item::Item;
 use location_collection::LocationCollection;
@@ -20,7 +20,7 @@ const FILE_INDEX_ITEM_ALIAS_START: usize = 8;
 const ITEM_WRITING_NONE: &'static str = "0"; // String indicating that there is no writing
 
 pub struct ItemCollection {
-	items_by_id: HashMap<Id, ItemRef>,
+	items_by_id: HashMap<ItemId, ItemRef>,
 	items_by_name: HashMap<String, ItemRef>,
 }
 
@@ -35,7 +35,7 @@ impl ItemCollection {
 
 	pub fn init(&mut self, buffer: &mut FileBuffer, expected_count: u32, locations: &mut LocationCollection, treasure_count: &mut u32) {
 
-		let mut initial_locations: HashMap<Id, Id> = HashMap::new();
+		let mut initial_locations: HashMap<ItemId, Id> = HashMap::new();
 		let mut line = buffer.get_line();
 		while !buffer.eof() {
 			match line.as_ref() {
@@ -69,7 +69,7 @@ impl ItemCollection {
 		self.validate(constants::INDEX_START_ITEM, expected_count + constants::INDEX_START_ITEM);
 	}
 
-	fn parse_and_insert_item(&mut self, words: &Vec<&str>) -> (ItemRef, Id) {
+	fn parse_and_insert_item(&mut self, words: &Vec<&str>) -> (ItemRef, ItemId) {
 		let id = data_collection::str_to_u32(words[FILE_INDEX_ITEM_ID], 10);
 		let properties = data_collection::str_to_u32(words[FILE_INDEX_ITEM_STATUS], 16);
 		let initial = data_collection::str_to_u32(words[FILE_INDEX_ITEM_INITIAL_LOC], 10);
@@ -131,7 +131,7 @@ impl ItemCollection {
 		}
 	}
 
-	pub fn get_by_id(&self, key: Id) -> Option<&ItemRef> {
+	pub fn get_by_id(&self, key: ItemId) -> Option<&ItemRef> {
 		self.items_by_id.get(&key)
 	}
 

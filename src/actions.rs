@@ -1,6 +1,6 @@
 use command::ArgumentType;
 use constants;
-use data_collection::DataCollection;
+use data_collection::{DataCollection, ItemId, StringId};
 use player::ItemManipFn;
 use player::Player;
 
@@ -295,7 +295,7 @@ fn manipulate_item(data: &DataCollection, arg: String, arg_type: ArgumentType, p
 	}
 }
 
-fn problem_with_item_manipulation(player: &Player, item_id: u32, arg_type: ArgumentType) -> Option<u32> {
+fn problem_with_item_manipulation(player: &Player, item_id: ItemId, arg_type: ArgumentType) -> Option<StringId> {
 	if arg_type == ArgumentType::Inventory && !player.has_item_inventory(item_id) {
 		return Some(constants::STR_ID_NO_HAVE_INVENTORY);
 	} else if arg_type == ArgumentType::Present && !player.has_item_present(item_id) {

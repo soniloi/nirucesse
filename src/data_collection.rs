@@ -24,8 +24,12 @@ pub type InventoryRef = GenericRcRefCellBox<Inventory>;
 pub type ItemRef = GenericRcRefCellBox<Item>;
 pub type LocationRef = GenericRcRefCellBox<Location>;
 pub type Id = u32;
+pub type InventoryId = Id;
+pub type ItemId = Id;
+pub type LocationId = Id;
+pub type StringId = Id;
+pub type TpMap = HashMap<LocationId, (LocationId, InventoryId)>;
 pub type Properties = u32;
-pub type TpMap = HashMap<Id, (Id, Id)>;
 
 pub struct DataCollection {
 	commands: CommandCollection,
@@ -36,8 +40,8 @@ pub struct DataCollection {
 	responses: InfoStringCollection,
 	puzzles: InfoStringCollection,
 	events: InfoStringCollection,
-	inventories: HashMap<Id, InventoryRef>,
-	event_turns: HashMap<u32, Id>,
+	inventories: HashMap<InventoryId, InventoryRef>,
+	event_turns: HashMap<u32, StringId>,
 	tp_map_sleep: TpMap,
 	tp_map_witch: TpMap,
 	max_score: u32,
@@ -81,7 +85,7 @@ impl DataCollection {
 		self.max_score = treasure_count * constants::SCORE_TREASURE + achievement_count * constants::SCORE_PUZZLE;
 	}
 
-	fn init_inventory(&mut self, inventory_id: Id, inventory_capacity: u32) {
+	fn init_inventory(&mut self, inventory_id: InventoryId, inventory_capacity: u32) {
 		let inventory = Rc::new(RefCell::new(Box::new(Inventory::new(inventory_id, inventory_capacity))));
 		self.inventories.insert(inventory_id, inventory);
 	}
@@ -120,7 +124,7 @@ impl DataCollection {
 		self.commands.get(key)
 	}
 
-	pub fn get_inventory(&self, key: Id) -> &InventoryRef {
+	pub fn get_inventory(&self, key: InventoryId) -> &InventoryRef {
 		match self.inventories.get(&key) {
 			None => panic!("Error: Data collection corrupt when searching for inventory [{}].", key),
 			Some(inventory) => return inventory,
@@ -131,14 +135,14 @@ impl DataCollection {
 		self.items.get_by_name(key)
 	}
 
-	pub fn get_item_by_id_certain(&self, key: Id) -> &ItemRef {
+	pub fn get_item_by_id_certain(&self, key: ItemId) -> &ItemRef {
 		match self.items.get_by_id(key.clone()) {
 			None => panic!("Error: Data collection corrupt when searching for item [{}].", key),
 			Some(item) => return item,
 		}
 	}
 
-	pub fn get_location_certain(&self, key: Id) -> &LocationRef {
+	pub fn get_location_certain(&self, key: LocationId) -> &LocationRef {
 		match self.locations.get(key) {
 			None => panic!("Error: Data collection corrupt when searching for location [{}].", key),
 			Some(loc) => return loc,
@@ -164,17 +168,17 @@ impl DataCollection {
 		}
 	}
 
-	pub fn get_response(&self, key: Id) -> &str {
+	pub fn get_response(&self, key: StringId) -> &str {
 		self.responses.get_certain(key)
 	}
 
 	// TODO: more than one parameter; make generic with get_response
-	pub fn get_response_param(&self, key: Id, param: &str) -> String {
+	pub fn get_response_param(&self, key: StringId, param: &str) -> String {
 		let response = String::from(self.responses.get_certain(key));
 		response.replace("$0", param)
 	}
 
-	pub fn get_puzzle(&self, key: Id) -> &str {
+	pub fn get_puzzle(&self, key: StringId) -> &str {
 		self.puzzles.get_certain(key)
 	}
 
