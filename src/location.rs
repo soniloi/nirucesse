@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use constants;
-use data_collection::{Id, ItemRef, LocationRef};
+use data_collection::{Id, ItemRef, LocationRef, Properties};
 
 #[derive(PartialEq, Eq, Hash, Clone, Copy)]
 pub enum Direction {
@@ -21,7 +21,7 @@ pub enum Direction {
 
 pub struct Location {
 	id: Id,
-	properties: u32,
+	properties: Properties,
 	shortname: String,
 	longname: String,
 	description: String,
@@ -30,11 +30,11 @@ pub struct Location {
 	items: HashMap<Id, ItemRef>,
 }
 
-pub type PropertyWithinFn = fn(location: &Location, property_code: u32) -> bool;
+pub type PropertyWithinFn = fn(location: &Location, property_code: Properties) -> bool;
 
 impl Location {
 
-	pub fn new(id: Id, properties: u32, shortname: String, longname: String, description: String) -> Location {
+	pub fn new(id: Id, properties: Properties, shortname: String, longname: String, description: String) -> Location {
 		Location {
 			id: id,
 			properties: properties,
@@ -59,34 +59,34 @@ impl Location {
 		self.visited = vis;
 	}
 
-	pub fn has_property(&self, property_code: u32) -> bool {
+	pub fn has_property(&self, property_code: Properties) -> bool {
 		self.properties & property_code != 0
 	}
 
-	fn has_or_contains_with_property_generic(&self, property_code_loc: u32, property_code_item: u32, next: PropertyWithinFn) -> bool {
+	fn has_or_contains_with_property_generic(&self, property_code_loc: Properties, property_code_item: Properties, next: PropertyWithinFn) -> bool {
 		if self.has_property(property_code_loc) {
 			return true;
 		}
 		next(self, property_code_item)
 	}
 
-	pub fn has_or_contains_with_property(&self, property_code_loc: u32, property_code_item: u32) -> bool {
+	pub fn has_or_contains_with_property(&self, property_code_loc: Properties, property_code_item: Properties) -> bool {
 		self.has_or_contains_with_property_generic(property_code_loc, property_code_item, Location::contains_with_property)
 	}
 
-	pub fn has_or_contains_with_switchable_property(&self, property_code_loc: u32, property_code_item: u32) -> bool {
+	pub fn has_or_contains_with_switchable_property(&self, property_code_loc: Properties, property_code_item: Properties) -> bool {
 		self.has_or_contains_with_property_generic(property_code_loc, property_code_item, Location::contains_with_switchable_property)
 	}
 
-	pub fn contains_with_property(&self, property_code: u32) -> bool {
+	pub fn contains_with_property(&self, property_code: Properties) -> bool {
 		self.items.values().any(|x| x.borrow().has_or_contains_with_property(property_code) && !x.borrow().has_property(constants::CTRL_ITEM_WEARABLE))
 	}
 
-	pub fn contains_with_switchable_property(&self, property_code: u32) -> bool {
+	pub fn contains_with_switchable_property(&self, property_code: Properties) -> bool {
 		self.items.values().any(|x| x.borrow().has_or_contains_with_switchable_property(property_code) && !x.borrow().has_property(constants::CTRL_ITEM_WEARABLE))
 	}
 
-	pub fn set_property(&mut self, property_code: u32, next: bool) {
+	pub fn set_property(&mut self, property_code: Properties, next: bool) {
 		if next {
 			self.properties |= property_code;
 		} else {

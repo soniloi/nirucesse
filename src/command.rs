@@ -1,5 +1,5 @@
 use constants;
-use data_collection::DataCollection;
+use data_collection::{DataCollection, Properties};
 use player::Player;
 use terminal;
 
@@ -14,13 +14,13 @@ pub type ActionFn = fn(items: &DataCollection, arg: String, player: &mut Player,
 
 pub struct Command {
 	name: String,
-	properties: u32,
+	properties: Properties,
 	handler: ActionFn,
 }
 
 impl Command {
 
-	pub fn new(name: String, properties: u32, handler: ActionFn) -> Command {
+	pub fn new(name: String, properties: Properties, handler: ActionFn) -> Command {
 		Command {
 			name: name,
 			properties: properties,
@@ -28,7 +28,7 @@ impl Command {
 		}
 	}
 
-	pub fn has_property(&self, property: u32) -> bool {
+	pub fn has_property(&self, property: Properties) -> bool {
 		self.properties & property != 0
 	}
 

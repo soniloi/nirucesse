@@ -24,6 +24,7 @@ pub type InventoryRef = GenericRcRefCellBox<Inventory>;
 pub type ItemRef = GenericRcRefCellBox<Item>;
 pub type LocationRef = GenericRcRefCellBox<Location>;
 pub type Id = u32;
+pub type Properties = u32;
 pub type TpMap = HashMap<Id, (Id, Id)>;
 
 pub struct DataCollection {
