@@ -3,8 +3,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use constants;
-use data_collection;
-use data_collection::ItemRef;
+use data_collection::{self, Id, ItemRef};
 use file_buffer::FileBuffer;
 use item::Item;
 use location_collection::LocationCollection;
@@ -21,7 +20,7 @@ const FILE_INDEX_ITEM_ALIAS_START: usize = 8;
 const ITEM_WRITING_NONE: &'static str = "0"; // String indicating that there is no writing
 
 pub struct ItemCollection {
-	items_by_id: HashMap<u32, ItemRef>,
+	items_by_id: HashMap<Id, ItemRef>,
 	items_by_name: HashMap<String, ItemRef>,
 }
 
@@ -36,7 +35,7 @@ impl ItemCollection {
 
 	pub fn init(&mut self, buffer: &mut FileBuffer, expected_count: u32, locations: &mut LocationCollection, treasure_count: &mut u32) {
 
-		let mut initial_locations: HashMap<u32, u32> = HashMap::new();
+		let mut initial_locations: HashMap<Id, Id> = HashMap::new();
 		let mut line = buffer.get_line();
 		while !buffer.eof() {
 			match line.as_ref() {
@@ -70,7 +69,7 @@ impl ItemCollection {
 		self.validate(constants::INDEX_START_ITEM, expected_count + constants::INDEX_START_ITEM);
 	}
 
-	fn parse_and_insert_item(&mut self, words: &Vec<&str>) -> (ItemRef, u32) {
+	fn parse_and_insert_item(&mut self, words: &Vec<&str>) -> (ItemRef, Id) {
 		let id = data_collection::str_to_u32(words[FILE_INDEX_ITEM_ID], 10);
 		let properties = data_collection::str_to_u32(words[FILE_INDEX_ITEM_STATUS], 16);
 		let initial = data_collection::str_to_u32(words[FILE_INDEX_ITEM_INITIAL_LOC], 10);
@@ -95,7 +94,7 @@ impl ItemCollection {
 		(item, initial)
 	}
 
-	fn set_initial(&self, locations: &mut LocationCollection, item: &ItemRef, initial_id: u32) {
+	fn set_initial(&self, locations: &mut LocationCollection, item: &ItemRef, initial_id: Id) {
 		// FIXME: tidy this up
 		if initial_id <= constants::INDEX_START_ITEM {
 			let initial_loc = match locations.get(initial_id) {
@@ -132,7 +131,7 @@ impl ItemCollection {
 		}
 	}
 
-	pub fn get_by_id(&self, key: u32) -> Option<&ItemRef> {
+	pub fn get_by_id(&self, key: Id) -> Option<&ItemRef> {
 		self.items_by_id.get(&key)
 	}
 

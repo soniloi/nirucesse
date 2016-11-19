@@ -1,24 +1,24 @@
 use constants;
-use data_collection::ItemRef;
+use data_collection::{Id, ItemRef};
 
-pub type ItemCheckFn = fn(primary: &Item, other: &ItemRef) -> Option<u32>;
+pub type ItemCheckFn = fn(primary: &Item, other: &ItemRef) -> Option<Id>;
 
 pub struct Item {
-	id: u32,
+	id: Id,
 	properties: u32,
 	size: u32,
 	shortname: String,
 	longname: String,
 	description: String,
 	writing: Option<String>,
-	location: u32,
+	location: Id,
 	on: bool,
 	within: Option<ItemRef>,
 }
 
 impl Item {
 
-	pub fn new(id: u32, properties: u32, size: u32, shortname: String, longname: String, description: String, writing: Option<String>, location: u32) -> Item {
+	pub fn new(id: Id, properties: u32, size: u32, shortname: String, longname: String, description: String, writing: Option<String>, location: Id) -> Item {
 		Item {
 			id: id,
 			properties: properties,
@@ -33,7 +33,7 @@ impl Item {
 		}
 	}
 
-	pub fn is(&self, id: u32) -> bool {
+	pub fn is(&self, id: Id) -> bool {
 		id == self.id
 	}
 
@@ -50,14 +50,14 @@ impl Item {
 	}
 
 	// FIXME: probably refactor this out
-	pub fn contains_item(&self, id: u32) -> bool {
+	pub fn contains_item(&self, id: Id) -> bool {
 		match self.within.clone() {
 			None => false,
 			Some(within) => within.borrow().is_or_contains_item(id),
 		}
 	}
 
-	pub fn is_or_contains_item(&self, id: u32) -> bool {
+	pub fn is_or_contains_item(&self, id: Id) -> bool {
 		if self.id == id {
 			return true;
 		}
@@ -67,11 +67,11 @@ impl Item {
 		}
 	}
 
-	pub fn get_location(&self) -> u32 {
+	pub fn get_location(&self) -> Id {
 		self.location
 	}
 
-	pub fn set_location(&mut self, loc: u32) {
+	pub fn set_location(&mut self, loc: Id) {
 		self.location = loc;
 	}
 
@@ -107,7 +107,7 @@ impl Item {
 		}
 	}
 
-	pub fn get_id(&self) -> u32 {
+	pub fn get_id(&self) -> Id {
 		self.id
 	}
 
@@ -146,7 +146,7 @@ impl Item {
 	// Check that a potential container is a container, that we are not inserting an item into itself, that it is the right kind of container,
 	// 	that it is empty, and that it is large enough to hold the item
 	// If there is a problem, return the string tag of the reason, otherwise return None
-	pub fn has_problem_accepting(&self, item: &ItemRef) -> Option<u32> {
+	pub fn has_problem_accepting(&self, item: &ItemRef) -> Option<Id> {
 		// Check attributes of container
 		if !self.has_property(constants::CTRL_ITEM_CONTAINER) {
 			return Some(constants::STR_ID_NOT_CONTAINER);
@@ -182,7 +182,7 @@ impl Item {
 	// Check that an item can be emptied
 	// If there is a problem, return the string tag of the reason, otherwise return None
 	#[allow(unused_variables)]
-	pub fn has_problem_emptying(&self, other: &ItemRef) -> Option<u32> {
+	pub fn has_problem_emptying(&self, other: &ItemRef) -> Option<Id> {
 		if !self.has_property(constants::CTRL_ITEM_CONTAINER) {
 			return Some(constants::STR_ID_NOT_CONTAINER);
 		}
@@ -192,7 +192,7 @@ impl Item {
 	// Check that an item can be inserted
 	// If there is a problem, return the string tag of the reason, otherwise return None
 	#[allow(unused_variables)]
-	pub fn has_problem_inserting(&self, other: &ItemRef) -> Option<u32> {
+	pub fn has_problem_inserting(&self, other: &ItemRef) -> Option<Id> {
 		if self.has_property(constants::CTRL_ITEM_WEARABLE) {
 			return Some(constants::STR_ID_CANNOT_INSERT_WEARABLE);
 		}
@@ -298,7 +298,7 @@ impl Item {
 		self.on = next;
 	}
 
-	pub fn remove_item_certain(&mut self, id: u32) {
+	pub fn remove_item_certain(&mut self, id: Id) {
 		match self.within.clone() {
 			None => panic!("Data corruption seeking item [{}], fail.", id),
 			Some(within) => {

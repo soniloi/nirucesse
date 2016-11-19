@@ -1,18 +1,17 @@
 use std::collections::HashMap;
 
 use constants;
-use data_collection::ItemRef;
-use data_collection::LocationRef;
+use data_collection::{Id, ItemRef, LocationRef};
 
 pub struct Inventory {
-	id: u32,
+	id: Id,
 	capacity: u32,
-	items: HashMap<u32, ItemRef>,
+	items: HashMap<Id, ItemRef>,
 }
 
 impl Inventory {
 
-	pub fn new(id: u32, capacity: u32) -> Inventory {
+	pub fn new(id: Id, capacity: u32) -> Inventory {
 		Inventory {
 			id: id,
 			capacity: capacity,
@@ -28,7 +27,7 @@ impl Inventory {
 		self.items.values().any(|x| x.borrow().has_or_contains_with_switchable_property(property_code))
 	}
 
-	pub fn contains_item(&self, id: u32) -> bool {
+	pub fn contains_item(&self, id: Id) -> bool {
 		self.items.values().any(|x| x.borrow().is_or_contains_item(id))
 	}
 
@@ -37,7 +36,7 @@ impl Inventory {
 		self.items.insert(item.borrow().get_id(), item.clone());
 	}
 
-	pub fn remove_item_certain(&mut self, id: u32) {
+	pub fn remove_item_certain(&mut self, id: Id) {
 		if self.items.contains_key(&id) {
 			let found_option = self.items.remove(&id);
 			match found_option {

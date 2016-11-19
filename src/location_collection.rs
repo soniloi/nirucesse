@@ -3,8 +3,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use constants;
-use data_collection;
-use data_collection::LocationRef;
+use data_collection::{self, Id, LocationRef};
 use location::Direction;
 use location::Location;
 use file_buffer::FileBuffer;
@@ -27,7 +26,7 @@ const FILE_INDEX_LOCATION_DESCRIPTION: usize = 14;
 const KEY_DIRECTION_NONE: u32 = 0;
 
 pub struct LocationCollection {
-	locations: HashMap<u32, LocationRef>,
+	locations: HashMap<Id, LocationRef>,
 	direction_map: HashMap<&'static str, Direction>, // Map of direction strings to direction enum
 }
 
@@ -60,7 +59,7 @@ impl LocationCollection {
 
 		self.init_direction_map();
 
-		let mut all_links: HashMap<u32, Box<HashMap<Direction, u32>>> = HashMap::new();
+		let mut all_links: HashMap<Id, Box<HashMap<Direction, Id>>> = HashMap::new();
 		let mut line = buffer.get_line();
 		while !buffer.eof() {
 			match line.as_ref() {
@@ -90,7 +89,7 @@ impl LocationCollection {
 		self.validate(expected_count);
 	}
 
-	fn parse_location(words: &Vec<&str>) -> (LocationRef, u32) {
+	fn parse_location(words: &Vec<&str>) -> (LocationRef, Id) {
 		let id = data_collection::str_to_u32(words[FILE_INDEX_LOCATION_ID], 10);
 		let properties = data_collection::str_to_u32(words[FILE_INDEX_LOCATION_STATUS], 16);
 		let shortname = String::from(words[FILE_INDEX_LOCATION_SHORTNAME]);
@@ -101,8 +100,8 @@ impl LocationCollection {
 		(loc, id)
 	}
 
-	fn parse_links(words: &Vec<&str>) -> Box<HashMap<Direction, u32>> {
-		let mut links: Box<HashMap<Direction, u32>> = Box::new(HashMap::new());
+	fn parse_links(words: &Vec<&str>) -> Box<HashMap<Direction, Id>> {
+		let mut links: Box<HashMap<Direction, Id>> = Box::new(HashMap::new());
 		links.insert(Direction::North, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_N], 10));
 		links.insert(Direction::South, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_S], 10));
 		links.insert(Direction::East, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_E], 10));
@@ -116,7 +115,7 @@ impl LocationCollection {
 		links
 	}
 
-	fn cross_reference(&mut self, all_links: &HashMap<u32, Box<HashMap<Direction, u32>>>) {
+	fn cross_reference(&mut self, all_links: &HashMap<u32, Box<HashMap<Direction, Id>>>) {
 		for (loc_id, direction_map) in all_links.iter() {
 			let loc = self.get_certain(*loc_id);
 			for (direction_key, direction_val) in (*direction_map).iter() {
@@ -140,11 +139,11 @@ impl LocationCollection {
 		}
 	}
 
-	pub fn get(&self, key: u32) -> Option<&LocationRef> {
+	pub fn get(&self, key: Id) -> Option<&LocationRef> {
 		self.locations.get(&key)
 	}
 
-	fn get_certain(&self, key: u32) -> &LocationRef {
+	fn get_certain(&self, key: Id) -> &LocationRef {
 		match self.locations.get(&key) {
 			None => panic!("Location collection corruption for location id [{}], fail.", key),
 			Some(location) => return location,
