@@ -157,6 +157,7 @@ pub const STR_ID_COOK_CABBAGE: u32 = 14;
 pub const STR_ID_NO_SEE_DARKNESS: u32 = 15;
 pub const STR_ID_NO_SEE_HAZE: u32 = 16;
 pub const STR_ID_CAULDRON_FULL: u32 = 17;
+pub const STR_ID_WHERE_FLASH: u32 = 18;
 pub const STR_ID_COMMANDS_INTRO: u32 = 19;
 pub const STR_ID_CONTAINER_FULL: u32 = 20;
 pub const STR_ID_ALREADY_CONTAINED: u32 = 21;
