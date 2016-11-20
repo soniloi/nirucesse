@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use constants;
-use data_collection::{InventoryId, ItemId, ItemRef, LocationRef, Properties};
+use data_collection::{InventoryId, ItemId, ItemProperties, ItemRef, LocationRef};
 
 pub struct Inventory {
 	id: InventoryId,
@@ -19,11 +19,11 @@ impl Inventory {
 		}
 	}
 
-	pub fn contains_with_property(&self, property_code: Properties) -> bool {
+	pub fn contains_with_property(&self, property_code: ItemProperties) -> bool {
 		self.items.values().any(|x| x.borrow().has_or_contains_with_property(property_code))
 	}
 
-	pub fn contains_with_switchable_property(&self, property_code: Properties) -> bool {
+	pub fn contains_with_switchable_property(&self, property_code: ItemProperties) -> bool {
 		self.items.values().any(|x| x.borrow().has_or_contains_with_switchable_property(property_code))
 	}
 

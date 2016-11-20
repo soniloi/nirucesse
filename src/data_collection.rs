@@ -30,6 +30,9 @@ pub type LocationId = Id;
 pub type StringId = Id;
 pub type TpMap = HashMap<LocationId, (LocationId, InventoryId)>;
 pub type Properties = u32;
+pub type CommandProperties = Properties;
+pub type ItemProperties = Properties;
+pub type LocationProperties = Properties;
 
 pub struct DataCollection {
 	commands: CommandCollection,

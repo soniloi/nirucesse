@@ -1,11 +1,11 @@
 use constants;
-use data_collection::{Id, ItemId, ItemRef, Properties, StringId};
+use data_collection::{Id, ItemId, ItemProperties, ItemRef, StringId};
 
 pub type ItemCheckFn = fn(primary: &Item, other: &ItemRef) -> Option<StringId>;
 
 pub struct Item {
 	id: ItemId,
-	properties: Properties,
+	properties: ItemProperties,
 	size: u32,
 	shortname: String,
 	longname: String,
@@ -18,7 +18,7 @@ pub struct Item {
 
 impl Item {
 
-	pub fn new(id: ItemId, properties: Properties, size: u32, shortname: String, longname: String, description: String, writing: Option<String>, location: Id) -> Item {
+	pub fn new(id: ItemId, properties: ItemProperties, size: u32, shortname: String, longname: String, description: String, writing: Option<String>, location: Id) -> Item {
 		Item {
 			id: id,
 			properties: properties,
@@ -75,11 +75,11 @@ impl Item {
 		self.location = loc;
 	}
 
-	pub fn has_property(&self, property_code: Properties) -> bool {
+	pub fn has_property(&self, property_code: ItemProperties) -> bool {
 		self.properties & property_code != 0
 	}
 
-	fn has_or_contains_with_property_generic(&self, property_code: Properties, on_optional: bool) -> bool {
+	fn has_or_contains_with_property_generic(&self, property_code: ItemProperties, on_optional: bool) -> bool {
 		if (on_optional || self.on) && self.has_property(property_code) {
 			return true;
 		}
@@ -90,16 +90,16 @@ impl Item {
 	}
 
 	// Whether the item has some property
-	pub fn has_or_contains_with_property(&self, property_code: Properties) -> bool {
+	pub fn has_or_contains_with_property(&self, property_code: ItemProperties) -> bool {
 		self.has_or_contains_with_property_generic(property_code, true)
 	}
 
 	// Whether the item has some property, but must be switched on in order for that property to be active
-	pub fn has_or_contains_with_switchable_property(&self, property_code: Properties) -> bool {
+	pub fn has_or_contains_with_switchable_property(&self, property_code: ItemProperties) -> bool {
 		self.has_or_contains_with_property_generic(property_code, false)
 	}
 
-	pub fn set_property(&mut self, property_code: Properties, next: bool) {
+	pub fn set_property(&mut self, property_code: ItemProperties, next: bool) {
 		if next {
 			self.properties |= property_code;
 		} else {
