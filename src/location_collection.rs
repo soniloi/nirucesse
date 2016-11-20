@@ -90,8 +90,8 @@ impl LocationCollection {
 	}
 
 	fn parse_location(words: &Vec<&str>) -> (LocationRef, LocationId) {
-		let id = data_collection::str_to_u32(words[FILE_INDEX_LOCATION_ID], 10);
-		let properties = data_collection::str_to_u32(words[FILE_INDEX_LOCATION_STATUS], 16);
+		let id = data_collection::str_to_u32_certain(words[FILE_INDEX_LOCATION_ID], 10);
+		let properties = data_collection::str_to_u32_certain(words[FILE_INDEX_LOCATION_STATUS], 16);
 		let shortname = String::from(words[FILE_INDEX_LOCATION_SHORTNAME]);
 		let longname = String::from(words[FILE_INDEX_LOCATION_LONGNAME]);
 		let description = String::from(words[FILE_INDEX_LOCATION_DESCRIPTION]);
@@ -102,16 +102,16 @@ impl LocationCollection {
 
 	fn parse_links(words: &Vec<&str>) -> Box<HashMap<Direction, LocationId>> {
 		let mut links: Box<HashMap<Direction, LocationId>> = Box::new(HashMap::new());
-		links.insert(Direction::North, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_N], 10));
-		links.insert(Direction::South, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_S], 10));
-		links.insert(Direction::East, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_E], 10));
-		links.insert(Direction::West, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_W], 10));
-		links.insert(Direction::Northeast, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_NE], 10));
-		links.insert(Direction::Southwest, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_SW], 10));
-		links.insert(Direction::Southeast, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_SE], 10));
-		links.insert(Direction::Northwest, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_NW], 10));
-		links.insert(Direction::Up, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_U], 10));
-		links.insert(Direction::Down, data_collection::str_to_u32(words[FILE_INDEX_LOCATION_DIRECTION_D], 10));
+		links.insert(Direction::North, data_collection::str_to_u32_certain(words[FILE_INDEX_LOCATION_DIRECTION_N], 10));
+		links.insert(Direction::South, data_collection::str_to_u32_certain(words[FILE_INDEX_LOCATION_DIRECTION_S], 10));
+		links.insert(Direction::East, data_collection::str_to_u32_certain(words[FILE_INDEX_LOCATION_DIRECTION_E], 10));
+		links.insert(Direction::West, data_collection::str_to_u32_certain(words[FILE_INDEX_LOCATION_DIRECTION_W], 10));
+		links.insert(Direction::Northeast, data_collection::str_to_u32_certain(words[FILE_INDEX_LOCATION_DIRECTION_NE], 10));
+		links.insert(Direction::Southwest, data_collection::str_to_u32_certain(words[FILE_INDEX_LOCATION_DIRECTION_SW], 10));
+		links.insert(Direction::Southeast, data_collection::str_to_u32_certain(words[FILE_INDEX_LOCATION_DIRECTION_SE], 10));
+		links.insert(Direction::Northwest, data_collection::str_to_u32_certain(words[FILE_INDEX_LOCATION_DIRECTION_NW], 10));
+		links.insert(Direction::Up, data_collection::str_to_u32_certain(words[FILE_INDEX_LOCATION_DIRECTION_U], 10));
+		links.insert(Direction::Down, data_collection::str_to_u32_certain(words[FILE_INDEX_LOCATION_DIRECTION_D], 10));
 		links
 	}
 

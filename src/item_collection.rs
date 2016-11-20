@@ -70,10 +70,10 @@ impl ItemCollection {
 	}
 
 	fn parse_and_insert_item(&mut self, words: &Vec<&str>) -> (ItemRef, ItemId) {
-		let id = data_collection::str_to_u32(words[FILE_INDEX_ITEM_ID], 10);
-		let properties = data_collection::str_to_u32(words[FILE_INDEX_ITEM_STATUS], 16);
-		let initial = data_collection::str_to_u32(words[FILE_INDEX_ITEM_INITIAL_LOC], 10);
-		let size = data_collection::str_to_u32(words[FILE_INDEX_ITEM_SIZE], 10);
+		let id = data_collection::str_to_u32_certain(words[FILE_INDEX_ITEM_ID], 10);
+		let properties = data_collection::str_to_u32_certain(words[FILE_INDEX_ITEM_STATUS], 16);
+		let initial = data_collection::str_to_u32_certain(words[FILE_INDEX_ITEM_INITIAL_LOC], 10);
+		let size = data_collection::str_to_u32_certain(words[FILE_INDEX_ITEM_SIZE], 10);
 		let shortname = String::from(words[FILE_INDEX_ITEM_SHORTNAME]);
 		let longname = String::from(words[FILE_INDEX_ITEM_LONGNAME]);
 		let description = String::from(words[FILE_INDEX_ITEM_DESCRIPTION]);

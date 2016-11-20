@@ -2,6 +2,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use rand;
 use rand::distributions::{IndependentSample, Range};
+use std::num::ParseIntError;
 use std::rc::Rc;
 
 use command::Command;
@@ -218,9 +219,13 @@ impl DataCollection {
 	}
 }
 
-pub fn str_to_u32(st: &str, radix: u32) -> u32 {
-	match u32::from_str_radix(st, radix) {
-		Err(why) => panic!("Unable to parse integer field {}: {}", st, why),
-		Ok(status) => status,
+pub fn str_to_u32(st: &str, radix: u32) -> Result<u32, ParseIntError> {
+	u32::from_str_radix(st, radix)
+}
+
+pub fn str_to_u32_certain(st: &str, radix: u32) -> u32 {
+	match str_to_u32(st, radix) {
+		Err(why) => panic!(why),
+		Ok(result) => result,
 	}
 }

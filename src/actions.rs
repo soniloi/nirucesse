@@ -14,9 +14,13 @@ pub fn do_flash(data: &DataCollection, arg: String, player: &mut Player, arg_typ
 		let further_args = terminal::read_question(&data.get_response(constants::STR_ID_WHERE_FLASH));
 		actual_arg = String::new() + &further_args[0];
 	}
-	let next_id = data_collection::str_to_u32(&actual_arg, 10);
-	let next = data.get_location_certain(next_id);
-	player.flash(data, next.clone());
+	match data_collection::str_to_u32(&actual_arg, 10) {
+		Err(why) => terminal::write_full(data.get_response(constants::STR_ID_INVALID_NUMBER)),
+		Ok(next_id) => {
+			let next = data.get_location_certain(next_id);
+			player.flash(data, next.clone());
+		},
+	};
 }
 
 #[cfg(not(debug_assertions))]

@@ -43,7 +43,7 @@ impl InfoStringCollection {
 	}
 
 	fn parse_string(words: &Vec<&str>) -> (StringId, String) {
-		let tag = data_collection::str_to_u32(words[FILE_INDEX_STRING_TAG], 10);
+		let tag = data_collection::str_to_u32_certain(words[FILE_INDEX_STRING_TAG], 10);
 		let content = words[FILE_INDEX_STRING_CONTENT];
 		return (tag, String::from(content))
 	}

@@ -119,7 +119,7 @@ impl CommandCollection {
 	fn parse_and_insert_command(&mut self, words: &Vec<&str>, acts: &HashMap<&str, ActionFn>) {
 		let primary = String::from(words[FILE_INDEX_COMMAND_PRIMARY]);
 		let key = primary.clone();
-		let properties = data_collection::str_to_u32(words[FILE_INDEX_COMMAND_STATUS], 16);
+		let properties = data_collection::str_to_u32_certain(words[FILE_INDEX_COMMAND_STATUS], 16);
 		let tag = words[FILE_INDEX_COMMAND_TAG];
 
 		match acts.get(tag) {
