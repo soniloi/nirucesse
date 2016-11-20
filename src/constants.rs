@@ -282,6 +282,7 @@ pub const STR_ID_ITEM_HEAVY: u32 = 147;
 pub const STR_ID_TAKEN: u32 = 148;
 pub const STR_ID_THE_START: u32 = 149;
 pub const STR_ID_INVALID_NUMBER: u32 = 150;
+pub const STR_ID_INVALID_LOCATION: u32 = 151;
 pub const STR_ID_BURN_TOAST: u32 = 152;
 pub const STR_ID_NO_GRAVITY: u32 = 153;
 pub const STR_ID_TROLL_FED: u32 = 154;

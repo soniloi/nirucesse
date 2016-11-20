@@ -17,8 +17,10 @@ pub fn do_flash(data: &DataCollection, arg: String, player: &mut Player, arg_typ
 	match data_collection::str_to_u32(&actual_arg, 10) {
 		Err(why) => terminal::write_full(data.get_response(constants::STR_ID_INVALID_NUMBER)),
 		Ok(next_id) => {
-			let next = data.get_location_certain(next_id);
-			player.flash(data, next.clone());
+			match data.get_location(next_id) {
+				None => terminal::write_full(&data.get_response_param(constants::STR_ID_INVALID_LOCATION, &next_id.to_string())),
+				Some(next) => player.flash(data, next.clone()),
+			};
 		},
 	};
 }
