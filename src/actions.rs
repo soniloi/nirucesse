@@ -1,10 +1,24 @@
 use command::ArgumentType;
 use constants;
-use data_collection::{DataCollection, ItemId, StringId};
+use data_collection::{self, DataCollection, ItemId, StringId};
 use player::ItemManipFn;
 use player::Player;
 
 use terminal;
+
+#[cfg(debug_assertions)]
+#[allow(unused_variables)]
+pub fn do_flash(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	let next_id = data_collection::str_to_u32(&arg, 10);
+	let next = data.get_location_certain(next_id);
+	player.flash(data, next.clone());
+}
+
+#[cfg(not(debug_assertions))]
+#[allow(unused_variables)]
+pub fn do_flash(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	terminal::write_full(data.get_response(constants::STR_ID_NO_UNDERSTAND_INSTRUCTION));
+}
 
 #[cfg(debug_assertions)]
 pub fn do_grab(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {

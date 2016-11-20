@@ -875,6 +875,13 @@ impl Player {
 		self.complete_obstruction_achievement(constants::ITEM_ID_GLINT, data.get_puzzle(constants::PUZZLE_ID_GLINT));
 	}
 
+	#[cfg(debug_assertions)]
+	pub fn flash(&mut self, data: &DataCollection, next: LocationRef) {
+		self.location = next;
+		self.previous = None;
+		terminal::write_full(&self.location.borrow().mk_arrival_string(data.get_response(constants::STR_ID_YOU_ARE)));
+	}
+
 	pub fn fly(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
 		let loc_id = self.location.borrow().get_id();

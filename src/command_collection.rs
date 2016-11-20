@@ -29,6 +29,7 @@ impl CommandCollection {
 	// TODO: make properly static
 	fn init_actions() -> HashMap<&'static str, ActionFn> {
 		let mut acts: HashMap<&str, ActionFn> = HashMap::new();
+		acts.insert("flash", actions::do_flash);
 		acts.insert("grab", actions::do_grab);
 		acts.insert("node", actions::do_node);
 		acts.insert("attack", actions::do_attack);
