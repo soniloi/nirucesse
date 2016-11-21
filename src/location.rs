@@ -17,6 +17,7 @@ pub enum Direction {
 	Down,
 	Back,
 	Out,
+	Max,
 }
 
 pub struct Location {
@@ -42,7 +43,7 @@ impl Location {
 			longname: longname,
 			description: description,
 			visited: false,
-			directions: HashMap::with_capacity(10),
+			directions: HashMap::with_capacity(Direction::Max as usize),
 			items: HashMap::new(),
 		}
 	}
