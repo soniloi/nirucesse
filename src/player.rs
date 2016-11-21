@@ -201,7 +201,7 @@ impl Player {
 	}
 
 	pub fn has_item_present(&self, item_id: ItemId) -> bool {
-	        self.inventory.borrow().contains_item(item_id) || self.location.borrow().contains_item(item_id)
+	    self.inventory.borrow().contains_item(item_id) || self.location.borrow().contains_item(item_id)
 	}
 
 	fn complete_obstruction_achievement(&mut self, obstruction_id: ItemId, response: &str) {
@@ -222,10 +222,6 @@ impl Player {
 			terminal::write_full(data.get_response(constants::STR_ID_DEATH_NO_GRAVITY));
 			self.die(data);
 		}
-	}
-
-	fn item_present(&self, item_id: ItemId) -> bool {
-		self.inventory.borrow().contains_item(item_id) || self.location.borrow().contains_item(item_id)
 	}
 
 	fn operate_machine(&mut self, data: &DataCollection, cartridge: &ItemRef, request: &ItemRef) {
@@ -816,7 +812,7 @@ impl Player {
 		match data.get_item_by_name(indirect_str[0].clone()) {
 			None => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_WHO_WHAT)),
 			Some(indirect) => {
-				let present = self.item_present(indirect.borrow().get_id());
+				let present = self.has_item_present(indirect.borrow().get_id());
 				if present {
 					self.feed_item_unknown(data, direct, indirect);
 				} else {
@@ -912,7 +908,7 @@ impl Player {
 		match data.get_item_by_name(recipient_str[0].clone()) {
 			None => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_WHO_WHAT)),
 			Some(recipient) => {
-				let present = self.item_present(recipient.borrow().get_id());
+				let present = self.has_item_present(recipient.borrow().get_id());
 				if present {
 					self.transfer_item(data, item, recipient);
 				} else {
@@ -1081,7 +1077,7 @@ impl Player {
 		match data.get_item_by_name(container_str[0].clone()) {
 			None => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_WHO_WHAT)),
 			Some(container) => {
-				let present = self.item_present(container.borrow().get_id());
+				let present = self.has_item_present(container.borrow().get_id());
 				if present {
 					self.insert_final(data, item, container)
 				} else {
@@ -1173,7 +1169,7 @@ impl Player {
 		match data.get_item_by_name(recipient_str[0].clone()) {
 			None => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_WHO_WHAT)),
 			Some(recipient) => {
-				let present = self.item_present(recipient.borrow().get_id());
+				let present = self.has_item_present(recipient.borrow().get_id());
 				if present {
 					self.transfer_item(data, item, recipient);
 				} else {
