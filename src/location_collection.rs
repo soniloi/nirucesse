@@ -71,8 +71,7 @@ impl LocationCollection {
 
 					// Create location and copy a reference into this collection
 					let location_parsed = LocationCollection::parse_location(&words);
-					let location = location_parsed.0;
-					let id = location_parsed.1;
+					let (location, id) = location_parsed;
 					self.locations.insert(id, location);
 
 					// Note links to adjacent locations

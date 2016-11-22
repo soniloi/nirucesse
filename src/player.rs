@@ -932,9 +932,7 @@ impl Player {
 			_ => self.try_move_other(dir),
 		};
 
-		let next_location_option = move_result.0;
-		let death = move_result.1;
-		let response_code_option = move_result.2;
+		let (next_location_option, death, response_code_option) = move_result;
 
 		// Print any returned responses
 		match response_code_option {

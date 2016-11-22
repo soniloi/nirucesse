@@ -47,12 +47,10 @@ impl ItemCollection {
 
 					// Create item and copy a reference into this collection
 					let item_parsed = self.parse_and_insert_item(&words);
-					let item = item_parsed.0;
-
+					let (item, initial) = item_parsed;
 					*treasure_count = *treasure_count + item.borrow().get_treasure_value();
 
 					// Note item's starting location
-					let initial = item_parsed.1;
 					initial_locations.insert(item.borrow().get_id(), initial);
 				},
 			}
