@@ -288,17 +288,14 @@ impl Player {
 		} else if !has_floor && self.has_gravity() { // Gravity pulls item down to location beneath current
 			let self_loc = self.location.borrow();
 			let below_option = self_loc.get_direction(&Direction::Down);
-			match below_option {
-				None => {}, // Probably an error state (error in datafile) TODO: do something with this case
-				Some(below) => {
-					response_code = constants::STR_ID_DROP_NO_FLOOR;
-					if is_fragile {
-						shattered = true;
-						response_code = constants::STR_ID_BREAK_FAR;
-					} else {
-						below.borrow_mut().insert_item(item.clone());
-					}
-				},
+			if let Some(below) = below_option {
+				response_code = constants::STR_ID_DROP_NO_FLOOR;
+				if is_fragile {
+					shattered = true;
+					response_code = constants::STR_ID_BREAK_FAR;
+				} else {
+					below.borrow_mut().insert_item(item.clone());
+				}
 			}
 		} else if !has_land { // When dropped near open water, lost forever
 			item.borrow_mut().retire();
@@ -931,29 +928,24 @@ impl Player {
 			Direction::Back => self.try_move_back(),
 			_ => self.try_move_other(dir),
 		};
-
 		let (next_location_option, death, response_code_option) = move_result;
 
 		// Print any returned responses
-		match response_code_option {
-			None => {},
-			Some(response_code) => terminal::write_full(data.get_response(response_code)),
+		if let Some(response_code) = response_code_option {
+			terminal::write_full(data.get_response(response_code));
 		}
 
 		// Update location if returned
-		match next_location_option {
-			None => {},
-			Some (next_location) => {
-				self.location = next_location;
-				if self.location.borrow().can_reach(&location_before) {
-					self.previous = Some(location_before);
-				} else {
-					self.previous = None;
-				}
-				let arrival_description = self.location.borrow().mk_arrival_string(data.get_response(constants::STR_ID_YOU_ARE));
-				terminal::write_full(&self.get_effective_appearance(data, arrival_description));
-				self.location.borrow_mut().set_visited(true);
+		if let Some(next_location) = next_location_option {
+			self.location = next_location;
+			if self.location.borrow().can_reach(&location_before) {
+				self.previous = Some(location_before);
+			} else {
+				self.previous = None;
 			}
+			let arrival_description = self.location.borrow().mk_arrival_string(data.get_response(constants::STR_ID_YOU_ARE));
+			terminal::write_full(&self.get_effective_appearance(data, arrival_description));
+			self.location.borrow_mut().set_visited(true);
 		}
 
 		// Process death
@@ -986,31 +978,27 @@ impl Player {
 			},
 			Some(next) => {
 				if !self.is_previous_loc(&next) {
-					match (**self_loc).get_obstruction() {
-						None => {},
-						Some(obstruction) => {
-							// FIXME: tidy this whole area
-							let mut next_loc_option: Option<LocationRef> = None;
-							let mut death = false;
-							let mut response_code = constants::STR_ID_BLOCKED; // FIXME: tailor to individual obstructions
-							if obstruction.borrow().is(constants::ITEM_ID_BUCCANEER) {
-								if !self.has_invisibility() {
-									response_code = constants::STR_ID_BUCCANEER_WATCHING;
-								} else {
-									next_loc_option = Some(next.clone());
-									response_code = constants::STR_ID_BUCCANEER_SNEAK_PAST;
-								}
-							} else if obstruction.borrow().is(constants::ITEM_ID_CORSAIR) {
-								if self.has_item_inventory(constants::ITEM_ID_BOOTS) {
-									death = true;
-									response_code = constants::STR_ID_CORSAIR_SNEAK_PAST;
-								} else {
-									response_code = constants::STR_ID_CORSAIR_LISTENING;
-								}
+					if let Some(obstruction) = (**self_loc).get_obstruction() {
+						// FIXME: tidy this whole area
+						let mut next_loc_option: Option<LocationRef> = None;
+						let mut death = false;
+						let mut response_code = constants::STR_ID_BLOCKED; // FIXME: tailor to individual obstructions
+						if obstruction.borrow().is(constants::ITEM_ID_BUCCANEER) {
+							if !self.has_invisibility() {
+								response_code = constants::STR_ID_BUCCANEER_WATCHING;
+							} else {
+								next_loc_option = Some(next.clone());
+								response_code = constants::STR_ID_BUCCANEER_SNEAK_PAST;
 							}
-							return (next_loc_option, death, Some(response_code));
+						} else if obstruction.borrow().is(constants::ITEM_ID_CORSAIR) {
+							if self.has_item_inventory(constants::ITEM_ID_BOOTS) {
+								death = true;
+								response_code = constants::STR_ID_CORSAIR_SNEAK_PAST;
+							} else {
+								response_code = constants::STR_ID_CORSAIR_LISTENING;
+							}
 						}
-					}
+						return (next_loc_option, death, Some(response_code));					}
 				}
 
 				if !next.borrow().has_or_contains_with_property(constants::CTRL_LOC_HAS_AIR, constants::CTRL_ITEM_GIVES_AIR) && !self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_AIR) { // Refuse to proceed if there is no air at the next location
