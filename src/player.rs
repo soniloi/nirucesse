@@ -249,13 +249,13 @@ impl Player {
 	}
 
 	fn play_player(&self, data: &DataCollection, player: &ItemRef) {
+		let mut response_code = constants::STR_ID_NO_MUSIC;
 		if player.borrow().contains_item(constants::ITEM_ID_CD) {
-			terminal::write_full(data.get_response(constants::STR_ID_PLAY_CD));
+			response_code = constants::STR_ID_PLAY_CD
 		} else if player.borrow().contains_item(constants::ITEM_ID_CASSETTE) {
-			terminal::write_full(data.get_response(constants::STR_ID_PLAY_CASSETTE));
-		} else{
-			terminal::write_full(data.get_response(constants::STR_ID_NO_MUSIC));
+			response_code = constants::STR_ID_PLAY_CASSETTE;
 		}
+		terminal::write_full(data.get_response(response_code));
 		player.borrow_mut().set_on(false);
 	}
 
@@ -328,11 +328,9 @@ impl Player {
 
 		terminal::write_full(data.get_response(response_code));
 
-		if shattered {
-			if item_id == constants::ITEM_ID_MIRROR {
-				terminal::write_full(data.get_response(constants::STR_ID_BAD_LUCK));
-				self.death_divisor = constants::DEATH_DIVISOR_SMASHED;
-			}
+		if shattered && item_id == constants::ITEM_ID_MIRROR {
+			terminal::write_full(data.get_response(constants::STR_ID_BAD_LUCK));
+			self.death_divisor = constants::DEATH_DIVISOR_SMASHED;
 		}
 	}
 
@@ -678,20 +676,22 @@ impl Player {
 		self.inventory.borrow_mut().remove_item_certain(item_id);
 		terminal::write_full(data.get_response(constants::STR_ID_DRINK_LIQUID));
 
+		let mut response_code = constants::STR_ID_NOTHING_HAPPENS;
 		match item_id {
-			constants::ITEM_ID_AQUA => terminal::write_full(data.get_response(constants::STR_ID_DRINK_AQUA)),
-			constants::ITEM_ID_WATER => terminal::write_full(data.get_response(constants::STR_ID_DRINK_WATER)),
-			constants::ITEM_ID_STEW => terminal::write_full(data.get_response(constants::STR_ID_DRINK_STEW)),
+			constants::ITEM_ID_AQUA => response_code = constants::STR_ID_DRINK_AQUA,
+			constants::ITEM_ID_WATER => response_code = constants::STR_ID_DRINK_WATER,
+			constants::ITEM_ID_STEW => response_code = constants::STR_ID_DRINK_STEW,
 			constants::ITEM_ID_ELIXIR => {
 				self.strong = true;
-				terminal::write_full(data.get_response(constants::STR_ID_DRINK_ELIXIR));
+				response_code = constants::STR_ID_DRINK_ELIXIR;
 			}
 			constants::ITEM_ID_POTION => {
-				terminal::write_full(data.get_response(constants::STR_ID_DRINK_POTION));
+				response_code = constants::STR_ID_DRINK_POTION;
 				self.die(data);
 			},
-			_ => terminal::write_full(data.get_response(constants::STR_ID_NOTHING_HAPPENS)),
+			_ => {},
 		}
+		terminal::write_full(data.get_response(response_code));
 	}
 
 	pub fn drop(&mut self, data: &DataCollection, item: &ItemRef) {
