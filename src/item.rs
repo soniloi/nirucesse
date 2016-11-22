@@ -324,9 +324,8 @@ impl Item {
 	}
 
 	pub fn set_within(&mut self, within: Option<ItemRef>) {
-		match within.clone() {
-			None => {},
-			Some(with) => with.borrow_mut().set_location(self.id),
+		if let Some(with) = within.clone() {
+			with.borrow_mut().set_location(self.id);
 		}
 		self.within = within;
 	}

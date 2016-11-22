@@ -42,9 +42,8 @@ impl Game {
 			if !self.player.is_alive() {
 				self.process_reincarnation();
 			} else if self.player.is_playing() {
-				match self.data.get_event(self.player.get_instructions()) {
-					None => {},
-					Some(event) => terminal::write_full(event),
+				if let Some(event) = self.data.get_event(self.player.get_instructions()) {
+					terminal::write_full(event);
 				}
 			}
 		}
@@ -63,26 +62,20 @@ impl Game {
 
 		// First try verb-noun
 		let mut cmd_name_tentative = inputs[0].clone();
-		match self.data.get_command(cmd_name_tentative.clone()) {
-			None => {},
-			Some(cmd) => {
-				let arg: String = if inputs.len() > 1 { inputs[1].clone() } else { String::from("") };
-				(**cmd).execute(&self.data, arg, &mut self.player);
-				return;
-			},
+		if let Some(cmd) = self.data.get_command(cmd_name_tentative.clone()) {
+			let arg: String = if inputs.len() > 1 { inputs[1].clone() } else { String::from("") };
+			(**cmd).execute(&self.data, arg, &mut self.player);
+			return;
 		}
 
 		// That didn't parse, so try noun-verb instead
 		if inputs.len() >= 2 {
 			cmd_name_tentative = inputs[1].clone();
-			match self.data.get_command(cmd_name_tentative.clone()) {
-				None => {},
-				Some(cmd) => {
-					if cmd.has_property(constants::CTRL_COMMAND_INVERTIBLE) {
-						let arg: String = inputs[0].clone();
-						(**cmd).execute(&self.data, arg, &mut self.player);
-						return;
-					}
+			if let Some(cmd) = self.data.get_command(cmd_name_tentative.clone()) {
+				if cmd.has_property(constants::CTRL_COMMAND_INVERTIBLE) {
+					let arg: String = inputs[0].clone();
+					(**cmd).execute(&self.data, arg, &mut self.player);
+					return;
 				}
 			}
 		}

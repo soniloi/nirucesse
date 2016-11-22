@@ -146,15 +146,12 @@ impl Location {
 
 	// FIXME: clean up the flow here
 	pub fn remove_item_certain(&mut self, id: ItemId) {
-		match self.items.get(&id) {
-			None => {},
-			Some(item) => {
-				// Liquids don't get removed ONLY if they were at a location and not within a container
-				if item.borrow().has_property(constants::CTRL_ITEM_LIQUID) {
-					return;
-				}
-				item.borrow_mut().retire();
+		if let Some(item) = self.items.get(&id) {
+			// Liquids don't get removed ONLY if they were at a location and not within a container
+			if item.borrow().has_property(constants::CTRL_ITEM_LIQUID) {
+				return;
 			}
+			item.borrow_mut().retire();
 		}
 		for item in self.items.values() {
 			if item.borrow().contains_item(id) {

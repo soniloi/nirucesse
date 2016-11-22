@@ -122,17 +122,14 @@ impl CommandCollection {
 		let properties = data_collection::str_to_u32_certain(words[FILE_INDEX_COMMAND_STATUS], 16);
 		let tag = words[FILE_INDEX_COMMAND_TAG];
 
-		match acts.get(tag) {
-			None => {},
-			Some(act) => {
-				let cmd: CommandRef = Rc::new(Box::new(Command::new(primary, properties, *act)));
-				self.commands.insert(key, cmd.clone());
-				for i in FILE_INDEX_COMMAND_ALIAS_START..words.len() {
-					if !words[i].is_empty() {
-						self.commands.insert(String::from(words[i]), cmd.clone());
-					}
+		if let Some(act) = acts.get(tag) {
+			let cmd: CommandRef = Rc::new(Box::new(Command::new(primary, properties, *act)));
+			self.commands.insert(key, cmd.clone());
+			for i in FILE_INDEX_COMMAND_ALIAS_START..words.len() {
+				if !words[i].is_empty() {
+					self.commands.insert(String::from(words[i]), cmd.clone());
 				}
-			},
+			}
 		}
 	}
 

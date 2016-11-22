@@ -39,13 +39,10 @@ impl Inventory {
 	pub fn remove_item_certain(&mut self, id: ItemId) {
 		if self.items.contains_key(&id) {
 			let found_option = self.items.remove(&id);
-			match found_option {
-				None => {},
-				Some(found) => {
-					let is_liquid = found.borrow().has_property(constants::CTRL_ITEM_LIQUID);
-					if !is_liquid {
-						found.borrow_mut().retire();
-					}
+			if let Some(found) = found_option {
+				let is_liquid = found.borrow().has_property(constants::CTRL_ITEM_LIQUID);
+				if !is_liquid {
+					found.borrow_mut().retire();
 				}
 			}
 			return;

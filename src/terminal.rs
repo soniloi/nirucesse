@@ -129,16 +129,14 @@ fn read_prompted(prompt: &str) -> Vec<String> {
 }
 
 fn read_line(result_raw: &mut String) {
-	match io::stdin().read_line(result_raw) {
-		Err(e) => panic!("Error [{}] on stdin read_line, fail.", e),
-		_ => {},
+	if let Err(e) = io::stdin().read_line(result_raw) {
+		panic!("Error [{}] on stdin read_line, fail.", e);
 	}
 }
 
 fn flush() {
-	match stdout().flush() {
-		Err(e) => panic!("Error [{}] on stdout flush, fail.", e),
-		_ => {},
+	if let Err(e) = stdout().flush() {
+		panic!("Error [{}] on stdout flush, fail.", e);
 	}
 }
 
