@@ -925,7 +925,7 @@ impl Player {
 		let location_before = self.location.clone();
 
 		let move_result = match dir {
-			Direction::Back => self.try_move_back(),
+			Direction::Back => self.try_move_back(dir),
 			_ => self.try_move_other(dir),
 		};
 		let (next_location_option, death, response_code_option) = move_result;
@@ -956,11 +956,18 @@ impl Player {
 
 	// Attempt to move to previous location
 	// Return a tuple representing the next location (if move is successful), whether the player died, and any response message to be printed
-	fn try_move_back(&mut self) -> (Option<LocationRef>, bool, Option<StringId>) {
+	fn try_move_back(&mut self, dir: Direction) -> (Option<LocationRef>, bool, Option<StringId>) {
 		match self.previous.clone() {
-			None => (None, false, Some(constants::STR_ID_NO_REMEMBER)),
-			Some(prev) => (Some(prev.clone()), false, None),
-		}
+			None => return (None, false, Some(constants::STR_ID_NO_REMEMBER)),
+			Some(prev) => {
+				let needsno_gravity = self.location.borrow().has_property(constants::CTRL_LOC_NEEDSNO_GRAVITY);
+				let has_floor = self.location.borrow().has_property(constants::CTRL_LOC_HAS_FLOOR);
+				if let Some(movement_problem_id) = self.has_environmental_movement_problem(dir, &prev, needsno_gravity, has_floor) {
+					return (None, false, Some(movement_problem_id));
+				}
+				return (Some(prev.clone()), false, None);
+			},
+		};
 	}
 
 	fn try_move_obstruction(&self, obstruction: &ItemRef, next: &LocationRef) -> (Option<LocationRef>, bool, Option<StringId>) {
