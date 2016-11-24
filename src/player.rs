@@ -965,7 +965,7 @@ impl Player {
 				if let Some(movement_problem_id) = self.has_environmental_movement_problem(dir, &prev, needsno_gravity, has_floor) {
 					return (None, false, Some(movement_problem_id));
 				}
-				return (Some(prev.clone()), false, None);
+				return self.try_move_to(&prev);
 			},
 		};
 	}
