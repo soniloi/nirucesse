@@ -963,6 +963,28 @@ impl Player {
 		}
 	}
 
+	fn try_move_obstruction(&self, obstruction: &ItemRef, next: &LocationRef) -> (Option<LocationRef>, bool, Option<StringId>) {
+		let mut next_loc_option: Option<LocationRef> = None;
+		let mut death = false;
+		let mut response_code = constants::STR_ID_BLOCKED; // FIXME: tailor to individual obstructions
+		if obstruction.borrow().is(constants::ITEM_ID_BUCCANEER) {
+			if !self.has_invisibility() {
+				response_code = constants::STR_ID_BUCCANEER_WATCHING;
+			} else {
+				next_loc_option = Some(next.clone());
+				response_code = constants::STR_ID_BUCCANEER_SNEAK_PAST;
+			}
+		} else if obstruction.borrow().is(constants::ITEM_ID_CORSAIR) {
+			if self.has_item_inventory(constants::ITEM_ID_BOOTS) {
+				death = true;
+				response_code = constants::STR_ID_CORSAIR_SNEAK_PAST;
+			} else {
+				response_code = constants::STR_ID_CORSAIR_LISTENING;
+			}
+		}
+		(next_loc_option, death, Some(response_code))
+	}
+
 	// Attempt to move to some location, which may not be reachable from the current location
 	// Return a tuple representing the next location (if move is successful), whether the player died, and any response message to be printed
 	fn try_move_other(&mut self, dir: Direction) -> (Option<LocationRef>, bool, Option<StringId>) {
@@ -979,26 +1001,8 @@ impl Player {
 			Some(next) => {
 				if !self.is_previous_loc(&next) {
 					if let Some(obstruction) = (**self_loc).get_obstruction() {
-						// FIXME: tidy this whole area
-						let mut next_loc_option: Option<LocationRef> = None;
-						let mut death = false;
-						let mut response_code = constants::STR_ID_BLOCKED; // FIXME: tailor to individual obstructions
-						if obstruction.borrow().is(constants::ITEM_ID_BUCCANEER) {
-							if !self.has_invisibility() {
-								response_code = constants::STR_ID_BUCCANEER_WATCHING;
-							} else {
-								next_loc_option = Some(next.clone());
-								response_code = constants::STR_ID_BUCCANEER_SNEAK_PAST;
-							}
-						} else if obstruction.borrow().is(constants::ITEM_ID_CORSAIR) {
-							if self.has_item_inventory(constants::ITEM_ID_BOOTS) {
-								death = true;
-								response_code = constants::STR_ID_CORSAIR_SNEAK_PAST;
-							} else {
-								response_code = constants::STR_ID_CORSAIR_LISTENING;
-							}
-						}
-						return (next_loc_option, death, Some(response_code));					}
+						return self.try_move_obstruction(&obstruction, next);
+					}
 				}
 
 				if !next.borrow().has_or_contains_with_property(constants::CTRL_LOC_HAS_AIR, constants::CTRL_ITEM_GIVES_AIR) && !self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_AIR) { // Refuse to proceed if there is no air at the next location
