@@ -985,6 +985,22 @@ impl Player {
 		(next_loc_option, death, Some(response_code))
 	}
 
+	fn has_environmental_movement_problem(&self, dir: Direction, next: &LocationRef, needsno_gravity: bool, has_floor: bool) -> Option<StringId> {
+		if !next.borrow().has_or_contains_with_property(constants::CTRL_LOC_HAS_AIR, constants::CTRL_ITEM_GIVES_AIR) && !self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_AIR) { // Refuse to proceed if there is no air at the next location
+			return Some(constants::STR_ID_NO_AIR);
+		}
+		if dir == Direction::Up && self.has_gravity() && needsno_gravity { // Gravity is preventing the player from going up
+			return Some(constants::STR_ID_NO_REACH_CEILING);
+		}
+		if dir == Direction::Down && self.has_gravity() && !has_floor {
+			return Some(constants::STR_ID_DOWN_KILL);
+		}
+		if !next.borrow().has_property(constants::CTRL_LOC_HAS_LAND) && !self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_LAND) {
+			return Some(constants::STR_ID_OPEN_WATER);
+		}
+		None
+	}
+
 	// Attempt to move to some location, which may not be reachable from the current location
 	// Return a tuple representing the next location (if move is successful), whether the player died, and any response message to be printed
 	fn try_move_other(&mut self, dir: Direction) -> (Option<LocationRef>, bool, Option<StringId>) {
@@ -1004,20 +1020,11 @@ impl Player {
 						return self.try_move_obstruction(&obstruction, next);
 					}
 				}
-
-				if !next.borrow().has_or_contains_with_property(constants::CTRL_LOC_HAS_AIR, constants::CTRL_ITEM_GIVES_AIR) && !self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_AIR) { // Refuse to proceed if there is no air at the next location
-					return (None, false, Some(constants::STR_ID_NO_AIR));
+				let needsno_gravity = self_loc.has_property(constants::CTRL_LOC_NEEDSNO_GRAVITY);
+				let has_floor = self_loc.has_property(constants::CTRL_LOC_HAS_FLOOR);
+				if let Some(movement_problem_id) = self.has_environmental_movement_problem(dir, next, needsno_gravity, has_floor) {
+					return (None, false, Some(movement_problem_id));
 				}
-				if dir == Direction::Up && self.has_gravity() && self_loc.has_property(constants::CTRL_LOC_NEEDSNO_GRAVITY) { // Gravity is preventing the player from going up
-					return (None, false, Some(constants::STR_ID_NO_REACH_CEILING));
-				}
-				if dir == Direction::Down && self.has_gravity() && !self_loc.has_property(constants::CTRL_LOC_HAS_FLOOR) {
-					return (None, false, Some(constants::STR_ID_DOWN_KILL));
-				}
-				if !next.borrow().has_property(constants::CTRL_LOC_HAS_LAND) && !self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_LAND) {
-					return (None, false, Some(constants::STR_ID_OPEN_WATER));
-				}
-
 				return self.try_move_to(&next);
 			},
 		}
