@@ -105,10 +105,7 @@ impl Location {
 	}
 
 	pub fn get_direction(&self, dir: Direction) -> Option<LocationRef> {
-		match self.directions.get(&dir) {
-			Some(next) => Some(next.clone()),
-			_ => None,
-		}
+		self.directions.get(&dir).and_then(|next| Some(next.clone()))
 	}
 
 	// Return the only direction one can go from here, if it exists; return None if there are multiple possible directions or none
