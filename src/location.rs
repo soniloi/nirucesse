@@ -104,8 +104,11 @@ impl Location {
 		None
 	}
 
-	pub fn get_direction(&self, dir: &Direction) -> Option<&LocationRef> {
-		self.directions.get(dir)
+	pub fn get_direction(&self, dir: Direction) -> Option<LocationRef> {
+		match self.directions.get(&dir) {
+			Some(next) => Some(next.clone()),
+			_ => None,
+		}
 	}
 
 	// FIXME: tidy the flow here

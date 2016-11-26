@@ -287,7 +287,7 @@ impl Player {
 			response_code = constants::STR_ID_BREAK_NEAR;
 		} else if !has_floor && self.has_gravity() { // Gravity pulls item down to location beneath current
 			let self_loc = self.location.borrow();
-			let below_option = self_loc.get_direction(&Direction::Down);
+			let below_option = self_loc.get_direction(Direction::Down);
 			if let Some(below) = below_option {
 				response_code = constants::STR_ID_DROP_NO_FLOOR;
 				if is_fragile {
@@ -1012,9 +1012,9 @@ impl Player {
 	// Return a tuple representing the next location (if move is successful), whether the player died, and any response message to be printed
 	fn try_move_other(&mut self, dir: Direction) -> (Option<LocationRef>, bool, Option<StringId>) {
 		let loc_clone = self.location.clone();
-		let self_loc = loc_clone.borrow();
+		let next_option = loc_clone.borrow().get_direction(dir);
 
-		match self_loc.get_direction(&dir) {
+		match next_option {
 			None => {
 				if dir == Direction::Out {
 					return (None, false, Some(constants::STR_ID_NO_IN_OUT));
@@ -1023,13 +1023,13 @@ impl Player {
 			},
 			Some(next) => {
 				if !self.is_previous_loc(&next) {
-					if let Some(obstruction) = (**self_loc).get_obstruction() {
-						return self.try_move_obstruction(&obstruction, next);
+					if let Some(obstruction) = (**self.location.borrow()).get_obstruction() {
+						return self.try_move_obstruction(&obstruction, &next);
 					}
 				}
-				let needsno_gravity = self_loc.has_property(constants::CTRL_LOC_NEEDSNO_GRAVITY);
-				let has_floor = self_loc.has_property(constants::CTRL_LOC_HAS_FLOOR);
-				if let Some(movement_problem_id) = self.has_environmental_movement_problem(dir, next, needsno_gravity, has_floor) {
+				let needsno_gravity = self.location.borrow().has_property(constants::CTRL_LOC_NEEDSNO_GRAVITY);
+				let has_floor = self.location.borrow().has_property(constants::CTRL_LOC_HAS_FLOOR);
+				if let Some(movement_problem_id) = self.has_environmental_movement_problem(dir, &next, needsno_gravity, has_floor) {
 					return (None, false, Some(movement_problem_id));
 				}
 				return self.try_move_to(&next);
