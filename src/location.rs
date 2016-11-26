@@ -111,19 +111,15 @@ impl Location {
 		}
 	}
 
-	// FIXME: tidy the flow here
+	// Return the only direction one can go from here, if it exists; return None if there are multiple possible directions or none
 	fn determine_out(&self) -> Option<LocationRef> {
 		let mut direction_iter = self.directions.iter();
-		let direction_opt = direction_iter.next();
-		match direction_opt {
-			None => return None,
-			Some (direction) => {
-				match direction_iter.next() {
-					None => return Some(direction.1.clone()),
-					Some(_) => return None,
-				}
+		if let Some(direction) = direction_iter.next() {
+			if let None = direction_iter.next() {
+				return Some(direction.1.clone());
 			}
 		}
+		None
 	}
 
 	pub fn set_direction(&mut self, dir: Direction, next: Option<LocationRef>) {
