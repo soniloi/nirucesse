@@ -285,10 +285,8 @@ impl Player {
 		} else if is_fragile && thrown { // When thrown, fragile items shatter
 			shattered = true;
 			response_code = constants::STR_ID_BREAK_NEAR;
-		} else if !has_floor && self.has_gravity() { // Gravity pulls item down to location beneath current
-			let self_loc = self.location.borrow();
-			let below_option = self_loc.get_direction(Direction::Down);
-			if let Some(below) = below_option {
+		} else if !has_floor && self.has_gravity() { // When there is no floor, gravity pulls item down to location below current location
+			if let Some(below) = self.location.borrow().get_direction(Direction::Down) {
 				response_code = constants::STR_ID_DROP_NO_FLOOR;
 				if is_fragile {
 					shattered = true;
@@ -297,7 +295,7 @@ impl Player {
 					below.borrow_mut().insert_item(item.clone());
 				}
 			}
-		} else if !has_land { // When dropped near open water, lost forever
+		} else if !has_land { // When dropped into open water, item is lost forever
 			item.borrow_mut().retire();
 			response_code = constants::STR_ID_DROP_WATER;
 		} else {
@@ -1095,14 +1093,14 @@ impl Player {
 		}
 
 		let item_id = item.borrow().get_id();
-		let mut self_loc = self.location.borrow_mut();
+		let in_location = self.has_item_location(item_id);
 		let in_inventory = self.has_item_inventory(item_id);
-		if self_loc.contains_item(item_id) {
+		if in_location {
 			if !self.inventory.borrow().can_fit(&item) {
 				terminal::write_full(data.get_response(constants::STR_ID_ITEM_HEAVY));
 				return;
 			}
-			self_loc.remove_item_certain(item_id);
+			self.location.borrow_mut().remove_item_certain(item_id);
 		} else if in_inventory {
 			self.inventory.borrow_mut().remove_item_certain(item_id);
 		}
