@@ -282,19 +282,20 @@ impl Player {
 		let mut response_code = constants::STR_ID_DROP_GOOD;
 		if liquid { // When dropped, liquids drain away
 			response_code = constants::STR_ID_EMPTY_LIQUID
-		} else if is_fragile && thrown { // When thrown, fragile items shatter
-			shattered = true;
-			response_code = constants::STR_ID_BREAK_NEAR;
 		} else if !has_floor && self.has_gravity() { // When there is no floor, gravity pulls item down to location below current location
 			if let Some(below) = self.location.borrow().get_direction(Direction::Down) {
-				response_code = constants::STR_ID_DROP_NO_FLOOR;
+				terminal::write_full(data.get_response(constants::STR_ID_DROP_NO_FLOOR));
 				if is_fragile {
 					shattered = true;
 					response_code = constants::STR_ID_BREAK_FAR;
 				} else {
 					below.borrow_mut().insert_item(item.clone());
+					response_code = constants::STR_ID_DROP_FAR;
 				}
 			}
+		} else if is_fragile && thrown { // When thrown, fragile items shatter
+			shattered = true;
+			response_code = constants::STR_ID_BREAK_NEAR;
 		} else if !has_land { // When dropped into open water, item is lost forever
 			item.borrow_mut().retire();
 			response_code = constants::STR_ID_DROP_WATER;

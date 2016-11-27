@@ -187,6 +187,7 @@ pub const STR_ID_NO_BURN_MATCHES: u32 = 44;
 pub const STR_ID_NO_BURN_LAMP: u32 = 45;
 pub const STR_ID_ROLL_MARBLE: u32 = 46;
 pub const STR_ID_RUB_LAMP: u32 = 47;
+pub const STR_ID_DROP_FAR: u32 = 48;
 pub const STR_ID_DISAMBIGUATE_GO: u32 = 49;
 pub const STR_ID_WELCOME: u32 = 50;
 pub const STR_ID_HELLO_BEACON: u32 = 51;
