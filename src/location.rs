@@ -47,6 +47,11 @@ impl Location {
 		}
 	}
 
+	// Clear the entire direction map, removing all cross-references
+	pub fn remove_all_directions(&mut self) {
+		self.directions.clear();
+	}
+
 	pub fn get_id(&self) -> LocationId {
 		self.id
 	}

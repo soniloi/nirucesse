@@ -30,6 +30,14 @@ pub struct LocationCollection {
 	direction_map: HashMap<&'static str, Direction>, // Map of direction strings to direction enum
 }
 
+impl Drop for LocationCollection {
+	fn drop(&mut self) {
+		for location in self.locations.values() {
+			location.borrow_mut().remove_all_directions();
+		}
+	}
+}
+
 impl LocationCollection {
 
 	pub fn new() -> LocationCollection {
