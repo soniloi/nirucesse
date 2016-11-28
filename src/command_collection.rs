@@ -92,10 +92,16 @@ impl CommandCollection {
 		acts.insert("ziqua", actions::do_acorn);
 	}
 
+	#[cfg(debug_assertions)]
 	fn add_actions_additional(acts: &mut HashMap<&str, ActionFn>) {
 		acts.insert("flash", actions::do_flash);
 		acts.insert("grab", actions::do_grab);
 		acts.insert("node", actions::do_node);
+	}
+
+	#[cfg(not(debug_assertions))]
+	#[allow(unused_variables)]
+	fn add_actions_additional(acts: &mut HashMap<&str, ActionFn>) {
 	}
 
 	// TODO: make properly static

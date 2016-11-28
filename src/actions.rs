@@ -1,6 +1,8 @@
 use command::ArgumentType;
 use constants;
-use data_collection::{self, DataCollection, ItemId, StringId};
+#[cfg(debug_assertions)]
+use data_collection;
+use data_collection::{DataCollection, ItemId, StringId};
 use player::ItemManipFn;
 use player::Player;
 
@@ -25,33 +27,15 @@ pub fn do_flash(data: &DataCollection, arg: String, player: &mut Player, arg_typ
 	};
 }
 
-#[cfg(not(debug_assertions))]
-#[allow(unused_variables)]
-pub fn do_flash(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
-	terminal::write_full(data.get_response(constants::STR_ID_NO_UNDERSTAND_INSTRUCTION));
-}
-
 #[cfg(debug_assertions)]
 pub fn do_grab(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, arg_type, player, Player::grab);
-}
-
-#[cfg(not(debug_assertions))]
-#[allow(unused_variables)]
-pub fn do_grab(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
-	terminal::write_full(data.get_response(constants::STR_ID_NO_UNDERSTAND_INSTRUCTION));
 }
 
 #[cfg(debug_assertions)]
 #[allow(unused_variables)]
 pub fn do_node(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	terminal::write_full(&player.get_node(data));
-}
-
-#[cfg(not(debug_assertions))]
-#[allow(unused_variables)]
-pub fn do_node(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
-	terminal::write_full(data.get_response(constants::STR_ID_NO_UNDERSTAND_INSTRUCTION));
 }
 
 #[allow(unused_variables)]

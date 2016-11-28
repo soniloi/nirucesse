@@ -157,6 +157,7 @@ pub const STR_ID_COOK_CABBAGE: u32 = 14;
 pub const STR_ID_NO_SEE_DARKNESS: u32 = 15;
 pub const STR_ID_NO_SEE_HAZE: u32 = 16;
 pub const STR_ID_CAULDRON_FULL: u32 = 17;
+#[cfg(debug_assertions)]
 pub const STR_ID_WHERE_FLASH: u32 = 18;
 pub const STR_ID_COMMANDS_INTRO: u32 = 19;
 pub const STR_ID_CONTAINER_FULL: u32 = 20;
@@ -282,7 +283,9 @@ pub const STR_ID_CANNOT_TAKE: u32 = 146;
 pub const STR_ID_ITEM_HEAVY: u32 = 147;
 pub const STR_ID_TAKEN: u32 = 148;
 pub const STR_ID_THE_START: u32 = 149;
+#[cfg(debug_assertions)]
 pub const STR_ID_INVALID_NUMBER: u32 = 150;
+#[cfg(debug_assertions)]
 pub const STR_ID_INVALID_LOCATION: u32 = 151;
 pub const STR_ID_BURN_TOAST: u32 = 152;
 pub const STR_ID_NO_GRAVITY: u32 = 153;
@@ -309,8 +312,11 @@ pub const STR_ID_WHAT_POUR: u32 = 174;
 pub const STR_ID_POUR_LIQUID_DEFAULT: u32 = 175;
 pub const STR_ID_POUR_POTION_BEAN: u32 = 176;
 pub const STR_ID_POUR_POTION_PLANT: u32 = 177;
+#[cfg(debug_assertions)]
 pub const STR_ID_NODE: u32 = 178;
+#[cfg(debug_assertions)]
 pub const STR_ID_NO_WANT_TAKE: u32 = 179;
+#[cfg(debug_assertions)]
 pub const STR_ID_GRABBED: u32 = 180;
 pub const STR_ID_DISAMBIGUATE_CLIMB: u32 = 181;
 pub const STR_ID_ARG_EXTRA: u32 = 182;
