@@ -26,12 +26,7 @@ impl CommandCollection {
 		}
 	}
 
-	// TODO: make properly static
-	fn init_actions() -> HashMap<&'static str, ActionFn> {
-		let mut acts: HashMap<&str, ActionFn> = HashMap::new();
-		acts.insert("flash", actions::do_flash);
-		acts.insert("grab", actions::do_grab);
-		acts.insert("node", actions::do_node);
+	fn add_actions_common(acts: &mut HashMap<&str, ActionFn>) {
 		acts.insert("attack", actions::do_attack);
 		acts.insert("avnarand", actions::do_robot);
 		acts.insert("back", actions::do_go);
@@ -95,6 +90,19 @@ impl CommandCollection {
 		acts.insert("xyro", actions::do_wizard);
 		acts.insert("xyzzy", actions::do_xyzzy);
 		acts.insert("ziqua", actions::do_acorn);
+	}
+
+	fn add_actions_additional(acts: &mut HashMap<&str, ActionFn>) {
+		acts.insert("flash", actions::do_flash);
+		acts.insert("grab", actions::do_grab);
+		acts.insert("node", actions::do_node);
+	}
+
+	// TODO: make properly static
+	fn init_actions() -> HashMap<&'static str, ActionFn> {
+		let mut acts: HashMap<&str, ActionFn> = HashMap::new();
+		CommandCollection::add_actions_common(&mut acts);
+		CommandCollection::add_actions_additional(&mut acts);
 		acts
 	}
 
