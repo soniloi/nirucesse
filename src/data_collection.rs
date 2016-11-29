@@ -202,7 +202,7 @@ impl DataCollection {
 	}
 
 	pub fn get_direction_enum(&self, dir_str: &str) -> Direction {
-		*self.locations.get_direction_enum(dir_str)
+		*self.commands.get_direction_enum(dir_str)
 	}
 
 	pub fn get_tp_map_sleep(&self) -> &TpMap {

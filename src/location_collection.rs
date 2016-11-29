@@ -27,7 +27,6 @@ const KEY_DIRECTION_NONE: u32 = 0;
 
 pub struct LocationCollection {
 	locations: HashMap<LocationId, LocationRef>,
-	direction_map: HashMap<&'static str, Direction>, // Map of direction strings to direction enum
 }
 
 impl Drop for LocationCollection {
@@ -43,30 +42,10 @@ impl LocationCollection {
 	pub fn new() -> LocationCollection {
 		LocationCollection {
 			locations: HashMap::new(),
-			direction_map: HashMap::new(),
 		}
 	}
 
-	// TODO: make static
-	fn init_direction_map(&mut self) {
-		self.direction_map.insert("north", Direction::North);
-		self.direction_map.insert("south", Direction::South);
-		self.direction_map.insert("east", Direction::East);
-		self.direction_map.insert("west", Direction::West);
-		self.direction_map.insert("northeast", Direction::Northeast);
-		self.direction_map.insert("southwest", Direction::Southwest);
-		self.direction_map.insert("southeast", Direction::Southeast);
-		self.direction_map.insert("northwest", Direction::Northwest);
-		self.direction_map.insert("up", Direction::Up);
-		self.direction_map.insert("down", Direction::Down);
-		self.direction_map.insert("out", Direction::Out);
-		self.direction_map.insert("back", Direction::Back);
-	}
-
 	pub fn init(&mut self, buffer: &mut FileBuffer, expected_count: u32) {
-
-		self.init_direction_map();
-
 		let mut all_links: HashMap<LocationId, Box<HashMap<Direction, LocationId>>> = HashMap::new();
 		let mut line = buffer.get_line();
 		while !buffer.eof() {
@@ -154,14 +133,6 @@ impl LocationCollection {
 		match self.locations.get(&key) {
 			None => panic!("Location collection corruption for location id [{}], fail.", key),
 			Some(location) => return location,
-		}
-	}
-
-	// Get a Direction from a string
-	pub fn get_direction_enum(&self, dir_str: &str) -> &Direction {
-		match self.direction_map.get(dir_str) {
-		    None => panic!("Location collection corruption, fail."),
-			Some(dir) => dir,
 		}
 	}
 }

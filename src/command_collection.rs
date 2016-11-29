@@ -8,6 +8,7 @@ use constants;
 use data_collection;
 use data_collection::CommandRef;
 use file_buffer::FileBuffer;
+use location::Direction;
 
 const FILE_INDEX_COMMAND_TAG: usize = 0;
 const FILE_INDEX_COMMAND_STATUS: usize = 1;
@@ -16,6 +17,7 @@ const FILE_INDEX_COMMAND_ALIAS_START: usize = 3;
 
 pub struct CommandCollection {
 	commands: HashMap<String, CommandRef>,
+	direction_map: HashMap<&'static str, Direction>, // Map of direction strings to direction enum
 }
 
 impl CommandCollection {
@@ -23,6 +25,7 @@ impl CommandCollection {
 	pub fn new() -> CommandCollection {
 		CommandCollection {
 			commands: HashMap::new(),
+			direction_map: HashMap::new(),
 		}
 	}
 
@@ -112,10 +115,26 @@ impl CommandCollection {
 		acts
 	}
 
+	// TODO: make static
+	fn init_direction_map(&mut self) {
+		self.direction_map.insert("north", Direction::North);
+		self.direction_map.insert("south", Direction::South);
+		self.direction_map.insert("east", Direction::East);
+		self.direction_map.insert("west", Direction::West);
+		self.direction_map.insert("northeast", Direction::Northeast);
+		self.direction_map.insert("southwest", Direction::Southwest);
+		self.direction_map.insert("southeast", Direction::Southeast);
+		self.direction_map.insert("northwest", Direction::Northwest);
+		self.direction_map.insert("up", Direction::Up);
+		self.direction_map.insert("down", Direction::Down);
+		self.direction_map.insert("out", Direction::Out);
+		self.direction_map.insert("back", Direction::Back);
+	}
+
 	pub fn init(&mut self, buffer: &mut FileBuffer) {
+		self.init_direction_map();
 
 		let acts = CommandCollection::init_actions();
-
 		let mut line = buffer.get_line();
 	    while !buffer.eof() {
 			match line.as_ref() {
@@ -160,5 +179,13 @@ impl CommandCollection {
 		}
 		comms.sort();
 		String::from(intro) + "\n" + &comms.concat()
+	}
+
+	// Get a Direction from a string
+	pub fn get_direction_enum(&self, dir_str: &str) -> &Direction {
+		match self.direction_map.get(dir_str) {
+		    None => panic!("Location collection corruption, fail."),
+			Some(dir) => dir,
+		}
 	}
 }
