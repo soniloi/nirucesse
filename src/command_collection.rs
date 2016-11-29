@@ -116,26 +116,26 @@ impl CommandCollection {
 	}
 
 	// TODO: make static
-	// Create map of command keys (note: not primary names) to Directions
-	fn get_primary_dir_map() -> HashMap<&'static str, Direction> {
-		let mut primary_dirs = HashMap::new();
-		primary_dirs.insert("north", Direction::North);
-		primary_dirs.insert("south", Direction::South);
-		primary_dirs.insert("east", Direction::East);
-		primary_dirs.insert("west", Direction::West);
-		primary_dirs.insert("northeast", Direction::Northeast);
-		primary_dirs.insert("southwest", Direction::Southwest);
-		primary_dirs.insert("southeast", Direction::Southeast);
-		primary_dirs.insert("northwest", Direction::Northwest);
-		primary_dirs.insert("up", Direction::Up);
-		primary_dirs.insert("down", Direction::Down);
-		primary_dirs.insert("out", Direction::Out);
-		primary_dirs.insert("back", Direction::Back);
-		primary_dirs
+	// Create map of command tags (note: not primary names) to Directions
+	fn get_tag_dir_map() -> HashMap<&'static str, Direction> {
+		let mut tag_dirs = HashMap::new();
+		tag_dirs.insert(constants::STR_NORTH, Direction::North);
+		tag_dirs.insert(constants::STR_SOUTH, Direction::South);
+		tag_dirs.insert(constants::STR_EAST, Direction::East);
+		tag_dirs.insert(constants::STR_WEST, Direction::West);
+		tag_dirs.insert(constants::STR_NORTHEAST, Direction::Northeast);
+		tag_dirs.insert(constants::STR_SOUTHWEST, Direction::Southwest);
+		tag_dirs.insert(constants::STR_SOUTHEAST, Direction::Southeast);
+		tag_dirs.insert(constants::STR_NORTHWEST, Direction::Northwest);
+		tag_dirs.insert(constants::STR_UP, Direction::Up);
+		tag_dirs.insert(constants::STR_DOWN, Direction::Down);
+		tag_dirs.insert(constants::STR_OUT, Direction::Out);
+		tag_dirs.insert(constants::STR_BACK, Direction::Back);
+		tag_dirs
 	}
 
 	pub fn init(&mut self, buffer: &mut FileBuffer) {
-		let primary_dirs = CommandCollection::get_primary_dir_map();
+		let tag_dirs = CommandCollection::get_tag_dir_map();
 
 		let acts = CommandCollection::init_actions();
 		let mut line = buffer.get_line();
@@ -145,14 +145,14 @@ impl CommandCollection {
 				x => {
 					let words_split = x.split("\t");
 					let words: Vec<&str> = words_split.collect();
-					self.parse_and_insert_command(&words, &acts, &primary_dirs);
+					self.parse_and_insert_command(&words, &acts, &tag_dirs);
 				},
 			}
 			line = buffer.get_line();
 		}
 	}
 
-	fn parse_and_insert_command(&mut self, words: &Vec<&str>, acts: &HashMap<&str, ActionFn>, primary_dirs: &HashMap<&'static str, Direction>) {
+	fn parse_and_insert_command(&mut self, words: &Vec<&str>, acts: &HashMap<&str, ActionFn>, tag_dirs: &HashMap<&'static str, Direction>) {
 		let primary = String::from(words[FILE_INDEX_COMMAND_PRIMARY]);
 		let properties = data_collection::str_to_u32_certain(words[FILE_INDEX_COMMAND_STATUS], 16);
 		let tag = words[FILE_INDEX_COMMAND_TAG];
@@ -168,7 +168,7 @@ impl CommandCollection {
 
 			// Map localized primary names (as opposed to tags) to Directions
 			if cmd.has_property(constants::CTRL_COMMAND_MOVEMENT) {
-				match primary_dirs.get(&tag) {
+				match tag_dirs.get(&tag) {
 					None => panic!("Unknown movement command {}, fail.", primary),
 					Some(dir) => self.direction_map.insert(primary, *dir),
 				};

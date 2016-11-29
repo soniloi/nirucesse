@@ -414,3 +414,17 @@ pub const CTRL_LOC_HAS_LAND: u32 = 0x400; // Whether the location has land, as o
 pub const FILE_SECTION_SEPARATOR: &'static str = "---"; // String separating sections of data file
 pub const STR_DEFAULT: &'static str = "default";
 pub const STR_LOCATION_UNKNOWN: &'static str = "???";
+
+// Direction tag strings
+pub const STR_BACK: &'static str = "back";
+pub const STR_DOWN: &'static str = "down";
+pub const STR_EAST: &'static str = "east";
+pub const STR_NORTH: &'static str = "north";
+pub const STR_NORTHEAST: &'static str = "northeast";
+pub const STR_NORTHWEST: &'static str = "northwest";
+pub const STR_OUT: &'static str = "out";
+pub const STR_SOUTH: &'static str = "south";
+pub const STR_SOUTHEAST: &'static str = "southeast";
+pub const STR_SOUTHWEST: &'static str = "southwest";
+pub const STR_UP: &'static str = "up";
+pub const STR_WEST: &'static str = "west";
