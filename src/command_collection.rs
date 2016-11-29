@@ -154,20 +154,19 @@ impl CommandCollection {
 
 	fn parse_and_insert_command(&mut self, words: &Vec<&str>, acts: &HashMap<&str, ActionFn>, primary_dirs: &HashMap<&'static str, Direction>) {
 		let primary = String::from(words[FILE_INDEX_COMMAND_PRIMARY]);
-		let key = primary.clone();
 		let properties = data_collection::str_to_u32_certain(words[FILE_INDEX_COMMAND_STATUS], 16);
 		let tag = words[FILE_INDEX_COMMAND_TAG];
 
 		if let Some(act) = acts.get(tag) {
 			let cmd: CommandRef = Rc::new(Box::new(Command::new(primary.clone(), properties, *act)));
-			self.commands.insert(key.clone(), cmd.clone());
+			self.commands.insert(primary.clone(), cmd.clone());
 			for i in FILE_INDEX_COMMAND_ALIAS_START..words.len() {
 				if !words[i].is_empty() {
 					self.commands.insert(String::from(words[i]), cmd.clone());
 				}
 			}
 
-			// Map localized primary names (rather than keys) to Directions
+			// Map localized primary names (as opposed to tags) to Directions
 			if cmd.has_property(constants::CTRL_COMMAND_MOVEMENT) {
 				match primary_dirs.get(&tag) {
 					None => panic!("Unknown movement command {}, fail.", primary),
