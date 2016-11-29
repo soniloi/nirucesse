@@ -17,7 +17,7 @@ const FILE_INDEX_COMMAND_ALIAS_START: usize = 3;
 
 pub struct CommandCollection {
 	commands: HashMap<String, CommandRef>,
-	direction_map: HashMap<&'static str, Direction>, // Map of direction strings to direction enum
+	direction_map: HashMap<String, Direction>, // Map of direction strings to direction enum
 }
 
 impl CommandCollection {
@@ -116,23 +116,26 @@ impl CommandCollection {
 	}
 
 	// TODO: make static
-	fn init_direction_map(&mut self) {
-		self.direction_map.insert("north", Direction::North);
-		self.direction_map.insert("south", Direction::South);
-		self.direction_map.insert("east", Direction::East);
-		self.direction_map.insert("west", Direction::West);
-		self.direction_map.insert("northeast", Direction::Northeast);
-		self.direction_map.insert("southwest", Direction::Southwest);
-		self.direction_map.insert("southeast", Direction::Southeast);
-		self.direction_map.insert("northwest", Direction::Northwest);
-		self.direction_map.insert("up", Direction::Up);
-		self.direction_map.insert("down", Direction::Down);
-		self.direction_map.insert("out", Direction::Out);
-		self.direction_map.insert("back", Direction::Back);
+	// Create map of command keys (note: not primary names) to Directions
+	fn get_primary_dir_map() -> HashMap<&'static str, Direction> {
+		let mut primary_dirs = HashMap::new();
+		primary_dirs.insert("north", Direction::North);
+		primary_dirs.insert("south", Direction::South);
+		primary_dirs.insert("east", Direction::East);
+		primary_dirs.insert("west", Direction::West);
+		primary_dirs.insert("northeast", Direction::Northeast);
+		primary_dirs.insert("southwest", Direction::Southwest);
+		primary_dirs.insert("southeast", Direction::Southeast);
+		primary_dirs.insert("northwest", Direction::Northwest);
+		primary_dirs.insert("up", Direction::Up);
+		primary_dirs.insert("down", Direction::Down);
+		primary_dirs.insert("out", Direction::Out);
+		primary_dirs.insert("back", Direction::Back);
+		primary_dirs
 	}
 
 	pub fn init(&mut self, buffer: &mut FileBuffer) {
-		self.init_direction_map();
+		let primary_dirs = CommandCollection::get_primary_dir_map();
 
 		let acts = CommandCollection::init_actions();
 		let mut line = buffer.get_line();
@@ -142,26 +145,34 @@ impl CommandCollection {
 				x => {
 					let words_split = x.split("\t");
 					let words: Vec<&str> = words_split.collect();
-					self.parse_and_insert_command(&words, &acts);
+					self.parse_and_insert_command(&words, &acts, &primary_dirs);
 				},
 			}
 			line = buffer.get_line();
 		}
 	}
 
-	fn parse_and_insert_command(&mut self, words: &Vec<&str>, acts: &HashMap<&str, ActionFn>) {
+	fn parse_and_insert_command(&mut self, words: &Vec<&str>, acts: &HashMap<&str, ActionFn>, primary_dirs: &HashMap<&'static str, Direction>) {
 		let primary = String::from(words[FILE_INDEX_COMMAND_PRIMARY]);
 		let key = primary.clone();
 		let properties = data_collection::str_to_u32_certain(words[FILE_INDEX_COMMAND_STATUS], 16);
 		let tag = words[FILE_INDEX_COMMAND_TAG];
 
 		if let Some(act) = acts.get(tag) {
-			let cmd: CommandRef = Rc::new(Box::new(Command::new(primary, properties, *act)));
-			self.commands.insert(key, cmd.clone());
+			let cmd: CommandRef = Rc::new(Box::new(Command::new(primary.clone(), properties, *act)));
+			self.commands.insert(key.clone(), cmd.clone());
 			for i in FILE_INDEX_COMMAND_ALIAS_START..words.len() {
 				if !words[i].is_empty() {
 					self.commands.insert(String::from(words[i]), cmd.clone());
 				}
+			}
+
+			// Map localized primary names (rather than keys) to Directions
+			if cmd.has_property(constants::CTRL_COMMAND_MOVEMENT) {
+				match primary_dirs.get(&tag) {
+					None => panic!("Unknown movement command {}, fail.", primary),
+					Some(dir) => self.direction_map.insert(primary, *dir),
+				};
 			}
 		}
 	}
@@ -184,7 +195,7 @@ impl CommandCollection {
 	// Get a Direction from a string
 	pub fn get_direction_enum(&self, dir_str: &str) -> &Direction {
 		match self.direction_map.get(dir_str) {
-		    None => panic!("Location collection corruption, fail."),
+		    None => panic!("Command collection corruption, fail."),
 			Some(dir) => dir,
 		}
 	}
