@@ -103,11 +103,12 @@ impl Player {
 
 	pub fn get_score_str(&self, data: &DataCollection, response_code_start: StringId) -> String {
 		let total_score = self.calculate_score(data);
-		String::from(data.get_response(response_code_start)) + &total_score.to_string() +
-		data.get_response(constants::STR_ID_SCORE_POINTS) + &data.get_max_score().to_string() +
-		data.get_response(constants::STR_ID_SCORE_DIED) + &self.deaths.to_string() +
-		data.get_response(constants::STR_ID_SCORE_DEATHS) + &self.instructions.to_string() +
-		data.get_response(constants::STR_ID_SCORE_INSTRUCTIONS) + &self.hints.to_string() + data.get_response(constants::STR_ID_SCORE_HINTS)
+		String::from(data.get_response(response_code_start)) +
+		&data.get_response_param(constants::STR_ID_SCORE_POINTS, &total_score.to_string()) +
+		&data.get_response_param(constants::STR_ID_SCORE_DIED, &data.get_max_score().to_string()) +
+		&data.get_response_param(constants::STR_ID_SCORE_DEATHS, &self.deaths.to_string()) +
+		&data.get_response_param(constants::STR_ID_SCORE_INSTRUCTIONS, &self.instructions.to_string()) +
+		&data.get_response_param(constants::STR_ID_SCORE_HINTS, &self.hints.to_string())
 	}
 
 	fn calculate_score(&self, data: &DataCollection) -> u32 {
