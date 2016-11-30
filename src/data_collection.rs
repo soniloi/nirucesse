@@ -25,6 +25,7 @@ pub type InventoryRef = GenericRcRefCellBox<Inventory>;
 pub type ItemRef = GenericRcRefCellBox<Item>;
 pub type LocationRef = GenericRcRefCellBox<Location>;
 pub type Id = u32;
+pub type CommandId = Id;
 pub type InventoryId = Id;
 pub type ItemId = Id;
 pub type LocationId = Id;

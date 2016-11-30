@@ -5,8 +5,7 @@ use actions;
 use command::ActionFn;
 use command::Command;
 use constants;
-use data_collection;
-use data_collection::CommandRef;
+use data_collection::{self, CommandId, CommandRef};
 use file_buffer::FileBuffer;
 use location::Direction;
 
@@ -29,7 +28,7 @@ impl CommandCollection {
 		}
 	}
 
-	fn add_actions_common(acts: &mut HashMap<u32, ActionFn>) {
+	fn add_actions_common(acts: &mut HashMap<CommandId, ActionFn>) {
 		acts.insert(constants::COMMAND_ID_ATTACK, actions::do_attack);
 		acts.insert(constants::COMMAND_ID_ROBOT, actions::do_robot);
 		acts.insert(constants::COMMAND_ID_BACK, actions::do_go);
@@ -96,7 +95,7 @@ impl CommandCollection {
 	}
 
 	#[cfg(debug_assertions)]
-	fn add_actions_additional(acts: &mut HashMap<u32, ActionFn>) {
+	fn add_actions_additional(acts: &mut HashMap<CommandId, ActionFn>) {
 		acts.insert(constants::COMMAND_ID_FLASH, actions::do_flash);
 		acts.insert(constants::COMMAND_ID_GRAB, actions::do_grab);
 		acts.insert(constants::COMMAND_ID_NODE, actions::do_node);
@@ -104,12 +103,12 @@ impl CommandCollection {
 
 	#[cfg(not(debug_assertions))]
 	#[allow(unused_variables)]
-	fn add_actions_additional(acts: &mut HashMap<u32, ActionFn>) {
+	fn add_actions_additional(acts: &mut HashMap<CommandId, ActionFn>) {
 	}
 
 	// TODO: make properly static
-	fn init_actions() -> HashMap<u32, ActionFn> {
-		let mut acts: HashMap<u32, ActionFn> = HashMap::new();
+	fn init_actions() -> HashMap<CommandId, ActionFn> {
+		let mut acts: HashMap<CommandId, ActionFn> = HashMap::new();
 		CommandCollection::add_actions_common(&mut acts);
 		CommandCollection::add_actions_additional(&mut acts);
 		acts
@@ -117,7 +116,7 @@ impl CommandCollection {
 
 	// TODO: make static
 	// Create map of command tags (note: not primary names) to Directions
-	fn get_tag_dir_map() -> HashMap<u32, Direction> {
+	fn get_tag_dir_map() -> HashMap<CommandId, Direction> {
 		let mut tag_dirs = HashMap::new();
 		tag_dirs.insert(constants::COMMAND_ID_NORTH, Direction::North);
 		tag_dirs.insert(constants::COMMAND_ID_SOUTH, Direction::South);
@@ -152,7 +151,7 @@ impl CommandCollection {
 		}
 	}
 
-	fn parse_and_insert_command(&mut self, words: &Vec<&str>, acts: &HashMap<u32, ActionFn>, tag_dirs: &HashMap<u32, Direction>) {
+	fn parse_and_insert_command(&mut self, words: &Vec<&str>, acts: &HashMap<CommandId, ActionFn>, tag_dirs: &HashMap<CommandId, Direction>) {
 		let primary = String::from(words[FILE_INDEX_COMMAND_PRIMARY]);
 		let properties = data_collection::str_to_u32_certain(words[FILE_INDEX_COMMAND_STATUS], 16);
 		let id = data_collection::str_to_u32_certain(words[FILE_INDEX_COMMAND_TAG], 10);
