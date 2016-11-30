@@ -416,15 +416,15 @@ pub const STR_DEFAULT: &'static str = "default";
 pub const STR_LOCATION_UNKNOWN: &'static str = "???";
 
 // Direction tag strings
-pub const STR_BACK: &'static str = "back";
-pub const STR_DOWN: &'static str = "down";
-pub const STR_EAST: &'static str = "east";
-pub const STR_NORTH: &'static str = "north";
-pub const STR_NORTHEAST: &'static str = "northeast";
-pub const STR_NORTHWEST: &'static str = "northwest";
-pub const STR_OUT: &'static str = "out";
-pub const STR_SOUTH: &'static str = "south";
-pub const STR_SOUTHEAST: &'static str = "southeast";
-pub const STR_SOUTHWEST: &'static str = "southwest";
-pub const STR_UP: &'static str = "up";
-pub const STR_WEST: &'static str = "west";
+pub const STR_BACK: &'static str = "5";
+pub const STR_DOWN: &'static str = "13";
+pub const STR_EAST: &'static str = "16";
+pub const STR_NORTH: &'static str = "34";
+pub const STR_NORTHEAST: &'static str = "35";
+pub const STR_NORTHWEST: &'static str = "36";
+pub const STR_OUT: &'static str = "37";
+pub const STR_SOUTH: &'static str = "52";
+pub const STR_SOUTHEAST: &'static str = "53";
+pub const STR_SOUTHWEST: &'static str = "54";
+pub const STR_UP: &'static str = "60";
+pub const STR_WEST: &'static str = "62";

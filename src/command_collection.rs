@@ -30,76 +30,76 @@ impl CommandCollection {
 	}
 
 	fn add_actions_common(acts: &mut HashMap<&str, ActionFn>) {
-		acts.insert("attack", actions::do_attack);
-		acts.insert("avnarand", actions::do_robot);
-		acts.insert("back", actions::do_go);
-		acts.insert("burn", actions::do_burn);
-		acts.insert("call", actions::do_call);
-		acts.insert("chimbu", actions::do_fairy);
-		acts.insert("climb", actions::do_climb);
-		acts.insert("commands", actions::do_commands);
-		acts.insert("cook", actions::do_cook);
-		acts.insert("describe", actions::do_describe);
-		acts.insert("down", actions::do_go);
-		acts.insert("drink", actions::do_drink);
-		acts.insert("drop", actions::do_drop);
-		acts.insert("east", actions::do_go);
-		acts.insert("eat", actions::do_eat);
-		acts.insert("empty", actions::do_empty);
-		acts.insert("exchange", actions::do_exchange);
-		acts.insert("explain", actions::do_explain);
-		acts.insert("feed", actions::do_feed);
-		acts.insert("fish", actions::do_fish);
-		acts.insert("fly", actions::do_fly);
-		acts.insert("give", actions::do_give);
-		acts.insert("go", actions::do_go_disambiguate);
-		acts.insert("help", actions::do_help);
-		acts.insert("hint", actions::do_hint);
-		acts.insert("ignore", actions::do_ignore);
-		acts.insert("insert", actions::do_insert);
-		acts.insert("inventory", actions::do_inventory);
-		acts.insert("knit", actions::do_knit);
-		acts.insert("light", actions::do_light);
-		acts.insert("look", actions::do_look);
-		acts.insert("north", actions::do_go);
-		acts.insert("northeast", actions::do_go);
-		acts.insert("northwest", actions::do_go);
-		acts.insert("out", actions::do_go);
-		acts.insert("play", actions::do_play);
-		acts.insert("plugh", actions::do_plugh);
-		acts.insert("pour", actions::do_pour);
-		acts.insert("push", actions::do_push);
-		acts.insert("quench", actions::do_quench);
-		acts.insert("quit", actions::do_quit);
-		acts.insert("read", actions::do_read);
-		acts.insert("repair", actions::do_repair);
-		acts.insert("rob", actions::do_rob);
-		acts.insert("roll", actions::do_roll);
-		acts.insert("rub", actions::do_rub);
-		acts.insert("say", actions::do_say);
-		acts.insert("score", actions::do_score);
-		acts.insert("sleep", actions::do_sleep);
-		acts.insert("south", actions::do_go);
-		acts.insert("southeast", actions::do_go);
-		acts.insert("southwest", actions::do_go);
-		acts.insert("stare", actions::do_stare);
-		acts.insert("tezazzle", actions::do_tezazzle);
-		acts.insert("take", actions::do_take);
-		acts.insert("tether", actions::do_tether);
-		acts.insert("throw", actions::do_throw);
-		acts.insert("up", actions::do_go);
-		acts.insert("water", actions::do_water);
-		acts.insert("west", actions::do_go);
-		acts.insert("xyro", actions::do_wizard);
-		acts.insert("xyzzy", actions::do_xyzzy);
-		acts.insert("ziqua", actions::do_acorn);
+		acts.insert("3", actions::do_attack);
+		acts.insert("4", actions::do_robot);
+		acts.insert("5", actions::do_go);
+		acts.insert("6", actions::do_burn);
+		acts.insert("7", actions::do_call);
+		acts.insert("8", actions::do_fairy);
+		acts.insert("9", actions::do_climb);
+		acts.insert("10", actions::do_commands);
+		acts.insert("11", actions::do_cook);
+		acts.insert("12", actions::do_describe);
+		acts.insert("13", actions::do_go);
+		acts.insert("14", actions::do_drink);
+		acts.insert("15", actions::do_drop);
+		acts.insert("16", actions::do_go);
+		acts.insert("17", actions::do_eat);
+		acts.insert("18", actions::do_empty);
+		acts.insert("19", actions::do_exchange);
+		acts.insert("20", actions::do_explain);
+		acts.insert("21", actions::do_feed);
+		acts.insert("22", actions::do_fish);
+		acts.insert("23", actions::do_fly);
+		acts.insert("24", actions::do_give);
+		acts.insert("25", actions::do_go_disambiguate);
+		acts.insert("26", actions::do_help);
+		acts.insert("27", actions::do_hint);
+		acts.insert("28", actions::do_ignore);
+		acts.insert("29", actions::do_insert);
+		acts.insert("30", actions::do_inventory);
+		acts.insert("31", actions::do_knit);
+		acts.insert("32", actions::do_light);
+		acts.insert("33", actions::do_look);
+		acts.insert("34", actions::do_go);
+		acts.insert("35", actions::do_go);
+		acts.insert("36", actions::do_go);
+		acts.insert("37", actions::do_go);
+		acts.insert("38", actions::do_play);
+		acts.insert("39", actions::do_plugh);
+		acts.insert("40", actions::do_pour);
+		acts.insert("41", actions::do_push);
+		acts.insert("42", actions::do_quench);
+		acts.insert("43", actions::do_quit);
+		acts.insert("44", actions::do_read);
+		acts.insert("45", actions::do_repair);
+		acts.insert("46", actions::do_rob);
+		acts.insert("47", actions::do_roll);
+		acts.insert("48", actions::do_rub);
+		acts.insert("49", actions::do_say);
+		acts.insert("50", actions::do_score);
+		acts.insert("51", actions::do_sleep);
+		acts.insert("52", actions::do_go);
+		acts.insert("53", actions::do_go);
+		acts.insert("54", actions::do_go);
+		acts.insert("55", actions::do_stare);
+		acts.insert("56", actions::do_take);
+		acts.insert("57", actions::do_tether);
+		acts.insert("58", actions::do_tezazzle);
+		acts.insert("59", actions::do_throw);
+		acts.insert("60", actions::do_go);
+		acts.insert("61", actions::do_water);
+		acts.insert("62", actions::do_go);
+		acts.insert("63", actions::do_wizard);
+		acts.insert("64", actions::do_xyzzy);
+		acts.insert("65", actions::do_acorn);
 	}
 
 	#[cfg(debug_assertions)]
 	fn add_actions_additional(acts: &mut HashMap<&str, ActionFn>) {
-		acts.insert("flash", actions::do_flash);
-		acts.insert("grab", actions::do_grab);
-		acts.insert("node", actions::do_node);
+		acts.insert("0", actions::do_flash);
+		acts.insert("1", actions::do_grab);
+		acts.insert("2", actions::do_node);
 	}
 
 	#[cfg(not(debug_assertions))]
@@ -169,7 +169,7 @@ impl CommandCollection {
 			// Map localized primary names (as opposed to tags) to Directions
 			if cmd.has_property(constants::CTRL_COMMAND_MOVEMENT) {
 				match tag_dirs.get(&tag) {
-					None => panic!("Unknown movement command {}, fail.", primary),
+					None => panic!("Unknown movement command {}, fail.", tag),
 					Some(dir) => self.direction_map.insert(primary, *dir),
 				};
 			}
