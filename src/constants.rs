@@ -25,7 +25,78 @@ pub const INVENTORY_ID_MAIN: u32 = 0;
 pub const INVENTORY_ID_CHASM: u32 = 1;
 pub const INVENTORY_ID_DREAM: u32 = 2;
 
-// ID numbers of specific locations
+// Command Id numbers
+#[cfg(debug_assertions)]
+pub const COMMAND_ID_FLASH: u32 = 0;
+#[cfg(debug_assertions)]
+pub const COMMAND_ID_GRAB: u32 = 1;
+#[cfg(debug_assertions)]
+pub const COMMAND_ID_NODE: u32 = 2;
+pub const COMMAND_ID_ATTACK: u32 = 3;
+pub const COMMAND_ID_ROBOT: u32 = 4;
+pub const COMMAND_ID_BACK: u32 = 5;
+pub const COMMAND_ID_BURN: u32 = 6;
+pub const COMMAND_ID_CALL: u32 = 7;
+pub const COMMAND_ID_FAIRY: u32 = 8;
+pub const COMMAND_ID_CLIMB: u32 = 9;
+pub const COMMAND_ID_COMMANDS: u32 = 10;
+pub const COMMAND_ID_COOK: u32 = 11;
+pub const COMMAND_ID_DESCRIBE: u32 = 12;
+pub const COMMAND_ID_DOWN: u32 = 13;
+pub const COMMAND_ID_DRINK: u32 = 14;
+pub const COMMAND_ID_DROP: u32 = 15;
+pub const COMMAND_ID_EAST: u32 = 16;
+pub const COMMAND_ID_EAT: u32 = 17;
+pub const COMMAND_ID_EMPTY: u32 = 18;
+pub const COMMAND_ID_EXCHANGE: u32 = 19;
+pub const COMMAND_ID_EXPLAIN: u32 = 20;
+pub const COMMAND_ID_FEED: u32 = 21;
+pub const COMMAND_ID_FISH: u32 = 22;
+pub const COMMAND_ID_FLY: u32 = 23;
+pub const COMMAND_ID_GIVE: u32 = 24;
+pub const COMMAND_ID_GO: u32 = 25;
+pub const COMMAND_ID_HELP: u32 = 26;
+pub const COMMAND_ID_HINT: u32 = 27;
+pub const COMMAND_ID_IGNORE: u32 = 28;
+pub const COMMAND_ID_INSERT: u32 = 29;
+pub const COMMAND_ID_INVENTORY: u32 = 30;
+pub const COMMAND_ID_KNIT: u32 = 31;
+pub const COMMAND_ID_LIGHT: u32 = 32;
+pub const COMMAND_ID_LOOK: u32 = 33;
+pub const COMMAND_ID_NORTH: u32 = 34;
+pub const COMMAND_ID_NORTHEAST: u32 = 35;
+pub const COMMAND_ID_NORTHWEST: u32 = 36;
+pub const COMMAND_ID_OUT: u32 = 37;
+pub const COMMAND_ID_PLAY: u32 = 38;
+pub const COMMAND_ID_PLUGH: u32 = 39;
+pub const COMMAND_ID_POUR: u32 = 40;
+pub const COMMAND_ID_PUSH: u32 = 41;
+pub const COMMAND_ID_QUENCH: u32 = 42;
+pub const COMMAND_ID_QUIT: u32 = 43;
+pub const COMMAND_ID_READ: u32 = 44;
+pub const COMMAND_ID_REPAIR: u32 = 45;
+pub const COMMAND_ID_ROB: u32 = 46;
+pub const COMMAND_ID_ROLL: u32 = 47;
+pub const COMMAND_ID_RUB: u32 = 48;
+pub const COMMAND_ID_SAY: u32 = 49;
+pub const COMMAND_ID_SCORE: u32 = 50;
+pub const COMMAND_ID_SLEEP: u32 = 51;
+pub const COMMAND_ID_SOUTH: u32 = 52;
+pub const COMMAND_ID_SOUTHEAST: u32 = 53;
+pub const COMMAND_ID_SOUTHWEST: u32 = 54;
+pub const COMMAND_ID_STARE: u32 = 55;
+pub const COMMAND_ID_TAKE: u32 = 56;
+pub const COMMAND_ID_TETHER: u32 = 57;
+pub const COMMAND_ID_TEZAZZLE: u32 = 58;
+pub const COMMAND_ID_THROW: u32 = 59;
+pub const COMMAND_ID_UP: u32 = 60;
+pub const COMMAND_ID_WATER: u32 = 61;
+pub const COMMAND_ID_WEST: u32 = 62;
+pub const COMMAND_ID_WIZARD: u32 = 63;
+pub const COMMAND_ID_XYZZY: u32 = 64;
+pub const COMMAND_ID_ACORN: u32 = 65;
+
+// Id numbers of specific locations
 pub const LOCATION_ID_AIRLOCKE: u32 = 31; // The airlock just off the Recreation Hub
 pub const LOCATION_ID_AIRLOCKEOUT: u32 = 36; // The area immediately outside Airlock East
 pub const LOCATION_ID_ANTEROOM: u32 = 125; // The room beneath the observatory
@@ -65,7 +136,7 @@ pub const INDEX_START_ITEM: u32 = 1000; // Location ids from this up is for item
 pub const INDEX_STOP_INVENTORY: u32 = INDEX_START_LOCATION - 1;
 pub const INDEX_STOP_LOCATION: u32 = INDEX_START_ITEM - 1;
 
-// ID numbers of specific items
+// Id numbers of specific items
 pub const ITEM_ID_ACORN: u32 = 1082;
 pub const ITEM_ID_ALIEN: u32 = 1000;
 pub const ITEM_ID_AQUA: u32 = 1084;
@@ -414,17 +485,3 @@ pub const CTRL_LOC_HAS_LAND: u32 = 0x400; // Whether the location has land, as o
 pub const FILE_SECTION_SEPARATOR: &'static str = "---"; // String separating sections of data file
 pub const STR_DEFAULT: &'static str = "default";
 pub const STR_LOCATION_UNKNOWN: &'static str = "???";
-
-// Direction command tags
-pub const COMMAND_ID_BACK: u32 = 5;
-pub const COMMAND_ID_DOWN: u32 = 13;
-pub const COMMAND_ID_EAST: u32 = 16;
-pub const COMMAND_ID_NORTH: u32 = 34;
-pub const COMMAND_ID_NORTHEAST: u32 = 35;
-pub const COMMAND_ID_NORTHWEST: u32 = 36;
-pub const COMMAND_ID_OUT: u32 = 37;
-pub const COMMAND_ID_SOUTH: u32 = 52;
-pub const COMMAND_ID_SOUTHEAST: u32 = 53;
-pub const COMMAND_ID_SOUTHWEST: u32 = 54;
-pub const COMMAND_ID_UP: u32 = 60;
-pub const COMMAND_ID_WEST: u32 = 62;
