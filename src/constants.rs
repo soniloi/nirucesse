@@ -1,5 +1,6 @@
 // Validation for various collections
 pub const EXPECTED_ITEMS: u32 = 127;
+pub const EXPECTED_COMMANDS: u32 = 66;
 pub const EXPECTED_LOCATIONS: u32 = 134;
 pub const EXPECTED_STRINGS_RESPONSES: u32 = 200;
 pub const EXPECTED_STRINGS_PUZZLES: u32 = 28;

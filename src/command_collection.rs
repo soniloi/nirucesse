@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::collections::HashSet;
 use std::rc::Rc;
 
 use actions;
@@ -133,44 +134,60 @@ impl CommandCollection {
 		tag_dirs
 	}
 
-	pub fn init(&mut self, buffer: &mut FileBuffer) {
+	pub fn init(&mut self, buffer: &mut FileBuffer, expected_count: u32) {
 		let tag_dirs = CommandCollection::get_tag_dir_map();
-
 		let acts = CommandCollection::init_actions();
+		let mut ids: HashSet<CommandId> = HashSet::new(); // Set of id numbers of all commands found in datafile
+
 		let mut line = buffer.get_line();
 	    while !buffer.eof() {
 			match line.as_ref() {
-				constants::FILE_SECTION_SEPARATOR => return,
+				constants::FILE_SECTION_SEPARATOR => break,
 				x => {
 					let words_split = x.split("\t");
 					let words: Vec<&str> = words_split.collect();
-					self.parse_and_insert_command(&words, &acts, &tag_dirs);
+					let id = self.parse_and_insert_command(&words, &acts, &tag_dirs);
+					ids.insert(id);
 				},
 			}
 			line = buffer.get_line();
 		}
+		self.validate(expected_count, &ids);
 	}
 
-	fn parse_and_insert_command(&mut self, words: &Vec<&str>, acts: &HashMap<CommandId, ActionFn>, tag_dirs: &HashMap<CommandId, Direction>) {
+	fn parse_and_insert_command(&mut self, words: &Vec<&str>, acts: &HashMap<CommandId, ActionFn>, tag_dirs: &HashMap<CommandId, Direction>) -> CommandId {
 		let primary = String::from(words[FILE_INDEX_COMMAND_PRIMARY]);
 		let properties = data_collection::str_to_u32_certain(words[FILE_INDEX_COMMAND_STATUS], 16);
 		let id = data_collection::str_to_u32_certain(words[FILE_INDEX_COMMAND_TAG], 10);
 
 		if let Some(act) = acts.get(&id) {
 			let cmd: CommandRef = Rc::new(Box::new(Command::new(primary.clone(), properties, *act)));
+			// Insert command by primary name and any aliases
 			self.commands.insert(primary.clone(), cmd.clone());
 			for i in FILE_INDEX_COMMAND_ALIAS_START..words.len() {
 				if !words[i].is_empty() {
 					self.commands.insert(String::from(words[i]), cmd.clone());
 				}
 			}
-
 			// Map localized primary names (as opposed to tags) to Directions
 			if cmd.has_property(constants::CTRL_COMMAND_MOVEMENT) {
 				match tag_dirs.get(&id) {
 					None => panic!("Unknown movement command {}, fail.", id),
 					Some(dir) => self.direction_map.insert(primary, *dir),
 				};
+			}
+		}
+		id
+	}
+
+	// Ensure that all the necessary ids will be available
+	fn validate(&self, expected_count: u32, ids: &HashSet<CommandId>) {
+		if ids.len() as u32 != expected_count {
+			panic!("Error in command collection. Expected [{}] tags, found [{}]", expected_count, ids.len());
+		}
+		for id in 0..expected_count {
+			if !ids.contains(&id) {
+				panic!("Error in command collection. Id [{}] not found", id);
 			}
 		}
 	}

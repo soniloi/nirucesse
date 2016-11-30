@@ -74,7 +74,7 @@ impl DataCollection {
 
 	pub fn init(&mut self, mut buffer: &mut FileBuffer) {
 		let mut treasure_count: u32 = 0;
-		self.commands.init(&mut buffer);
+		self.commands.init(&mut buffer, constants::EXPECTED_COMMANDS);
 		self.locations.init(&mut buffer, constants::EXPECTED_LOCATIONS);
 		self.items.init(&mut buffer, constants::EXPECTED_ITEMS, &mut self.locations, &mut treasure_count);
 		self.hints.init(&mut buffer);
