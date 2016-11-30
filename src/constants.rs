@@ -415,16 +415,16 @@ pub const FILE_SECTION_SEPARATOR: &'static str = "---"; // String separating sec
 pub const STR_DEFAULT: &'static str = "default";
 pub const STR_LOCATION_UNKNOWN: &'static str = "???";
 
-// Direction tag strings
-pub const STR_BACK: &'static str = "5";
-pub const STR_DOWN: &'static str = "13";
-pub const STR_EAST: &'static str = "16";
-pub const STR_NORTH: &'static str = "34";
-pub const STR_NORTHEAST: &'static str = "35";
-pub const STR_NORTHWEST: &'static str = "36";
-pub const STR_OUT: &'static str = "37";
-pub const STR_SOUTH: &'static str = "52";
-pub const STR_SOUTHEAST: &'static str = "53";
-pub const STR_SOUTHWEST: &'static str = "54";
-pub const STR_UP: &'static str = "60";
-pub const STR_WEST: &'static str = "62";
+// Direction command tags
+pub const COMMAND_ID_BACK: u32 = 5;
+pub const COMMAND_ID_DOWN: u32 = 13;
+pub const COMMAND_ID_EAST: u32 = 16;
+pub const COMMAND_ID_NORTH: u32 = 34;
+pub const COMMAND_ID_NORTHEAST: u32 = 35;
+pub const COMMAND_ID_NORTHWEST: u32 = 36;
+pub const COMMAND_ID_OUT: u32 = 37;
+pub const COMMAND_ID_SOUTH: u32 = 52;
+pub const COMMAND_ID_SOUTHEAST: u32 = 53;
+pub const COMMAND_ID_SOUTHWEST: u32 = 54;
+pub const COMMAND_ID_UP: u32 = 60;
+pub const COMMAND_ID_WEST: u32 = 62;

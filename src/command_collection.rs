@@ -29,87 +29,87 @@ impl CommandCollection {
 		}
 	}
 
-	fn add_actions_common(acts: &mut HashMap<&str, ActionFn>) {
-		acts.insert("3", actions::do_attack);
-		acts.insert("4", actions::do_robot);
-		acts.insert("5", actions::do_go);
-		acts.insert("6", actions::do_burn);
-		acts.insert("7", actions::do_call);
-		acts.insert("8", actions::do_fairy);
-		acts.insert("9", actions::do_climb);
-		acts.insert("10", actions::do_commands);
-		acts.insert("11", actions::do_cook);
-		acts.insert("12", actions::do_describe);
-		acts.insert("13", actions::do_go);
-		acts.insert("14", actions::do_drink);
-		acts.insert("15", actions::do_drop);
-		acts.insert("16", actions::do_go);
-		acts.insert("17", actions::do_eat);
-		acts.insert("18", actions::do_empty);
-		acts.insert("19", actions::do_exchange);
-		acts.insert("20", actions::do_explain);
-		acts.insert("21", actions::do_feed);
-		acts.insert("22", actions::do_fish);
-		acts.insert("23", actions::do_fly);
-		acts.insert("24", actions::do_give);
-		acts.insert("25", actions::do_go_disambiguate);
-		acts.insert("26", actions::do_help);
-		acts.insert("27", actions::do_hint);
-		acts.insert("28", actions::do_ignore);
-		acts.insert("29", actions::do_insert);
-		acts.insert("30", actions::do_inventory);
-		acts.insert("31", actions::do_knit);
-		acts.insert("32", actions::do_light);
-		acts.insert("33", actions::do_look);
-		acts.insert("34", actions::do_go);
-		acts.insert("35", actions::do_go);
-		acts.insert("36", actions::do_go);
-		acts.insert("37", actions::do_go);
-		acts.insert("38", actions::do_play);
-		acts.insert("39", actions::do_plugh);
-		acts.insert("40", actions::do_pour);
-		acts.insert("41", actions::do_push);
-		acts.insert("42", actions::do_quench);
-		acts.insert("43", actions::do_quit);
-		acts.insert("44", actions::do_read);
-		acts.insert("45", actions::do_repair);
-		acts.insert("46", actions::do_rob);
-		acts.insert("47", actions::do_roll);
-		acts.insert("48", actions::do_rub);
-		acts.insert("49", actions::do_say);
-		acts.insert("50", actions::do_score);
-		acts.insert("51", actions::do_sleep);
-		acts.insert("52", actions::do_go);
-		acts.insert("53", actions::do_go);
-		acts.insert("54", actions::do_go);
-		acts.insert("55", actions::do_stare);
-		acts.insert("56", actions::do_take);
-		acts.insert("57", actions::do_tether);
-		acts.insert("58", actions::do_tezazzle);
-		acts.insert("59", actions::do_throw);
-		acts.insert("60", actions::do_go);
-		acts.insert("61", actions::do_water);
-		acts.insert("62", actions::do_go);
-		acts.insert("63", actions::do_wizard);
-		acts.insert("64", actions::do_xyzzy);
-		acts.insert("65", actions::do_acorn);
+	fn add_actions_common(acts: &mut HashMap<u32, ActionFn>) {
+		acts.insert(3, actions::do_attack);
+		acts.insert(4, actions::do_robot);
+		acts.insert(5, actions::do_go);
+		acts.insert(6, actions::do_burn);
+		acts.insert(7, actions::do_call);
+		acts.insert(8, actions::do_fairy);
+		acts.insert(9, actions::do_climb);
+		acts.insert(10, actions::do_commands);
+		acts.insert(11, actions::do_cook);
+		acts.insert(12, actions::do_describe);
+		acts.insert(13, actions::do_go);
+		acts.insert(14, actions::do_drink);
+		acts.insert(15, actions::do_drop);
+		acts.insert(16, actions::do_go);
+		acts.insert(17, actions::do_eat);
+		acts.insert(18, actions::do_empty);
+		acts.insert(19, actions::do_exchange);
+		acts.insert(20, actions::do_explain);
+		acts.insert(21, actions::do_feed);
+		acts.insert(22, actions::do_fish);
+		acts.insert(23, actions::do_fly);
+		acts.insert(24, actions::do_give);
+		acts.insert(25, actions::do_go_disambiguate);
+		acts.insert(26, actions::do_help);
+		acts.insert(27, actions::do_hint);
+		acts.insert(28, actions::do_ignore);
+		acts.insert(29, actions::do_insert);
+		acts.insert(30, actions::do_inventory);
+		acts.insert(31, actions::do_knit);
+		acts.insert(32, actions::do_light);
+		acts.insert(33, actions::do_look);
+		acts.insert(34, actions::do_go);
+		acts.insert(35, actions::do_go);
+		acts.insert(36, actions::do_go);
+		acts.insert(37, actions::do_go);
+		acts.insert(38, actions::do_play);
+		acts.insert(39, actions::do_plugh);
+		acts.insert(40, actions::do_pour);
+		acts.insert(41, actions::do_push);
+		acts.insert(42, actions::do_quench);
+		acts.insert(43, actions::do_quit);
+		acts.insert(44, actions::do_read);
+		acts.insert(45, actions::do_repair);
+		acts.insert(46, actions::do_rob);
+		acts.insert(47, actions::do_roll);
+		acts.insert(48, actions::do_rub);
+		acts.insert(49, actions::do_say);
+		acts.insert(50, actions::do_score);
+		acts.insert(51, actions::do_sleep);
+		acts.insert(52, actions::do_go);
+		acts.insert(53, actions::do_go);
+		acts.insert(54, actions::do_go);
+		acts.insert(55, actions::do_stare);
+		acts.insert(56, actions::do_take);
+		acts.insert(57, actions::do_tether);
+		acts.insert(58, actions::do_tezazzle);
+		acts.insert(59, actions::do_throw);
+		acts.insert(60, actions::do_go);
+		acts.insert(61, actions::do_water);
+		acts.insert(62, actions::do_go);
+		acts.insert(63, actions::do_wizard);
+		acts.insert(64, actions::do_xyzzy);
+		acts.insert(65, actions::do_acorn);
 	}
 
 	#[cfg(debug_assertions)]
-	fn add_actions_additional(acts: &mut HashMap<&str, ActionFn>) {
-		acts.insert("0", actions::do_flash);
-		acts.insert("1", actions::do_grab);
-		acts.insert("2", actions::do_node);
+	fn add_actions_additional(acts: &mut HashMap<u32, ActionFn>) {
+		acts.insert(0, actions::do_flash);
+		acts.insert(1, actions::do_grab);
+		acts.insert(2, actions::do_node);
 	}
 
 	#[cfg(not(debug_assertions))]
 	#[allow(unused_variables)]
-	fn add_actions_additional(acts: &mut HashMap<&str, ActionFn>) {
+	fn add_actions_additional(acts: &mut HashMap<u32, ActionFn>) {
 	}
 
 	// TODO: make properly static
-	fn init_actions() -> HashMap<&'static str, ActionFn> {
-		let mut acts: HashMap<&str, ActionFn> = HashMap::new();
+	fn init_actions() -> HashMap<u32, ActionFn> {
+		let mut acts: HashMap<u32, ActionFn> = HashMap::new();
 		CommandCollection::add_actions_common(&mut acts);
 		CommandCollection::add_actions_additional(&mut acts);
 		acts
@@ -117,20 +117,20 @@ impl CommandCollection {
 
 	// TODO: make static
 	// Create map of command tags (note: not primary names) to Directions
-	fn get_tag_dir_map() -> HashMap<&'static str, Direction> {
+	fn get_tag_dir_map() -> HashMap<u32, Direction> {
 		let mut tag_dirs = HashMap::new();
-		tag_dirs.insert(constants::STR_NORTH, Direction::North);
-		tag_dirs.insert(constants::STR_SOUTH, Direction::South);
-		tag_dirs.insert(constants::STR_EAST, Direction::East);
-		tag_dirs.insert(constants::STR_WEST, Direction::West);
-		tag_dirs.insert(constants::STR_NORTHEAST, Direction::Northeast);
-		tag_dirs.insert(constants::STR_SOUTHWEST, Direction::Southwest);
-		tag_dirs.insert(constants::STR_SOUTHEAST, Direction::Southeast);
-		tag_dirs.insert(constants::STR_NORTHWEST, Direction::Northwest);
-		tag_dirs.insert(constants::STR_UP, Direction::Up);
-		tag_dirs.insert(constants::STR_DOWN, Direction::Down);
-		tag_dirs.insert(constants::STR_OUT, Direction::Out);
-		tag_dirs.insert(constants::STR_BACK, Direction::Back);
+		tag_dirs.insert(constants::COMMAND_ID_NORTH, Direction::North);
+		tag_dirs.insert(constants::COMMAND_ID_SOUTH, Direction::South);
+		tag_dirs.insert(constants::COMMAND_ID_EAST, Direction::East);
+		tag_dirs.insert(constants::COMMAND_ID_WEST, Direction::West);
+		tag_dirs.insert(constants::COMMAND_ID_NORTHEAST, Direction::Northeast);
+		tag_dirs.insert(constants::COMMAND_ID_SOUTHWEST, Direction::Southwest);
+		tag_dirs.insert(constants::COMMAND_ID_SOUTHEAST, Direction::Southeast);
+		tag_dirs.insert(constants::COMMAND_ID_NORTHWEST, Direction::Northwest);
+		tag_dirs.insert(constants::COMMAND_ID_UP, Direction::Up);
+		tag_dirs.insert(constants::COMMAND_ID_DOWN, Direction::Down);
+		tag_dirs.insert(constants::COMMAND_ID_OUT, Direction::Out);
+		tag_dirs.insert(constants::COMMAND_ID_BACK, Direction::Back);
 		tag_dirs
 	}
 
@@ -152,12 +152,12 @@ impl CommandCollection {
 		}
 	}
 
-	fn parse_and_insert_command(&mut self, words: &Vec<&str>, acts: &HashMap<&str, ActionFn>, tag_dirs: &HashMap<&'static str, Direction>) {
+	fn parse_and_insert_command(&mut self, words: &Vec<&str>, acts: &HashMap<u32, ActionFn>, tag_dirs: &HashMap<u32, Direction>) {
 		let primary = String::from(words[FILE_INDEX_COMMAND_PRIMARY]);
 		let properties = data_collection::str_to_u32_certain(words[FILE_INDEX_COMMAND_STATUS], 16);
-		let tag = words[FILE_INDEX_COMMAND_TAG];
+		let id = data_collection::str_to_u32_certain(words[FILE_INDEX_COMMAND_TAG], 10);
 
-		if let Some(act) = acts.get(tag) {
+		if let Some(act) = acts.get(&id) {
 			let cmd: CommandRef = Rc::new(Box::new(Command::new(primary.clone(), properties, *act)));
 			self.commands.insert(primary.clone(), cmd.clone());
 			for i in FILE_INDEX_COMMAND_ALIAS_START..words.len() {
@@ -168,8 +168,8 @@ impl CommandCollection {
 
 			// Map localized primary names (as opposed to tags) to Directions
 			if cmd.has_property(constants::CTRL_COMMAND_MOVEMENT) {
-				match tag_dirs.get(&tag) {
-					None => panic!("Unknown movement command {}, fail.", tag),
+				match tag_dirs.get(&id) {
+					None => panic!("Unknown movement command {}, fail.", id),
 					Some(dir) => self.direction_map.insert(primary, *dir),
 				};
 			}
