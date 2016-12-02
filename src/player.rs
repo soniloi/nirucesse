@@ -610,6 +610,9 @@ impl Player {
 				let docking_ctrl = data.get_location_certain(constants::LOCATION_ID_DOCKINGCONTROL);
 				let buccaneer = data.get_item_by_id_certain(constants::ITEM_ID_BUCCANEER);
 				docking_ctrl.borrow_mut().insert_item(buccaneer.clone());
+				docking_ctrl.borrow_mut().set_property(constants::CTRL_LOC_HAS_LIGHT, true);
+				let lever = data.get_item_by_id_certain(constants::ITEM_ID_LEVER);
+				lever.borrow_mut().set_on(true);
 
 				// Link pirate ship (both item and location) to the docking bay
 				let docking = data.get_location_certain(constants::LOCATION_ID_DOCKING);
