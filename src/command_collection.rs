@@ -3,8 +3,7 @@ use std::collections::HashSet;
 use std::rc::Rc;
 
 use actions;
-use command::ActionFn;
-use command::Command;
+use command::{ActionFn, Command};
 use constants;
 use data_collection::{self, CommandId, CommandRef};
 use file_buffer::FileBuffer;

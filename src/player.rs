@@ -3,8 +3,7 @@ use rand::Rng;
 
 use constants;
 use data_collection::{DataCollection, InventoryRef, ItemId, ItemRef, LocationId, LocationRef, StringId, TpMap};
-use item::Item;
-use item::ItemCheckFn;
+use item::{Item, ItemCheckFn};
 use location::Direction;
 use terminal;
 

@@ -14,8 +14,7 @@ use info_string_collection::InfoStringCollection;
 use inventory::Inventory;
 use item::Item;
 use item_collection::ItemCollection;
-use location::Direction;
-use location::Location;
+use location::{Direction, Location};
 use location_collection::LocationCollection;
 
 pub type GenericRcBox<T> = Rc<Box<T>>;

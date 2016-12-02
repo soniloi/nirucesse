@@ -4,8 +4,7 @@ use std::rc::Rc;
 
 use constants;
 use data_collection::{self, LocationId, LocationRef};
-use location::Direction;
-use location::Location;
+use location::{Direction, Location};
 use file_buffer::FileBuffer;
 
 const FILE_INDEX_LOCATION_ID: usize = 0;
