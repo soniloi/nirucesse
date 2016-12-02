@@ -2,7 +2,7 @@
 pub const EXPECTED_ITEMS: u32 = 127;
 pub const EXPECTED_COMMANDS: u32 = 66;
 pub const EXPECTED_LOCATIONS: u32 = 134;
-pub const EXPECTED_STRINGS_RESPONSES: u32 = 200;
+pub const EXPECTED_STRINGS_RESPONSES: u32 = 210;
 pub const EXPECTED_STRINGS_PUZZLES: u32 = 28;
 
 // Scoring stuff
@@ -172,6 +172,7 @@ pub const ITEM_ID_ENVELOPE: u32 = 1029;
 pub const ITEM_ID_FAIRY: u32 = 1030;
 pub const ITEM_ID_GLINT: u32 = 1033;
 pub const ITEM_ID_GUNSLINGER: u32 = 1037;
+pub const ITEM_ID_LEVER: u32 = 1055;
 pub const ITEM_ID_JUMPER: u32 = 1040;
 pub const ITEM_ID_KEY: u32 = 1041;
 pub const ITEM_ID_KOHLRABI: u32 = 1042;
@@ -409,6 +410,8 @@ pub const STR_ID_EAT_LION: u32 = 196;
 pub const STR_ID_EAT_CABBAGE: u32 = 197;
 pub const STR_ID_EAT_LIQUID: u32 = 198;
 pub const STR_ID_EAT_RADISHES: u32 = 199;
+pub const STR_ID_DOCKING_LIGHT_OFF: u32 = 200;
+pub const STR_ID_DOCKING_LIGHT_ON: u32 = 201;
 
 pub const PUZZLE_ID_ACORN: u32 = 0;
 pub const PUZZLE_ID_TRANSMITTER: u32 = 1;

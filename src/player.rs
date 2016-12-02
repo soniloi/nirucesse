@@ -376,6 +376,11 @@ impl Player {
 			let anteroom = data.get_location_certain(constants::LOCATION_ID_ANTEROOM);
 			anteroom.borrow_mut().set_property(constants::CTRL_LOC_HAS_GRAVITY, !on_next);
 			terminal::write_full(data.get_response(constants::STR_ID_NOTHING_HAPPENS));
+		} else if item_id == constants::ITEM_ID_LEVER {
+			let docking_ctrl = data.get_location_certain(constants::LOCATION_ID_DOCKINGCONTROL);
+			docking_ctrl.borrow_mut().set_property(constants::CTRL_LOC_HAS_LIGHT, on_next); // Opposite, as we have just changed it
+			let response_code = if docking_ctrl.borrow().has_property(constants::CTRL_LOC_HAS_LIGHT) {constants::STR_ID_DOCKING_LIGHT_ON} else {constants::STR_ID_DOCKING_LIGHT_OFF};
+			terminal::write_full(data.get_response(response_code));
 		} else if item_id == constants::ITEM_ID_PLAYER && on_next {
 			self.play_player(data, item);
 		}
@@ -1184,9 +1189,9 @@ impl Player {
 	pub fn push(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
 		match item_id {
-			constants::ITEM_ID_BUTTON => {
-				let button_on = item.borrow().is_on();
-				self.switch_item(data, item, !button_on);
+			constants::ITEM_ID_BUTTON | constants::ITEM_ID_LEVER => {
+				let is_on = item.borrow().is_on();
+				self.switch_item(data, item, !is_on);
 			},
 			_ => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW)),
 		}
