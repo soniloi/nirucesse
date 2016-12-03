@@ -208,18 +208,19 @@ impl Player {
 	    self.has_item_inventory(item_id) || self.has_item_location(item_id)
 	}
 
-	fn complete_obstruction_achievement(&mut self, data: &DataCollection, obstruction_id: ItemId, response: &str) {
+	fn complete_obstruction_achievement(&mut self, data: &DataCollection, obstruction_id: ItemId, puzzle_code: StringId) {
 		self.location.borrow_mut().remove_item_certain(obstruction_id);
-		self.complete_achievement(data, response);
+		self.complete_achievement(data, puzzle_code);
 		let unblocked_known = String::from(data.get_response(constants::STR_ID_PATH_UNBLOCKED_KNOWN));
 		let unblocked_unknown = String::from(data.get_response(constants::STR_ID_PATH_UNBLOCKED_UNKNOWN));
 		terminal::write_full(&self.get_effective_description(unblocked_unknown.clone(), unblocked_unknown, unblocked_known));
 	}
 
-	fn complete_achievement(&mut self, data: &DataCollection, response: &str) {
+	fn complete_achievement(&mut self, data: &DataCollection, puzzle_code: StringId) {
 		self.achievement_count = self.achievement_count + 1;
+		let achievement_known = String::from(data.get_puzzle(puzzle_code));
 		let achievement_unknown = String::from(data.get_response(constants::STR_ID_ACHIEVEMENT_UNKNOWN));
-		terminal::write_full(&self.get_effective_description(achievement_unknown.clone(), achievement_unknown, String::from(response)));
+		terminal::write_full(&self.get_effective_description(achievement_unknown.clone(), achievement_unknown, achievement_known));
 	}
 
 	pub fn float(&mut self, data: &DataCollection) {
@@ -312,7 +313,7 @@ impl Player {
 			response_code = constants::STR_ID_LION_SITS;
 			let wolf_present = self.has_item_location(constants::ITEM_ID_WOLF);
 			if wolf_present {
-				self.complete_obstruction_achievement(data, constants::ITEM_ID_WOLF, data.get_puzzle(constants::PUZZLE_ID_WOLF));
+				self.complete_obstruction_achievement(data, constants::ITEM_ID_WOLF, constants::PUZZLE_ID_WOLF);
 			}
 		}
 
@@ -320,7 +321,7 @@ impl Player {
 			let dogs_present = self.has_item_location(constants::ITEM_ID_DOGS);
 			if dogs_present {
 				self.location.borrow_mut().remove_item_certain(constants::ITEM_ID_PUPPY);
-				self.complete_obstruction_achievement(data, constants::ITEM_ID_DOGS, data.get_puzzle(constants::PUZZLE_ID_DOGS));
+				self.complete_obstruction_achievement(data, constants::ITEM_ID_DOGS, constants::PUZZLE_ID_DOGS);
 				self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_BELL).clone());
 				response_code = constants::STR_ID_BELL_FEET;
 			}
@@ -358,7 +359,7 @@ impl Player {
 			terminal::write_full(&data.get_response_param(constants::STR_ID_PIRATE_HEAVY, pirate.borrow().get_shortname()));
 		} else {
 			self.inventory.borrow_mut().insert_item(reward.clone());
-			self.complete_achievement(data, data.get_puzzle(response_code_success));
+			self.complete_achievement(data, response_code_success);
 		}
 	}
 
@@ -431,17 +432,17 @@ impl Player {
 			if gift_id == constants::ITEM_ID_CHART {
 				self.inventory.borrow_mut().remove_item_certain(gift_id);
 				gift.borrow_mut().set_location(constants::LOCATION_ID_GRAVEYARD);
-				self.complete_achievement(data, data.get_puzzle(constants::PUZZLE_ID_CHART));
+				self.complete_achievement(data, constants::PUZZLE_ID_CHART);
 			} else if gift_id == constants::ITEM_ID_TRANSMITTER && chart_used && transmitter_on { // Alien cannot operate our machinery, so needs the transmitter to be on
 				self.inventory.borrow_mut().remove_item_certain(gift_id);
 				gift.borrow_mut().set_location(constants::LOCATION_ID_GRAVEYARD);
-				self.complete_achievement(data, data.get_puzzle(constants::PUZZLE_ID_TRANSMITTER));
+				self.complete_achievement(data, constants::PUZZLE_ID_TRANSMITTER);
 			} else if gift_id == constants::ITEM_ID_LENS && transmitter_used {
 				let pendant = data.get_item_by_id_certain(constants::ITEM_ID_PENDANT);
 				self.location.borrow_mut().insert_item(pendant.clone());
 				self.inventory.borrow_mut().remove_item_certain(gift_id);
 				gift.borrow_mut().set_location(constants::LOCATION_ID_GRAVEYARD);
-				self.complete_obstruction_achievement(data, constants::ITEM_ID_ALIEN, data.get_puzzle(constants::PUZZLE_ID_LENS));
+				self.complete_obstruction_achievement(data, constants::ITEM_ID_ALIEN, constants::PUZZLE_ID_LENS);
 			} else {
 				terminal::write_full(data.get_response(constants::STR_ID_ALIEN_NO_USE));
 			}
@@ -450,7 +451,7 @@ impl Player {
 			let cartridge = data.get_item_by_id_certain(constants::ITEM_ID_CARTRIDGE);
 			self.location.borrow_mut().insert_item(cartridge.clone());
 			self.inventory.borrow_mut().remove_item_certain(gift_id);
-			self.complete_obstruction_achievement(data, constants::ITEM_ID_GUNSLINGER, data.get_puzzle(constants::PUZZLE_ID_GUNSLINGER));
+			self.complete_obstruction_achievement(data, constants::ITEM_ID_GUNSLINGER, constants::PUZZLE_ID_GUNSLINGER);
 
 		} else if recipient_id == constants::ITEM_ID_LION && gift_edible {
 			self.inventory.borrow_mut().remove_item_certain(gift_id);
@@ -465,7 +466,7 @@ impl Player {
 			let brooch = data.get_item_by_id_certain(constants::ITEM_ID_BROOCH);
 			self.location.borrow_mut().insert_item(brooch.clone());
 			self.inventory.borrow_mut().remove_item_certain(gift_id);
-			self.complete_obstruction_achievement(data, constants::ITEM_ID_SKELETON, data.get_puzzle(constants::PUZZLE_ID_SKELETON));
+			self.complete_obstruction_achievement(data, constants::ITEM_ID_SKELETON, constants::PUZZLE_ID_SKELETON);
 
 		} else if recipient_id == constants::ITEM_ID_TROLL && gift_edible {
 			self.inventory.borrow_mut().remove_item_certain(gift_id);
@@ -483,7 +484,7 @@ impl Player {
 			self.remove_item_from_current(recipient_id);
 			self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_BEANSTALK).clone());
 			self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_BLOSSOM).clone());
-			self.complete_achievement(data, data.get_puzzle(constants::PUZZLE_ID_BEANSTALK));
+			self.complete_achievement(data, constants::PUZZLE_ID_BEANSTALK);
 
 		} else if recipient_id == constants::ITEM_ID_PLANT && gift_id == constants::ITEM_ID_POTION {
 			self.inventory.borrow_mut().remove_item_certain(gift_id);
@@ -496,7 +497,7 @@ impl Player {
 			self.remove_item_from_current(recipient_id);
 			self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_TOADSTOOL).clone());
 			self.location.borrow_mut().set_direction(Direction::North, Some(data.get_location_certain(constants::LOCATION_ID_TOADSTOOL).clone()));
-			self.complete_achievement(data, data.get_puzzle(constants::PUZZLE_ID_MUSHROOM));
+			self.complete_achievement(data, constants::PUZZLE_ID_MUSHROOM);
 
 		} else if gift_liquid { // Default response for liquids
 			self.inventory.borrow_mut().remove_item_certain(gift_id);
@@ -517,7 +518,7 @@ impl Player {
 			if acorn_is_new {
 				let garden = data.get_location_certain(constants::LOCATION_ID_GARDEN);
 				garden.borrow_mut().insert_item(acorn.clone());
-				self.complete_achievement(data, data.get_puzzle(constants::PUZZLE_ID_ACORN));
+				self.complete_achievement(data, constants::PUZZLE_ID_ACORN);
 				return;
 			}
 		}
@@ -533,7 +534,7 @@ impl Player {
 			},
 			constants::ITEM_ID_BOULDER => {
 				if self.strong {
-					self.complete_obstruction_achievement(data, constants::ITEM_ID_BOULDER, data.get_puzzle(constants::PUZZLE_ID_BOULDER));
+					self.complete_obstruction_achievement(data, constants::ITEM_ID_BOULDER, constants::PUZZLE_ID_BOULDER);
 					self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_DUST).clone());
 					let cellar = data.get_location_certain(constants::LOCATION_ID_CELLAR);
 					self.location.borrow_mut().set_direction(Direction::Down, Some(cellar.clone()));
@@ -573,7 +574,7 @@ impl Player {
 					let out_loc = data.get_location_certain(constants::LOCATION_ID_AIRLOCKEOUT);
 					self.location.borrow_mut().set_direction(Direction::Southwest, Some(out_loc.clone()));
 					self.location.borrow_mut().set_property(constants::CTRL_LOC_HAS_AIR, false);
-					self.complete_achievement(data, data.get_puzzle(constants::PUZZLE_ID_AIRLOCK));
+					self.complete_achievement(data, constants::PUZZLE_ID_AIRLOCK);
 				} else {
 					terminal::write_full(data.get_response(constants::STR_ID_ROBOT_MOUSE));
 				}
@@ -628,7 +629,7 @@ impl Player {
 				let shuttle = data.get_location_certain(constants::LOCATION_ID_SHUTTLE);
 				shuttle.borrow_mut().set_direction(Direction::South, None);
 
-				self.complete_obstruction_achievement(data, constants::ITEM_ID_CONSOLE_FIXED, data.get_puzzle(constants::PUZZLE_ID_DISTRESS));
+				self.complete_obstruction_achievement(data, constants::ITEM_ID_CONSOLE_FIXED, constants::PUZZLE_ID_DISTRESS);
 			},
 			_ => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW)),
 		}
@@ -659,7 +660,7 @@ impl Player {
 				self.inventory.borrow_mut().remove_item_certain(constants::ITEM_ID_RADISHES);
 				let elixir = data.get_item_by_id_certain(constants::ITEM_ID_ELIXIR);
 				cauldron.borrow_mut().set_within(Some(elixir.clone()));
-				self.complete_achievement(data, data.get_puzzle(constants::PUZZLE_ID_ELIXIR));
+				self.complete_achievement(data, constants::PUZZLE_ID_ELIXIR);
 			},
 			_ => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW)),
 		}
@@ -795,7 +796,7 @@ impl Player {
 			let coin = data.get_item_by_id_certain(constants::ITEM_ID_COIN);
 			envelope.borrow_mut().remove_item_certain(constants::ITEM_ID_TOOTH);
 			envelope.borrow_mut().set_within(Some(coin.clone()));
-			self.complete_obstruction_achievement(data, constants::ITEM_ID_FAIRY, data.get_puzzle(constants::PUZZLE_ID_FAIRY));
+			self.complete_obstruction_achievement(data, constants::ITEM_ID_FAIRY, constants::PUZZLE_ID_FAIRY);
 		} else {
 			terminal::write_full(data.get_response(constants::STR_ID_NOTHING_HAPPENS));
 		}
@@ -880,7 +881,7 @@ impl Player {
 			return;
 		}
 		self.inventory.borrow_mut().insert_item(nugget.clone());
-		self.complete_obstruction_achievement(data, constants::ITEM_ID_GLINT, data.get_puzzle(constants::PUZZLE_ID_GLINT));
+		self.complete_obstruction_achievement(data, constants::ITEM_ID_GLINT, constants::PUZZLE_ID_GLINT);
 	}
 
 	#[cfg(debug_assertions)]
@@ -904,7 +905,7 @@ impl Player {
 				} else if !key_present {
 					terminal::write_full(data.get_response(constants::STR_ID_NO_KEY));
 				} else {
-					self.complete_achievement(data, data.get_puzzle(constants::PUZZLE_ID_ESCAPE));
+					self.complete_achievement(data, constants::PUZZLE_ID_ESCAPE);
 					self.playing = false;
 				}
 			}
@@ -1082,7 +1083,7 @@ impl Player {
 	pub fn ignore(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
 		match item_id {
-			constants::ITEM_ID_TROLL => self.complete_obstruction_achievement(data, constants::ITEM_ID_TROLL, data.get_puzzle(constants::PUZZLE_ID_TROLL)),
+			constants::ITEM_ID_TROLL => self.complete_obstruction_achievement(data, constants::ITEM_ID_TROLL, constants::PUZZLE_ID_TROLL),
 			_ => terminal::write_full(data.get_response(constants::STR_ID_IGNORED)),
 		}
 	}
@@ -1137,7 +1138,7 @@ impl Player {
 		}
 		self.inventory.borrow_mut().remove_item_certain(constants::ITEM_ID_YARN);
 		self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_JUMPER).clone());
-		self.complete_achievement(data, data.get_puzzle(constants::PUZZLE_ID_JUMPER));
+		self.complete_achievement(data, constants::PUZZLE_ID_JUMPER);
 	}
 
 	pub fn light(&mut self, data: &DataCollection, item: &ItemRef) {
@@ -1164,7 +1165,7 @@ impl Player {
 						let lion_obstruction = lion.borrow().has_property(constants::CTRL_ITEM_OBSTRUCTION);
 						if lion_obstruction {
 							lion.borrow_mut().set_property(constants::CTRL_ITEM_OBSTRUCTION, false);
-							self.complete_achievement(data, data.get_puzzle(constants::PUZZLE_ID_LION));
+							self.complete_achievement(data, constants::PUZZLE_ID_LION);
 						}
 					}
 				}
@@ -1236,7 +1237,7 @@ impl Player {
 					let panel = data.get_item_by_id_certain(constants::ITEM_ID_CONSOLE_FIXED);
 					self.location.borrow_mut().insert_item(panel.clone());
 					self.inventory.borrow_mut().remove_item_certain(constants::ITEM_ID_WIRE);
-					self.complete_obstruction_achievement(data, constants::ITEM_ID_CONSOLE_BROKEN, data.get_puzzle(constants::PUZZLE_ID_CONSOLE));
+					self.complete_obstruction_achievement(data, constants::ITEM_ID_CONSOLE_BROKEN, constants::PUZZLE_ID_CONSOLE);
 				}
 			},
 			_ => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW)),
@@ -1262,7 +1263,7 @@ impl Player {
 	pub fn robot(&mut self, data: &DataCollection) {
 		let robot_present = self.has_item_location(constants::ITEM_ID_ROBOT);
 		if robot_present {
-			self.complete_obstruction_achievement(data, constants::ITEM_ID_ROBOT, data.get_puzzle(constants::PUZZLE_ID_ROBOT));
+			self.complete_obstruction_achievement(data, constants::ITEM_ID_ROBOT, constants::PUZZLE_ID_ROBOT);
 		} else {
 			terminal::write_full(data.get_response(constants::STR_ID_NOTHING_HAPPENS));
 		}
@@ -1278,7 +1279,7 @@ impl Player {
 				terminal::write_full(data.get_response(constants::STR_ID_ROLL_MARBLE));
 				if loc_id == constants::LOCATION_ID_CHECKPOINT && corsair_present {
 					let under = data.get_location_certain(constants::LOCATION_ID_UNDER);
-					self.complete_obstruction_achievement(data, constants::ITEM_ID_CORSAIR, data.get_puzzle(constants::PUZZLE_ID_MARBLE));
+					self.complete_obstruction_achievement(data, constants::ITEM_ID_CORSAIR, constants::PUZZLE_ID_MARBLE);
 					under.borrow_mut().insert_item(item.clone());
 					under.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_CORSAIR).clone());
 				} else {
@@ -1297,7 +1298,7 @@ impl Player {
 			constants::ITEM_ID_DRAGON => {
 				let tooth = data.get_item_by_id_certain(constants::ITEM_ID_TOOTH);
 				self.location.borrow_mut().insert_item(tooth.clone());
-				self.complete_obstruction_achievement(data, constants::ITEM_ID_DRAGON, data.get_puzzle(constants::PUZZLE_ID_DRAGON));
+				self.complete_obstruction_achievement(data, constants::ITEM_ID_DRAGON, constants::PUZZLE_ID_DRAGON);
 			},
 			constants::ITEM_ID_PENDANT => {
 				let thor = data.get_location_certain(constants::LOCATION_ID_THOR);
@@ -1410,7 +1411,7 @@ impl Player {
 				let item_id = item.borrow().get_id();
 				if item_id == constants::ITEM_ID_SHUTTLE && anchor_id == constants::ITEM_ID_SHIP {
 					self.inventory.borrow_mut().remove_item_certain(constants::ITEM_ID_CABLE);
-					self.complete_achievement(data, data.get_puzzle(constants::PUZZLE_ID_TETHER));
+					self.complete_achievement(data, constants::PUZZLE_ID_TETHER);
 				} else {
 					terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW));
 				}
@@ -1434,7 +1435,7 @@ impl Player {
 			if self.has_invisibility() {
 				terminal::write_full(data.get_response(constants::STR_ID_WIZARDED));
 			} else if mirror_present {
-				self.complete_obstruction_achievement(data, constants::ITEM_ID_WIZARD, data.get_puzzle(constants::PUZZLE_ID_WIZARD));
+				self.complete_obstruction_achievement(data, constants::ITEM_ID_WIZARD, constants::PUZZLE_ID_WIZARD);
 			} else {
 				terminal::write_full(data.get_response(constants::STR_ID_WIZARD_INVISIBLE));
 				self.die(data);
