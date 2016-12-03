@@ -935,11 +935,17 @@ impl Player {
 			Direction::Back => self.try_move_back(dir),
 			_ => self.try_move_other(dir),
 		};
-		let (next_location_option, death, response_code_option) = move_result;
+		let (next_location_option, death, response_code_option, obstruction_code_option) = move_result;
 
 		// Print any returned responses
 		if let Some(response_code) = response_code_option {
-			terminal::write_full(data.get_response(response_code));
+			match obstruction_code_option {
+				None => terminal::write_full(data.get_response(response_code)),
+				Some (obstruction_code) => {
+					let obstruction = data.get_item_by_id_certain(obstruction_code);
+					terminal::write_full(&data.get_response_param(response_code, obstruction.borrow().get_longname()));
+				}
+			}
 		}
 
 		// Update location if returned
@@ -963,27 +969,29 @@ impl Player {
 
 	// Attempt to move to previous location
 	// Return a tuple representing the next location (if move is successful), whether the player died, and any response message to be printed
-	fn try_move_back(&mut self, dir: Direction) -> (Option<LocationRef>, bool, Option<StringId>) {
+	fn try_move_back(&mut self, dir: Direction) -> (Option<LocationRef>, bool, Option<StringId>, Option<ItemId>) {
 		match self.previous.clone() {
-			None => return (None, false, Some(constants::STR_ID_NO_REMEMBER)),
+			None => return (None, false, Some(constants::STR_ID_NO_REMEMBER), None),
 			Some(prev) => {
 				if let Some(movement_problem_id) = self.has_environmental_movement_problem(dir, &prev) {
-					return (None, false, Some(movement_problem_id));
+					return (None, false, Some(movement_problem_id), None);
 				}
 				return self.try_move_to(&prev);
 			},
 		};
 	}
 
-	fn try_move_obstruction(&self, obstruction: &ItemRef, next: &LocationRef) -> (Option<LocationRef>, bool, Option<StringId>) {
+	fn try_move_obstruction(&self, obstruction: &ItemRef, next: &LocationRef) -> (Option<LocationRef>, bool, Option<StringId>, Option<ItemId>) {
 		let mut next_loc_option: Option<LocationRef> = None;
 		let mut death = false;
-		let mut response_code = constants::STR_ID_BLOCKED; // FIXME: tailor to individual obstructions
+		let mut response_code = constants::STR_ID_BLOCKED;
+		let mut obstruction_code_option = Some(obstruction.borrow().get_id());
 		if obstruction.borrow().is(constants::ITEM_ID_BUCCANEER) {
 			if !self.has_invisibility() {
 				response_code = constants::STR_ID_BUCCANEER_WATCHING;
 			} else {
 				next_loc_option = Some(next.clone());
+				obstruction_code_option = None;
 				response_code = constants::STR_ID_BUCCANEER_SNEAK_PAST;
 			}
 		} else if obstruction.borrow().is(constants::ITEM_ID_CORSAIR) {
@@ -994,7 +1002,7 @@ impl Player {
 				response_code = constants::STR_ID_CORSAIR_LISTENING;
 			}
 		}
-		(next_loc_option, death, Some(response_code))
+		(next_loc_option, death, Some(response_code), obstruction_code_option)
 	}
 
 	fn has_environmental_movement_problem(&self, dir: Direction, next: &LocationRef) -> Option<StringId> {
@@ -1015,14 +1023,14 @@ impl Player {
 
 	// Attempt to move to some location, which may not be reachable from the current location
 	// Return a tuple representing the next location (if move is successful), whether the player died, and any response message to be printed
-	fn try_move_other(&mut self, dir: Direction) -> (Option<LocationRef>, bool, Option<StringId>) {
+	fn try_move_other(&mut self, dir: Direction) -> (Option<LocationRef>, bool, Option<StringId>, Option<ItemId>) {
 		let next_option = self.location.borrow().get_direction(dir);
 		match next_option {
 			None => {
 				if dir == Direction::Out {
-					return (None, false, Some(constants::STR_ID_NO_IN_OUT));
+					return (None, false, Some(constants::STR_ID_NO_IN_OUT), None);
 				}
-				return (None, false, Some(constants::STR_ID_CANNOT_GO));
+				return (None, false, Some(constants::STR_ID_CANNOT_GO), None);
 			},
 			Some(next) => {
 				if !self.is_previous_loc(&next) {
@@ -1031,7 +1039,7 @@ impl Player {
 					}
 				}
 				if let Some(movement_problem_id) = self.has_environmental_movement_problem(dir, &next) {
-					return (None, false, Some(movement_problem_id));
+					return (None, false, Some(movement_problem_id), None);
 				}
 				return self.try_move_to(&next);
 			},
@@ -1040,16 +1048,16 @@ impl Player {
 
 	// Attempt to go to a location known to be adjacent
 	// Return a tuple representing the next location (if move is successful), whether the player died, and any response message to be printed
-	fn try_move_to(&mut self, next: &LocationRef) -> (Option<LocationRef>, bool, Option<StringId>) {
+	fn try_move_to(&mut self, next: &LocationRef) -> (Option<LocationRef>, bool, Option<StringId>, Option<ItemId>) {
 		let mut rng = rand::thread_rng();
 		let death_rand: u32 = rng.gen();
 		let death = death_rand % self.death_divisor == 0;
 		if !self.has_light() && !next.borrow().has_or_contains_with_switchable_property(constants::CTRL_LOC_HAS_LIGHT, constants::CTRL_ITEM_GIVES_LIGHT) && death {
-			return (None, true, Some(constants::STR_ID_BREAK_NECK));
+			return (None, true, Some(constants::STR_ID_BREAK_NECK), None);
 		} else if !self.has_nosnomp() && !next.borrow().has_or_contains_with_property(constants::CTRL_LOC_HAS_NOSNOMP, constants::CTRL_ITEM_GIVES_NOSNOMP) && death {
-			return (None, true, Some(constants::STR_ID_SNOMP_KILL));
+			return (None, true, Some(constants::STR_ID_SNOMP_KILL), None);
 		} else {
-			return (Some(next.clone()), false, None);
+			return (Some(next.clone()), false, None, None);
 		}
 	}
 
