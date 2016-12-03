@@ -942,8 +942,9 @@ impl Player {
 			match obstruction_code_option {
 				None => terminal::write_full(data.get_response(response_code)),
 				Some (obstruction_code) => {
-					let obstruction = data.get_item_by_id_certain(obstruction_code);
-					terminal::write_full(&data.get_response_param(response_code, obstruction.borrow().get_longname()));
+					let obstruction_longname = String::from(data.get_item_by_id_certain(obstruction_code).borrow().get_longname());
+					let obstruction_unknown = String::from(data.get_response(constants::STR_ID_OBSTRUCTION_UNKNOWN));
+					terminal::write_full(&data.get_response_param(response_code, &self.get_effective_description(obstruction_unknown.clone(), obstruction_unknown, obstruction_longname)));
 				}
 			}
 		}

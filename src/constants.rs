@@ -317,6 +317,7 @@ pub const STR_ID_NOT_VALUABLE: u32 = 105;
 pub const STR_ID_UNWISE: u32 = 106;
 pub const STR_ID_NO_WRITING: u32 = 107;
 pub const STR_ID_BLOCKED: u32 = 108;
+pub const STR_ID_OBSTRUCTION_UNKNOWN: u32 = 109;
 pub const STR_ID_OK: u32 = 110;
 pub const STR_ID_RUB_PENDANT: u32 = 111;
 pub const STR_ID_PHILISTINE: u32 = 112;
