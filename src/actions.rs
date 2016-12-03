@@ -295,7 +295,8 @@ fn manipulate_item(data: &DataCollection, arg: String, arg_type: ArgumentType, p
 		None => terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_WHO_WHAT)),
 		Some(i) => {
 			let item_id = i.borrow().get_id();
-			match problem_with_item_manipulation(player, item_id, arg_type) {
+			let is_mobile = i.borrow().has_property(constants::CTRL_ITEM_MOBILE);
+			match problem_with_item_manipulation(player, item_id, arg_type, is_mobile) {
 				Some(problem) => terminal::write_full(&data.get_response_param(problem, &i.borrow().get_shortname())),
 				None => act(player, data, i),
 			}
@@ -303,11 +304,16 @@ fn manipulate_item(data: &DataCollection, arg: String, arg_type: ArgumentType, p
 	}
 }
 
-fn problem_with_item_manipulation(player: &Player, item_id: ItemId, arg_type: ArgumentType) -> Option<StringId> {
+fn problem_with_item_manipulation(player: &Player, item_id: ItemId, arg_type: ArgumentType, is_mobile: bool) -> Option<StringId> {
 	if arg_type == ArgumentType::Inventory && !player.has_item_inventory(item_id) {
 		return Some(constants::STR_ID_NO_HAVE_INVENTORY);
 	} else if arg_type == ArgumentType::Present && !player.has_item_present(item_id) {
 		return Some(constants::STR_ID_NO_SEE_HERE);
+	}
+	if !is_mobile {
+		if let Some(_) = player.get_current_obstruction() {
+			return Some(constants::STR_ID_FIXTURE_OBSTRUCTED);
+		}
 	}
 	None
 }

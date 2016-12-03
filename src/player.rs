@@ -1027,6 +1027,10 @@ impl Player {
 		None
 	}
 
+	pub fn get_current_obstruction(&self) -> Option<ItemRef> {
+	    self.location.borrow().get_obstruction()
+	}
+
 	// Attempt to move to some location, which may not be reachable from the current location
 	// Return a tuple representing the next location (if move is successful), whether the player died, and any response message to be printed
 	fn try_move_other(&mut self, dir: Direction) -> (Option<LocationRef>, bool, Option<StringId>, Option<ItemId>) {
@@ -1040,7 +1044,7 @@ impl Player {
 			},
 			Some(next) => {
 				if !self.is_previous_loc(&next) {
-					if let Some(obstruction) = (**self.location.borrow()).get_obstruction() {
+					if let Some(obstruction) = self.get_current_obstruction() {
 						return self.try_move_obstruction(&obstruction, &next);
 					}
 				}
