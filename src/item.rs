@@ -3,6 +3,19 @@ use data_collection::{Id, ItemId, ItemProperties, ItemRef, StringId};
 
 pub type ItemCheckFn = fn(primary: &Item, other: &ItemRef) -> Option<StringId>;
 
+const STR_CONTAINS_LONG: &'static str = ". It contains ";
+const STR_CONTAINS_SHORT: &'static str = "containing ";
+const STR_DOT: &'static str = ".";
+const STR_EMPTY_LONG: &'static str = ". It is empty";
+const STR_EMPTY_SHORT: &'static str = " (empty)";
+const STR_EXCLAMATION: &'static str = "!";
+const STR_OFF: &'static str = "off";
+const STR_ON: &'static str = "on";
+const STR_SWITCH_LONG: &'static str = ". It is currently $0";
+const STR_SWITCH_SHORT: &'static str = " (currently $0)";
+const STR_THERE_IS: &'static str = "\nThere is $0 here";
+const STR_WEARING: &'static str = "(wearing) ";
+
 pub struct Item {
 	id: ItemId,
 	properties: ItemProperties,
@@ -203,26 +216,26 @@ impl Item {
 	}
 
 	fn get_description_ender(&self) -> &str {
-		if self.has_property(constants::CTRL_ITEM_OBSTRUCTION) || self.has_property(constants::CTRL_ITEM_TREASURE) {"!"} else {"."}
+		if self.has_property(constants::CTRL_ITEM_OBSTRUCTION) || self.has_property(constants::CTRL_ITEM_TREASURE) {STR_EXCLAMATION} else {STR_DOT}
 	}
 
 	fn get_switch_status(&self) -> &str {
-		if self.on {"on"} else {"off"}
+		if self.on {STR_ON} else {STR_OFF}
 	}
 
 	fn get_switch_status_short(&self) -> String {
-		String::from(" (currently $0)").replace("$0", self.get_switch_status())
+		String::from(STR_SWITCH_SHORT).replace("$0", self.get_switch_status())
 	}
 
 	fn get_switch_status_long(&self) -> String {
-		String::from(". It is currently $0").replace("$0", self.get_switch_status())
+		String::from(STR_SWITCH_LONG).replace("$0", self.get_switch_status())
 	}
 
 	fn get_within_status_short(&self, nest: bool, depth: u32) -> String {
 		let mut result = String::new();
 		if self.has_property(constants::CTRL_ITEM_CONTAINER) {
 			match self.within.clone() {
-				None => return String::from(" (empty)"),
+				None => return String::from(STR_EMPTY_SHORT),
 				Some(contained) => {
 					let mut nest_next = false;
 					let mut pre = String::new();
@@ -238,7 +251,7 @@ impl Item {
 						pre = pre + " (";
 						post = post + ")";
 					}
-					result = result + &pre + "containing " + &contained.borrow().get_longname() + &contained.borrow().get_within_status_short(nest_next, depth + 1) + &post;
+					result = result + &pre + STR_CONTAINS_SHORT + &contained.borrow().get_longname() + &contained.borrow().get_within_status_short(nest_next, depth + 1) + &post;
 				},
 			}
 		}
@@ -247,8 +260,8 @@ impl Item {
 
 	fn get_within_status_long(&self) -> String {
 		match self.within.clone() {
-			None => String::from(". It is empty"),
-			Some(contained) => String::from(". It contains ") + &contained.borrow().get_longname() + &contained.borrow().get_within_status_short(false, 1),
+			None => String::from(STR_EMPTY_LONG),
+			Some(contained) => String::from(STR_CONTAINS_LONG) + &contained.borrow().get_longname() + &contained.borrow().get_within_status_short(false, 1),
 		}
 	}
 
@@ -257,7 +270,7 @@ impl Item {
 
 		let mut result: String = String::new();
 		if self.has_property(constants::CTRL_ITEM_WEARABLE) {
-			result = result + "(wearing) ";
+			result = result + STR_WEARING;
 		}
 		result = result + &self.longname;
 		if self.has_property(constants::CTRL_ITEM_SWITCHABLE) {
@@ -275,7 +288,7 @@ impl Item {
 				result = result + &self.get_switch_status_short();
 			}
 			result = result + &self.get_within_status_short(false, 1);
-			result = String::from("\nThere is $0 here").replace("$0", &result);
+			result = String::from(STR_THERE_IS).replace("$0", &result);
 			result = result + self.get_description_ender();
 		}
 		result
