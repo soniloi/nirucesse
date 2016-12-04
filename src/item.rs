@@ -202,16 +202,20 @@ impl Item {
 		None
 	}
 
-	fn get_switch_status(&self) -> String {
-		String::from("currently ") + if self.on {"on"} else {"off"}
+	fn get_description_ender(&self) -> &str {
+		if self.has_property(constants::CTRL_ITEM_OBSTRUCTION) || self.has_property(constants::CTRL_ITEM_TREASURE) {"!"} else {"."}
+	}
+
+	fn get_switch_status(&self) -> &str {
+		if self.on {"on"} else {"off"}
 	}
 
 	fn get_switch_status_short(&self) -> String {
-		String::from(" (") + &self.get_switch_status() + ")"
+		String::from(" (currently $0)").replace("$0", self.get_switch_status())
 	}
 
 	fn get_switch_status_long(&self) -> String {
-		String::from(". It is ") + &self.get_switch_status()
+		String::from(". It is currently $0").replace("$0", self.get_switch_status())
 	}
 
 	fn get_within_status_short(&self, nest: bool, depth: u32) -> String {
@@ -242,12 +246,10 @@ impl Item {
 	}
 
 	fn get_within_status_long(&self) -> String {
-		let mut result = String::from(". It ");
 		match self.within.clone() {
-			None => result = result + "is empty",
-			Some(contained) => result = result + "contains " + &contained.borrow().get_longname() + &contained.borrow().get_within_status_short(false, 1),
+			None => String::from(". It is empty"),
+			Some(contained) => String::from(". It contains ") + &contained.borrow().get_longname() + &contained.borrow().get_within_status_short(false, 1),
 		}
-		result
 	}
 
 	// Return the name of this item as it would be displayed in an inventory listing
@@ -268,12 +270,13 @@ impl Item {
 	pub fn get_locationname(&self) -> String {
 		let mut result = String::new();
 		if !self.has_property(constants::CTRL_ITEM_SILENT) {
-			result = result + "\nThere is " + &self.longname;
+			result = result + &self.longname;
 			if self.has_property(constants::CTRL_ITEM_SWITCHABLE) {
 				result = result + &self.get_switch_status_short();
 			}
-			result = result + &self.get_within_status_short(false, 1) + " here";
-			result = result + if self.has_property(constants::CTRL_ITEM_OBSTRUCTION) || self.has_property(constants::CTRL_ITEM_TREASURE) {"!"} else {"."};
+			result = result + &self.get_within_status_short(false, 1);
+			result = String::from("\nThere is $0 here").replace("$0", &result);
+			result = result + self.get_description_ender();
 		}
 		result
 	}
