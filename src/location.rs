@@ -84,11 +84,11 @@ impl Location {
 	}
 
 	pub fn contains_with_property(&self, property_code: ItemProperties) -> bool {
-		self.items.values().any(|x| x.borrow().has_or_contains_with_property(property_code) && !x.borrow().has_property(constants::CTRL_ITEM_WEARABLE))
+		self.items.values().any(|x| x.borrow().has_or_contains_with_property(property_code, true) && !x.borrow().has_property(constants::CTRL_ITEM_WEARABLE))
 	}
 
 	pub fn contains_with_switchable_property(&self, property_code: ItemProperties) -> bool {
-		self.items.values().any(|x| x.borrow().has_or_contains_with_switchable_property(property_code) && !x.borrow().has_property(constants::CTRL_ITEM_WEARABLE))
+		self.items.values().any(|x| x.borrow().has_or_contains_with_property(property_code, false) && !x.borrow().has_property(constants::CTRL_ITEM_WEARABLE))
 	}
 
 	pub fn set_property(&mut self, property_code: LocationProperties, next: bool) {

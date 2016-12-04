@@ -62,7 +62,6 @@ impl Item {
 		self.location == constants::LOCATION_ID_GRAVEYARD
 	}
 
-	// FIXME: probably refactor this out
 	pub fn contains_item(&self, id: ItemId) -> bool {
 		match self.within.clone() {
 			None => false,
@@ -74,10 +73,7 @@ impl Item {
 		if self.id == id {
 			return true;
 		}
-		match self.within.clone() {
-			None => false,
-			Some(within) => within.borrow().is_or_contains_item(id),
-		}
+		self.contains_item(id)
 	}
 
 	pub fn get_location(&self) -> Id {
@@ -92,24 +88,15 @@ impl Item {
 		self.properties & property_code != 0
 	}
 
-	fn has_or_contains_with_property_generic(&self, property_code: ItemProperties, on_optional: bool) -> bool {
+	// If second parameter is set, then the item must be switched on in order for the property to be active
+	pub fn has_or_contains_with_property(&self, property_code: ItemProperties, on_optional: bool) -> bool {
 		if (on_optional || self.on) && self.has_property(property_code) {
 			return true;
 		}
 		match self.within.clone() {
 			None => return false,
-			Some (within) => return within.borrow().has_or_contains_with_property_generic(property_code, on_optional),
+			Some (within) => return within.borrow().has_or_contains_with_property(property_code, on_optional),
 		}
-	}
-
-	// Whether the item has some property
-	pub fn has_or_contains_with_property(&self, property_code: ItemProperties) -> bool {
-		self.has_or_contains_with_property_generic(property_code, true)
-	}
-
-	// Whether the item has some property, but must be switched on in order for that property to be active
-	pub fn has_or_contains_with_switchable_property(&self, property_code: ItemProperties) -> bool {
-		self.has_or_contains_with_property_generic(property_code, false)
 	}
 
 	pub fn set_property(&mut self, property_code: ItemProperties, next: bool) {
@@ -315,20 +302,16 @@ impl Item {
 	}
 
 	pub fn remove_item_certain(&mut self, id: ItemId) {
-		match self.within.clone() {
-			None => panic!("Data corruption seeking item [{}], fail.", id),
-			Some(within) => {
-				let is_item = within.borrow().is(id);
-				let is_liquid = within.borrow().has_property(constants::CTRL_ITEM_LIQUID);
-				if is_item {
-					if !is_liquid {
-						within.borrow_mut().retire();
-					}
-					self.within = None;
-				} else {
-					within.borrow_mut().remove_item_certain(id);
-				}
-			},
+		let within = self.within.clone().expect("Data corruption seeking item contained within item, fail.");
+		let is_item = within.borrow().is(id);
+		if is_item {
+			let is_liquid = within.borrow().has_property(constants::CTRL_ITEM_LIQUID);
+			if !is_liquid {
+				within.borrow_mut().retire();
+			}
+			self.within = None;
+		} else {
+			within.borrow_mut().remove_item_certain(id);
 		}
 	}
 

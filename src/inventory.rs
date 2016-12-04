@@ -20,11 +20,11 @@ impl Inventory {
 	}
 
 	pub fn contains_with_property(&self, property_code: ItemProperties) -> bool {
-		self.items.values().any(|x| x.borrow().has_or_contains_with_property(property_code))
+		self.items.values().any(|x| x.borrow().has_or_contains_with_property(property_code, true))
 	}
 
 	pub fn contains_with_switchable_property(&self, property_code: ItemProperties) -> bool {
-		self.items.values().any(|x| x.borrow().has_or_contains_with_switchable_property(property_code))
+		self.items.values().any(|x| x.borrow().has_or_contains_with_property(property_code, false))
 	}
 
 	pub fn contains_item(&self, id: ItemId) -> bool {
