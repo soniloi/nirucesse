@@ -30,8 +30,6 @@ pub struct Location {
 	items: HashMap<ItemId, ItemRef>,
 }
 
-pub type PropertyWithinFn = fn(location: &Location, property_code: ItemProperties) -> bool;
-
 impl Location {
 
 	pub fn new(id: LocationId, properties: LocationProperties, shortname: String, longname: String, description: String) -> Location {
@@ -68,27 +66,15 @@ impl Location {
 		self.properties & property_code != 0
 	}
 
-	fn has_or_contains_with_property_generic(&self, property_code_loc: LocationProperties, property_code_item: ItemProperties, next: PropertyWithinFn) -> bool {
+	pub fn has_or_contains_with_property(&self, property_code_loc: LocationProperties, property_code_item: ItemProperties, on_optional: bool) -> bool {
 		if self.has_property(property_code_loc) {
 			return true;
 		}
-		next(self, property_code_item)
+		self.contains_with_property(property_code_item, on_optional)
 	}
 
-	pub fn has_or_contains_with_property(&self, property_code_loc: LocationProperties, property_code_item: ItemProperties) -> bool {
-		self.has_or_contains_with_property_generic(property_code_loc, property_code_item, Location::contains_with_property)
-	}
-
-	pub fn has_or_contains_with_switchable_property(&self, property_code_loc: LocationProperties, property_code_item: ItemProperties) -> bool {
-		self.has_or_contains_with_property_generic(property_code_loc, property_code_item, Location::contains_with_switchable_property)
-	}
-
-	pub fn contains_with_property(&self, property_code: ItemProperties) -> bool {
-		self.items.values().any(|x| x.borrow().has_or_contains_with_property(property_code, true) && !x.borrow().has_property(constants::CTRL_ITEM_WEARABLE))
-	}
-
-	pub fn contains_with_switchable_property(&self, property_code: ItemProperties) -> bool {
-		self.items.values().any(|x| x.borrow().has_or_contains_with_property(property_code, false) && !x.borrow().has_property(constants::CTRL_ITEM_WEARABLE))
+	pub fn contains_with_property(&self, property_code: ItemProperties, on_optional: bool) -> bool {
+		self.items.values().any(|x| x.borrow().has_or_contains_with_property(property_code, on_optional) && !x.borrow().has_property(constants::CTRL_ITEM_WEARABLE))
 	}
 
 	pub fn set_property(&mut self, property_code: LocationProperties, next: bool) {
