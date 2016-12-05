@@ -1135,6 +1135,14 @@ impl Player {
 		terminal::write_full(data.get_response(constants::STR_ID_INSERTED));
 	}
 
+	pub fn jump(&self, data: &DataCollection) {
+		let response_code = match self.location.borrow().get_id() {
+			constants::LOCATION_ID_CHASM => constants::STR_ID_JUMP_CHASM,
+			_ => constants::STR_ID_JUMP_SPOT,
+		};
+		terminal::write_full(data.get_response(response_code));
+	}
+
 	pub fn knit(&mut self, data: &DataCollection) {
 		if !self.has_item_inventory(constants::ITEM_ID_NEEDLES) || !self.has_item_inventory(constants::ITEM_ID_YARN) {
 			terminal::write_full(data.get_response(constants::STR_ID_NO_EQUIPMENT));

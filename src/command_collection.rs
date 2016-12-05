@@ -57,6 +57,7 @@ impl CommandCollection {
 		acts.insert(constants::COMMAND_ID_IGNORE, actions::do_ignore);
 		acts.insert(constants::COMMAND_ID_INSERT, actions::do_insert);
 		acts.insert(constants::COMMAND_ID_INVENTORY, actions::do_inventory);
+		acts.insert(constants::COMMAND_ID_JUMP, actions::do_jump);
 		acts.insert(constants::COMMAND_ID_KNIT, actions::do_knit);
 		acts.insert(constants::COMMAND_ID_LIGHT, actions::do_light);
 		acts.insert(constants::COMMAND_ID_LOOK, actions::do_look);

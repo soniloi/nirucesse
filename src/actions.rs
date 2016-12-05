@@ -168,6 +168,11 @@ pub fn do_inventory(data: &DataCollection, arg: String, player: &mut Player, arg
 }
 
 #[allow(unused_variables)]
+pub fn do_jump(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	player.jump(data);
+}
+
+#[allow(unused_variables)]
 pub fn do_knit(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	player.knit(data);
 }

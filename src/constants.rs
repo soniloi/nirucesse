@@ -1,6 +1,6 @@
 // Validation for various collections
 pub const EXPECTED_ITEMS: u32 = 127;
-pub const EXPECTED_COMMANDS: u32 = 66;
+pub const EXPECTED_COMMANDS: u32 = 70;
 pub const EXPECTED_LOCATIONS: u32 = 134;
 pub const EXPECTED_STRINGS_RESPONSES: u32 = 210;
 pub const EXPECTED_STRINGS_PUZZLES: u32 = 28;
@@ -96,12 +96,14 @@ pub const COMMAND_ID_WEST: u32 = 62;
 pub const COMMAND_ID_WIZARD: u32 = 63;
 pub const COMMAND_ID_XYZZY: u32 = 64;
 pub const COMMAND_ID_ACORN: u32 = 65;
+pub const COMMAND_ID_JUMP: u32 = 66;
 
 // Id numbers of specific locations
 pub const LOCATION_ID_AIRLOCKE: u32 = 31; // The airlock just off the Recreation Hub
 pub const LOCATION_ID_AIRLOCKEOUT: u32 = 36; // The area immediately outside Airlock East
 pub const LOCATION_ID_ANTEROOM: u32 = 125; // The room beneath the observatory
 pub const LOCATION_ID_CELLAR: u32 = 29; // The only cellar
+pub const LOCATION_ID_CHASM: u32 = 127; // Top of the massive chasm
 pub const LOCATION_ID_CHECKPOINT: u32 = 32; // The security checkpoint between the Recreation Hub and the Control Hub
 pub const LOCATION_ID_DOCKING: u32 = 21; // Where the pirate ship will dock
 pub const LOCATION_ID_DOCKINGCONTROL: u32 = 19; // The docking control area
@@ -417,6 +419,8 @@ pub const STR_ID_ACHIEVEMENT_UNKNOWN: u32 = 202;
 pub const STR_ID_PATH_UNBLOCKED_KNOWN: u32 = 203;
 pub const STR_ID_PATH_UNBLOCKED_UNKNOWN: u32 = 204;
 pub const STR_ID_FIXTURE_OBSTRUCTED: u32 = 205;
+pub const STR_ID_JUMP_SPOT: u32 = 206;
+pub const STR_ID_JUMP_CHASM: u32 = 207;
 
 pub const PUZZLE_ID_ACORN: u32 = 0;
 pub const PUZZLE_ID_TRANSMITTER: u32 = 1;
