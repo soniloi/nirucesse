@@ -48,34 +48,34 @@ impl Player {
 
 	pub fn has_light(&self) -> bool {
 		self.location.borrow().has_or_contains_with_switchable_property(constants::CTRL_LOC_HAS_LIGHT, constants::CTRL_ITEM_GIVES_LIGHT) ||
-			self.inventory.borrow().contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT)
+			self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_LIGHT, false)
 	}
 
 	fn has_light_and_needsno_light(&self) -> bool {
 		self.location.borrow().has_property(constants::CTRL_LOC_NEEDSNO_LIGHT) &&
-			(self.inventory.borrow().contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT) || self.location.borrow().contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT))
+			(self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_LIGHT, false) || self.location.borrow().contains_with_switchable_property(constants::CTRL_ITEM_GIVES_LIGHT))
 	}
 
 	pub fn has_air(&self) -> bool {
 		self.location.borrow().has_or_contains_with_property(constants::CTRL_LOC_HAS_AIR, constants::CTRL_ITEM_GIVES_AIR) ||
-			self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_AIR)
+			self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_AIR, true)
 	}
 
 	pub fn has_gravity(&self) -> bool {
-		self.location.borrow().has_property(constants::CTRL_LOC_HAS_GRAVITY) || self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_GRAVITY)
+		self.location.borrow().has_property(constants::CTRL_LOC_HAS_GRAVITY) || self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_GRAVITY, true)
 	}
 
 	pub fn has_nosnomp(&self) -> bool {
 		self.location.borrow().has_or_contains_with_property(constants::CTRL_LOC_HAS_NOSNOMP, constants::CTRL_ITEM_GIVES_NOSNOMP) ||
-			self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_NOSNOMP)
+			self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_NOSNOMP, true)
 	}
 
 	pub fn has_land(&self) -> bool {
-	        self.location.borrow().has_property(constants::CTRL_LOC_HAS_LAND) || self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_LAND)
+	        self.location.borrow().has_property(constants::CTRL_LOC_HAS_LAND) || self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_LAND, true)
 	}
 
 	fn has_invisibility(&self) -> bool {
-		self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_INVISIBILITY)
+		self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_INVISIBILITY, true)
 	}
 
 	pub fn is_playing(&self) -> bool {
@@ -1012,7 +1012,7 @@ impl Player {
 	}
 
 	fn has_environmental_movement_problem(&self, dir: Direction, next: &LocationRef) -> Option<StringId> {
-		if !next.borrow().has_or_contains_with_property(constants::CTRL_LOC_HAS_AIR, constants::CTRL_ITEM_GIVES_AIR) && !self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_AIR) { // Refuse to proceed if there is no air at the next location
+		if !next.borrow().has_or_contains_with_property(constants::CTRL_LOC_HAS_AIR, constants::CTRL_ITEM_GIVES_AIR) && !self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_AIR, true) { // Refuse to proceed if there is no air at the next location
 			return Some(constants::STR_ID_NO_AIR);
 		}
 		if dir == Direction::Up && self.has_gravity() && self.location.borrow().has_property(constants::CTRL_LOC_NEEDSNO_GRAVITY) { // Gravity is preventing the player from going up
@@ -1021,7 +1021,7 @@ impl Player {
 		if dir == Direction::Down && self.has_gravity() && !self.location.borrow().has_property(constants::CTRL_LOC_HAS_FLOOR) {
 			return Some(constants::STR_ID_DOWN_KILL);
 		}
-		if !next.borrow().has_property(constants::CTRL_LOC_HAS_LAND) && !self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_LAND) {
+		if !next.borrow().has_property(constants::CTRL_LOC_HAS_LAND) && !self.inventory.borrow().contains_with_property(constants::CTRL_ITEM_GIVES_LAND, true) {
 			return Some(constants::STR_ID_OPEN_WATER);
 		}
 		None
