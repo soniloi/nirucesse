@@ -133,10 +133,11 @@ pub const LOCATION_ID_SAFE_PIRATES: u32 = 50; // Safe location after pirates arr
 pub const LOCATION_ID_WAKE_INITIAL: u32 = 9; // Wake location before pirates arrive
 pub const LOCATION_ID_WAKE_PIRATES: u32 = 79; // Wake location after pirates arrive
 
-pub const LOCATION_DESCRIPTION_SUFFIX_INDEX_DEFAULT: usize = 0;
 pub const LOCATION_DESCRIPTION_SUFFIX_INDEX_AIRLOCK_OPEN: usize = 1;
-pub const LOCATION_DESCRIPTION_SUFFIX_INDEX_GARDEN_OPEN: usize = 1;
 pub const LOCATION_DESCRIPTION_SUFFIX_INDEX_CELLAR_OPEN: usize = 1;
+pub const LOCATION_DESCRIPTION_SUFFIX_INDEX_CHECKPOINT_CLOSED: usize = 1;
+pub const LOCATION_DESCRIPTION_SUFFIX_INDEX_DEFAULT: usize = 0;
+pub const LOCATION_DESCRIPTION_SUFFIX_INDEX_GARDEN_OPEN: usize = 1;
 
 pub const INDEX_START_INVENTORY: u32 = 0; // Location ids between this and INDEX_START_LOCATION are used for inventories
 pub const INDEX_START_LOCATION: u32 = 3; // Location ids between this and INDEX_START_ITEM are used for locations

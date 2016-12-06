@@ -1297,6 +1297,8 @@ impl Player {
 					self.complete_obstruction_achievement(data, constants::ITEM_ID_CORSAIR, constants::PUZZLE_ID_MARBLE);
 					under.borrow_mut().insert_item(item.clone());
 					under.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_CORSAIR).clone());
+					self.location.borrow_mut().set_direction(Direction::Down, None);
+					self.location.borrow_mut().set_description_suffix_index(constants::LOCATION_DESCRIPTION_SUFFIX_INDEX_CHECKPOINT_CLOSED);
 				} else {
 					self.location.borrow_mut().insert_item(item.clone());
 					terminal::write_full(data.get_response(constants::STR_ID_NOTHING_HAPPENS));
