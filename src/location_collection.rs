@@ -22,7 +22,7 @@ const FILE_INDEX_LOCATION_STATUS: usize = 11;
 const FILE_INDEX_LOCATION_SHORTNAME: usize = 12;
 const FILE_INDEX_LOCATION_LONGNAME: usize = 13;
 const FILE_INDEX_LOCATION_DESCRIPTION_COMMON: usize = 14;
-const FILE_INDEX_LOCATION_DESCRIPTION_SUFFIX: usize = 15;
+const FILE_INDEX_LOCATION_DESCRIPTION_SUFFIX_START: usize = 15;
 const KEY_DIRECTION_NONE: u32 = 0;
 
 pub struct LocationCollection {
@@ -81,10 +81,13 @@ impl LocationCollection {
 		let shortname = String::from(words[FILE_INDEX_LOCATION_SHORTNAME]);
 		let longname = String::from(words[FILE_INDEX_LOCATION_LONGNAME]);
 		let description_common = String::from(words[FILE_INDEX_LOCATION_DESCRIPTION_COMMON]);
-		let description_suffix = String::from(words[FILE_INDEX_LOCATION_DESCRIPTION_SUFFIX]);
+		let mut description_suffixes: Vec<String> = Vec::new();
+		for i in FILE_INDEX_LOCATION_DESCRIPTION_SUFFIX_START..words.len() {
+			description_suffixes.push(String::from(words[i]));
+		}
 
 		let loc = Rc::new(RefCell::new(Box::new(Location::new(id, properties, shortname, longname,
-			description_common, description_suffix))));
+			description_common, description_suffixes))));
 		(loc, id)
 	}
 

@@ -538,7 +538,9 @@ impl Player {
 					self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_DUST).clone());
 					let cellar = data.get_location_certain(constants::LOCATION_ID_CELLAR);
 					self.location.borrow_mut().set_direction(Direction::Down, Some(cellar.clone()));
+					self.location.borrow_mut().set_description_suffix_index(1);
 					cellar.borrow_mut().set_direction(Direction::Up, Some(self.location.clone()));
+					cellar.borrow_mut().set_description_suffix_index(1);
 					self.strong = false;
 				} else {
 					terminal::write_full(data.get_response(constants::STR_ID_BOULDER_HIT_WEAK));
@@ -574,6 +576,7 @@ impl Player {
 					let out_loc = data.get_location_certain(constants::LOCATION_ID_AIRLOCKEOUT);
 					self.location.borrow_mut().set_direction(Direction::Southwest, Some(out_loc.clone()));
 					self.location.borrow_mut().set_property(constants::CTRL_LOC_HAS_AIR, false);
+					self.location.borrow_mut().set_description_suffix_index(1);
 					self.complete_achievement(data, constants::PUZZLE_ID_AIRLOCK);
 				} else {
 					terminal::write_full(data.get_response(constants::STR_ID_ROBOT_MOUSE));

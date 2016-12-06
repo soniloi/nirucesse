@@ -25,7 +25,8 @@ pub struct Location {
 	shortname: String,
 	longname: String,
 	description_common: String,
-	description_suffix: String,
+	description_suffixes: Vec<String>,
+	description_suffix_index: usize,
 	visited: bool,
 	directions: HashMap<Direction, LocationRef>,
 	items: HashMap<ItemId, ItemRef>,
@@ -34,14 +35,15 @@ pub struct Location {
 impl Location {
 
 	pub fn new(id: LocationId, properties: LocationProperties, shortname: String, longname: String,
-		description_common: String, description_suffix: String) -> Location {
+		description_common: String, description_suffixes: Vec<String>) -> Location {
 		Location {
 			id: id,
 			properties: properties,
 			shortname: shortname,
 			longname: longname,
 			description_common: description_common,
-			description_suffix: description_suffix,
+			description_suffixes: description_suffixes,
+			description_suffix_index: 0,
 			visited: false,
 			directions: HashMap::new(),
 			items: HashMap::new(),
@@ -124,6 +126,10 @@ impl Location {
 		}
 	}
 
+	pub fn set_description_suffix_index(&mut self, index: usize) {
+		self.description_suffix_index = index;
+	}
+
 	pub fn contains_item(&self, id: ItemId) -> bool {
 		self.items.values().any(|x| x.borrow().is_or_contains_item(id))
 	}
@@ -182,6 +188,7 @@ impl Location {
 	}
 
 	pub fn mk_full_string(&self, desc_start: &str) -> String {
-		self.mk_basic_string(desc_start) + &self.description_common + &self.description_suffix + &self.mk_contents_string()
+		self.mk_basic_string(desc_start) + &self.description_common +
+			&self.description_suffixes[self.description_suffix_index] + &self.mk_contents_string()
 	}
 }
