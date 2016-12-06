@@ -81,9 +81,16 @@ impl LocationCollection {
 		let shortname = String::from(words[FILE_INDEX_LOCATION_SHORTNAME]);
 		let longname = String::from(words[FILE_INDEX_LOCATION_LONGNAME]);
 		let description_common = String::from(words[FILE_INDEX_LOCATION_DESCRIPTION_COMMON]);
+
 		let mut description_suffixes: Vec<String> = Vec::new();
 		for i in FILE_INDEX_LOCATION_DESCRIPTION_SUFFIX_START..words.len() {
+			if words[i].is_empty() {
+				panic!("Error in location collection. Empty description suffix at index [{}] found for location with id [{}]", i, id);
+			}
 			description_suffixes.push(String::from(words[i]));
+		}
+		if description_suffixes.len() != 2 {
+			panic!("Error in location collection. Expected 2 description suffixes, but found [{}] for location with id [{}]", description_suffixes.len(), id);
 		}
 
 		let loc = Rc::new(RefCell::new(Box::new(Location::new(id, properties, shortname, longname,
