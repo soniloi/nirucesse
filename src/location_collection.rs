@@ -21,7 +21,8 @@ const FILE_INDEX_LOCATION_DIRECTION_D: usize = 10;
 const FILE_INDEX_LOCATION_STATUS: usize = 11;
 const FILE_INDEX_LOCATION_SHORTNAME: usize = 12;
 const FILE_INDEX_LOCATION_LONGNAME: usize = 13;
-const FILE_INDEX_LOCATION_DESCRIPTION: usize = 14;
+const FILE_INDEX_LOCATION_DESCRIPTION_COMMON: usize = 14;
+const FILE_INDEX_LOCATION_DESCRIPTION_SUFFIX: usize = 15;
 const KEY_DIRECTION_NONE: u32 = 0;
 
 pub struct LocationCollection {
@@ -79,9 +80,11 @@ impl LocationCollection {
 		let properties = data_collection::str_to_u32_certain(words[FILE_INDEX_LOCATION_STATUS], 16);
 		let shortname = String::from(words[FILE_INDEX_LOCATION_SHORTNAME]);
 		let longname = String::from(words[FILE_INDEX_LOCATION_LONGNAME]);
-		let description = String::from(words[FILE_INDEX_LOCATION_DESCRIPTION]);
+		let description_common = String::from(words[FILE_INDEX_LOCATION_DESCRIPTION_COMMON]);
+		let description_suffix = String::from(words[FILE_INDEX_LOCATION_DESCRIPTION_SUFFIX]);
 
-		let loc = Rc::new(RefCell::new(Box::new(Location::new(id, properties, shortname, longname, description))));
+		let loc = Rc::new(RefCell::new(Box::new(Location::new(id, properties, shortname, longname,
+			description_common, description_suffix))));
 		(loc, id)
 	}
 

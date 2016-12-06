@@ -24,7 +24,8 @@ pub struct Location {
 	properties: LocationProperties,
 	shortname: String,
 	longname: String,
-	description: String,
+	description_common: String,
+	description_suffix: String,
 	visited: bool,
 	directions: HashMap<Direction, LocationRef>,
 	items: HashMap<ItemId, ItemRef>,
@@ -32,13 +33,15 @@ pub struct Location {
 
 impl Location {
 
-	pub fn new(id: LocationId, properties: LocationProperties, shortname: String, longname: String, description: String) -> Location {
+	pub fn new(id: LocationId, properties: LocationProperties, shortname: String, longname: String,
+		description_common: String, description_suffix: String) -> Location {
 		Location {
 			id: id,
 			properties: properties,
 			shortname: shortname,
 			longname: longname,
-			description: description,
+			description_common: description_common,
+			description_suffix: description_suffix,
 			visited: false,
 			directions: HashMap::new(),
 			items: HashMap::new(),
@@ -179,6 +182,6 @@ impl Location {
 	}
 
 	pub fn mk_full_string(&self, desc_start: &str) -> String {
-		self.mk_basic_string(desc_start) + &self.description + &self.mk_contents_string()
+		self.mk_basic_string(desc_start) + &self.description_common + &self.description_suffix + &self.mk_contents_string()
 	}
 }
