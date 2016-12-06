@@ -24,6 +24,7 @@ const FILE_INDEX_LOCATION_LONGNAME: usize = 13;
 const FILE_INDEX_LOCATION_DESCRIPTION_COMMON: usize = 14;
 const FILE_INDEX_LOCATION_DESCRIPTION_SUFFIX_START: usize = 15;
 const KEY_DIRECTION_NONE: u32 = 0;
+const EXPECTED_DESCRIPTION_SUFFIXES: usize = 2;
 
 pub struct LocationCollection {
 	locations: HashMap<LocationId, LocationRef>,
@@ -90,7 +91,7 @@ impl LocationCollection {
 			description_suffixes.push(String::from(words[i]));
 		}
 		if description_suffixes.len() != 2 {
-			panic!("Error in location collection. Expected 2 description suffixes, but found [{}] for location with id [{}]", description_suffixes.len(), id);
+			panic!("Error in location collection. Expected [{}] description suffixes, but found [{}] for location with id [{}]", EXPECTED_DESCRIPTION_SUFFIXES, description_suffixes.len(), id);
 		}
 
 		let loc = Rc::new(RefCell::new(Box::new(Location::new(id, properties, shortname, longname,

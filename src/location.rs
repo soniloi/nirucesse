@@ -43,7 +43,7 @@ impl Location {
 			longname: longname,
 			description_common: description_common,
 			description_suffixes: description_suffixes,
-			description_suffix_index: 0,
+			description_suffix_index: constants::LOCATION_DESCRIPTION_SUFFIX_INDEX_DEFAULT,
 			visited: false,
 			directions: HashMap::new(),
 			items: HashMap::new(),
