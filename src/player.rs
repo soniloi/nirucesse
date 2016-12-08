@@ -1141,11 +1141,22 @@ impl Player {
 		terminal::write_full(data.get_response(constants::STR_ID_INSERTED));
 	}
 
-	pub fn jump(&self, data: &DataCollection) {
-		let response_code = match self.location.borrow().get_id() {
-			constants::LOCATION_ID_CHASM => constants::STR_ID_JUMP_CHASM,
-			_ => constants::STR_ID_JUMP_SPOT,
-		};
+	pub fn jump(&mut self, data: &DataCollection) {
+		let location_id = self.location.borrow().get_id();
+		let has_gravity = self.location.borrow().has_property(constants::CTRL_LOC_HAS_GRAVITY);
+		let has_ceiling = self.location.borrow().has_property(constants::CTRL_LOC_HAS_CEILING);
+		let has_land = self.location.borrow().has_property(constants::CTRL_LOC_HAS_LAND);
+
+		let mut response_code = constants::STR_ID_JUMP_SPOT;
+		if location_id == constants::LOCATION_ID_CHASM {
+			response_code = constants::STR_ID_JUMP_CHASM;
+		}  else if !has_gravity && !has_ceiling {
+			self.die(data);
+			response_code = constants::STR_ID_JUMP_GRAVITY;
+		} else if !has_land {
+			self.die(data);
+			response_code = constants::STR_ID_JUMP_WATER;
+		}
 		terminal::write_full(data.get_response(response_code));
 	}
 

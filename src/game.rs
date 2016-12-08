@@ -31,7 +31,7 @@ impl Game {
 			}
 
 			if !self.player.has_land() {
-				terminal::write_full(self.data.get_response(constants::STR_ID_DROWN));
+				terminal::write_full(self.data.get_response(constants::STR_ID_DROP_BOAT));
 				self.player.die(&self.data);
 			}
 

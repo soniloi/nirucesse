@@ -259,7 +259,7 @@ pub const STR_ID_DRINK_STEW: u32 = 34;
 pub const STR_ID_DRINK_WATER: u32 = 35;
 pub const STR_ID_DROP_NO_FLOOR: u32 = 36;
 pub const STR_ID_DROP_GOOD: u32 = 37;
-pub const STR_ID_DROWN: u32 = 38;
+pub const STR_ID_DROP_BOAT: u32 = 38;
 pub const STR_ID_DROP_WATER: u32 = 39;
 pub const STR_ID_ALREADY_EMPTY: u32 = 40;
 pub const STR_ID_EMPTY_CARRY: u32 = 41;
@@ -427,6 +427,8 @@ pub const STR_ID_PATH_UNBLOCKED_UNKNOWN: u32 = 204;
 pub const STR_ID_FIXTURE_OBSTRUCTED: u32 = 205;
 pub const STR_ID_JUMP_SPOT: u32 = 206;
 pub const STR_ID_JUMP_CHASM: u32 = 207;
+pub const STR_ID_JUMP_GRAVITY: u32 = 208;
+pub const STR_ID_JUMP_WATER: u32 = 209;
 
 pub const PUZZLE_ID_ACORN: u32 = 0;
 pub const PUZZLE_ID_TRANSMITTER: u32 = 1;
