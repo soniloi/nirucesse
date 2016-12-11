@@ -430,7 +430,10 @@ pub const STR_ID_JUMP_SPOT: u32 = 206;
 pub const STR_ID_JUMP_CHASM: u32 = 207;
 pub const STR_ID_JUMP_GRAVITY: u32 = 208;
 pub const STR_ID_JUMP_WATER: u32 = 209;
-pub const STR_ID_JOIN_CORSAIR: u32 = 211;
+pub const STR_ID_PIRATE_KILL: u32 = 210;
+pub const STR_ID_PIRATE_MAGIC: u32 = 211;
+pub const STR_ID_CORSAIR_ACCEPT: u32 = 212;
+pub const STR_ID_JOIN_CORSAIR: u32 = 213;
 
 pub const PUZZLE_ID_ACORN: u32 = 0;
 pub const PUZZLE_ID_TRANSMITTER: u32 = 1;

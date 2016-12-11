@@ -423,6 +423,7 @@ impl Player {
 	fn transfer_item(&mut self, data: &DataCollection, gift: &ItemRef, recipient: &ItemRef) {
 
 		let recipient_id = recipient.borrow().get_id();
+		let recipient_obstruction = recipient.borrow().has_property(constants::CTRL_ITEM_OBSTRUCTION);
 		let gift_id = gift.borrow().get_id();
 		let gift_edible = gift.borrow().has_property(constants::CTRL_ITEM_EDIBLE);
 		let gift_liquid = gift.borrow().has_property(constants::CTRL_ITEM_LIQUID);
@@ -502,11 +503,15 @@ impl Player {
 			self.location.borrow_mut().set_direction(Direction::North, Some(data.get_location_certain(constants::LOCATION_ID_TOADSTOOL).clone()));
 			self.complete_achievement(data, constants::PUZZLE_ID_MUSHROOM);
 
-		} else if recipient_id == constants::ITEM_ID_CORSAIR && gift_id == constants::ITEM_ID_JOURNAL {
+		} else if recipient_id == constants::ITEM_ID_CORSAIR && !recipient_obstruction && gift_id == constants::ITEM_ID_JOURNAL {
 			self.inventory.borrow_mut().remove_item_certain(gift_id);
 			terminal::write_full(data.get_response(constants::STR_ID_JOIN_CORSAIR));
 			self.complete_achievement(data, constants::PUZZLE_ID_ESCAPE);
 			self.playing = false;
+
+		} else if (recipient_id == constants::ITEM_ID_BUCCANEER || recipient_id == constants::ITEM_ID_CORSAIR) && recipient_obstruction {
+			terminal::write_full(data.get_response(constants::STR_ID_PIRATE_KILL));
+			self.die(data);
 
 		} else if gift_liquid { // Default response for liquids
 			self.inventory.borrow_mut().remove_item_certain(gift_id);
@@ -1350,10 +1355,20 @@ impl Player {
 
 	pub fn say(&mut self, data: &DataCollection, statement: &str) {
 		terminal::write_full(&data.get_response_param(constants::STR_ID_SAY, statement));
-		if self.has_item_location(constants::ITEM_ID_CORSAIR) { // Pirate hears player
-			terminal::write_full(data.get_response(constants::STR_ID_CORSAIR_SPEAK));
-			self.die(data);
-			return;
+		let corsair_present = self.has_item_location(constants::ITEM_ID_CORSAIR);
+		if corsair_present {
+			let corsair = data.get_item_by_id_certain(constants::ITEM_ID_CORSAIR);
+			let corsair_obstruction = corsair.borrow().has_property(constants::CTRL_ITEM_OBSTRUCTION);
+			if corsair_obstruction { // Corsair is still dangerous
+				if statement == data.get_response(constants::STR_ID_PIRATE_MAGIC) { // Player uses magic pirate word
+					corsair.borrow_mut().set_property(constants::CTRL_ITEM_OBSTRUCTION, false);
+					terminal::write_full(data.get_response(constants::STR_ID_CORSAIR_ACCEPT));
+				} else { // Corsair hears player
+					terminal::write_full(data.get_response(constants::STR_ID_CORSAIR_SPEAK));
+					self.die(data);
+					return;
+				}
+			}
 		}
 		if statement == data.get_response(constants::STR_ID_HELLO) {
 			let alien_present = self.has_item_location(constants::ITEM_ID_ALIEN);
