@@ -264,6 +264,11 @@ pub fn do_stare(data: &DataCollection, arg: String, player: &mut Player, arg_typ
 }
 
 #[allow(unused_variables)]
+pub fn do_swim(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW));
+}
+
+#[allow(unused_variables)]
 pub fn do_tezazzle(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	player.tezazzle(data);
 }

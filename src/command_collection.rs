@@ -83,6 +83,7 @@ impl CommandCollection {
 		acts.insert(constants::COMMAND_ID_SOUTHEAST, actions::do_go);
 		acts.insert(constants::COMMAND_ID_SOUTHWEST, actions::do_go);
 		acts.insert(constants::COMMAND_ID_STARE, actions::do_stare);
+		acts.insert(constants::COMMAND_ID_SWIM, actions::do_swim);
 		acts.insert(constants::COMMAND_ID_TAKE, actions::do_take);
 		acts.insert(constants::COMMAND_ID_TETHER, actions::do_tether);
 		acts.insert(constants::COMMAND_ID_TEZAZZLE, actions::do_tezazzle);

@@ -97,6 +97,7 @@ pub const COMMAND_ID_WIZARD: u32 = 63;
 pub const COMMAND_ID_XYZZY: u32 = 64;
 pub const COMMAND_ID_ACORN: u32 = 65;
 pub const COMMAND_ID_JUMP: u32 = 66;
+pub const COMMAND_ID_SWIM: u32 = 67;
 
 // Id numbers of specific locations
 pub const LOCATION_ID_AIRLOCKE: u32 = 31; // The airlock just off the Recreation Hub
