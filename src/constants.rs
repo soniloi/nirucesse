@@ -1,8 +1,8 @@
 // Validation for various collections
-pub const EXPECTED_ITEMS: u32 = 127;
+pub const EXPECTED_ITEMS: u32 = 140;
 pub const EXPECTED_COMMANDS: u32 = 70;
 pub const EXPECTED_LOCATIONS: u32 = 134;
-pub const EXPECTED_STRINGS_RESPONSES: u32 = 210;
+pub const EXPECTED_STRINGS_RESPONSES: u32 = 220;
 pub const EXPECTED_STRINGS_PUZZLES: u32 = 28;
 
 // Scoring stuff
@@ -181,6 +181,7 @@ pub const ITEM_ID_FAIRY: u32 = 1030;
 pub const ITEM_ID_GLINT: u32 = 1033;
 pub const ITEM_ID_GUNSLINGER: u32 = 1037;
 pub const ITEM_ID_LEVER: u32 = 1055;
+pub const ITEM_ID_JOURNAL: u32 = 1128;
 pub const ITEM_ID_JUMPER: u32 = 1040;
 pub const ITEM_ID_KEY: u32 = 1041;
 pub const ITEM_ID_KOHLRABI: u32 = 1042;
@@ -191,7 +192,6 @@ pub const ITEM_ID_MACHINE: u32 = 1046;
 pub const ITEM_ID_MAGAZINE: u32 = 1047;
 pub const ITEM_ID_MARBLE: u32 = 1126;
 pub const ITEM_ID_MATCHES: u32 = 1048;
-pub const ITEM_ID_MEDALLION: u32 = 1094;
 pub const ITEM_ID_MILK: u32 = 1049;
 pub const ITEM_ID_MIRROR: u32 = 1050;
 pub const ITEM_ID_MUSHROOM: u32 = 1051;
@@ -429,6 +429,7 @@ pub const STR_ID_JUMP_SPOT: u32 = 206;
 pub const STR_ID_JUMP_CHASM: u32 = 207;
 pub const STR_ID_JUMP_GRAVITY: u32 = 208;
 pub const STR_ID_JUMP_WATER: u32 = 209;
+pub const STR_ID_JOIN_CORSAIR: u32 = 211;
 
 pub const PUZZLE_ID_ACORN: u32 = 0;
 pub const PUZZLE_ID_TRANSMITTER: u32 = 1;

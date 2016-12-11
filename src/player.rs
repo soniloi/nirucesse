@@ -502,6 +502,12 @@ impl Player {
 			self.location.borrow_mut().set_direction(Direction::North, Some(data.get_location_certain(constants::LOCATION_ID_TOADSTOOL).clone()));
 			self.complete_achievement(data, constants::PUZZLE_ID_MUSHROOM);
 
+		} else if recipient_id == constants::ITEM_ID_CORSAIR && gift_id == constants::ITEM_ID_JOURNAL {
+			self.inventory.borrow_mut().remove_item_certain(gift_id);
+			terminal::write_full(data.get_response(constants::STR_ID_JOIN_CORSAIR));
+			self.complete_achievement(data, constants::PUZZLE_ID_ESCAPE);
+			self.playing = false;
+
 		} else if gift_liquid { // Default response for liquids
 			self.inventory.borrow_mut().remove_item_certain(gift_id);
 			terminal::write_full(&data.get_response_param(constants::STR_ID_POUR_LIQUID_DEFAULT, recipient.borrow().get_shortname()));
@@ -1279,7 +1285,7 @@ impl Player {
 			constants::ITEM_ID_BODIES => terminal::write_full(data.get_response(constants::STR_ID_NO)),
 			constants::ITEM_ID_BUCCANEER => {
 				let kill_condition = !self.has_invisibility();
-				self.rob_pirate(data, item, constants::ITEM_ID_MEDALLION, kill_condition, constants::STR_ID_BUCCANEER_SNEAK_ROB, constants::PUZZLE_ID_BUCCANEER);
+				self.rob_pirate(data, item, constants::ITEM_ID_JOURNAL, kill_condition, constants::STR_ID_BUCCANEER_SNEAK_ROB, constants::PUZZLE_ID_BUCCANEER);
 			},
 			constants::ITEM_ID_CORSAIR => {
 				let kill_condition = self.has_item_inventory(constants::ITEM_ID_BOOTS);
