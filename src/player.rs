@@ -144,7 +144,7 @@ impl Player {
 	}
 
 	fn mk_location_string(&self, data: &DataCollection) -> String {
-		self.location.borrow().mk_full_string(data.get_response(constants::STR_ID_YOU_ARE))
+		self.location.borrow().mk_full_string(data.get_response(constants::STR_ID_YOU_ARE), data.get_response(constants::STR_ID_HOT_HERE))
 	}
 
 	// Return whether a location is the last place the player was
@@ -911,7 +911,7 @@ impl Player {
 	pub fn flash(&mut self, data: &DataCollection, next: LocationRef) {
 		self.location = next;
 		self.previous = None;
-		terminal::write_full(&self.location.borrow().mk_arrival_string(data.get_response(constants::STR_ID_YOU_ARE)));
+		terminal::write_full(&self.location.borrow().mk_arrival_string(data.get_response(constants::STR_ID_YOU_ARE), data.get_response(constants::STR_ID_HOT_HERE)));
 	}
 
 	pub fn fly(&mut self, data: &DataCollection, item: &ItemRef) {
@@ -985,7 +985,7 @@ impl Player {
 			} else {
 				self.previous = None;
 			}
-			let arrival_description = self.location.borrow().mk_arrival_string(data.get_response(constants::STR_ID_YOU_ARE));
+			let arrival_description = self.location.borrow().mk_arrival_string(data.get_response(constants::STR_ID_YOU_ARE), data.get_response(constants::STR_ID_HOT_HERE));
 			terminal::write_full(&self.get_effective_appearance(data, arrival_description));
 			self.location.borrow_mut().set_visited(true);
 		}
@@ -1251,7 +1251,7 @@ impl Player {
 	pub fn push(&mut self, data: &DataCollection, item: &ItemRef) {
 		let item_id = item.borrow().get_id();
 		match item_id {
-			constants::ITEM_ID_BUTTON | constants::ITEM_ID_LEVER => {
+			constants::ITEM_ID_BUTTON | constants::ITEM_ID_DIAL | constants::ITEM_ID_LEVER => {
 				let is_on = item.borrow().is_on();
 				self.switch_item(data, item, !is_on);
 			},

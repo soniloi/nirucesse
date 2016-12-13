@@ -342,6 +342,7 @@ pub const STR_ID_CORSAIR_LISTENING: u32 = 119;
 pub const STR_ID_BUCCANEER_WATCHING: u32 = 120;
 pub const STR_ID_PLAY_WHISTLE: u32 = 121;
 pub const STR_ID_HOLLOW: u32 = 122;
+pub const STR_ID_HOT_HERE: u32 = 123;
 pub const STR_ID_SEE_INVISIBLE: u32 = 124;
 pub const STR_ID_SEE_NORMAL: u32 = 125;
 pub const STR_ID_SEE_NOTHING: u32 = 126;

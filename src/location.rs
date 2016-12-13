@@ -180,15 +180,22 @@ impl Location {
 		self.items.values().fold(String::new(), |acc, x| acc + &x.borrow().get_locationname())
 	}
 
-	pub fn mk_arrival_string(&self, desc_start: &str) -> String {
-		if self.visited {
-			return self.mk_basic_string(desc_start) + "." + &self.mk_contents_string();
+	fn mk_hot_string(&self, desc_hot: &str) -> String {
+		if self.has_property(constants::CTRL_LOC_HOT) {
+			return String::from("\n") + desc_hot;
 		}
-		self.mk_full_string(desc_start)
+		String::new()
 	}
 
-	pub fn mk_full_string(&self, desc_start: &str) -> String {
+	pub fn mk_arrival_string(&self, desc_start: &str, desc_hot: &str) -> String {
+		match self.visited {
+			true => self.mk_basic_string(desc_start) + "." + &self.mk_contents_string() + &self.mk_hot_string(desc_hot),
+			_ => self.mk_full_string(desc_start, desc_hot),
+		}
+	}
+
+	pub fn mk_full_string(&self, desc_start: &str, desc_hot: &str) -> String {
 		self.mk_basic_string(desc_start) + &self.description_common +
-			&self.description_suffixes[self.description_suffix_index] + &self.mk_contents_string()
+			&self.description_suffixes[self.description_suffix_index] + &self.mk_contents_string() + &self.mk_hot_string(desc_hot)
 	}
 }
