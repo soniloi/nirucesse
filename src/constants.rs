@@ -173,6 +173,7 @@ pub const ITEM_ID_COIN: u32 = 1089;
 pub const ITEM_ID_CONSOLE_BROKEN: u32 = 1021;
 pub const ITEM_ID_CONSOLE_FIXED: u32 = 1057;
 pub const ITEM_ID_CORSAIR: u32 = 1022;
+pub const ITEM_ID_DIAL: u32 = 1129;
 pub const ITEM_ID_DOGS: u32 = 1026;
 pub const ITEM_ID_DUST: u32 = 1092;
 pub const ITEM_ID_DRAGON: u32 = 1027;
@@ -304,6 +305,7 @@ pub const STR_ID_NO_FISH: u32 = 80;
 pub const STR_ID_NO_FIT: u32 = 81;
 pub const STR_ID_CANNOT_INSERT_WEARABLE: u32 = 82;
 pub const STR_ID_LION_SITS: u32 = 83;
+pub const STR_ID_TEMPERATURE_SOMEWHERE: u32 = 84;
 pub const STR_ID_DEATH_NO_GRAVITY: u32 = 85;
 pub const STR_ID_NOTHING_HAPPENS: u32 = 86;
 pub const STR_ID_NOT_INTERESTED: u32 = 88;
@@ -506,6 +508,7 @@ pub const CTRL_LOC_NEEDSNO_GRAVITY: u32 = 0x40; // Whether the location requires
 pub const CTRL_LOC_HAS_CEILING: u32 = 0x100; // Whether there is a ceiling to this location, or something above it
 pub const CTRL_LOC_HAS_FLOOR: u32 = 0x200; // Whether there is a floor at this location
 pub const CTRL_LOC_HAS_LAND: u32 = 0x400; // Whether the location has land, as opposed to open water
+pub const CTRL_LOC_HOT: u32 = 0x800; // Whether the heating has been turned up
 
 // Constant non-response strings
 pub const FILE_SECTION_SEPARATOR: &'static str = "---"; // String separating sections of data file

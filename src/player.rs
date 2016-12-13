@@ -383,6 +383,12 @@ impl Player {
 			let anteroom = data.get_location_certain(constants::LOCATION_ID_ANTEROOM);
 			anteroom.borrow_mut().set_property(constants::CTRL_LOC_HAS_GRAVITY, !on_next);
 			terminal::write_full(data.get_response(constants::STR_ID_NOTHING_HAPPENS));
+		} else if item_id == constants::ITEM_ID_DIAL {
+			let checkpoint = data.get_location_certain(constants::LOCATION_ID_CHECKPOINT);
+			let is_hot = checkpoint.borrow().has_property(constants::CTRL_LOC_HOT);
+			checkpoint.borrow_mut().set_property(constants::CTRL_LOC_HOT, !is_hot);
+			terminal::write_full(data.get_response(constants::STR_ID_TEMPERATURE_SOMEWHERE));
+
 		} else if item_id == constants::ITEM_ID_LEVER {
 			let docking_ctrl = data.get_location_certain(constants::LOCATION_ID_DOCKINGCONTROL);
 			docking_ctrl.borrow_mut().set_property(constants::CTRL_LOC_HAS_LIGHT, on_next); // Opposite, as we have just changed it
