@@ -385,8 +385,16 @@ impl Player {
 			terminal::write_full(data.get_response(constants::STR_ID_NOTHING_HAPPENS));
 		} else if item_id == constants::ITEM_ID_DIAL {
 			let checkpoint = data.get_location_certain(constants::LOCATION_ID_CHECKPOINT);
-			let is_hot = checkpoint.borrow().has_property(constants::CTRL_LOC_HOT);
-			checkpoint.borrow_mut().set_property(constants::CTRL_LOC_HOT, !is_hot);
+			let was_hot = checkpoint.borrow().has_property(constants::CTRL_LOC_HOT);
+			checkpoint.borrow_mut().set_property(constants::CTRL_LOC_HOT, !was_hot);
+			if !was_hot {
+				let corsair_at_checkpoint = checkpoint.borrow().contains_item(constants::ITEM_ID_CORSAIR);
+				if corsair_at_checkpoint {
+					checkpoint.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_DOUBLET).clone());
+					checkpoint.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_JUSTACORPS).clone());
+					checkpoint.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_TRICORN).clone());
+				}
+			}
 			terminal::write_full(data.get_response(constants::STR_ID_TEMPERATURE_SOMEWHERE));
 
 		} else if item_id == constants::ITEM_ID_LEVER {
@@ -634,12 +642,14 @@ impl Player {
 				let checkpoint = data.get_location_certain(constants::LOCATION_ID_CHECKPOINT);
 				let corsair = data.get_item_by_id_certain(constants::ITEM_ID_CORSAIR);
 				checkpoint.borrow_mut().insert_item(corsair.clone());
+				checkpoint.borrow_mut().set_property(constants::CTRL_LOC_HOT, false);
+				data.get_item_by_id_certain(constants::ITEM_ID_DIAL).borrow_mut().set_on(false);
+
 				let docking_ctrl = data.get_location_certain(constants::LOCATION_ID_DOCKINGCONTROL);
 				let buccaneer = data.get_item_by_id_certain(constants::ITEM_ID_BUCCANEER);
 				docking_ctrl.borrow_mut().insert_item(buccaneer.clone());
 				docking_ctrl.borrow_mut().set_property(constants::CTRL_LOC_HAS_LIGHT, true);
-				let lever = data.get_item_by_id_certain(constants::ITEM_ID_LEVER);
-				lever.borrow_mut().set_on(true);
+				data.get_item_by_id_certain(constants::ITEM_ID_LEVER).borrow_mut().set_on(true);
 
 				// Link pirate ship (both item and location) to the docking bay
 				let docking = data.get_location_certain(constants::LOCATION_ID_DOCKING);
