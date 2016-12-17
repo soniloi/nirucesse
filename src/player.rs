@@ -1514,6 +1514,16 @@ impl Player {
 		self.release_item(data, item, true);
 	}
 
+	pub fn wave(&mut self, data: &DataCollection) {
+		terminal::write_full(data.get_response(constants::STR_ID_WAVE));
+		let buccaneer_present = self.has_item_location(constants::ITEM_ID_BUCCANEER);
+		let invisible = self.has_invisibility();
+		if buccaneer_present && !invisible {
+			terminal::write_full(data.get_response(constants::STR_ID_BUCCANEER_WAVE));
+			self.die(data);
+		}
+	}
+
 	pub fn wizard(&mut self, data: &DataCollection) {
 		let wizard_present = self.has_item_location(constants::ITEM_ID_WIZARD);
 		let mirror_present = self.has_item_inventory(constants::ITEM_ID_MIRROR);

@@ -291,6 +291,11 @@ pub fn do_water(data: &DataCollection, arg: String, player: &mut Player, arg_typ
 }
 
 #[allow(unused_variables)]
+pub fn do_wave(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	player.wave(data);
+}
+
+#[allow(unused_variables)]
 pub fn do_wizard(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	player.wizard(data);
 }

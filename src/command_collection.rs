@@ -90,6 +90,7 @@ impl CommandCollection {
 		acts.insert(constants::COMMAND_ID_THROW, actions::do_throw);
 		acts.insert(constants::COMMAND_ID_UP, actions::do_go);
 		acts.insert(constants::COMMAND_ID_WATER, actions::do_water);
+		acts.insert(constants::COMMAND_ID_WAVE, actions::do_wave);
 		acts.insert(constants::COMMAND_ID_WEST, actions::do_go);
 		acts.insert(constants::COMMAND_ID_WIZARD, actions::do_wizard);
 		acts.insert(constants::COMMAND_ID_XYZZY, actions::do_xyzzy);
