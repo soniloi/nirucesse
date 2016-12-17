@@ -1514,13 +1514,22 @@ impl Player {
 		self.release_item(data, item, true);
 	}
 
+	fn looks_like_corsair(&self) -> bool {
+		self.has_item_inventory(constants::ITEM_ID_DOUBLET) && self.has_item_inventory(constants::ITEM_ID_JUSTACORPS) && self.has_item_inventory(constants::ITEM_ID_TRICORN)
+	}
+
 	pub fn wave(&mut self, data: &DataCollection) {
 		terminal::write_full(data.get_response(constants::STR_ID_WAVE));
 		let buccaneer_present = self.has_item_location(constants::ITEM_ID_BUCCANEER);
 		let invisible = self.has_invisibility();
 		if buccaneer_present && !invisible {
-			terminal::write_full(data.get_response(constants::STR_ID_BUCCANEER_WAVE));
-			self.die(data);
+			if self.looks_like_corsair() {
+				terminal::write_full(data.get_response(constants::STR_ID_BUCCANEER_WAVE_DISGUISED));
+				self.playing = false;
+			} else {
+				terminal::write_full(data.get_response(constants::STR_ID_BUCCANEER_WAVE_UNDISGUISED));
+				self.die(data);
+			}
 		}
 	}
 
