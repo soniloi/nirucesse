@@ -366,6 +366,23 @@ impl Player {
 		}
 	}
 
+	fn corsair_drop_item(&mut self, data: &DataCollection, checkpoint: &LocationRef, item_id: ItemId) {
+		let item = data.get_item_by_id_certain(item_id);
+		let to_drop = item.borrow().is_new() || item.borrow().is_retired();
+		if to_drop {
+			self.unlink_item(data, item);
+			checkpoint.borrow_mut().insert_item(item.clone());
+		}
+	}
+
+	fn corsair_take_item(&mut self, data: &DataCollection, checkpoint: &LocationRef, item_id: ItemId) {
+		let to_take = checkpoint.borrow().contains_item(item_id);
+		if to_take {
+			checkpoint.borrow_mut().remove_item_certain(item_id);
+			data.get_item_by_id_certain(item_id).borrow_mut().retire();
+		}
+	}
+
 	fn switch_item(&mut self, data: &DataCollection, item: &ItemRef, on_next: bool) {
 		if !item.borrow().has_property(constants::CTRL_ITEM_SWITCHABLE) {
 			terminal::write_full(data.get_response(constants::STR_ID_NO_KNOW_HOW));
@@ -386,17 +403,18 @@ impl Player {
 		} else if item_id == constants::ITEM_ID_DIAL {
 			let checkpoint = data.get_location_certain(constants::LOCATION_ID_CHECKPOINT);
 			let was_hot = checkpoint.borrow().has_property(constants::CTRL_LOC_HOT);
+			let corsair_at_checkpoint = checkpoint.borrow().contains_item(constants::ITEM_ID_CORSAIR);
 			checkpoint.borrow_mut().set_property(constants::CTRL_LOC_HOT, !was_hot);
-			if !was_hot {
-				let corsair_at_checkpoint = checkpoint.borrow().contains_item(constants::ITEM_ID_CORSAIR);
-				if corsair_at_checkpoint {
-					checkpoint.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_DOUBLET).clone());
-					checkpoint.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_JUSTACORPS).clone());
-					checkpoint.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_TRICORN).clone());
-				}
+			if !was_hot && corsair_at_checkpoint {
+				self.corsair_drop_item(data, checkpoint, constants::ITEM_ID_DOUBLET);
+				self.corsair_drop_item(data, checkpoint, constants::ITEM_ID_JUSTACORPS);
+				self.corsair_drop_item(data, checkpoint, constants::ITEM_ID_TRICORN);
+			} else if was_hot && corsair_at_checkpoint {
+				self.corsair_take_item(data, checkpoint, constants::ITEM_ID_DOUBLET);
+				self.corsair_take_item(data, checkpoint, constants::ITEM_ID_JUSTACORPS);
+				self.corsair_take_item(data, checkpoint, constants::ITEM_ID_TRICORN);
 			}
 			terminal::write_full(data.get_response(constants::STR_ID_TEMPERATURE_SOMEWHERE));
-
 		} else if item_id == constants::ITEM_ID_LEVER {
 			let docking_ctrl = data.get_location_certain(constants::LOCATION_ID_DOCKINGCONTROL);
 			docking_ctrl.borrow_mut().set_property(constants::CTRL_LOC_HAS_LIGHT, on_next); // Opposite, as we have just changed it
