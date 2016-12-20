@@ -99,6 +99,7 @@ pub const COMMAND_ID_ACORN: u32 = 65;
 pub const COMMAND_ID_JUMP: u32 = 66;
 pub const COMMAND_ID_SWIM: u32 = 67;
 pub const COMMAND_ID_WAVE: u32 = 68;
+pub const COMMAND_ID_MARBLE: u32 = 69;
 
 // Id numbers of specific locations
 pub const LOCATION_ID_AIRLOCKE: u32 = 31; // The airlock just off the Recreation Hub
@@ -444,6 +445,7 @@ pub const STR_ID_JOIN_CORSAIR: u32 = 213;
 pub const STR_ID_WAVE: u32 = 214;
 pub const STR_ID_BUCCANEER_WAVE_UNDISGUISED: u32 = 215;
 pub const STR_ID_BUCCANEER_WAVE_DISGUISED: u32 = 216;
+pub const STR_ID_MARBLE: u32 = 219;
 
 pub const PUZZLE_ID_ACORN: u32 = 0;
 pub const PUZZLE_ID_TRANSMITTER: u32 = 1;

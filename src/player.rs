@@ -532,6 +532,7 @@ impl Player {
 			self.inventory.borrow_mut().remove_item_certain(gift_id);
 			self.remove_item_from_current(recipient_id);
 			self.location.borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_TOADSTOOL).clone());
+			data.get_location_certain(constants::LOCATION_ID_TOADSTOOL).borrow_mut().insert_item(data.get_item_by_id_certain(constants::ITEM_ID_MARBLE).clone());
 			self.location.borrow_mut().set_direction(Direction::North, Some(data.get_location_certain(constants::LOCATION_ID_TOADSTOOL).clone()));
 			self.complete_achievement(data, constants::PUZZLE_ID_MUSHROOM);
 
@@ -1217,6 +1218,18 @@ impl Player {
 
 	pub fn light(&mut self, data: &DataCollection, item: &ItemRef) {
 		self.switch_item(data, item, true);
+	}
+
+	pub fn marble(&mut self, data: &DataCollection) {
+		let marble = data.get_item_by_id_certain(constants::ITEM_ID_MARBLE);
+		let mut response_code = constants::STR_ID_NOTHING_HAPPENS;
+		let to_move = !marble.borrow().is_new() && !self.inventory.borrow().contains_item(constants::ITEM_ID_MARBLE);
+		if to_move {
+			self.unlink_item(data, marble);
+			self.inventory.borrow_mut().insert_item(marble.clone());
+			response_code = constants::STR_ID_MARBLE;
+		}
+		terminal::write_full(data.get_response(response_code));
 	}
 
 	#[cfg(debug_assertions)]

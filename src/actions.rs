@@ -190,6 +190,11 @@ pub fn do_look(data: &DataCollection, arg: String, player: &mut Player, arg_type
 	}
 }
 
+#[allow(unused_variables)]
+pub fn do_marble(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
+	player.marble(data);
+}
+
 pub fn do_play(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	manipulate_item(data, arg, arg_type, player, Player::play);
 }

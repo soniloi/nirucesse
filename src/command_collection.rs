@@ -29,6 +29,7 @@ impl CommandCollection {
 	}
 
 	fn add_actions_common(acts: &mut HashMap<CommandId, ActionFn>) {
+		acts.insert(constants::COMMAND_ID_ACORN, actions::do_acorn);
 		acts.insert(constants::COMMAND_ID_ATTACK, actions::do_attack);
 		acts.insert(constants::COMMAND_ID_ROBOT, actions::do_robot);
 		acts.insert(constants::COMMAND_ID_BACK, actions::do_go);
@@ -61,6 +62,7 @@ impl CommandCollection {
 		acts.insert(constants::COMMAND_ID_KNIT, actions::do_knit);
 		acts.insert(constants::COMMAND_ID_LIGHT, actions::do_light);
 		acts.insert(constants::COMMAND_ID_LOOK, actions::do_look);
+		acts.insert(constants::COMMAND_ID_MARBLE, actions::do_marble);
 		acts.insert(constants::COMMAND_ID_NORTH, actions::do_go);
 		acts.insert(constants::COMMAND_ID_NORTHEAST, actions::do_go);
 		acts.insert(constants::COMMAND_ID_NORTHWEST, actions::do_go);
@@ -94,7 +96,6 @@ impl CommandCollection {
 		acts.insert(constants::COMMAND_ID_WEST, actions::do_go);
 		acts.insert(constants::COMMAND_ID_WIZARD, actions::do_wizard);
 		acts.insert(constants::COMMAND_ID_XYZZY, actions::do_xyzzy);
-		acts.insert(constants::COMMAND_ID_ACORN, actions::do_acorn);
 	}
 
 	#[cfg(debug_assertions)]
