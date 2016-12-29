@@ -190,11 +190,12 @@ impl DataCollection {
 		self.puzzles.get_certain(key)
 	}
 
-	pub fn get_event(&self, turn: u32) -> Option<&str> {
-		match self.event_turns.get(&turn) {
-			None => None,
-			Some(event_turn) => Some(self.events.get_certain(*event_turn)),
+	// Retrieve an event for a given turn index; clear any event found and return it
+	pub fn get_and_clear_event(&mut self, turn: u32) -> Option<&str> {
+		if let Some(event_turn) = self.event_turns.remove(&turn) {
+			return Some(self.events.get_certain(event_turn));
 		}
+		None
 	}
 
 	pub fn get_commands_non_secret(&self) -> String {

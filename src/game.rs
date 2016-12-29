@@ -42,7 +42,7 @@ impl Game {
 			if !self.player.is_alive() {
 				self.process_reincarnation();
 			} else if self.player.is_playing() {
-				if let Some(event) = self.data.get_event(self.player.get_instructions()) {
+				if let Some(event) = self.data.get_and_clear_event(self.player.get_instructions()) {
 					terminal::write_full(event);
 				}
 			}
