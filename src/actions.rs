@@ -219,7 +219,12 @@ pub fn do_quench(data: &DataCollection, arg: String, player: &mut Player, arg_ty
 #[allow(unused_variables)]
 pub fn do_quit(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
 	player.decrement_instructions(); // Quitting does not count as an instruction
-	player.set_playing(false);
+	let confirm = terminal::get_yes_no(data.get_response(constants::STR_ID_SURE_ASK), data.get_response(constants::STR_ID_NO_UNDERSTAND_SELECTION));
+	if confirm {
+		player.set_playing(false);
+	} else {
+		terminal::write_full(data.get_response(constants::STR_ID_OK));
+	}
 }
 
 pub fn do_read(data: &DataCollection, arg: String, player: &mut Player, arg_type: ArgumentType) {
